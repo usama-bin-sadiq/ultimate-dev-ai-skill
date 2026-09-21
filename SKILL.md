@@ -145,6 +145,76 @@ Do everything in LARGE path plus:
 7. **Review**: security, performance, correctness
 8. **Learn**: persist in .ultimate-dev/project-memory.md
 
+---
+
+# AUTO-TRIGGER (execute on EVERY user message)
+
+**DO NOT WAIT for explicit "use the skill" — this is your default mode.**
+
+```
+ON EACH USER TURN:
+  1. READ task from user message
+  2. CLASSIFY: size (atomic|moderate|complex) + domains + risk
+  3. ROUTE per YOUR detected tier (see MODEL DETECTION):
+     - TINY (≤8K):     inline only, max 500 words
+     - SMALL (≤32K):   load 1 module max (use lite-mode.md lookup table)
+     - LARGE (≤128K):  load up to 3 modules, spawn sub-agents for complex
+     - HUGE (>128K):   full system, unlimited agents
+  4. EXECUTE using module patterns + applicable personas
+  5. OUTPUT in tier format: [tier: X | module: Y | agents: Z]
+```
+
+## TIER-SPECIFIC EXECUTION PATTERNS (apply the one matching YOUR context window)
+
+### TINY (≤8K) — Inline Only
+```
+For EVERY task:
+  1. Classify: atomic | moderate | complex
+  2. ALL inline — no modules, no agents
+  3. Output: [tier: tiny | work: inline]
+  4. Max 500 words
+```
+
+### SMALL (≤32K) — 1 Module Max
+```
+For EVERY task:
+  1. Quick Classification (lite-mode.md):
+     - 1 file/function? → atomic → inline
+     - 1 feature? → moderate → load 1 module
+     - Multi-feature? → complex → best effort + note gaps
+  2. Module Lookup (lite-mode.md table) → Read module
+  3. Apply module patterns
+  4. Output: [tier: small | module: <name> | coverage: full|partial]
+```
+
+**If complex (≥2 domains):**
+- Decompose per `router/decomposition.md`
+- Spawn sub-agent using `router/invocation-template.md`
+- Max 1 sub-agent
+
+### LARGE (≤128K) — Full System
+```
+For EVERY task:
+  1. Classify: atomic | moderate | complex
+  2. Load matching modules (up to 3)
+  3. If complex: decompose → spawn sub-agents (max 3)
+  4. Verify all results
+  5. Output: [tier: large | modules: <list> | agents: <count>]
+```
+
+### HUGE (>128K) — All Features
+```
+For EVERY task:
+  1. Deep analysis, multiple iterations
+  2. Unlimited modules + agents
+  3. Full test coverage + ADRs
+  4. Output: [tier: huge | modules: <list> | agents: <count> | iterations: <n>]
+```
+
+---
+
+**Each model self-detects its tier at start (see MODEL DETECTION) and follows ONLY its tier's pattern.**
+
 # ESCALATION
 1. Sub-agent result checked against contract
 2. Violation → one retry with explicit gap

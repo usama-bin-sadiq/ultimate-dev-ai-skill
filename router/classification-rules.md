@@ -1,5 +1,9 @@
 # Classification Rules (compact)
 
+## ⚡ MANDATORY: Run on EVERY user message
+
+**Do not skip. Do not wait for "use skill." This IS your workflow.**
+
 ## Step 1: Size
 - **atomic**: single function/file/config, factual question
 - **moderate**: one feature, one domain, bounded
@@ -44,10 +48,15 @@ Risk: `none | data | security | compliance`
 ## Step 4: Clarity Check
 If size ≠ atomic and missing decision → ask ONE question before proceeding.
 
-## Output
+## Output (EMIT THIS on every turn)
 ```
 size: atomic | moderate | complex
 domains: [list]
 risk: none | data | security | compliance
 clarity: clear | ambiguous
 ```
+
+## Then IMMEDIATELY:
+- **atomic** → inline answer, `[tier: tiny | work: inline]`
+- **moderate** → load 1 module, `[tier: small | module: <name>]`
+- **complex** → decompose, spawn agent, `[tier: small | module: <primary> | agents: 1 | coverage: partial]`

@@ -2,13 +2,26 @@
 
 Use this router when context is limited (≤32K tokens).
 
+## ⚡ AUTO-EXECUTE ON EVERY TURN
+
+**This is not optional reference — it's your execution loop.**
+
+```
+USER MESSAGE RECEIVED:
+  → CLASSIFY (3 questions below)
+  → LOOKUP module (table below)
+  → READ module
+  → APPLY patterns
+  → OUTPUT with tier header
+```
+
 ## Quick Classification
 
 Read the task. Answer 3 questions:
 
-1. **Is it one file?** → atomic (do inline)
-2. **Is it one feature?** → moderate (load 1 module)
-3. **Is it multiple features?** → complex (do best effort)
+1. **Is it one file/function/config?** → atomic → **do inline, no module**
+2. **Is it one feature, one domain?** → moderate → **load 1 module (table below)**
+3. **Is it multi-domain / multi-feature?** → complex → **best effort + note gaps**
 
 ## Module Lookup (fast)
 
