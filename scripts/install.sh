@@ -384,9 +384,9 @@ get_tool_path() {
       ;;
     generic|*)
       if [ "$scope" = "project" ]; then
-        echo ".agent/skills/ultimate-dev"
+        echo ".agents/skills/ultimate-dev"
       else
-        echo "$HOME/.agent/skills/ultimate-dev"
+        echo "$HOME/.agents/skills/ultimate-dev"
       fi
       ;;
   esac
@@ -581,7 +581,7 @@ This file references the full ultimate-dev skill installation.
 
 ## Full Skill Location
 - User scope: `~/.agents/skills/ultimate-dev/`
-- Project scope: `.agent/skills/ultimate-dev/`
+- Project scope: `.agents/skills/ultimate-dev/`
 
 ## Quick Reference
 The main rules are in `ultimate-dev.md` in this directory.
@@ -708,9 +708,9 @@ install_opencode() {
 
 # Install for generic CLI
 install_generic() {
-  local target="$HOME/.agent/skills/ultimate-dev"
+  local target="$HOME/.agents/skills/ultimate-dev"
   if [ "$SCOPE" = "project" ]; then
-    target=".agent/skills/ultimate-dev"
+    target=".agents/skills/ultimate-dev"
   fi
   
   print_info "Generic CLI: Installing to $target"

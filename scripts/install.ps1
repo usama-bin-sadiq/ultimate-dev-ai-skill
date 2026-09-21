@@ -334,9 +334,9 @@ function Get-ToolPath {
         }
         default {
             if ($Scope -eq "project") {
-                return ".agent\skills\ultimate-dev"
+                return ".agents\skills\ultimate-dev"
             } else {
-                return "$env:USERPROFILE\.agent\skills\ultimate-dev"
+                return "$env:USERPROFILE\.agents\skills\ultimate-dev"
             }
         }
     }
@@ -695,7 +695,7 @@ When working on engineering tasks, follow the classification and routing rules d
         Install-Skill $target
     }
     default {
-        $target = if ($Scope -eq "project") { ".agent\skills\ultimate-dev" } else { "$env:USERPROFILE\.agent\skills\ultimate-dev" }
+        $target = if ($Scope -eq "project") { ".agents\skills\ultimate-dev" } else { "$env:USERPROFILE\.agents\skills\ultimate-dev" }
         Install-Skill $target
     }
 }
