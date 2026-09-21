@@ -34,13 +34,19 @@ fallback: _emerging-tech-handler
 > - Modules are loaded via `Read: modules/<department>/<module>.md` — not via skill loading.
 
 # MODEL DETECTION (do this FIRST)
+The context tier MUST be determined from the current runtime/provider's effective context-window metadata.
+Never identify the model by name.
+Never maintain a hardcoded model-to-tier mapping.
+If the runtime does not expose an effective context-window value,
+do not guess it from the model name or model family.
+
 Count your approximate context window:
 - **≤8K tokens** → You are TINY. Follow TINY path.
 - **≤32K tokens** → You are SMALL. Follow SMALL path.
 - **≤128K tokens** → You are LARGE. Follow LARGE path.
 - **>128K tokens** → You are HUGE. Follow HUGE path.
 
-If unsure, assume SMALL.
+If unsure, assume LARGE.
 
 ---
 
