@@ -169,10 +169,12 @@ ultimate-dev/
 
 ## Credits & Attribution
 
-This skill was built with inspiration and reference from:
+This skill was **built directly from** the PRD defined in **[ultimate-developer](https://github.com/usama-bin-sadiq/ultimate-developer)** — the agent-based implementation (65 agents) that shares the same architecture.
 
 | Source | What It Contributed |
 |--------|---------------------|
+| **[ultimate-developer PRD](https://github.com/usama-bin-sadiq/ultimate-developer)** | Core architecture: 3-tier system, token budgets, routing rules, adapter pattern, gap promotion |
+| **[ultimate-developer agents](https://github.com/usama-bin-sadiq/ultimate-developer/tree/main/agents)** | Agent patterns, agency/orchestrator design, domain coverage reference |
 | **[OpenAI Codex](https://github.com/openai/codex)** | Agent instruction format (`AGENTS.md`) and skill loading pattern |
 | **[Claude Code](https://github.com/anthropics/claude-code)** | Project instruction patterns (`.claude/CLAUDE.md`) |
 | **[Cursor](https://github.com/getcursor/cursor)** | Project rules format (`.cursorrules`) |
@@ -183,9 +185,6 @@ This skill was built with inspiration and reference from:
 | **[WCAG](https://www.w3.org/WAI/standards-guidelines/wcag/)** | Accessibility guidelines |
 | **[12 Factor App](https://12factor.net/)** | Cloud-native architecture patterns |
 | **[Martin Fowler's Patterns](https://martinfowler.com/)** | Enterprise architecture patterns |
-
-### Original PRD
-- **`ultimate-developer-prd.md`** — The product requirements document that defined this system's architecture
 
 ---
 
