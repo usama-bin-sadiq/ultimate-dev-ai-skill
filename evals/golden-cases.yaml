@@ -1,0 +1,413 @@
+# Golden Test Cases for Classification Accuracy
+# Run: verify classification against these cases to ensure routing is correct
+# Each case has: task, expected_size, expected_domains, expected_risk
+
+cases:
+  # === ATOMIC TASKS (should load zero modules) ===
+  - id: atomic-001
+    task: "Fix the null check in UserService.findById"
+    expected_size: atomic
+    expected_domains: []
+    expected_risk: none
+    notes: "Single function fix, no domain module needed"
+
+  - id: atomic-002
+    task: "What does the JWT exp claim mean?"
+    expected_size: atomic
+    expected_domains: []
+    expected_risk: none
+    notes: "Factual question, no module load"
+
+  - id: atomic-003
+    task: "Rename the variable `usr` to `user` in auth.ts"
+    expected_size: atomic
+    expected_domains: []
+    expected_risk: none
+    notes: "Simple rename, no domain match"
+
+  # === MODERATE TASKS (should load exactly matched modules) ===
+  - id: moderate-001
+    task: "Design a REST API for user management with registration, login, and profile endpoints"
+    expected_size: moderate
+    expected_domains: [backend]
+    expected_risk: security
+    notes: "API design + auth = security risk flag"
+
+  - id: moderate-002
+    task: "Optimize this PostgreSQL query that's taking 3 seconds on the users table"
+    expected_size: moderate
+    expected_domains: [database]
+    expected_risk: none
+    notes: "Single domain, clear scope"
+
+  - id: moderate-003
+    task: "Create a responsive dashboard layout with sidebar navigation"
+    expected_size: moderate
+    expected_domains: [frontend]
+    expected_risk: none
+    notes: "UI work, no risk"
+
+  - id: moderate-004
+    task: "Set up GitHub Actions CI pipeline with lint, test, and build steps"
+    expected_size: moderate
+    expected_domains: [devops]
+    expected_risk: none
+    notes: "CI/CD setup"
+
+  - id: moderate-005
+    task: "Write a threat model for the payment processing flow"
+    expected_size: moderate
+    expected_domains: [security]
+    expected_risk: security
+    notes: "Security module always added for auth/payment"
+
+  - id: moderate-006
+    task: "Create a sprint plan for the next 2 weeks with capacity allocation"
+    expected_size: moderate
+    expected_domains: [project-management]
+    expected_risk: none
+    notes: "PM work"
+
+  - id: moderate-007
+    task: "Write a PRD for the new notification system"
+    expected_size: moderate
+    expected_domains: [product]
+    expected_risk: none
+    notes: "Product requirements"
+
+  - id: moderate-008
+    task: "Design a Figma component spec for the new Button component with all variants"
+    expected_size: moderate
+    expected_domains: [design-handoff]
+    expected_risk: none
+    notes: "Design handoff"
+
+  - id: moderate-009
+    task: "Write a status update for the client about this week's progress"
+    expected_size: moderate
+    expected_domains: [client-comms]
+    expected_risk: none
+    notes: "Client communication"
+
+  - id: moderate-010
+    task: "Create a content calendar for Q4 blog posts"
+    expected_size: moderate
+    expected_domains: [marketing]
+    expected_risk: none
+    notes: "Marketing content"
+
+  - id: moderate-011
+    task: "Build a sales outreach sequence for SaaS prospects"
+    expected_size: moderate
+    expected_domains: [sales]
+    expected_risk: none
+    notes: "Sales outreach"
+
+  - id: moderate-012
+    task: "Create a revenue model for the SaaS product with MRR projections"
+    expected_size: moderate
+    expected_domains: [finance]
+    expected_risk: none
+    notes: "Financial modeling"
+
+  - id: moderate-013
+    task: "Design a FHIR API for patient record exchange"
+    expected_size: moderate
+    expected_domains: [healthcare]
+    expected_risk: compliance
+    notes: "Healthcare = HIPAA compliance"
+
+  - id: moderate-014
+    task: "Design a loot box system with proper drop rate disclosure"
+    expected_size: moderate
+    expected_domains: [game-dev]
+    expected_risk: none
+    notes: "Game monetization"
+
+  - id: moderate-015
+    task: "Write a PostGIS query to find all restaurants within 5km of a point"
+    expected_size: moderate
+    expected_domains: [gis]
+    expected_risk: none
+    notes: "Spatial query"
+
+  - id: moderate-016
+    task: "Set up hand tracking interactions for a VR meditation app"
+    expected_size: moderate
+    expected_domains: [spatial-computing]
+    expected_risk: none
+    notes: "XR development"
+
+  - id: moderate-017
+    task: "Audit this Solidity smart contract for reentrancy vulnerabilities"
+    expected_size: moderate
+    expected_domains: [specialized]
+    expected_risk: security
+    notes: "Blockchain security"
+
+  - id: moderate-018
+    task: "Write a literature review on microservices adoption patterns"
+    expected_size: moderate
+    expected_domains: [academic]
+    expected_risk: none
+    notes: "Academic writing"
+
+  - id: moderate-019
+    task: "Design a ticket triage system with SLAs for a SaaS support team"
+    expected_size: moderate
+    expected_domains: [support]
+    expected_risk: none
+    notes: "Support operations"
+
+  - id: moderate-020
+    task: "Set up a Google Ads campaign structure for a B2B SaaS product"
+    expected_size: moderate
+    expected_domains: [paid-media]
+    expected_risk: none
+    notes: "Paid advertising"
+
+  # === COMPLEX TASKS (should decompose into subtasks) ===
+  - id: complex-001
+    task: "Build a user authentication system with JWT, OAuth, and role-based access control"
+    expected_size: complex
+    expected_domains: [backend, security]
+    expected_risk: security
+    notes: "Multi-domain: API + auth security"
+
+  - id: complex-002
+    task: "Migrate the monolith to microservices with zero downtime"
+    expected_size: complex
+    expected_domains: [architecture, devops, database]
+    expected_risk: security
+    notes: "Architecture + deployment + data"
+
+  - id: complex-003
+    task: "Launch a new product feature with marketing campaign, sales enablement, and support documentation"
+    expected_size: complex
+    expected_domains: [product, marketing, sales, support, documentation]
+    expected_risk: none
+    notes: "Full cross-functional launch"
+
+  - id: complex-004
+    task: "Build a real-time dashboard with WebSocket updates, chart rendering, and responsive layout"
+    expected_size: complex
+    expected_domains: [frontend, backend]
+    expected_risk: none
+    notes: "Frontend + backend integration"
+
+  - id: complex-005
+    task: "Design and implement a HIPAA-compliant patient portal with EHR integration"
+    expected_size: complex
+    expected_domains: [healthcare, backend, security, frontend]
+    expected_risk: compliance
+    notes: "Healthcare + full stack + compliance"
+
+  - id: complex-006
+    task: "Create a go-to-market plan for a new SaaS feature including pricing, marketing, sales enablement, and support docs"
+    expected_size: complex
+    expected_domains: [product, finance, marketing, sales, support, documentation]
+    expected_risk: none
+    notes: "Full GTM cross-functional"
+
+  - id: complex-007
+    task: "Build a multiplayer game with matchmaking, anti-cheat, and in-app purchases"
+    expected_size: complex
+    expected_domains: [game-dev, backend, security]
+    expected_risk: security
+    notes: "Game + server + security"
+
+  - id: complex-008
+    task: "Implement a geospatial analytics platform with real-time map rendering and spatial queries"
+    expected_size: complex
+    expected_domains: [gis, frontend, backend, database]
+    expected_risk: none
+    notes: "GIS + full stack"
+
+  # === NEAR-MISS / ANTI-TRIGGER TESTS ===
+  # These should NOT trigger certain modules
+  - id: nearmiss-001
+    task: "Fix the CSS alignment on the login page"
+    expected_size: atomic
+    expected_domains: []
+    expected_risk: none
+    notes: "CSS fix is atomic, should NOT trigger design-handoff or frontend module"
+
+  - id: nearmiss-002
+    task: "Update the README installation instructions"
+    expected_size: atomic
+    expected_domains: []
+    expected_risk: none
+    notes: "Documentation fix is atomic, should NOT trigger documentation module"
+
+  - id: nearmiss-003
+    task: "Run npm install to update dependencies"
+    expected_size: atomic
+    expected_domains: []
+    expected_risk: none
+    notes: "Package update is atomic, should NOT trigger devops module"
+
+  - id: nearmiss-004
+    task: "Write a marketing blog post about our new feature"
+    expected_size: moderate
+    expected_domains: [marketing]
+    expected_risk: none
+    notes: "Content creation = marketing, NOT documentation module"
+
+  - id: nearmiss-005
+    task: "Set up a PostgreSQL database with proper indexing for the users table"
+    expected_size: moderate
+    expected_domains: [database]
+    expected_risk: none
+    notes: "Database setup = database module, NOT backend"
+
+  # === RISK FLAG TESTS ===
+  - id: risk-001
+    task: "Add user registration with email and password"
+    expected_size: moderate
+    expected_domains: [backend, security]
+    expected_risk: security
+    notes: "Auth logic triggers security module regardless of size"
+
+  - id: risk-002
+    task: "Implement payment processing with Stripe"
+    expected_size: moderate
+    expected_domains: [backend, security]
+    expected_risk: security
+    notes: "Payment = security risk"
+
+  - id: risk-003
+    task: "Add PII fields to the user model"
+    expected_size: moderate
+    expected_domains: [database, security]
+    expected_risk: security
+    notes: "PII handling triggers security"
+
+  - id: risk-004
+    task: "Deploy to production with database migration"
+    expected_size: moderate
+    expected_domains: [devops, security]
+    expected_risk: security
+    notes: "Production deploy + migration = security"
+
+  # === CLARITY CHECK TESTS ===
+  - id: clarity-001
+    task: "Build an API"
+    expected_size: ambiguous
+    expected_domains: [backend]
+    expected_risk: none
+    notes: "Missing: what kind of API? What domain? Should ask clarifying question"
+
+  - id: clarity-002
+    task: "Fix the performance issue"
+    expected_size: ambiguous
+    expected_domains: []
+    expected_risk: none
+    notes: "Missing: what performance issue? Where? Should ask clarifying question"
+
+  # === EMERGING TECH HANDLER TESTS ===
+  - id: emerging-001
+    task: "Write a WebAssembly module for image processing"
+    expected_size: moderate
+    expected_domains: [specialized]
+    expected_risk: none
+    notes: "WebAssembly is covered by specialized module"
+
+  - id: emerging-002
+    task: "Build a Telegram bot with natural language processing"
+    expected_size: moderate
+    expected_domains: []
+    expected_risk: none
+    notes: "No module matches — should route to emerging-tech-handler"
+
+  - id: emerging-003
+    task: "Implement a Rust-based CLI tool with async I/O"
+    expected_size: moderate
+    expected_domains: []
+    expected_risk: none
+    notes: "No module matches — should route to emerging-tech-handler"
+
+  # === META & SYSTEM MAINTENANCE TESTS ===
+  - id: meta-001
+    task: "Register the new AI/ML module in the capability index"
+    expected_size: moderate
+    expected_domains: [skill-maintainer]
+    expected_risk: none
+    notes: "Module registration triggers skill-maintainer"
+
+  - id: meta-002
+    task: "Track the occurrence count for the blockchain domain gap"
+    expected_size: atomic
+    expected_domains: [gap-tracker]
+    expected_risk: none
+    notes: "Gap tracking triggers gap-tracker"
+
+  - id: meta-003
+    task: "Validate this new module follows the §25 skeleton"
+    expected_size: atomic
+    expected_domains: [skill-maintainer]
+    expected_risk: none
+    notes: "Module validation triggers skill-maintainer"
+
+  - id: meta-004
+    task: "Check if the quantum computing domain has reached promotion threshold"
+    expected_size: atomic
+    expected_domains: [gap-tracker]
+    expected_risk: none
+    notes: "Promotion threshold check triggers gap-tracker"
+
+  - id: meta-005
+    task: "Update the version to 1.2.0 for the new marketing module"
+    expected_size: atomic
+    expected_domains: [skill-maintainer]
+    expected_risk: none
+    notes: "Version bump triggers skill-maintainer"
+
+  - id: meta-006
+    task: "Promote the blockchain domain from gap note to real module"
+    expected_size: moderate
+    expected_domains: [skill-maintainer, gap-tracker]
+    expected_risk: none
+    notes: "Promotion requires both personas for coordination"
+
+  # === EDGE CASE TESTS ===
+  - id: edge-001
+    task: "Register a module with invalid YAML in skill-manifest.yaml"
+    expected_size: atomic
+    expected_domains: [skill-maintainer]
+    expected_risk: none
+    notes: "skill-maintainer must detect and reject invalid YAML"
+
+  - id: edge-002
+    task: "Try to register the same module twice"
+    expected_size: atomic
+    expected_domains: [skill-maintainer]
+    expected_risk: none
+    notes: "skill-maintainer must detect duplicate registration"
+
+  - id: edge-003
+    task: "Add triggers that overlap with existing backend module"
+    expected_size: atomic
+    expected_domains: [skill-maintainer]
+    expected_risk: none
+    notes: "skill-maintainer must detect trigger conflicts"
+
+  - id: edge-004
+    task: "Rollback a promoted module due to routing issues"
+    expected_size: moderate
+    expected_domains: [skill-maintainer]
+    expected_risk: none
+    notes: "skill-maintainer must handle rollback procedure"
+
+  - id: edge-005
+    task: "Count gap occurrences when CHANGELOG.md has inconsistent date formats"
+    expected_size: atomic
+    expected_domains: [gap-tracker]
+    expected_risk: none
+    notes: "gap-tracker must handle format inconsistencies"
+
+  - id: edge-006
+    task: "Promote a domain with 3 occurrences but trigger conflicts"
+    expected_size: moderate
+    expected_domains: [skill-maintainer, gap-tracker]
+    expected_risk: none
+    notes: "Promotion blocked by trigger conflicts, requires resolution"

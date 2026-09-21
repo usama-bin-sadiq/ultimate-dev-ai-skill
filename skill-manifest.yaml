@@ -1,0 +1,332 @@
+name: ultimate-dev
+version: 1.6.0
+description: >
+  Master software-engineering orchestrator. Adapts to model size: tiny→inline,
+  small→1 module, large→parallel agents, huge→full system. 44 modules, 33 personas.
+
+author: ultimate-dev
+license: MIT
+last_updated: 2026-09-21
+# Updated: Added TUI installation, multi-tool detection, meta personas
+
+# Architecture
+tier:
+  0: SKILL.md (core router — always loaded, ~500 tokens)
+  1: modules/ (domain modules — loaded on classification match)
+  2: personas/ (execution specialists — spawned as sub-agents)
+
+# Domain Modules (18 departments + 2 cross-cutting)
+modules:
+  # Engineering (9)
+  - id: backend
+    path: modules/engineering/backend.md
+    department: engineering
+  - id: frontend
+    path: modules/engineering/frontend.md
+    department: engineering
+  - id: architecture
+    path: modules/engineering/architecture.md
+    department: engineering
+  - id: database
+    path: modules/engineering/database.md
+    department: engineering
+  - id: security
+    path: modules/engineering/security.md
+    department: engineering
+  - id: devops
+    path: modules/engineering/devops.md
+    department: engineering
+  - id: mobile
+    path: modules/engineering/mobile.md
+    department: engineering
+  - id: testing-qa
+    path: modules/engineering/testing-qa.md
+    department: engineering
+  - id: documentation
+    path: modules/engineering/documentation.md
+    department: engineering
+
+  # Agency & Business (4)
+  - id: project-management
+    path: modules/agency/project-management.md
+    department: agency
+  - id: product
+    path: modules/agency/product.md
+    department: agency
+  - id: design-handoff
+    path: modules/agency/design-handoff.md
+    department: agency
+  - id: client-comms
+    path: modules/agency/client-communication.md
+    department: agency
+
+  # Business Operations (5)
+  - id: marketing
+    path: modules/marketing/marketing.md
+    department: business
+  - id: sales
+    path: modules/sales/sales.md
+    department: business
+  - id: finance
+    path: modules/finance/finance.md
+    department: business
+  - id: support
+    path: modules/support/support.md
+    department: business
+  - id: paid-media
+    path: modules/paid-media/paid-media.md
+    department: business
+
+  # Research & Knowledge (2)
+  - id: research
+    path: modules/research/research.md
+    department: research
+  - id: academic
+    path: modules/academic/academic.md
+    department: research
+
+  # Domain-Specific (5)
+  - id: healthcare
+    path: modules/healthcare/healthcare.md
+    department: domain
+  - id: game-dev
+    path: modules/game-dev/game-dev.md
+    department: domain
+  - id: gis
+    path: modules/gis/gis.md
+    department: domain
+  - id: spatial-computing
+    path: modules/spatial-computing/spatial-computing.md
+    department: domain
+  - id: specialized
+    path: modules/specialized/specialized.md
+    department: domain
+
+  # Cross-cutting (2)
+  - id: universal-principles
+    path: modules/_universal-principles.md
+    department: cross-cutting
+  - id: emerging-tech-handler
+    path: modules/_emerging-tech-handler.md
+    department: cross-cutting
+
+  # Specialized (11)
+  - id: api-patterns
+    path: modules/api-patterns/api-patterns.md
+    department: specialized
+  - id: testing-frameworks
+    path: modules/testing-frameworks/testing-frameworks.md
+    department: specialized
+  - id: real-time
+    path: modules/real-time/real-time.md
+    department: specialized
+  - id: blockchain
+    path: modules/blockchain/blockchain.md
+    department: specialized
+  - id: ai-ml
+    path: modules/ai-ml/ai-ml.md
+    department: specialized
+  - id: data-engineering
+    path: modules/data-engineering/data-engineering.md
+    department: specialized
+  - id: cloud
+    path: modules/cloud/cloud.md
+    department: specialized
+  - id: messaging
+    path: modules/messaging/messaging.md
+    department: specialized
+  - id: caching
+    path: modules/caching/caching.md
+    department: specialized
+  - id: search
+    path: modules/search/search.md
+    department: specialized
+  - id: observability
+    path: modules/observability/observability.md
+    department: specialized
+
+  # Additional Patterns (6)
+  - id: i18n-l10n
+    path: modules/i18n-l10n/i18n-l10n.md
+    department: specialized
+  - id: performance
+    path: modules/performance/performance.md
+    department: specialized
+  - id: accessibility
+    path: modules/accessibility/accessibility.md
+    department: specialized
+  - id: open-source
+    path: modules/open-source/open-source.md
+    department: specialized
+  - id: legacy-modernization
+    path: modules/legacy-modernization/legacy-modernization.md
+    department: specialized
+  - id: monorepo
+    path: modules/monorepo/monorepo.md
+    department: specialized
+
+# Execution Personas (Tier 2) — 31 specialists
+personas:
+  # Engineering
+  - id: api-designer
+    path: personas/backend/api-designer.md
+    domain: backend
+  - id: database-tuner
+    path: personas/backend/database-tuner.md
+    domain: database
+  - id: threat-modeler
+    path: personas/security/threat-modeler.md
+    domain: security
+  - id: perf-specialist
+    path: personas/frontend/perf-specialist.md
+    domain: frontend
+  - id: devops-pipeline
+    path: personas/devops/pipeline-engineer.md
+    domain: devops
+  - id: qa-tester
+    path: personas/testing-qa/test-automator.md
+    domain: testing-qa
+  - id: tech-writer
+    path: personas/documentation/tech-writer.md
+    domain: documentation
+  # Agency & Business
+  - id: scrum-master
+    path: personas/project-management/scrum-master.md
+    domain: project-management
+  - id: growth-hacker
+    path: personas/marketing/growth-hacker.md
+    domain: marketing
+  - id: sales-strategist
+    path: personas/sales/outbound-strategist.md
+    domain: sales
+  - id: fintech-analyst
+    path: personas/finance/fintech-analyst.md
+    domain: finance
+  # Domain-Specific
+  - id: health-informaticist
+    path: personas/healthcare/health-informaticist.md
+    domain: healthcare
+  - id: game-designer
+    path: personas/game-dev/game-designer.md
+    domain: game-dev
+  - id: spatial-analyst
+    path: personas/gis/spatial-analyst.md
+    domain: gis
+  - id: xr-developer
+    path: personas/spatial-computing/xr-developer.md
+    domain: spatial-computing
+  - id: blockchain-engineer
+    path: personas/specialized/blockchain-engineer.md
+    domain: specialized
+  - id: research-methodologist
+    path: personas/academic/research-methodologist.md
+    domain: academic
+  - id: support-ops
+    path: personas/support/support-ops.md
+    domain: support
+  - id: ads-optimizer
+    path: personas/paid-media/ads-optimizer.md
+    domain: paid-media
+  - id: design-spec
+    path: personas/design-handoff/design-spec.md
+    domain: design-handoff
+
+  # Specialized Domains
+  - id: ml-engineer
+    path: personas/ai-ml/ml-engineer.md
+    domain: ai-ml
+  - id: data-pipeline-engineer
+    path: personas/data-engineering/data-pipeline-engineer.md
+    domain: data-engineering
+  - id: cloud-architect
+    path: personas/cloud/cloud-architect.md
+    domain: cloud
+  - id: event-architect
+    path: personas/messaging/event-architect.md
+    domain: messaging
+  - id: cache-engineer
+    path: personas/caching/cache-engineer.md
+    domain: caching
+  - id: search-engineer
+    path: personas/search/search-engineer.md
+    domain: search
+  - id: sre-engineer
+    path: personas/observability/sre-engineer.md
+    domain: observability
+  - id: api-architect
+    path: personas/api-patterns/api-architect.md
+    domain: api-patterns
+  - id: test-architect
+    path: personas/testing-frameworks/test-architect.md
+    domain: testing-frameworks
+  - id: realtime-engineer
+    path: personas/real-time/realtime-engineer.md
+    domain: real-time
+  - id: git-specialist
+    path: personas/git/git-specialist.md
+    domain: engineering
+
+  # Meta & System Maintenance
+  - id: skill-maintainer
+    path: personas/meta/skill-maintainer.md
+    domain: meta
+  - id: auto-persona-generator
+    path: personas/meta/auto-persona-generator.md
+    domain: meta
+  - id: gap-tracker
+    path: personas/meta/gap-tracker.md
+    domain: meta
+
+# Router Files
+router:
+  - path: router/classification-rules.md
+    purpose: Task classification (size, domain, risk, clarity)
+  - path: router/decomposition.md
+    purpose: Complex task decomposition into subtasks
+  - path: router/token-budgets.md
+    purpose: Context and token budget enforcement
+  - path: router/grounding-rules.md
+    purpose: Library/tool/API claim verification
+  - path: router/completion-checklist.md
+    purpose: Deliverable completeness verification
+  - path: router/invocation-template.md
+    purpose: Sub-agent invocation contract template
+  - path: router/precedence-rules.md
+    purpose: Conflict resolution between modules
+  - path: router/self-check.md
+    purpose: Process compliance verification
+  - path: router/gap-promotion-rules.md
+    purpose: Domain gap promotion lifecycle and validation
+  - path: router/lite-mode.md
+    purpose: Simplified router for small/tiny models
+
+# Scripts
+scripts:
+  - path: scripts/install.sh
+    platform: macos/linux
+  - path: scripts/install.ps1
+    platform: windows
+  - path: scripts/detect-tools.sh
+    platform: macos/linux
+  - path: scripts/verify.sh
+    platform: macos/linux
+
+# Adapters
+adapters:
+  - path: adapters/claude-code.md
+    tool: claude-code
+  - path: adapters/codex.md
+    tool: codex
+  - path: adapters/cursor.md
+    tool: cursor
+  - path: adapters/generic-cli.md
+    tool: generic-cli
+
+# Stats
+stats:
+  total_modules: 44
+  total_personas: 95
+  total_router_files: 9
+  total_scripts: 4
+  total_adapters: 4
+  departments_covered: 21
