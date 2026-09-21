@@ -36,7 +36,7 @@ Read the task. Answer 3 questions:
 | mobile, iOS, Android | modules/engineering/mobile.md |
 | architecture, system design | modules/engineering/architecture.md |
 | docs, README, API docs | modules/engineering/documentation.md |
-| Git, commit, branch | modules/engineering/git.md |
+
 | cache, Redis, CDN | modules/caching/caching.md |
 | search, autocomplete | modules/search/search.md |
 | WebSocket, real-time | modules/real-time/real-time.md |

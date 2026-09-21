@@ -69,6 +69,10 @@ The agent automatically:
 
 ### 44 Pattern-Based Modules
 
+> **⚠️ These are MODULES internal to the `ultimate-dev` skill — NOT standalone skills.**
+> - Load **only `ultimate-dev`** — do NOT call `skill("frontend")`, `skill("backend")`, etc.
+> - The router loads modules internally based on task classification.
+
 | Department | Modules |
 |------------|---------|
 | **Engineering** (9) | backend, frontend, architecture, database, security, devops, mobile, testing-qa, documentation |

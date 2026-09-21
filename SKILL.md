@@ -18,7 +18,7 @@ Security-first, test-what-matters, optimize-hot-paths, document-why, fail-gracef
 
 # CAPABILITY INDEX
 ```
-engineering: backend, frontend, architecture, database, security, devops, mobile, testing-qa, documentation, git
+engineering: backend, frontend, architecture, database, security, devops, mobile, testing-qa, documentation
 specialized: api-patterns, testing-frameworks, real-time, blockchain, ai-ml, data-engineering, cloud, messaging, caching, search, observability, i18n-l10n, performance, accessibility, open-source, legacy-modernization, monorepo
 agency: project-management, product, design-handoff, client-comms
 business: marketing, sales, finance, support, paid-media
@@ -27,6 +27,11 @@ domain: healthcare, game-dev, gis, spatial-computing
 meta: skill-maintainer, gap-tracker
 fallback: _emerging-tech-handler
 ```
+
+> **⚠️ IMPORTANT**: The items above are **MODULES** (internal to this skill), NOT standalone skills.
+> - Load the **`ultimate-dev` skill only** — do NOT call `skill("frontend")`, `skill("backend")`, etc.
+> - The router loads modules internally based on task classification.
+> - Modules are loaded via `Read: modules/<department>/<module>.md` — not via skill loading.
 
 # MODEL DETECTION (do this FIRST)
 Count your approximate context window:
