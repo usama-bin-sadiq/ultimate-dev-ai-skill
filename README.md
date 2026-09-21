@@ -168,9 +168,6 @@ ultimate-dev/
 ---
 
 ## Credits & Attribution
-
-This skill was **built directly from** the PRD defined in **[ultimate-developer](https://github.com/usama-bin-sadiq/ultimate-developer)** — the agent-based implementation (65 agents) that shares the same architecture.
-
 | Source | What It Contributed |
 |--------|---------------------|
 | **[msitarzewski/agency-agents](https://github.com/msitarzewski/agency-agents)** | Content source for Tier 2 personas (engineering, design, marketing, sales personas) — referenced in PRD as useful content reference |
