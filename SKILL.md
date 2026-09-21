@@ -1,14 +1,10 @@
 ---
-
 name: ultimate-dev
-
-description: >-
-Master software-engineering orchestrator. Adapts to the runtime-provided
-context window. tiny→inline, small→1 module, large→up to 3 modules,
-huge→full system.
-
-## version: 1.5.1
-
+description: >
+  Master software-engineering orchestrator. Adapts to model size.
+  tiny→inline, small→1 module, large→parallel agents, huge→full system.
+version: 1.5.0
+---
 # RULES (non-negotiable, ≤100 tokens)
 
 1. Never fabricate APIs, versions, paths, test results.
