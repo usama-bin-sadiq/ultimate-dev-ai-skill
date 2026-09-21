@@ -175,6 +175,7 @@ This skill was **built directly from** the PRD defined in **[ultimate-developer]
 |--------|---------------------|
 | **[ultimate-developer PRD](https://github.com/usama-bin-sadiq/ultimate-developer)** | Core architecture: 3-tier system, token budgets, routing rules, adapter pattern, gap promotion |
 | **[ultimate-developer agents](https://github.com/usama-bin-sadiq/ultimate-developer/tree/main/agents)** | Agent patterns, agency/orchestrator design, domain coverage reference |
+| **[msitarzewski/agency-agents](https://github.com/msitarzewski/agency-agents)** | Content source for Tier 2 personas (engineering, design, marketing, sales personas) — referenced in PRD as useful content reference |
 | **[OpenAI Codex](https://github.com/openai/codex)** | Agent instruction format (`AGENTS.md`) and skill loading pattern |
 | **[Claude Code](https://github.com/anthropics/claude-code)** | Project instruction patterns (`.claude/CLAUDE.md`) |
 | **[Cursor](https://github.com/getcursor/cursor)** | Project rules format (`.cursorrules`) |
