@@ -267,8 +267,3 @@ ultimate-dev/
 ```
 
 **Internal components** (modules, agents, router) are NOT discoverable as separate skills. Only `SKILL.md` and `skill-manifest.yaml` are entry points.
-
----
-
-Base directory for this skill: /Users/usamakhan/Learning/ultimate-dev/ultimate-dev
-Relative paths in this skill (e.g., scripts/, reference/) are relative to this base directory.
