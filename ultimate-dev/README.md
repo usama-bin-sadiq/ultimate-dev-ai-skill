@@ -189,7 +189,7 @@ chmod +x .git/hooks/pre-commit
 
 ```
 ultimate-dev/
-├── SKILL.md                    ← Orchestrator (270 lines)
+├── SKILL.md                    ← Orchestrator (271 lines)
 ├── skill-manifest.yaml         ← Auto-generated registry
 ├── README.md                   ← User documentation (this file)
 ├── VERSION                     ← Version number (source of truth)
@@ -211,7 +211,7 @@ ultimate-dev/
 ├── examples/                   ← Usage examples
 ├── evals/                      ← Evaluation cases
 ├── reference/                  ← Reference documentation
-├── memory/                     ← Persistent memory
+├── memory/                     ← Memory templates (runtime .memory/ lives at project root)
 └── changelog/                  ← Version history
 ```
 

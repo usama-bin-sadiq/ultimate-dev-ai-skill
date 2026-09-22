@@ -519,10 +519,11 @@ Do not manufacture findings simply to make the review appear thorough.
 
 Persist durable project-level knowledge when appropriate.
 
-Project memory:
+Project memory (at the project root — create `.memory/ultimate-dev/`
+there if it does not exist):
 
 ```text
-.memory/ultimate-dev/
+<project-root>/.memory/ultimate-dev/
 ├── project-memory.md
 ├── adrs/
 ├── conventions.md

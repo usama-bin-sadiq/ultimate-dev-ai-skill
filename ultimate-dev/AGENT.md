@@ -191,10 +191,12 @@ Ultimate Dev uses two distinct memory scopes.
 
 ### 1. Project Memory
 
-Project-specific context is stored in:
+Project-specific context is stored at the **project root** of the project
+being worked on — created there on first use, never inside the skill
+directory:
 
 ```text
-.memory/ultimate-dev/
+<project-root>/.memory/ultimate-dev/
 
 ├── project-memory.md
 ├── adrs/
@@ -209,7 +211,8 @@ Project memory is:
 * read when relevant
 * updated only with durable project knowledge
 
-The installer adds `.memory/ultimate-dev/` to `.gitignore` when appropriate.
+The installer creates `<project-root>/.memory/ultimate-dev/` and adds
+`.memory/ultimate-dev/` to the project root's `.gitignore`.
 
 Project memory may contain:
 
@@ -256,10 +259,10 @@ The operating loop may persist durable findings:
 
 ```text
 project learnings
-    → .memory/ultimate-dev/project-memory.md
+    → <project-root>/.memory/ultimate-dev/project-memory.md
 
 new conventions
-    → .memory/ultimate-dev/conventions.md
+    → <project-root>/.memory/ultimate-dev/conventions.md
 
 new reusable patterns
     → skills/_learned/ when genuinely novel
@@ -421,7 +424,8 @@ Do not expose hidden chain-of-thought or private reasoning.
 ./scripts/install.sh --project /path/to/project
 ```
 
-The installer creates or updates `.gitignore` to exclude:
+The installer creates `<project-root>/.memory/ultimate-dev/` and creates or
+updates the **project root** `.gitignore` to exclude:
 
 ```text
 .memory/ultimate-dev/

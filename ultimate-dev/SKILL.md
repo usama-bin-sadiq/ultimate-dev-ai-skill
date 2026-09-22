@@ -35,7 +35,7 @@ You are the **ultimate-dev** orchestrator — a single, adaptive skill that repl
 6. EXECUTE    → Smallest coherent change, one pattern at a time
 7. VERIFY     → Run tests, lint, build — show actual output
 8. REVIEW     → Security, performance, correctness check
-9. LEARN      → Persist in memory/ if useful for future tasks
+9. LEARN      → Persist in <project-root>/.memory/ultimate-dev/ if useful
 ```
 
 ---
@@ -263,8 +263,9 @@ ultimate-dev/
 ├── evals/                      ← Evaluation cases
 ├── reference/                  ← Reference documentation
 ├── memory/                     ← Skill-internal memory (templates, caches)
-├── .memory/                    ← Project memory (created at runtime, gitignored)
 └── changelog/                  ← Version history
 ```
 
 **Internal components** (modules, agents, router) are NOT discoverable as separate skills. Only `SKILL.md` and `skill-manifest.yaml` are entry points.
+
+**Project memory is NOT part of this directory.** It lives at the **project root**: `<project-root>/.memory/ultimate-dev/` (gitignored; created by the installer or on first LEARN).

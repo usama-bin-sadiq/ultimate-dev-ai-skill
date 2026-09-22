@@ -19,19 +19,27 @@ trap cleanup EXIT
 
 # ─── Helpers ────────────────────────────────────────────────
 print_logo() {
-    local ver
+    local ver agents skills modules stats
     ver="$(cat "$SKILL_DIR/VERSION" 2>/dev/null || echo "2.1.0")"
+    agents="$(find "$SKILL_DIR/agents" -name '*.md' -not -path '*/_shared/*' 2>/dev/null | wc -l | tr -d ' ' || true)"
+    skills="$(find "$SKILL_DIR/skills" -name 'SKILL.md' 2>/dev/null | wc -l | tr -d ' ' || true)"
+    modules="$(find "$SKILL_DIR/modules" -name '*.md' 2>/dev/null | wc -l | tr -d ' ' || true)"
+    stats="${agents:-0} agents • ${skills:-0} skills • ${modules:-0} modules • Any model"
+    while [ "${#stats}" -lt 47 ]; do stats="$stats "; done
     local C="${CYAN}" M="${MAGENTA}" B="${BOLD}" D="${DIM}" N="${NC}"
     printf '\n'
     printf '  %s┌─────────────────────────────────────────────────────┐%s\n' "$C" "$N"
     printf '  %s│%s                                                     %s│%s\n' "$C" "$N" "$C" "$N"
+    local vpad=$((27 - ${#ver}))
+    if [ "$vpad" -lt 0 ]; then vpad=0; fi
     printf '  %s│%s            ' "$C" "$N"
     printf '%s%sultimate-dev%s ' "$B$M" "$N"
     printf '%sv%s%s' "$D" "$ver" "$N"
-    printf '                          %s│%s\n' "$C" "$N"
-    printf '  %s│%s            %s─────────────────%s                          %s│%s\n' "$C" "$N" "$D" "$N" "$C" "$N"
-    printf '  %s│%s  %sMaster Software Engineering Orchestrator%s              %s│%s\n' "$C" "$N" "$M" "$N" "$C" "$N"
-    printf '  %s│%s  %s120 agents • 17 skills • 45 modules • Any model%s    %s│%s\n' "$C" "$N" "$D" "$N" "$C" "$N"
+    printf '%*s' "$vpad" ''
+    printf '%s│%s\n' "$C" "$N"
+    printf '  %s│%s            %s─────────────────%s                        %s│%s\n' "$C" "$N" "$D" "$N" "$C" "$N"
+    printf '  %s│%s  %sMaster Software Engineering Orchestrator%s           %s│%s\n' "$C" "$N" "$M" "$N" "$C" "$N"
+    printf '  %s│%s  %s%s%s    %s│%s\n' "$C" "$N" "$D" "$stats" "$N" "$C" "$N"
     printf '  %s│%s                                                     %s│%s\n' "$C" "$N" "$C" "$N"
     printf '  %s└─────────────────────────────────────────────────────┘%s\n' "$C" "$N"
     printf '\n'
@@ -346,7 +354,19 @@ if [ "$SCOPE" = "project" ]; then
     fi
 fi
 
-AGENT_COUNT=$(find "$TARGET/agents" -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
+# Create .memory folder at the project root (project memory lives at the
+# project root — never inside the skill directory)
+MEMORY_DIR="$PROJECT_DIR/.memory/ultimate-dev"
+if [ ! -d "$MEMORY_DIR" ]; then
+    mkdir -p "$MEMORY_DIR"
+    info "Created project memory: $MEMORY_DIR"
+fi
+if [ ! -f "$MEMORY_DIR/project-memory.md" ] && [ -f "$TARGET/memory/project-memory.md" ]; then
+    cp "$TARGET/memory/project-memory.md" "$MEMORY_DIR/project-memory.md"
+    info "Seeded $MEMORY_DIR/project-memory.md from template"
+fi
+
+AGENT_COUNT=$(find "$TARGET/agents" -name "*.md" -not -path "*/_shared/*" 2>/dev/null | wc -l | tr -d ' ')
 SKILL_COUNT=$(find "$TARGET/skills" -name "SKILL.md" 2>/dev/null | wc -l | tr -d ' ')
 MODULE_COUNT=$(find "$TARGET/modules" -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
 FILE_COUNT=$(find "$TARGET" -type f 2>/dev/null | wc -l | tr -d ' ')

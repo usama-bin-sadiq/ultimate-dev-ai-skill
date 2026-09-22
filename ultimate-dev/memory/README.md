@@ -1,6 +1,11 @@
 # Memory Directory
 
-This directory contains persistent memory for the multi-agent system.
+Skill-internal memory shipped with the skill: templates and caches.
+
+> **Runtime project memory lives at the project root**, not here:
+> `<project-root>/.memory/ultimate-dev/` (created by the installer or on
+> first LEARN, gitignored). This directory only ships the
+> `project-memory.md` template that gets seeded there.
 
 ## Contents
 
