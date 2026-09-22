@@ -40,7 +40,7 @@ Adapts to your model's context window automatically:
 
 ## What's Inside
 
-### 118 Agents across 36 Categories
+### 118 Agents across 99 Categories
 
 <!-- ud:begin agent-tree -->
 ```
