@@ -44,7 +44,7 @@ Adapts to your model's context window automatically:
 
 <!-- ud:begin agent-tree -->
 ```
-agents/ — 118 agents, 36 categories, 7 root-level  [empty: observability]
+agents/ — 118 agents, 36 categories, 7 root-level
 ├── academic/            ( 1)  research-methodologist
 ├── ai-ml/               ( 4)  generic-ai-ml-specialist, ml-engineer, prompt-engineer, rag-architect
 ├── api-patterns/        ( 1)  api-architect

@@ -72,13 +72,13 @@ def collect_stats(root: Path) -> dict:
 
     agents_dir = root / "agents"
     per_cat: dict[str, list[str]] = {}
-    empty: list[str] = []
     for d in sorted(p for p in agents_dir.iterdir() if p.is_dir() and p.name != "_shared"):
         names = sorted(f.stem for f in d.glob("*.md"))
         if names:
             per_cat[d.name] = names
-        else:
-            empty.append(d.name)
+        # Empty category dirs are skipped silently: git does not track
+        # empty directories, so they exist locally but never on CI —
+        # mentioning them in README would make --check fail there.
     root_agents = sorted(f.stem for f in agents_dir.glob("*.md"))
 
     skill_names = {p.parent.name for p in (root / "skills").glob("*/SKILL.md")}
@@ -93,7 +93,6 @@ def collect_stats(root: Path) -> dict:
         "categories": len(per_cat),
         "per_cat": per_cat,
         "root_agents": root_agents,
-        "empty": empty,
         "skills": len(skill_names),
         "skill_names": skill_names,
         "modules": len(modules),
@@ -154,8 +153,6 @@ def gen_agent_tree(s: dict) -> str:
         f"agents/ — {s['agents']} agents, {s['categories']} categories, "
         f"{len(s['root_agents'])} root-level"
     ]
-    if s["empty"]:
-        lines[0] += f"  [empty: {', '.join(s['empty'])}]"
     for cat, names in cats.items():
         lines.append(f"├── {(cat + '/').ljust(width)} ({len(names):>2})  {', '.join(names)}")
     lines.append(
