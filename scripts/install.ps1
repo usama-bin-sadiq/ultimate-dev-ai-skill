@@ -1,5 +1,6 @@
 # ultimate-dev v2.1.0 — Installer for Windows/macOS/Linux
 # Usage: .\install.ps1 [-Global] [-Project <DIR>] [-Uninstall] [-Yes] [-Help]
+# https://learn.microsoft.com/en-us/powershell/
 
 param(
     [switch]$Global,
@@ -47,83 +48,45 @@ function Write-Err($msg)    { Write-Host "  ✘ $msg" -ForegroundColor Red }
 function Write-Info($msg)   { Write-Host "  ℹ $msg" -ForegroundColor Cyan }
 function Write-Header($msg) { Write-Host "`n  ── $msg ──" -ForegroundColor Blue }
 
-# ─── Arrow key menu ─────────────────────────────────────────
+# ─── Numbered menu (reliable, portable) ─────────────────────
+# Returns selection via $script:MenuResult
+$script:MenuResult = 0
+
 function Show-Menu {
     param(
         [string]$Title,
         [string[]]$Options
     )
 
-    $selected = 1
     $count = $Options.Count
 
-    # If console input is redirected (piped, non-interactive), auto-select first option
-    if ([Console]::IsInputRedirected) {
-        return 1
+    Write-Host ""
+    Write-Host "  $Title" -ForegroundColor White
+    Write-Host ""
+
+    for ($i = 0; $i -lt $count; $i++) {
+        $num = $i + 1
+        Write-Host "    " -NoNewline
+        Write-Host "$num)" -ForegroundColor White -NoNewline
+        Write-Host " $($Options[$i])" -ForegroundColor DarkGray
     }
 
-    # Hide cursor — restore on any exit via try/finally
-    [Console]::CursorVisible = $false
+    Write-Host ""
+    Write-Host "  Enter number (1-$count): " -ForegroundColor DarkGray -NoNewline
 
-    try {
-        while ($true) {
-            # Draw menu
-            Write-Host "  $Title" -ForegroundColor White
-            Write-Host ""
+    $choice = Read-Host
 
-            for ($i = 0; $i -lt $count; $i++) {
-                $num = $i + 1
-                if ($num -eq $selected) {
-                    Write-Host "    ▸ $num) $($Options[$i])" -ForegroundColor White -BackgroundColor DarkBlue
-                } else {
-                    Write-Host "    $num) $($Options[$i])" -ForegroundColor DarkGray
-                }
-            }
-
-            Write-Host ""
-            Write-Host "  ↑↓ navigate  •  Enter select  •  q quit" -ForegroundColor DarkGray
-            Write-Host ""
-
-            # Read key
-            $key = [Console]::ReadKey($true)
-
-            # Clear the menu area (count lines + title + blank + hint)
-            $totalLines = $count + 4
-            [Console]::SetCursorPosition(0, [Console]::CursorTop - $totalLines)
-            for ($i = 0; $i -lt $totalLines; $i++) {
-                Write-Host (" " * ([Console]::WindowWidth - 1))
-            }
-            [Console]::SetCursorPosition(0, [Console]::CursorTop - $totalLines)
-
-            switch ($key.Key) {
-                "UpArrow" {
-                    $selected--
-                    if ($selected -lt 1) { $selected = $count }
-                }
-                "DownArrow" {
-                    $selected++
-                    if ($selected -gt $count) { $selected = 1 }
-                }
-                "Enter" {
-                    return $selected
-                }
-                "Escape" {
-                    return 0
-                }
-                default {
-                    # Check for number keys 1-9
-                    $num = [int]$key.KeyChar - 48  # ASCII digit to int
-                    if ($num -ge 1 -and $num -le $count) {
-                        return $num
-                    }
-                    # Wrong key — do nothing, redraw
-                }
-            }
+    # Validate
+    if ($choice -match '^\d+$') {
+        $num = [int]$choice
+        if ($num -ge 1 -and $num -le $count) {
+            $script:MenuResult = $num
+            return $true
         }
-    } finally {
-        # Always restore cursor — even on Ctrl+C or error
-        [Console]::CursorVisible = $true
     }
+
+    Write-Host "  ✘ Invalid choice. Please enter 1-$count." -ForegroundColor Red
+    return $false
 }
 
 # ─── Help ───────────────────────────────────────────────────
@@ -156,20 +119,17 @@ if ($Uninstall) {
 # ─── Interactive mode ───────────────────────────────────────
 if (-not $Global -and -not $Project) {
     if ($Yes) {
-        # Non-interactive: default to global
         $Global = $true
     } else {
-        $result = Show-Menu -Title "Where do you want to install?" -Options @(
-            "Global    — ~/.agents/skills/ultimate-dev/"
-            "Project   — <project>/.agents/skills/ultimate-dev/"
-        )
+        # Scope selection with retry on invalid input
+        do {
+            $valid = Show-Menu -Title "Where do you want to install?" -Options @(
+                "Global    — ~/.agents/skills/ultimate-dev/"
+                "Project   — <project>/.agents/skills/ultimate-dev/"
+            )
+        } while (-not $valid)
 
-        if ($result -eq 0) {
-            Write-Info "Cancelled."
-            exit 0
-        }
-
-        switch ($result) {
+        switch ($script:MenuResult) {
             1 { $Global = $true }
             2 {
                 $Project = "project"
@@ -215,7 +175,10 @@ if (Test-Path $Target) {
 if ($Yes) {
     $confirm = 1
 } else {
-    $confirm = Show-Menu -Title "Proceed?" -Options @("Yes — Install", "No — Cancel")
+    do {
+        $valid = Show-Menu -Title "Proceed?" -Options @("Yes — Install", "No — Cancel")
+    } while (-not $valid)
+    $confirm = $script:MenuResult
 }
 
 if ($confirm -ne 1) {

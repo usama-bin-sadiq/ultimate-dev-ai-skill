@@ -8,15 +8,13 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SKILL_DIR="$(dirname "$SCRIPT_DIR")/ultimate-dev"
 
-# ─── Colors (printf-safe) ───────────────────────────────────
+# ─── Colors (ANSI-C quoting for portability) ────────────────
 RED=$'\033[0;31m';  GREEN=$'\033[0;32m';  YELLOW=$'\033[1;33m'
 BLUE=$'\033[0;34m'; CYAN=$'\033[0;36m';  MAGENTA=$'\033[0;35m'
 BOLD=$'\033[1m';    DIM=$'\033[2m';      NC=$'\033[0m'
 
-# ─── Cleanup trap — always restore cursor on exit ───────────
-cleanup() {
-    printf '\e[?25h'  # show cursor
-}
+# ─── Cleanup trap ───────────────────────────────────────────
+cleanup() { printf '\e[?25h'; }  # show cursor on exit
 trap cleanup EXIT
 
 # ─── Helpers ────────────────────────────────────────────────
@@ -64,107 +62,37 @@ Examples:
 EOF
 }
 
-# ─── Arrow key menu ─────────────────────────────────────────
-# Uses printf for output, $'\e' for escape sequences
-ARROW_MENU_RESULT=""
-arrow_menu() {
-    local title="$1"
+# ─── Numbered menu (reliable, portable) ─────────────────────
+# Returns selection in MENU_RESULT
+MENU_RESULT=""
+menu_select() {
+    local prompt="$1"
     shift
     local options=("$@")
     local count=${#options[@]}
-    local selected=1
 
-    # Hide cursor
-    printf '\e[?25l'
+    printf '\n'
+    printf '  %s%s%s\n' "$BOLD" "$prompt" "$NC"
+    printf '\n'
 
-    while true; do
-        # Draw title
-        printf '  %s%s%s\n' "$BOLD" "$title" "$NC"
-        printf '\n'
-
-        # Draw options
-        for i in "${!options[@]}"; do
-            local idx=$((i + 1))
-            if [ "$idx" -eq "$selected" ]; then
-                printf '    %s▸%s %s%s)%s %s\n' "$BLUE" "$NC" "$BOLD" "$idx" "$NC" "${options[$i]}"
-            else
-                printf '      %s%s) %s%s\n' "$DIM" "$idx" "${options[$i]}" "$NC"
-            fi
-        done
-
-        printf '\n'
-        printf '  %s↑↓ navigate  •  Enter select  •  q quit%s\n' "$DIM" "$NC"
-        printf '\n'
-
-        # Read a single keypress
-        local key=""
-        while true; do
-            IFS= read -rsn1 char
-            local code
-            code=$(printf '%d' "'$char" 2>/dev/null || printf '0')
-
-            if [ "$code" -eq 27 ]; then
-                # Escape sequence — read 2 more bytes (arrow keys)
-                read -rsn1 -t 0.1 _
-                read -rsn1 -t 0.1 arrow
-                local arrow_code
-                arrow_code=$(printf '%d' "'$arrow" 2>/dev/null || printf '0')
-                if [ "$arrow_code" -eq 65 ]; then
-                    key="up"
-                elif [ "$arrow_code" -eq 66 ]; then
-                    key="down"
-                fi
-                break
-            elif [ "$code" -eq 10 ] || [ "$code" -eq 13 ]; then
-                key="enter"
-                break
-            elif [ "$char" = "q" ] || [ "$char" = "Q" ]; then
-                key="quit"
-                break
-            elif [ "$char" = "1" ] && [ "$count" -ge 1 ]; then
-                key="num1"; break
-            elif [ "$char" = "2" ] && [ "$count" -ge 2 ]; then
-                key="num2"; break
-            elif [ "$char" = "3" ] && [ "$count" -ge 3 ]; then
-                key="num3"; break
-            elif [ "$char" = "4" ] && [ "$count" -ge 4 ]; then
-                key="num4"; break
-            fi
-            # All other keys — ignore silently
-        done
-
-        # Process input
-        case "$key" in
-            up|down)
-                if [ "$key" = "up" ]; then
-                    selected=$((selected - 1))
-                    [ "$selected" -lt 1 ] && selected=$count
-                else
-                    selected=$((selected + 1))
-                    [ "$selected" -gt "$count" ] && selected=1
-                fi
-                # Clear and redraw
-                local lines=$((count + 4))
-                printf '\e[%sA' "$lines"
-                for ((j = 0; j < lines; j++)); do
-                    printf '\e[2K\e[1B'
-                done
-                printf '\e[%sA' "$lines"
-                ;;
-            enter)
-                ARROW_MENU_RESULT=$selected
-                return 0
-                ;;
-            num1|num2|num3|num4)
-                ARROW_MENU_RESULT="${key#num}"
-                return 0
-                ;;
-            quit)
-                ARROW_MENU_RESULT=0
-                return 1
-                ;;
-        esac
+    for i in "${!options[@]}"; do
+        printf '    %s%s)%s %s\n' "$BOLD" "$((i + 1))" "$NC" "${options[$i]}"
     done
+
+    printf '\n'
+    printf '  %sEnter number (1-%d):%s ' "$DIM" "$count" "$NC"
+
+    local choice
+    read -r choice
+
+    # Validate
+    if [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -ge 1 ] && [ "$choice" -le "$count" ]; then
+        MENU_RESULT=$choice
+        return 0
+    else
+        printf '  %s✘ Invalid choice. Please enter 1-%d.%s\n' "$RED" "$count" "$NC"
+        return 1
+    fi
 }
 
 # ─── Parse arguments ────────────────────────────────────────
@@ -204,16 +132,19 @@ if [ -z "$SCOPE" ]; then
     if [ "$AUTO_YES" = true ]; then
         SCOPE="global"
     else
-        arrow_menu "Where do you want to install?" \
+        # Scope selection with retry on invalid input
+        until menu_select "Where do you want to install?" \
             "Global    — ~/.agents/skills/ultimate-dev/" \
-            "Project   — <project>/.agents/skills/ultimate-dev/"
+            "Project   — <project>/.agents/skills/ultimate-dev/"; do
+            :
+        done
 
-        if [ "$ARROW_MENU_RESULT" -eq 0 ]; then
+        if [ "$MENU_RESULT" -eq 0 ]; then
             info "Cancelled."
             exit 0
         fi
 
-        case "$ARROW_MENU_RESULT" in
+        case "$MENU_RESULT" in
             1) SCOPE="global" ;;
             2)
                 SCOPE="project"
@@ -254,12 +185,14 @@ if [ -d "$TARGET" ]; then
 fi
 
 if [ "$AUTO_YES" = true ]; then
-    ARROW_MENU_RESULT=1
+    MENU_RESULT=1
 else
-    arrow_menu "Proceed?" "Yes — Install" "No — Cancel"
+    until menu_select "Proceed?" "Yes — Install" "No — Cancel"; do
+        :
+    done
 fi
 
-if [ "$ARROW_MENU_RESULT" -ne 1 ]; then
+if [ "$MENU_RESULT" -ne 1 ]; then
     info "Cancelled."
     exit 0
 fi
