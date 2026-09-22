@@ -2,43 +2,150 @@
 
 **Master software-engineering orchestrator** — a single, adaptive skill that replaces dozens of specialized skills. Works with ANY model (tiny to huge) and ANY technology stack.
 
-## Quick Start
+[![Release](https://img.shields.io/github/v/release/usama-bin-sadiq/ultimate-dev-ai-skill?sort=semver)](https://github.com/usama-bin-sadiq/ultimate-dev-ai-skill/releases)
+[![Sync & Release](https://github.com/usama-bin-sadiq/ultimate-dev-ai-skill/actions/workflows/release.yml/badge.svg)](https://github.com/usama-bin-sadiq/ultimate-dev-ai-skill/actions/workflows/release.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-yellow)](../LICENSE)
+[![Models](https://img.shields.io/badge/models-adaptive-orange)](ultimate-dev/README.md#-how-it-adapts-to-your-model)
+[![Tools](https://img.shields.io/badge/tools-any-blue)](ultimate-dev/README.md#-supported-tools)
 
-1. Install the skill in your agent's skills directory
-2. Start working — the orchestrator handles routing automatically
+[What Is This?](#-what-is-this) ·
+[Quick Start](#-quick-start) ·
+[How It Works](#-how-it-works) ·
+[What's Inside](#-whats-inside) ·
+[Supported Tools](#-supported-tools) ·
+[Examples](#-examples) ·
+[Validation & Development](#-validation--development) ·
+[Documentation](#-documentation)
 
-## How It Works
+---
 
+## 🧩 What Is This?
+
+ultimate-dev is a **single skill** that replaces dozens of specialized skills. It works with ANY AI model — tiny to huge — and ANY technology stack (React/Vue, Kafka/RabbitMQ, PostgreSQL/MongoDB, AWS/Azure — you name it).
+
+> [!NOTE]
+> **No hardcoded technologies. Pure patterns and best practices.** Unknown tech is handled by universal specialists that research it from the web and teach themselves.
+
+---
+
+## 🚀 Quick Start
+
+### 1. Install
+
+```bash
+# macOS / Linux — interactive menu
+./scripts/install.sh
+
+# Non-interactive
+./scripts/install.sh --global              # every project (~/.agents/skills/)
+./scripts/install.sh --project . --yes     # this project only
+
+# Windows (PowerShell)
+.\scripts\install.ps1                      # interactive
+.\scripts\install.ps1 -Global -Yes         # every project
+.\scripts\install.ps1 -Project . -Yes      # this project only
 ```
-User Task → Capture → Detect → Classify → Pattern → Route → Execute → Verify → Review
-                                         ↓
-                                   Decision Tree
-                                   /     |     \     \
-                                 A       B      C     D
-                              Skills  Subagents Handoffs Router
+
+Every install seeds a memory folder at the project root — `<project>/.memory/ultimate-dev/` (or `~/.memory/ultimate-dev/` for global installs) — with a template, and project-scoped installs add `.memory/ultimate-dev/` to `.gitignore`.
+
+> [!TIP]
+> Not sure which tools you have? Run `./scripts/detect-tools.sh` to list installed agentic tools, and `./scripts/verify.sh` to check the package integrity.
+
+### 2. Use
+
+Just use your AI tool normally. The skill activates automatically:
+
+```text
+You: "Add user authentication with JWT"
+Agent: [tier: small | size: moderate | module: security]
+       Implements JWT auth with proper patterns
 ```
 
-### The 4 Architecture Patterns (LangChain)
+### 3. Done
 
-| Pattern | When | How |
-|---------|------|-----|
-| **A: Skills** | Single domain | Load skill on-demand, execute directly |
-| **B: Subagents** | Multi-domain parallel | Spawn stateless agents, synthesize results |
-| **C: Handoffs** | Sequential workflow | Pass state between agents in sequence |
-| **D: Router** | Classify + dispatch | Classify task, dispatch to specialists, merge |
+The agent automatically:
 
-### Tier-Based Execution
+- Classifies your task (atomic / moderate / complex)
+- Loads the right module(s) internally
+- Applies best practices for your stack
+- Adapts depth to your model's context window
 
-Adapts to your model's context window automatically:
+---
 
-| Tier | Context | Behavior |
-|------|---------|----------|
-| **TINY** | ≤8K | Inline only, max 500 words |
-| **SMALL** | ≤32K | 1 module, 1 agent, max 2000 words |
-| **LARGE** | ≤128K | 3 modules, 3 agents |
-| **HUGE** | >128K | Everything, unlimited agents |
+## 🧠 How It Works
 
-## What's Inside
+Every task flows through the same operating loop, then fans out to one of four architecture patterns:
+
+```mermaid
+flowchart TD
+    U["User task"] --> CL["Classify: size, domains, risk"]
+    CL --> PT{"Which pattern?"}
+    PT -->|"Single domain"| PA["A · Skills — load skill, execute"]
+    PT -->|"Parallel domains"| PB["B · Subagents — spawn, collect, synthesize"]
+    PT -->|"Sequential"| PC["C · Handoffs — pass state along"]
+    PT -->|"Classify + dispatch"| PD["D · Router — dispatch, merge"]
+    PA --> EX["Execute & verify"]
+    PB --> EX
+    PC --> EX
+    PD --> EX
+    EX --> RV["Review, learn, persist"]
+```
+
+### 📐 How It Adapts to Your Model
+
+The context window is auto-detected at runtime — model names are never hardcoded:
+
+| Model tier | Context | Max modules | Max agents | Max words |
+|------------|---------|-------------|------------|-----------|
+| **TINY**   | ≤8K     | 0           | 0          | 500       |
+| **SMALL**  | ≤32K    | 1           | 1          | 2,000     |
+| **LARGE**  | ≤128K   | 3           | 3          | unlimited |
+| **HUGE**   | >128K   | all         | unlimited  | unlimited |
+
+---
+
+## 📦 What's Inside
+
+Three layers, each with a distinct job — no triple-loading:
+
+| Layer | What it is | When it loads |
+|-------|------------|---------------|
+| 🧠 **Skills** | Meta-cognitive sub-skills that teach *how to think* (testing, security, architecture, …) | On demand, per pattern |
+| 🤖 **Agents** | Domain specialists spawned as stateless subagents | Parallel, multi-domain work |
+| ⚙️ **Modules** | Internal pattern libraries per domain | Router classifies, then loads internally |
+
+> [!IMPORTANT]
+> Modules are **internal to the skill** — load only `ultimate-dev`. Do **not** call `skill("frontend")` or `skill("backend")`; the router picks modules automatically from task classification.
+
+<details>
+<summary>Expand: module departments</summary>
+
+| Department | Modules |
+|------------|---------|
+| **Engineering** | backend, frontend, architecture, database, security, devops, mobile, testing-qa, documentation |
+| **Specialized** | api-patterns, testing-frameworks, real-time, blockchain, ai-ml, data-engineering, cloud, messaging, caching, search, observability, i18n-l10n, performance, accessibility, open-source, legacy-modernization, monorepo |
+| **Agency** | project-management, product, design-handoff, client-communication |
+| **Business** | marketing, sales, finance, support, paid-media |
+| **Research** | research, academic |
+| **Domain** | healthcare, game-dev, gis, spatial-computing, specialized |
+| **Cross-cutting** | universal-principles, emerging-tech-handler, project-memory-template |
+
+</details>
+
+Live counts (agents, categories, sub-skills, modules) are **auto-synced** on every release — they never go stale.
+
+### 🌐 Works With ANY Technology
+
+| You use | Skill handles it |
+|---------|------------------|
+| React or Vue | ✅ Frontend patterns |
+| Kafka or RabbitMQ | ✅ Messaging patterns |
+| PostgreSQL or MongoDB | ✅ Database patterns |
+| AWS or Azure | ✅ Cloud patterns |
+| Redis or Memcached | ✅ Caching patterns |
+| Anything else | ✅ Universal specialists research it from the web |
+
+---
 
 ### 118 Agents across 36 Categories
 
@@ -114,15 +221,19 @@ Each teaches HOW to think about a domain — technology-agnostic:
 ### Self-Evolution
 
 When the system encounters a task with no matching sub-skill:
+
 1. Researches how to do it
 2. Executes the task
 3. Extracts patterns
 4. Auto-generates a new sub-skill
 5. Persists in `skills/_learned/` for future use
 
-## Usage Examples
+---
+
+## 💡 Examples
 
 ### Simple Task (Tier: SMALL)
+
 ```
 User: "Fix the login bug"
 → Pattern A: Skills (debugging)
@@ -133,6 +244,7 @@ User: "Fix the login bug"
 ```
 
 ### Multi-Domain Task (Tier: LARGE)
+
 ```
 User: "Build a React feature with API and tests"
 → Pattern B: Subagents (multi-domain)
@@ -144,6 +256,7 @@ User: "Build a React feature with API and tests"
 ```
 
 ### Sequential Pipeline (Tier: LARGE)
+
 ```
 User: "Deploy to production"
 → Pattern C: Handoffs (sequential)
@@ -155,6 +268,7 @@ User: "Deploy to production"
 ```
 
 ### Unknown Technology (Tier: SMALL)
+
 ```
 User: "Use Bun for the backend"
 → No dedicated Bun specialist exists
@@ -165,10 +279,29 @@ User: "Use Bun for the backend"
 → Auto-generate bun-specialist for future use
 ```
 
-## Validation
+---
+
+## 🔧 Supported Tools
+
+Install **once** (global or project scope) — tools auto-discover the skill from `.agents/skills/`. Tool-specific conventions are mapped by adapters:
+
+| Tool | Adapter |
+|------|---------|
+| Claude Code | [`adapters/claude-code.md`](adapters/claude-code.md) |
+| Codex CLI | [`adapters/codex.md`](adapters/codex.md) |
+| Cursor | [`adapters/cursor.md`](adapters/cursor.md) |
+| OpenCode | [`adapters/generic-cli.md`](adapters/generic-cli.md) |
+| Windsurf, Cline, GitHub Copilot, Aider | [`adapters/generic-cli.md`](adapters/generic-cli.md) |
+| Any other agentic CLI | [`adapters/generic-cli.md`](adapters/generic-cli.md) |
+
+The full compatibility list lives in [`skill-manifest.yaml`](skill-manifest.yaml) (`compatible_tools`).
+
+---
+
+## 🛠 Validation & Development
 
 ```bash
-# Run all checks
+# Run all validation checks
 python3 scripts/validate.py
 
 # Auto-generate manifest from disk
@@ -180,12 +313,20 @@ python3 scripts/sync-docs.py
 # Verify README is in sync without rewriting (pre-commit/CI)
 python3 scripts/sync-docs.py --check
 
-# Install pre-commit hook
-cp scripts/pre-commit .git/hooks/pre-commit
+# Install pre-commit hook (from repo root)
+cp ultimate-dev/scripts/pre-commit .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 ```
 
-## Structure
+> [!NOTE]
+> `validate.py` and `generate-manifest.py` need PyYAML. One-time setup:
+> ```bash
+> python3 -m pip install pyyaml
+> ```
+
+---
+
+## 📂 Structure
 
 ```
 ultimate-dev/
@@ -215,6 +356,26 @@ ultimate-dev/
 └── changelog/                  ← Version history
 ```
 
-## License
+---
 
-MIT
+## 📚 Documentation
+
+| Document | Purpose |
+|----------|---------|
+| [README.md](../README.md) | GitHub landing — overview & quick start |
+| [ultimate-dev/README.md](README.md) | Full skill reference — counts auto-synced on release |
+| [ultimate-dev/SKILL.md](SKILL.md) | Skill entry point (orchestrator) |
+| [ARCHITECTURE.md](../ARCHITECTURE.md) | System design for maintainers |
+| [CONTRIBUTING.md](../CONTRIBUTING.md) | How to contribute |
+| [Changelog](changelog/CHANGELOG.md) | Release notes (source for GitHub Releases) |
+| [LICENSE](../LICENSE) | MIT license |
+
+---
+
+## 📄 License
+
+MIT — see [LICENSE](../LICENSE).
+
+---
+
+**One skill. Every domain. Any model.** 🚀

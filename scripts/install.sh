@@ -1,5 +1,5 @@
 #!/bin/bash
-# ultimate-dev v2.1.0 — Installer for macOS/Linux
+# ultimate-dev — Installer for macOS/Linux
 # Usage: ./scripts/install.sh [--global|--project DIR|--uninstall|--yes|--help]
 # https://www.gnu.org/software/bash/manual/
 
@@ -302,6 +302,7 @@ fi
 # ─── Determine target ───────────────────────────────────────
 if [ "$SCOPE" = "global" ]; then
     TARGET="$HOME/.agents/skills/ultimate-dev"
+    PROJECT_DIR="$HOME"
 else
     PROJECT_DIR="${PROJECT_DIR:-$(pwd)}"
     TARGET="$PROJECT_DIR/.agents/skills/ultimate-dev"

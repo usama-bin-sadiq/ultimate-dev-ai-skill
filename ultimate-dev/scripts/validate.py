@@ -90,7 +90,11 @@ if os.path.exists(skills_dir):
         for f in files:
             if f == "SKILL.md":
                 skill_files.append(os.path.join(root, f))
-    check(len(skill_files) >= 15, f"{len(skill_files)} sub-skill SKILL.md files found")
+    expected_skills = (manifest.get("stats") or {}).get("total_skills")
+    check(
+        len(skill_files) == expected_skills,
+        f"{len(skill_files)} sub-skill SKILL.md files found (manifest expects {expected_skills})",
+    )
 else:
     check(False, "skills/ directory exists")
 

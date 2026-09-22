@@ -1,4 +1,4 @@
-# ultimate-dev v2.1.0 — Installer for Windows/macOS/Linux
+# ultimate-dev — Installer for Windows/macOS/Linux
 # Usage: .\install.ps1 [-Global] [-Project <DIR>] [-Uninstall] [-Yes] [-CleanMemory] [-CleanGitignore] [-All] [-Help]
 # https://learn.microsoft.com/en-us/powershell/
 
@@ -23,26 +23,57 @@ $SkillDir = Join-Path (Split-Path -Parent $ScriptDir) "ultimate-dev"
 
 # ─── Helpers ────────────────────────────────────────────────
 function Write-Logo {
-    $ver = if (Test-Path (Join-Path (Split-Path -Parent $PSScriptRoot) "VERSION")) {
-        (Get-Content (Join-Path (Split-Path -Parent $PSScriptRoot) "VERSION") -Raw).Trim()
+    # Version and counts come from the skill source on disk — never hardcoded
+    $ver = if (Test-Path (Join-Path $SkillDir "VERSION")) {
+        (Get-Content (Join-Path $SkillDir "VERSION") -Raw).Trim()
     } else { "2.1.0" }
+    $agentCount = if (Test-Path (Join-Path $SkillDir "agents")) {
+        @(Get-ChildItem (Join-Path $SkillDir "agents") -Recurse -File -Filter "*.md" |
+            Where-Object { $_.FullName -notmatch '[\\/]_shared[\\/]' }).Count
+    } else { 0 }
+    $skillCount = if (Test-Path (Join-Path $SkillDir "skills")) {
+        @(Get-ChildItem (Join-Path $SkillDir "skills") -Recurse -File -Filter "SKILL.md").Count
+    } else { 0 }
+    $moduleCount = if (Test-Path (Join-Path $SkillDir "modules")) {
+        @(Get-ChildItem (Join-Path $SkillDir "modules") -Recurse -File -Filter "*.md").Count
+    } else { 0 }
+
+    $w = 53  # box interior width
+    $stats = ("$agentCount agents • $skillCount skills • $moduleCount modules • Any model").PadRight(47)
+    $title = "Master Software Engineering Orchestrator"
+    $vpad = $w - 12 - 12 - 2 - $ver.Length
+    $dpad = $w - 12 - 17
+    $tpad = $w - 2 - $title.Length
+    if ($vpad -lt 0) { $vpad = 0 }
+    if ($dpad -lt 0) { $dpad = 0 }
+    if ($tpad -lt 0) { $tpad = 0 }
 
     Write-Host ""
-    Write-Host "  ┌─────────────────────────────────────────────────────┐" -ForegroundColor Cyan
-    Write-Host "  │                                                     │" -ForegroundColor Cyan
-    Write-Host "  │            " -ForegroundColor Cyan -NoNewline
+    Write-Host ("  ┌" + [System.String]::new('─', $w) + "┐") -ForegroundColor Cyan
+    Write-Host ("  │" + [System.String]::new(' ', $w) + "│") -ForegroundColor Cyan
+    Write-Host "  │" -ForegroundColor Cyan -NoNewline
+    Write-Host ([System.String]::new(' ', 12)) -NoNewline -ForegroundColor Cyan
     Write-Host "ultimate-dev" -ForegroundColor Magenta -NoNewline
     Write-Host " v$ver" -ForegroundColor DarkGray -NoNewline
-    Write-Host "                          │" -ForegroundColor Cyan
-    Write-Host "  │            ─────────────────                         │" -ForegroundColor Cyan
-    Write-Host "  │  " -ForegroundColor Cyan -NoNewline
-    Write-Host "Master Software Engineering Orchestrator" -ForegroundColor Magenta -NoNewline
-    Write-Host "              │" -ForegroundColor Cyan
-    Write-Host "  │  " -ForegroundColor Cyan -NoNewline
-    Write-Host "120 agents • 17 skills • 45 modules • Any model" -ForegroundColor DarkGray -NoNewline
-    Write-Host "    │" -ForegroundColor Cyan
-    Write-Host "  │                                                     │" -ForegroundColor Cyan
-    Write-Host "  └─────────────────────────────────────────────────────┘" -ForegroundColor Cyan
+    Write-Host ([System.String]::new(' ', $vpad)) -NoNewline -ForegroundColor Cyan
+    Write-Host "│" -ForegroundColor Cyan
+    Write-Host "  │" -ForegroundColor Cyan -NoNewline
+    Write-Host ([System.String]::new(' ', 12)) -NoNewline -ForegroundColor Cyan
+    Write-Host "─────────────────" -ForegroundColor DarkGray -NoNewline
+    Write-Host ([System.String]::new(' ', $dpad)) -NoNewline -ForegroundColor Cyan
+    Write-Host "│" -ForegroundColor Cyan
+    Write-Host "  │" -ForegroundColor Cyan -NoNewline
+    Write-Host ([System.String]::new(' ', 2)) -NoNewline -ForegroundColor Cyan
+    Write-Host $title -ForegroundColor Magenta -NoNewline
+    Write-Host ([System.String]::new(' ', $tpad)) -NoNewline -ForegroundColor Cyan
+    Write-Host "│" -ForegroundColor Cyan
+    Write-Host "  │" -ForegroundColor Cyan -NoNewline
+    Write-Host ([System.String]::new(' ', 2)) -NoNewline -ForegroundColor Cyan
+    Write-Host $stats -ForegroundColor DarkGray -NoNewline
+    Write-Host ([System.String]::new(' ', 4)) -NoNewline -ForegroundColor Cyan
+    Write-Host "│" -ForegroundColor Cyan
+    Write-Host ("  │" + [System.String]::new(' ', $w) + "│") -ForegroundColor Cyan
+    Write-Host ("  └" + [System.String]::new('─', $w) + "┘") -ForegroundColor Cyan
     Write-Host ""
 }
 
@@ -310,6 +341,7 @@ if (-not $Global -and -not $Project) {
 # ─── Determine target ───────────────────────────────────────
 if ($Global) {
     $Target = Join-Path $HomeDir ".agents/skills/ultimate-dev"
+    $Project = $HomeDir
 } else {
     if (-not $Project -or $Project -eq "project") { $Project = (Get-Location).Path }
     $Target = Join-Path $Project ".agents/skills/ultimate-dev"
@@ -350,18 +382,35 @@ $parentDir = Split-Path -Parent $Target
 if (-not (Test-Path $parentDir)) { New-Item -ItemType Directory -Force -Path $parentDir | Out-Null }
 Copy-Item -Recurse -Force $SkillDir $Target
 
-# Manage .gitignore for project memory directory
-$gitignore = Join-Path $Project ".gitignore"
-$memoryEntry = ".memory/ultimate-dev/"
-if (Test-Path $gitignore) {
-    $content = Get-Content $gitignore -Raw
-    if ($content -notmatch "^$memoryEntry$") {
-        Add-Content $gitignore "`n$memoryEntry"
-        Write-Info "Added $memoryEntry to .gitignore"
+# Manage .gitignore for project memory directory (project scope only,
+# mirroring install.sh — global installs never touch ~/.gitignore)
+if (-not $Global) {
+    $gitignore = Join-Path $Project ".gitignore"
+    $memoryEntry = ".memory/ultimate-dev/"
+    if (Test-Path $gitignore) {
+        $content = Get-Content $gitignore -Raw
+        if ($content -notmatch "^$memoryEntry$") {
+            Add-Content $gitignore "`n$memoryEntry"
+            Write-Info "Added $memoryEntry to .gitignore"
+        }
+    } else {
+        Set-Content $gitignore $memoryEntry
+        Write-Info "Created .gitignore with $memoryEntry"
     }
-} else {
-    Set-Content $gitignore $memoryEntry
-    Write-Info "Created .gitignore with $memoryEntry"
+}
+
+# Create .memory folder at the project root (project memory lives at the
+# project root — never inside the skill directory)
+$memoryDir = Join-Path $Project ".memory/ultimate-dev"
+if (-not (Test-Path $memoryDir)) {
+    New-Item -ItemType Directory -Force -Path $memoryDir | Out-Null
+    Write-Info "Created project memory: $memoryDir"
+}
+$template = Join-Path $Target "memory/project-memory.md"
+$seeded = Join-Path $memoryDir "project-memory.md"
+if (-not (Test-Path $seeded) -and (Test-Path $template)) {
+    Copy-Item $template $seeded
+    Write-Info "Seeded $seeded from template"
 }
 
 $agentCount = if (Test-Path (Join-Path $Target "agents")) { (Get-ChildItem (Join-Path $Target "agents") -Recurse -Filter "*.md").Count } else { 0 }

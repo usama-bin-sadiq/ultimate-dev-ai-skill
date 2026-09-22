@@ -5,7 +5,15 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-SKILL_DIR="$(dirname "$SCRIPT_DIR")"
+# verify.sh lives in the repo's scripts/ directory; the skill itself
+# (SKILL.md, router/, modules/, ...) lives in ./ultimate-dev when the
+# repo has been cloned. Fall back to the parent dir for flat layouts.
+REPO_ROOT="$(dirname "$SCRIPT_DIR")"
+if [ -d "$REPO_ROOT/ultimate-dev" ]; then
+  SKILL_DIR="$REPO_ROOT/ultimate-dev"
+else
+  SKILL_DIR="$REPO_ROOT"
+fi
 ERRORS=0
 WARNINGS=0
 
@@ -30,9 +38,11 @@ fi
 
 # Check top-level files
 echo ""
-echo "Top-level files:"
-for f in README.md ARCHITECTURE.md CONTRIBUTING.md VERSION CHANGELOG.md; do
-  if [ -f "$SKILL_DIR/$f" ]; then
+TOP_LEVEL_FILES="README.md ARCHITECTURE.md CONTRIBUTING.md VERSION CHANGELOG.md"
+TOP_LEVEL_COUNT=$(echo "$TOP_LEVEL_FILES" | wc -w | tr -d ' ')
+echo "Top-level files ($TOP_LEVEL_COUNT required):"
+for f in $TOP_LEVEL_FILES; do
+  if [ -f "$REPO_ROOT/$f" ]; then
     echo "  ✅ $f"
   else
     echo "  ❌ $f missing"
@@ -40,10 +50,12 @@ for f in README.md ARCHITECTURE.md CONTRIBUTING.md VERSION CHANGELOG.md; do
   fi
 done
 
-# Check router files (8 required)
+# Check router files
 echo ""
-echo "Router files (10 required):"
-for f in classification-rules.md decomposition.md token-budgets.md grounding-rules.md completion-checklist.md invocation-template.md precedence-rules.md self-check.md gap-promotion-rules.md lite-mode.md; do
+ROUTER_FILES="classification-rules.md decomposition.md token-budgets.md grounding-rules.md completion-checklist.md invocation-template.md precedence-rules.md self-check.md gap-promotion-rules.md lite-mode.md"
+ROUTER_COUNT=$(echo "$ROUTER_FILES" | wc -w | tr -d ' ')
+echo "Router files ($ROUTER_COUNT required):"
+for f in $ROUTER_FILES; do
   if [ -f "$SKILL_DIR/router/$f" ]; then
     echo "  ✅ $f"
   else
@@ -52,10 +64,12 @@ for f in classification-rules.md decomposition.md token-budgets.md grounding-rul
   fi
 done
 
-# Check engineering modules (9 required)
+# Check engineering modules
 echo ""
-echo "Engineering modules (9 required):"
-for f in backend.md frontend.md architecture.md database.md security.md devops.md mobile.md testing-qa.md documentation.md; do
+ENGINEERING_FILES="backend.md frontend.md architecture.md database.md security.md devops.md mobile.md testing-qa.md documentation.md"
+ENGINEERING_COUNT=$(echo "$ENGINEERING_FILES" | wc -w | tr -d ' ')
+echo "Engineering modules ($ENGINEERING_COUNT required):"
+for f in $ENGINEERING_FILES; do
   if [ -f "$SKILL_DIR/modules/engineering/$f" ]; then
     echo "  ✅ $f"
   else
@@ -64,10 +78,12 @@ for f in backend.md frontend.md architecture.md database.md security.md devops.m
   fi
 done
 
-# Check agency modules (4 required)
+# Check agency modules
 echo ""
-echo "Agency modules (4 required):"
-for f in project-management.md product.md design-handoff.md client-communication.md; do
+AGENCY_FILES="project-management.md product.md design-handoff.md client-communication.md"
+AGENCY_COUNT=$(echo "$AGENCY_FILES" | wc -w | tr -d ' ')
+echo "Agency modules ($AGENCY_COUNT required):"
+for f in $AGENCY_FILES; do
   if [ -f "$SKILL_DIR/modules/agency/$f" ]; then
     echo "  ✅ $f"
   else
@@ -76,10 +92,12 @@ for f in project-management.md product.md design-handoff.md client-communication
   fi
 done
 
-# Check business operations modules (5 required)
+# Check business operations modules
 echo ""
-echo "Business operations modules (5 required):"
-for f in marketing sales finance support paid-media; do
+BUSINESS_FILES="marketing sales finance support paid-media"
+BUSINESS_COUNT=$(echo "$BUSINESS_FILES" | wc -w | tr -d ' ')
+echo "Business operations modules ($BUSINESS_COUNT required):"
+for f in $BUSINESS_FILES; do
   if [ -f "$SKILL_DIR/modules/$f/$f.md" ]; then
     echo "  ✅ $f.md"
   else
@@ -88,10 +106,12 @@ for f in marketing sales finance support paid-media; do
   fi
 done
 
-# Check research modules (2 required)
+# Check research modules
 echo ""
-echo "Research modules (2 required):"
-for f in research academic; do
+RESEARCH_FILES="research academic"
+RESEARCH_COUNT=$(echo "$RESEARCH_FILES" | wc -w | tr -d ' ')
+echo "Research modules ($RESEARCH_COUNT required):"
+for f in $RESEARCH_FILES; do
   if [ -f "$SKILL_DIR/modules/$f/$f.md" ]; then
     echo "  ✅ $f.md"
   else
@@ -100,10 +120,12 @@ for f in research academic; do
   fi
 done
 
-# Check domain-specific modules (5 required)
+# Check domain-specific modules
 echo ""
-echo "Domain-specific modules (5 required):"
-for f in healthcare game-dev gis spatial-computing specialized; do
+DOMAIN_FILES="healthcare game-dev gis spatial-computing specialized"
+DOMAIN_COUNT=$(echo "$DOMAIN_FILES" | wc -w | tr -d ' ')
+echo "Domain-specific modules ($DOMAIN_COUNT required):"
+for f in $DOMAIN_FILES; do
   if [ -f "$SKILL_DIR/modules/$f/$f.md" ]; then
     echo "  ✅ $f.md"
   else
@@ -112,10 +134,12 @@ for f in healthcare game-dev gis spatial-computing specialized; do
   fi
 done
 
-# Check cross-cutting modules (2 required)
+# Check cross-cutting modules
 echo ""
-echo "Cross-cutting modules (2 required):"
-for f in _emerging-tech-handler.md _universal-principles.md; do
+CROSS_FILES="_emerging-tech-handler.md _universal-principles.md"
+CROSS_COUNT=$(echo "$CROSS_FILES" | wc -w | tr -d ' ')
+echo "Cross-cutting modules ($CROSS_COUNT required):"
+for f in $CROSS_FILES; do
   if [ -f "$SKILL_DIR/modules/$f" ]; then
     echo "  ✅ $f"
   else
@@ -124,28 +148,25 @@ for f in _emerging-tech-handler.md _universal-principles.md; do
   fi
 done
 
-# Check personas (dynamically found)
+# Check agents (dynamically found)
 echo ""
-echo "Personas (all found):"
-PERSONA_COUNT=0
-for f in $(find "$SKILL_DIR/personas" -name "*.md" 2>/dev/null | sort); do
-  REL=$(echo "$f" | sed "s|$SKILL_DIR/||")
-  if [ -f "$f" ]; then
-    echo "  ✅ $REL"
-    PERSONA_COUNT=$((PERSONA_COUNT + 1))
-  fi
-done
+echo "Agents:"
+AGENT_COUNT=$(find "$SKILL_DIR/agents" -name "*.md" -not -path "*/_shared/*" 2>/dev/null | wc -l | tr -d ' ')
 
-if [ $PERSONA_COUNT -eq 0 ]; then
-  echo "  ❌ No persona files found"
+if [ "$AGENT_COUNT" -gt 0 ]; then
+  echo "  ✅ $AGENT_COUNT agent files"
+else
+  echo "  ❌ No agent files found"
   ERRORS=$((ERRORS + 1))
 fi
 
-# Check scripts (4 required)
+# Check scripts
 echo ""
-echo "Scripts (4 required):"
-for f in install.sh install.ps1 detect-tools.sh verify.sh; do
-  if [ -f "$SKILL_DIR/scripts/$f" ]; then
+SCRIPTS_FILES="install.sh install.ps1 detect-tools.sh verify.sh"
+SCRIPTS_COUNT=$(echo "$SCRIPTS_FILES" | wc -w | tr -d ' ')
+echo "Scripts ($SCRIPTS_COUNT required):"
+for f in $SCRIPTS_FILES; do
+  if [ -f "$REPO_ROOT/scripts/$f" ]; then
     echo "  ✅ $f"
   else
     echo "  ❌ $f missing"
@@ -153,10 +174,12 @@ for f in install.sh install.ps1 detect-tools.sh verify.sh; do
   fi
 done
 
-# Check adapters (4 required) and staleness
+# Check adapters and staleness
 echo ""
-echo "Adapters (4 required):"
-for f in claude-code.md codex.md cursor.md generic-cli.md; do
+ADAPTERS_FILES="claude-code.md codex.md cursor.md generic-cli.md"
+ADAPTERS_COUNT=$(echo "$ADAPTERS_FILES" | wc -w | tr -d ' ')
+echo "Adapters ($ADAPTERS_COUNT required):"
+for f in $ADAPTERS_FILES; do
   if [ -f "$SKILL_DIR/adapters/$f" ]; then
     # Check for doc_source and last_verified fields
     if grep -q "doc_source:" "$SKILL_DIR/adapters/$f" && grep -q "last_verified:" "$SKILL_DIR/adapters/$f"; then
@@ -184,10 +207,10 @@ fi
 # Summary
 echo ""
 echo "=== Results ==="
-echo "Personas found: $PERSONA_COUNT"
-echo "Router files: 8"
-echo "Scripts: 4"
-echo "Adapters: 4"
+echo "Agents found: $AGENT_COUNT"
+echo "Router files: $ROUTER_COUNT"
+echo "Scripts: $SCRIPTS_COUNT"
+echo "Adapters: $ADAPTERS_COUNT"
 echo ""
 
 if [ $ERRORS -eq 0 ] && [ $WARNINGS -eq 0 ]; then

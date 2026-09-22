@@ -249,15 +249,11 @@ echo -e "${BOLD}${CYAN}═══════════════════
 if [ ${#TOOLS_FOUND[@]} -eq 0 ]; then
   echo -e "${YELLOW}No known agent tools detected.${NC}"
   echo -e "The generic-cli adapter will be used for installation."
-  echo -e ""
-  echo -e "To install for a specific tool, run:"
-  echo -e "  ${BOLD}./scripts/install.sh --tool <tool-name>${NC}"
 else
   echo -e "${GREEN}Detected tools can be used with ultimate-dev.${NC}"
-  echo -e ""
-  echo -e "To install for a specific tool, run:"
-  echo -e "  ${BOLD}./scripts/install.sh --tool <tool-name>${NC}"
-  echo -e ""
-  echo -e "Or use interactive mode:"
-  echo -e "  ${BOLD}./scripts/install.sh --tui${NC}"
 fi
+echo -e ""
+echo -e "To install ultimate-dev, run:"
+echo -e "  ${BOLD}./scripts/install.sh${NC}              # Interactive"
+echo -e "  ${BOLD}./scripts/install.sh --global${NC}      # All projects (~/.agents/skills/)"
+echo -e "  ${BOLD}./scripts/install.sh --project .${NC}   # Current project only"

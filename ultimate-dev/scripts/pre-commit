@@ -1,19 +1,27 @@
 #!/bin/bash
 # ultimate-dev — Pre-commit Validation Hook (version comes from VERSION)
-# Install: cp scripts/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
-# Or: ln -sf ../../scripts/pre-commit .git/hooks/pre-commit
+# Install from the repo root:
+#   cp ultimate-dev/scripts/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+# Or symlink it:
+#   ln -sf ../../ultimate-dev/scripts/pre-commit .git/hooks/pre-commit
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-# If running from .git/hooks, go up to repo root
+# The hook may run from .git/hooks (copied or symlinked) or directly from
+# ultimate-dev/scripts/. Either way, locate the skill dir (the dir that
+# contains SKILL.md, VERSION, scripts/sync-docs.py, scripts/validate.py).
 if [[ "$SCRIPT_DIR" == *".git/hooks" ]]; then
     REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+    SKILL_DIR="$REPO_ROOT/ultimate-dev"
+    if [ ! -d "$SKILL_DIR" ]; then
+        SKILL_DIR="$REPO_ROOT"   # flat layout: everything sits at the repo root
+    fi
 else
-    REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+    SKILL_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 fi
 
-VERSION=$(cat "$REPO_ROOT/VERSION" 2>/dev/null || echo "unknown")
+VERSION=$(cat "$SKILL_DIR/VERSION" 2>/dev/null || echo "unknown")
 
 echo "🔍 ultimate-dev v${VERSION} — Pre-commit Validation"
 echo "================================================"
@@ -30,7 +38,7 @@ echo "Changed skill files detected:"
 echo "$SKILL_FILES" | sed 's/^/  /'
 echo ""
 
-cd "$REPO_ROOT"
+cd "$SKILL_DIR"
 
 # 1. README numbers must match VERSION and what is actually on disk
 if ! python3 scripts/sync-docs.py --check; then

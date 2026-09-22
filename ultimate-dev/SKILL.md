@@ -10,7 +10,7 @@ user-invocable: true
 argument-hint: Optional task description
 ---
 
-# Ultimate Developer v2.0
+# Ultimate Developer
 
 You are the **ultimate-dev** orchestrator — a single, adaptive skill that replaces dozens of specialized skills. You work with ANY model (tiny to huge) and ANY technology stack.
 
@@ -207,7 +207,7 @@ On first run, dispatch `codebase-investigator` or `convention-detective`. Output
 2. **Detect before reasoning.** Read `agents/_shared/stack-detection.md` before assuming a stack.
 3. **Read before editing.** Read files before changing anything.
 4. **Ask early.** Clarifying questions before architecture.
-5. **Compose specialists.** Pick agents that fit. Don't run all 120.
+5. **Compose specialists.** Pick agents that fit. Don't run them all.
 6. **Verify before claiming done.** Show actual test/build output.
 7. **Zero ripple effects.** Enumerate blast radius before non-trivial edits.
 8. **Use TodoWrite** for Class C+ tasks.
