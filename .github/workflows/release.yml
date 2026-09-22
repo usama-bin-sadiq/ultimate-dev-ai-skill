@@ -1,0 +1,76 @@
+name: Release
+
+# Push to main → ensure a GitHub Release + tag exist for the version in
+# ultimate-dev/VERSION, with the matching changelog section as notes.
+# Skips automatically when the release for that tag already exists, so
+# ordinary pushes are no-ops. Bump VERSION + add a changelog entry to release.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Never cancel a release mid-flight; queue behind any in-progress one.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Tag & release from VERSION
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Refuse to ship a README that contradicts the repo (version, counts, tree).
+      - name: Verify skill docs are in sync
+        run: python3 ultimate-dev/scripts/sync-docs.py --check
+
+      - name: Create tag + GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          VERSION="$(tr -d '[:space:]' < ultimate-dev/VERSION)"
+          TAG="v${VERSION}"
+          CHANGELOG="ultimate-dev/changelog/CHANGELOG.md"
+          README_URL="https://github.com/${GITHUB_REPOSITORY}/blob/main/ultimate-dev/README.md"
+
+          # Already released? Nothing to do.
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release ${TAG} already exists — skipping."
+            exit 0
+          fi
+
+          # Extract this version's changelog section (header line dropped,
+          # leading blank lines stripped).
+          awk -v v="$VERSION" '
+            $0 ~ "^## \\[" v "\\]" { grab = 1; next }
+            grab && /^## \[/       { exit }
+            grab                   { print }
+          ' "$CHANGELOG" | awk 'NF { seen = 1 } seen' > notes.md
+
+          if [ ! -s notes.md ]; then
+            {
+              echo "No \`## [${VERSION}]\` entry found in \`${CHANGELOG}\`."
+              echo ""
+              echo "See the [changelog](https://github.com/${GITHUB_REPOSITORY}/blob/main/${CHANGELOG})."
+            } > notes.md
+          fi
+
+          {
+            echo ""
+            echo "---"
+            echo "**Install:** \`./scripts/install.sh --project .\` — see the [README](${README_URL})"
+          } >> notes.md
+
+          gh release create "$TAG" \
+            --target "$GITHUB_SHA" \
+            --title "ultimate-dev ${TAG}" \
+            --notes-file notes.md
+
+          echo "Created release ${TAG}"
