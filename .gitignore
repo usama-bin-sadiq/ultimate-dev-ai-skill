@@ -18,3 +18,5 @@ personas/drafts/
 *.log
 .agents
 .memory/ultimate-dev/
+**/__pycache__/
+*.pyc
