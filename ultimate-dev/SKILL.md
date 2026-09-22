@@ -262,7 +262,8 @@ ultimate-dev/
 ├── examples/                   ← Usage examples
 ├── evals/                      ← Evaluation cases
 ├── reference/                  ← Reference documentation
-├── memory/                     ← Persistent memory
+├── memory/                     ← Skill-internal memory (templates, caches)
+├── .memory/                    ← Project memory (created at runtime, gitignored)
 └── changelog/                  ← Version history
 ```
 
