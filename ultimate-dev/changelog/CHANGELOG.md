@@ -5,6 +5,27 @@ All notable changes to the ultimate-dev skill will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.1] - 2026-09-22
+
+### Fixed
+- **install.sh**: global scope crash (`mkdir /.memory: Read-only file system`) — now sets `PROJECT_DIR=$HOME` so memory seeds to `~/.memory/ultimate-dev/`
+- **install.ps1**: global scope crashes (`$Project` empty → `Join-Path` error), missing `.memory` seeding, managed `.gitignore` for global installs (bash only does project scope)
+- **verify.sh**: computed `SKILL_DIR` from its own location (repo root) instead of `ultimate-dev/` — 44 false errors; now derives all counts from file lists; replaced deleted `personas/` check with agents count
+- **detect-tools.sh**: footer advertised nonexistent `--tool` and `--tui` flags — now prints real install commands
+- **validate.py**: hardcoded `>= 15` skills check → reads `total_skills` from manifest
+- **pre-commit**: broken path resolution when installed as git hook (ran `scripts/sync-docs.py` from repo root where it doesn't exist) — now resolves `ultimate-dev/` correctly in both hook and direct modes
+- **SKILL.md**: stale header `# Ultimate Developer v2.0` → versionless `# Ultimate Developer`; removed stale "Don't run all 120" count
+
+### Added
+- **LICENSE** (MIT, 2026, usama-bin-sadiq) at repo root
+- Dynamic badges only on both READMEs (release, workflow, license, models, tools) — zero drift
+- Mermaid flowchart for 4 LangChain patterns, collapsible module departments, emoji-first TOC anchors, alert callouts
+- `pip install pyyaml` note in inner README (required for `validate.py` / `generate-manifest.py`)
+
+### Changed
+- Outer README: memory wording covers both global (`~/.memory`) and project (`<project>/.memory`) scopes; `verify.sh` description → "check package integrity"
+- Inner README: preserves all 7 inline managed facts + 2 `ud:` blocks (sync-docs passes); real pre-commit install path (`ultimate-dev/scripts/pre-commit`)
+
 ## [2.1.0] - 2026-09-22
 
 ### Added
