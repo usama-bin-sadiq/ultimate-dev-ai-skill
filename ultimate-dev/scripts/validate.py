@@ -29,7 +29,7 @@ def load_skill_md():
         return f.read()
 
 def get_version():
-    with open(os.path.join(BASE, "VERSION")) as f:
+    with open(os.path.join(os.path.dirname(BASE), "VERSION")) as f:
         return f.read().strip()
 
 version = get_version()
@@ -40,8 +40,9 @@ print("=" * 60)
 
 # 1. Required files exist
 print("\n=== Required Files ===")
-for f in ["SKILL.md", "skill-manifest.yaml", "README.md", "VERSION"]:
+for f in ["SKILL.md", "skill-manifest.yaml", "README.md"]:
     check(os.path.exists(os.path.join(BASE, f)), f"{f} exists")
+check(os.path.exists(os.path.join(os.path.dirname(BASE), "VERSION")), "VERSION exists (root)")
 
 # 2. Version consistency
 print("\n=== Version Consistency ===")

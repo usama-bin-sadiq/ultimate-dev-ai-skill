@@ -5,7 +5,7 @@ description: >
   tiny→inline, small→1 module, large→parallel agents, huge→full system.
   Includes universal specialists that learn ANY technology from the web
   and auto-generate new agents for future use.
-version: "2.1.1"
+version: "2.2.0"
 user-invocable: true
 argument-hint: Optional task description
 ---

@@ -66,7 +66,7 @@ PURPOSE: dict[str, str] = {
 # --------------------------------------------------------------------- facts
 
 def collect_stats(root: Path) -> dict:
-    version_file = root / "VERSION"
+    version_file = root.parent / "VERSION"
     if not version_file.is_file():
         raise SystemExit(f"sync-docs: VERSION not found at {version_file}")
 

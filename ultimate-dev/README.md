@@ -1,4 +1,4 @@
-# ultimate-dev v2.1.1
+# ultimate-dev v2.2.0
 
 **Master software-engineering orchestrator** — a single, adaptive skill that replaces dozens of specialized skills. Works with ANY model (tiny to huge) and ANY technology stack.
 
