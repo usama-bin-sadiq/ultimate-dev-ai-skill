@@ -27,13 +27,14 @@ compatible_tools:
 - generic
 min_tool_version: 2.0.0
 stats:
-  total_agents: 117
+  total_agents: 118
   total_skills: 17
   total_modules: 45
   total_shared: 5
   departments_covered: 41
   last_generated: '2026-09-22'
 agents:
+- agents/orchestrator.md
 - agents/browser-agent.md
 - agents/cli-help.md
 - agents/codebase-investigator.md

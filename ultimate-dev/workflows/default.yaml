@@ -1,11 +1,12 @@
 # Default Workflow
 # The standard workflow for any task that doesn't specify a different workflow.
 # Covers: detect → classify → route → execute → verify → review
+# Supports all 4 LangChain patterns via orchestrator decision
 
 name: default
 description: >
-  Standard workflow for general tasks. Detects the problem, classifies it,
-  routes to the right agent, executes the work, verifies results, and reviews.
+  Standard workflow for general tasks. The orchestrator autonomously selects
+  the architecture pattern (Skills/Subagents/Handoffs/Router) and executes.
 
 steps:
   - id: detect
@@ -18,34 +19,93 @@ steps:
       - Read task description and acceptance criteria
       - Scan codebase for relevant files
       - Identify existing patterns and conventions
-    outputs: [context, affected_files, patterns]
+      - Run stack detection (agents/_shared/stack-detection.md)
+    outputs: [context, affected_files, patterns, stack_info]
 
   - id: classify
-    name: "Classify & Route"
+    name: "Classify & Select Pattern"
     description: >
-      Determine task size, domains involved, risk level, and select the
-      appropriate architecture pattern (Skills, Subagents, Handoffs, Router).
+      Determine task size, domains, risk, and autonomously select the
+      architecture pattern using the decision tree.
     agent: orchestrator
     actions:
       - Classify size: atomic / moderate / complex
-      - Identify domains: frontend, backend, security, etc.
-      - Assess risk: low / medium / high / critical
-      - Select pattern from decision tree
-    outputs: [size, domains, risk, pattern]
+      - Identify domains from task + stack
+      - Assess risk: none / data / security / compliance
+      - Run PATTERN DECISION TREE (orchestrator.md Step 4)
+      - Select agents via tiebreaker (router/classification-rules.md)
+      - Enumerate blast radius
+    outputs: [size, domains, risk, pattern, agents, blast_radius, workflow_path]
 
-  - id: execute
-    name: "Execute"
+  # PATTERN A: SKILLS — Single domain, direct execution
+  - id: execute_skills
+    name: "Execute (Pattern A: Skills)"
     description: >
-      Execute the task using the selected pattern and agents.
-      For atomic tasks: single specialist. For complex: orchestrate multiple.
-    agent: auto  # Determined by pattern selection
+      Single domain task — load skill methodology, apply module patterns, execute directly.
+    agent: auto  # Resolved by orchestrator based on domain
+    condition: "{{ pattern == 'A' }}"
     actions:
-      - Load relevant module from modules/<dept>/<module>.md
-      - Spawn selected agent(s) based on pattern
-      - Execute the change
-      - Write results
+      - Load skill: skills/<domain>/SKILL.md
+      - Apply module patterns from modules/
+      - Execute the task
     outputs: [result, files_changed]
-    on_failure: retry_once
+    depends_on: [classify]
+
+  # PATTERN B: SUBAGENTS — Multi-domain parallel
+  - id: execute_subagents
+    name: "Execute (Pattern B: Subagents)"
+    description: >
+      Multi-domain parallel — spawn agents in parallel, collect, synthesize.
+    agent: orchestrator
+    condition: "{{ pattern == 'B' }}"
+    actions:
+      - For each domain: spawn selected agent in parallel
+      - Wait for all completions
+      - Synthesize results (precedence-rules.md for conflicts)
+    outputs: [synthesized_result, agent_outputs]
+    depends_on: [classify]
+
+  # PATTERN C: HANDOFFS — Sequential workflow
+  - id: execute_handoffs
+    name: "Execute (Pattern C: Handoffs)"
+    description: >
+      Sequential stateful workflow — pass state between agents in sequence.
+    agent: orchestrator
+    condition: "{{ pattern == 'C' }}"
+    actions:
+      - Define stages from task decomposition
+      - For each stage: select agent, execute, capture handoff state
+      - State: {context, decisions, artifacts, risks}
+    outputs: [final_result, handoff_chain]
+    depends_on: [classify]
+
+  # PATTERN D: ROUTER — Classify + dispatch
+  - id: execute_router
+    name: "Execute (Pattern D: Router)"
+    description: >
+      Classification + synthesis — classify task, dispatch to specialists, merge.
+    agent: orchestrator
+    condition: "{{ pattern == 'D' }}"
+    actions:
+      - Classify task into categories
+      - Dispatch to specialists in parallel
+      - Merge results via synthesis
+    outputs: [merged_result, specialist_outputs]
+    depends_on: [classify]
+
+  # COMPOSE — Mixed patterns
+  - id: execute_compose
+    name: "Execute (Composed Patterns)"
+    description: >
+      Complex tasks requiring multiple patterns (e.g., Handoffs with Subagents inside).
+    agent: orchestrator
+    condition: "{{ pattern == 'compose' }}"
+    actions:
+      - Decompose into pattern-specific phases
+      - Execute each phase with appropriate pattern
+      - Chain results
+    outputs: [final_result, phase_results]
+    depends_on: [classify]
 
   - id: verify
     name: "Verify"
@@ -59,7 +119,7 @@ steps:
       - Run build
       - Check for regressions
     outputs: [verification_report]
-    depends_on: [execute]
+    depends_on: [execute_skills, execute_subagents, execute_handoffs, execute_router, execute_compose]
 
   - id: review
     name: "Review"
@@ -67,7 +127,7 @@ steps:
       Security, performance, and correctness review of the change.
     agent: security-auditor
     actions:
-      - Security review (if risk > low)
+      - Security review (if risk > none)
       - Performance review (if hot path)
       - Correctness review
       - Format handoff report

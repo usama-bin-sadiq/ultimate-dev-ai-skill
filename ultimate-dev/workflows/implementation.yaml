@@ -1,10 +1,12 @@
 # Implementation Workflow
 # For tasks that require writing or modifying code.
+# Uses Pattern C (Handoffs) by default for sequential implementation phases.
 
 name: implementation
 description: >
-  Structured implementation workflow: spec → plan → implement → test → review.
-  Use for new features, refactoring, or significant code changes.
+  Structured implementation workflow using Handoffs pattern:
+  Spec → Plan → Implement → Test → Review.
+  Orchestrator may compose with Subagents for parallel test writing.
 
 steps:
   - id: spec
@@ -15,6 +17,7 @@ steps:
       - Confirm acceptance criteria
       - Identify edge cases
       - Check for existing patterns in codebase
+      - Output: spec, edge_cases
     outputs: [spec, edge_cases]
 
   - id: plan
@@ -26,29 +29,38 @@ steps:
       - List files to create/modify
       - Enumerate blast radius (callers, tests, configs)
       - Estimate complexity
+      - Output: plan, files, blast_radius
     outputs: [plan, files, blast_radius]
+    depends_on: [spec]
 
   - id: implement
-    name: "Implement"
-    description: Write the code following existing patterns.
-    agent: auto  # Matched by domain (react-specialist, python-engineer, etc.)
+    name: "Implement (Pattern C: Handoffs)"
+    description: >
+      Write the code following existing patterns.
+      If multi-domain: orchestrator spawns subagents in parallel (Pattern B compose).
+    agent: orchestrator
     actions:
-      - Load relevant module patterns
-      - Implement the change
+      - If single domain: load relevant module, spawn domain agent
+      - If multi-domain: decompose, spawn subagents in parallel (Pattern B)
+      - Execute implementation
       - Follow existing code style
       - Handle edge cases
+      - Output: code, files_changed
     outputs: [code, files_changed]
     depends_on: [plan]
 
   - id: test
-    name: "Test"
-    description: Write and run tests for the change.
-    agent: test-architect
+    name: "Test (Pattern B: Subagents)"
+    description: >
+      Write and run tests. Test writing parallelized via Subagents pattern.
+    agent: orchestrator
     actions:
-      - Write unit tests for new logic
+      - Decompose test needs by domain
+      - Spawn test-automator / qa-engineer / performance-tester in parallel
       - Run existing test suite
       - Check edge cases
       - Verify no regressions
+      - Output: test_results
     outputs: [test_results]
     depends_on: [implement]
 
@@ -61,5 +73,6 @@ steps:
       - Security check (if risk > low)
       - Performance check (if hot path)
       - Format handoff
+      - Output: review_report
     outputs: [review_report]
     depends_on: [test]

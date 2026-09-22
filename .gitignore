@@ -16,3 +16,4 @@ personas/drafts/
 
 # Logs
 *.log
+.agents

@@ -1,33 +1,50 @@
 # Research Workflow
 # For tasks that require investigation, analysis, or comparison before action.
+# Uses Pattern D (Router) for parallel evidence gathering from multiple domains.
 
 name: research
 description: >
-  Structured research workflow: question → search → analyze → synthesize → report.
-  Use when the task requires understanding before implementation.
+  Structured research workflow using Router pattern:
+  Question → Search (parallel) → Analyze → Synthesize → Recommend.
 
 steps:
   - id: question
-    name: "Define the Question"
+    name: "Define the Question (Orchestrator)"
     description: Break down the research objective into specific, answerable questions.
     agent: orchestrator
     actions:
       - Clarify the research goal
       - Identify constraints and success criteria
       - List specific questions to answer
-    outputs: [questions, constraints]
+      - Identify domains needed (backend, frontend, security, devops, etc.)
+    outputs: [questions, constraints, domains]
 
   - id: search
-    name: "Gather Evidence"
-    description: Search official docs, GitHub, and authoritative sources.
-    agent: universal-technology-specialist
+    name: "Gather Evidence (Pattern D: Router)"
+    description: >
+      Classify questions by domain, dispatch to domain specialists in parallel,
+      collect all evidence.
+    agent: orchestrator
+    condition: "{{ domains | length > 1 }}"
     actions:
-      - Search official documentation
-      - Check GitHub repos and issues
-      - Review blog posts and conference talks
+      - For each domain: select specialist agent (tiebreaker)
+      - Spawn all agents in parallel with their domain questions
+      - Collect evidence from each specialist
+      - Merge evidence by question
+    outputs: [sources, evidence_by_domain]
+    depends_on: [question]
+
+  - id: search_single
+    name: "Gather Evidence (Pattern A: Skills)"
+    description: Single domain — use generic specialist or universal.
+    agent: auto  # Resolved by orchestrator
+    condition: "{{ domains | length == 1 }}"
+    actions:
+      - Load relevant skill methodology
+      - Search authoritative sources
       - Note source credibility and dates
     outputs: [sources, evidence]
-    parallel: true
+    depends_on: [question]
 
   - id: analyze
     name: "Analyze & Compare"
@@ -37,7 +54,9 @@ steps:
       - Compare options against constraints
       - List pros/cons with evidence
       - Identify risks and unknowns
+      - Apply precedence-rules.md for conflicts
     outputs: [analysis, options]
+    depends_on: [search, search_single]
 
   - id: synthesize
     name: "Synthesize & Recommend"
@@ -47,5 +66,6 @@ steps:
       - Rank options by fit
       - Write recommendation with reasoning
       - Note open questions and risks
-    outputs: [recommendation, confidence]
+      - Format handoff report
+    outputs: [recommendation, confidence, handoff_report]
     depends_on: [analyze]
