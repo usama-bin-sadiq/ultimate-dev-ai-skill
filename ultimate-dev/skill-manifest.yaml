@@ -27,7 +27,7 @@ compatible_tools:
 - generic
 min_tool_version: 2.0.0
 stats:
-  total_agents: 115
+  total_agents: 117
   total_skills: 17
   total_modules: 45
   total_shared: 5
@@ -89,12 +89,14 @@ agents:
 - agents/backend/csharp-engineer.md
 - agents/backend/database-tuner.md
 - agents/backend/generic-backend-specialist.md
+- agents/backend/generic-shell-specialist.md
 - agents/backend/go-engineer.md
 - agents/backend/graphql-engineer.md
 - agents/backend/java-engineer.md
 - agents/backend/nodejs-architect.md
 - agents/backend/python-engineer.md
 - agents/backend/rust-engineer.md
+- agents/backend/tui-specialist.md
 - agents/real-time/realtime-engineer.md
 - agents/specialized/blockchain-engineer.md
 - agents/specialized/edtech-designer.md
