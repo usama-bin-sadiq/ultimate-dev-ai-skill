@@ -1,14 +1,18 @@
-# ultimate-dev v2.1.0 — Installer for Windows
-# Usage: .\install.ps1 [-Global] [-Project <DIR>] [-Uninstall] [-Help]
+# ultimate-dev v2.1.0 — Installer for Windows/macOS/Linux
+# Usage: .\install.ps1 [-Global] [-Project <DIR>] [-Uninstall] [-Yes] [-Help]
 
 param(
     [switch]$Global,
     [string]$Project = "",
     [switch]$Uninstall,
+    [switch]$Yes,
     [switch]$Help
 )
 
 $ErrorActionPreference = "Stop"
+
+# Cross-platform home directory
+$HomeDir = if ($env:USERPROFILE) { $env:USERPROFILE } else { $env:HOME }
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $SkillDir = Join-Path (Split-Path -Parent $ScriptDir) "ultimate-dev"
@@ -44,6 +48,11 @@ function Show-Menu {
         [string]$Title,
         [string[]]$Options
     )
+
+    # If console is not interactive (piped/redirected), auto-select first option
+    if (-not [Console]::IsInputRedirected -eq $false) {
+        return 1
+    }
 
     $selected = 1
     $count = $Options.Count
@@ -116,12 +125,13 @@ function Show-Menu {
 
 # ─── Help ───────────────────────────────────────────────────
 if ($Help) {
-    Write-Host "Usage: .\install.ps1 [-Global|-Project <DIR>|-Uninstall|-Help]"
+    Write-Host "Usage: .\install.ps1 [-Global|-Project <DIR>|-Uninstall|-Yes|-Help]"
     Write-Host ""
     Write-Host "Options:"
     Write-Host "  -Global        Install to ~/.agents/skills/ultimate-dev"
     Write-Host "  -Project DIR   Install to DIR\.agents\skills\ultimate-dev"
     Write-Host "  -Uninstall     Remove the installation"
+    Write-Host "  -Yes           Skip confirmation prompt"
     exit 0
 }
 
@@ -130,7 +140,7 @@ Write-Logo
 # ─── Uninstall ──────────────────────────────────────────────
 if ($Uninstall) {
     Write-Header "Uninstalling"
-    $target = "$env:USERPROFILE\.agents\skills\ultimate-dev"
+    $target = Join-Path $HomeDir ".agents/skills/ultimate-dev"
     if (Test-Path $target) {
         Remove-Item -Recurse -Force $target
         Write-Status "Removed $target"
@@ -142,31 +152,36 @@ if ($Uninstall) {
 
 # ─── Interactive mode ───────────────────────────────────────
 if (-not $Global -and -not $Project) {
-    $result = Show-Menu -Title "Where do you want to install?" -Options @(
-        "Global    — ~/.agents/skills/ultimate-dev/"
-        "Project   — <project>/.agents/skills/ultimate-dev/"
-    )
+    if ($Yes) {
+        # Non-interactive: default to global
+        $Global = $true
+    } else {
+        $result = Show-Menu -Title "Where do you want to install?" -Options @(
+            "Global    — ~/.agents/skills/ultimate-dev/"
+            "Project   — <project>/.agents/skills/ultimate-dev/"
+        )
 
-    if ($result -eq 0) {
-        Write-Info "Cancelled."
-        exit 0
-    }
+        if ($result -eq 0) {
+            Write-Info "Cancelled."
+            exit 0
+        }
 
-    switch ($result) {
-        1 { $Global = $true }
-        2 {
-            $Project = "project"
-            Write-Host ""
-            Write-Host "  Enter project path:" -ForegroundColor Cyan
-            Write-Host "  (e.g., C:\my-app or . for current directory)" -ForegroundColor DarkGray
-            Write-Host ""
-            Write-Host "  " -NoNewline
-            $input_path = Read-Host
-            if ($input_path -eq ".") { $input_path = (Get-Location).Path }
-            $Project = $input_path
-            if (-not (Test-Path $Project)) {
-                Write-Err "Directory not found: $Project"
-                exit 1
+        switch ($result) {
+            1 { $Global = $true }
+            2 {
+                $Project = "project"
+                Write-Host ""
+                Write-Host "  Enter project path:" -ForegroundColor Cyan
+                Write-Host "  (e.g., C:\my-app or . for current directory)" -ForegroundColor DarkGray
+                Write-Host ""
+                Write-Host "  " -NoNewline
+                $input_path = Read-Host
+                if ($input_path -eq ".") { $input_path = (Get-Location).Path }
+                $Project = $input_path
+                if (-not (Test-Path $Project)) {
+                    Write-Err "Directory not found: $Project"
+                    exit 1
+                }
             }
         }
     }
@@ -174,16 +189,16 @@ if (-not $Global -and -not $Project) {
 
 # ─── Determine target ───────────────────────────────────────
 if ($Global) {
-    $Target = "$env:USERPROFILE\.agents\skills\ultimate-dev"
+    $Target = Join-Path $HomeDir ".agents/skills/ultimate-dev"
 } else {
     if (-not $Project -or $Project -eq "project") { $Project = (Get-Location).Path }
-    $Target = "$Project\.agents\skills\ultimate-dev"
+    $Target = Join-Path $Project ".agents/skills/ultimate-dev"
 }
 
 # ─── Confirm ────────────────────────────────────────────────
 Write-Header "Ready to install"
 Write-Host ""
-$version = if (Test-Path "$SkillDir\VERSION") { (Get-Content "$SkillDir\VERSION" -Raw).Trim() } else { "unknown" }
+$version = if (Test-Path (Join-Path $SkillDir "VERSION")) { (Get-Content (Join-Path $SkillDir "VERSION") -Raw).Trim() } else { "unknown" }
 Write-Host "  Source:  $SkillDir" -ForegroundColor White
 Write-Host "  Target:  $Target" -ForegroundColor White
 Write-Host "  Scope:   $(if ($Global) { 'global' } else { 'project' })" -ForegroundColor White
@@ -194,7 +209,11 @@ if (Test-Path $Target) {
     Write-Warn "Already installed at $Target"
 }
 
-$confirm = Show-Menu -Title "Proceed?" -Options @("Yes — Install", "No — Cancel")
+if ($Yes) {
+    $confirm = 1
+} else {
+    $confirm = Show-Menu -Title "Proceed?" -Options @("Yes — Install", "No — Cancel")
+}
 
 if ($confirm -ne 1) {
     Write-Info "Cancelled."
@@ -208,9 +227,9 @@ $parentDir = Split-Path -Parent $Target
 if (-not (Test-Path $parentDir)) { New-Item -ItemType Directory -Force -Path $parentDir | Out-Null }
 Copy-Item -Recurse -Force $SkillDir $Target
 
-$agentCount = if (Test-Path "$Target\agents") { (Get-ChildItem "$Target\agents" -Recurse -Filter "*.md").Count } else { 0 }
-$skillCount = if (Test-Path "$Target\skills") { (Get-ChildItem "$Target\skills" -Recurse -Filter "SKILL.md").Count } else { 0 }
-$moduleCount = if (Test-Path "$Target\modules") { (Get-ChildItem "$Target\modules" -Recurse -Filter "*.md").Count } else { 0 }
+$agentCount = if (Test-Path (Join-Path $Target "agents")) { (Get-ChildItem (Join-Path $Target "agents") -Recurse -Filter "*.md").Count } else { 0 }
+$skillCount = if (Test-Path (Join-Path $Target "skills")) { (Get-ChildItem (Join-Path $Target "skills") -Recurse -Filter "SKILL.md").Count } else { 0 }
+$moduleCount = if (Test-Path (Join-Path $Target "modules")) { (Get-ChildItem (Join-Path $Target "modules") -Recurse -Filter "*.md").Count } else { 0 }
 $fileCount = (Get-ChildItem $Target -Recurse -File).Count
 
 Write-Status "Copied $fileCount files"
