@@ -1,0 +1,51 @@
+# Research Workflow
+# For tasks that require investigation, analysis, or comparison before action.
+
+name: research
+description: >
+  Structured research workflow: question → search → analyze → synthesize → report.
+  Use when the task requires understanding before implementation.
+
+steps:
+  - id: question
+    name: "Define the Question"
+    description: Break down the research objective into specific, answerable questions.
+    agent: orchestrator
+    actions:
+      - Clarify the research goal
+      - Identify constraints and success criteria
+      - List specific questions to answer
+    outputs: [questions, constraints]
+
+  - id: search
+    name: "Gather Evidence"
+    description: Search official docs, GitHub, and authoritative sources.
+    agent: universal-technology-specialist
+    actions:
+      - Search official documentation
+      - Check GitHub repos and issues
+      - Review blog posts and conference talks
+      - Note source credibility and dates
+    outputs: [sources, evidence]
+    parallel: true
+
+  - id: analyze
+    name: "Analyze & Compare"
+    description: Evaluate options against constraints and trade-offs.
+    agent: system-architect
+    actions:
+      - Compare options against constraints
+      - List pros/cons with evidence
+      - Identify risks and unknowns
+    outputs: [analysis, options]
+
+  - id: synthesize
+    name: "Synthesize & Recommend"
+    description: Produce a clear, evidence-based recommendation.
+    agent: orchestrator
+    actions:
+      - Rank options by fit
+      - Write recommendation with reasoning
+      - Note open questions and risks
+    outputs: [recommendation, confidence]
+    depends_on: [analyze]

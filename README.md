@@ -171,23 +171,6 @@ ultimate-dev/
 
 ---
 
-## Credits & Attribution
-| Source | What It Contributed |
-|--------|---------------------|
-| **[msitarzewski/agency-agents](https://github.com/msitarzewski/agency-agents)** | Content source for Tier 2 personas (engineering, design, marketing, sales personas) — referenced in PRD as useful content reference |
-| **[OpenAI Codex](https://github.com/openai/codex)** | Agent instruction format (`AGENTS.md`) and skill loading pattern |
-| **[Claude Code](https://github.com/anthropics/claude-code)** | Project instruction patterns (`.claude/CLAUDE.md`) |
-| **[Cursor](https://github.com/getcursor/cursor)** | Project rules format (`.cursorrules`) |
-| **[Aider](https://github.com/Aider-AI/aider)** | Instruction file conventions |
-| **[Conventional Commits](https://www.conventionalcommits.org/)** | Commit message specification |
-| **[Semantic Versioning](https://semver.org/)** | Versioning scheme |
-| **[OWASP](https://owasp.org/)** | Security best practices |
-| **[WCAG](https://www.w3.org/WAI/standards-guidelines/wcag/)** | Accessibility guidelines |
-| **[12 Factor App](https://12factor.net/)** | Cloud-native architecture patterns |
-| **[Martin Fowler's Patterns](https://martinfowler.com/)** | Enterprise architecture patterns |
-
----
-
 ## License
 
 MIT

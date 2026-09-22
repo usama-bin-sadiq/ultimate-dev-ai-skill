@@ -1,0 +1,212 @@
+# Message Schema
+# Defines the structure of messages exchanged between agents and the orchestrator.
+
+message:
+  type: object
+  required:
+    - from
+    - to
+    - type
+    - content
+  properties:
+    from:
+      type: string
+      description: "Sender identifier (agent role, orchestrator, or user)"
+      examples:
+        - "orchestrator"
+        - "backend-specialist"
+        - "frontend-specialist"
+        - "user"
+
+    to:
+      type: string
+      description: "Recipient identifier"
+      examples:
+        - "orchestrator"
+        - "backend-specialist"
+        - "frontend-specialist"
+        - "user"
+
+    type:
+      type: string
+      enum:
+        - "task"
+        - "result"
+        - "question"
+        - "answer"
+        - "clarification"
+        - "error"
+        - "status_update"
+        - "delegation"
+        - "handoff"
+        - "review"
+        - "approval"
+        - "rejection"
+      description: "Type of message determining how content should be interpreted"
+
+    content:
+      type: object
+      description: "Message payload — structure depends on message type"
+      oneOf:
+        - $ref: "#/message_types/task"
+        - $ref: "#/message_types/result"
+        - $ref: "#/message_types/question"
+        - $ref: "#/message_types/error"
+
+    metadata:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: "When the message was created"
+        correlation_id:
+          type: string
+          description: "ID to correlate request/response pairs"
+        reply_to:
+          type: string
+          description: "Message ID this is replying to"
+        priority:
+          type: string
+          enum: ["urgent", "normal", "low"]
+          default: "normal"
+        ttl:
+          type: integer
+          description: "Time-to-live in seconds before message expires"
+        requires_response:
+          type: boolean
+          default: false
+          description: "Whether the recipient must respond"
+
+    status:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: "HTTP-like status code"
+        text:
+          type: string
+          description: "Human-readable status text"
+
+# Message type definitions
+message_types:
+  task:
+    type: object
+    properties:
+      task_id:
+        type: string
+      objective:
+        type: string
+      priority:
+        type: string
+      context:
+        type: object
+      constraints:
+        type: object
+      acceptance_criteria:
+        type: array
+        items:
+          type: string
+
+  result:
+    type: object
+    properties:
+      task_id:
+        type: string
+      status:
+        type: string
+        enum: ["completed", "partial", "failed"]
+      summary:
+        type: string
+      output:
+        type: object
+      evidence:
+        type: array
+        items:
+          type: object
+
+  question:
+    type: object
+    properties:
+      question:
+        type: string
+        description: "The question being asked"
+      context:
+        type: string
+        description: "Why this question needs to be answered"
+      options:
+        type: array
+        items:
+          type: object
+          properties:
+            value:
+              type: string
+            description:
+              type: string
+        description: "Pre-defined options (if applicable)"
+      deadline:
+        type: string
+        format: date-time
+        description: "When an answer is needed by"
+
+  error:
+    type: object
+    properties:
+      error_code:
+        type: string
+      message:
+        type: string
+      severity:
+        type: string
+        enum: ["critical", "high", "medium", "low"]
+      context:
+        type: object
+      suggested_fix:
+        type: string
+      stack_trace:
+        type: string
+
+# Example messages
+examples:
+  delegation:
+    from: "orchestrator"
+    to: "backend-specialist"
+    type: "delegation"
+    content:
+      task_id: "fix-auth-001"
+      objective: "Fix null pointer in auth middleware"
+      priority: "high"
+    metadata:
+      timestamp: "2026-09-22T10:30:00Z"
+      correlation_id: "corr-001"
+      requires_response: true
+
+  status_update:
+    from: "backend-specialist"
+    to: "orchestrator"
+    type: "status_update"
+    content:
+      task_id: "fix-auth-001"
+      status: "completed"
+      summary: "Fixed null pointer, all tests passing"
+    metadata:
+      timestamp: "2026-09-22T10:38:00Z"
+      correlation_id: "corr-001"
+      reply_to: "corr-001"
+
+  question:
+    from: "backend-specialist"
+    to: "orchestrator"
+    type: "question"
+    content:
+      question: "Should expired sessions be cleaned up by a background job?"
+      context: "The current fix handles null sessions but doesn't clean up expired ones."
+      options:
+        - value: "yes"
+          description: "Add a cron job to clean up expired sessions"
+        - value: "no"
+          description: "Leave as-is, handle in a separate task"
+      deadline: "2026-09-22T12:00:00Z"
+    metadata:
+      timestamp: "2026-09-22T10:38:00Z"
+      requires_response: true

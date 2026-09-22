@@ -1,0 +1,295 @@
+# Tool Registry
+# Defines all tools available to agents, their capabilities, parameters, and restrictions.
+
+tools:
+  - id: read_file
+    name: "Read File"
+    description: "Read the contents of a file from the filesystem"
+    category: "filesystem"
+    permissions: ["read"]
+    parameters:
+      path:
+        type: string
+        required: true
+        description: "Path to the file to read"
+      offset:
+        type: integer
+        required: false
+        description: "Line number to start reading from (1-based)"
+      limit:
+        type: integer
+        required: false
+        description: "Maximum number of lines to read"
+    returns:
+      type: object
+      properties:
+        content:
+          type: string
+          description: "File contents with line numbers"
+        path:
+          type: string
+          description: "Absolute path of the file"
+    restrictions:
+      - "Cannot execute files"
+      - "Cannot access files outside project scope"
+      - "Binary files are presented as images/PDFs"
+    usage: "Use before modifying any file to understand current content"
+
+  - id: write_file
+    name: "Write File"
+    description: "Create or completely overwrite a file"
+    category: "filesystem"
+    permissions: ["write"]
+    parameters:
+      path:
+        type: string
+        required: true
+        description: "Path to the file to write"
+      content:
+        type: string
+        required: true
+        description: "Complete content to write to the file"
+    returns:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: "Whether the write succeeded"
+        path:
+          type: string
+          description: "Path of the written file"
+    restrictions:
+      - "Overwrites existing content completely — prefer edit_file for changes"
+      - "Parent directories are created automatically"
+      - "Cannot write to paths outside project scope"
+    usage: "Use for creating new files or completely replacing file content"
+
+  - id: edit_file
+    name: "Edit File"
+    description: "Make targeted changes to a file by finding and replacing exact text"
+    category: "filesystem"
+    permissions: ["write"]
+    parameters:
+      path:
+        type: string
+        required: true
+        description: "Path to the file to edit"
+      old_string:
+        type: string
+        required: true
+        description: "Exact text to find and replace"
+      new_string:
+        type: string
+        required: true
+        description: "Text to replace with"
+      replace_all:
+        type: boolean
+        required: false
+        default: false
+        description: "Replace all occurrences (default: false, must match exactly once)"
+    returns:
+      type: object
+      properties:
+        success:
+          type: boolean
+        replacements:
+          type: integer
+          description: "Number of replacements made"
+    restrictions:
+      - "old_string must be found exactly (or exactly once unless replaceAll)"
+      - "Preserves surrounding content and indentation"
+      - "Cannot edit files outside project scope"
+    usage: "Use for targeted changes to existing files — preferred over write_file"
+
+  - id: grep_search
+    name: "Grep Search"
+    description: "Search file contents using regex or literal text patterns"
+    category: "search"
+    permissions: ["read"]
+    parameters:
+      pattern:
+        type: string
+        required: true
+        description: "Search pattern (regex or literal text)"
+      path:
+        type: string
+        required: false
+        description: "Directory or file to search in"
+      include:
+        type: string
+        required: false
+        description: "Glob pattern to filter files (e.g., '*.ts')"
+      literal:
+        type: boolean
+        required: false
+        default: false
+        description: "Treat pattern as exact text instead of regex"
+      case_sensitive:
+        type: boolean
+        required: false
+        default: true
+        description: "Case-sensitive matching"
+      limit:
+        type: integer
+        required: false
+        default: 100
+        description: "Maximum number of matching lines"
+    returns:
+      type: object
+      properties:
+        matches:
+          type: array
+          items:
+            type: object
+            properties:
+              file:
+                type: string
+              line:
+                type: integer
+              content:
+                type: string
+    restrictions:
+      - "Read-only — no modification"
+      - "Respects .gitignore patterns"
+    usage: "Use to find code patterns, function definitions, or specific text"
+
+  - id: glob_search
+    name: "Glob Search"
+    description: "Search for files matching a glob pattern"
+    category: "search"
+    permissions: ["read"]
+    parameters:
+      pattern:
+        type: string
+        required: true
+        description: "Glob pattern (e.g., '**/*.ts', 'src/**/*.test.*')"
+      path:
+        type: string
+        required: false
+        description: "Root directory for the search"
+      hidden:
+        type: boolean
+        required: false
+        default: false
+        description: "Include hidden files and directories"
+      limit:
+        type: integer
+        required: false
+        default: 100
+        description: "Maximum number of results"
+    returns:
+      type: object
+      properties:
+        files:
+          type: array
+          items:
+            type: string
+          description: "List of matching file paths"
+        remaining:
+          type: integer
+          description: "Number of additional results not returned"
+    restrictions:
+      - "Read-only — no modification"
+      - "Results limited to prevent overwhelming output"
+    usage: "Use to discover file structure and find specific file types"
+
+  - id: run_shell_command
+    name: "Run Shell Command"
+    description: "Execute a shell command in the project directory"
+    category: "execution"
+    permissions: ["execute"]
+    parameters:
+      command:
+        type: string
+        required: true
+        description: "Shell command to execute"
+      workdir:
+        type: string
+        required: false
+        description: "Working directory (defaults to project root)"
+      timeout:
+        type: integer
+        required: false
+        default: 120000
+        description: "Timeout in milliseconds"
+      background:
+        type: boolean
+        required: false
+        default: false
+        description: "Run in background (for long-running processes)"
+    returns:
+      type: object
+      properties:
+        stdout:
+          type: string
+          description: "Standard output"
+        stderr:
+          type: string
+          description: "Standard error"
+        exit_code:
+          type: integer
+          description: "Process exit code"
+    restrictions:
+      - "No destructive commands without approval: rm -rf, DROP TABLE, git push --force"
+      - "No network requests to unknown hosts"
+      - "No installing packages without approval"
+      - "No modifying system configuration"
+      - "Commands run in project directory by default"
+    usage: "Use to run tests, compilers, linters, build tools, and other CLI utilities"
+    allowed_commands:
+      - "npm, npx, node"
+      - "python, pip, pytest"
+      - "go, gofmt"
+      - "cargo, rustc"
+      - "git (read-only: status, log, diff, blame)"
+      - "grep, find, ls, cat, head, tail, wc"
+      - "curl, wget (read-only GET requests)"
+
+  - id: web_search
+    name: "Web Search"
+    description: "Search the web for information using a search engine"
+    category: "information"
+    permissions: ["read"]
+    parameters:
+      query:
+        type: string
+        required: true
+        description: "Search query"
+    returns:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+              url:
+                type: string
+              snippet:
+                type: string
+    restrictions:
+      - "Read-only — no posting, form submission, or authentication"
+      - "Results are informational only — verify before acting on them"
+      - "No accessing authenticated services"
+    usage: "Use to find documentation, solutions, and reference material"
+
+  - id: browser
+    name: "Browser"
+    description: "Open, navigate, and interact with browser tabs"
+    category: "interaction"
+    permissions: ["read", "navigate"]
+    capabilities:
+      - "Open new tabs"
+      - "Navigate to URLs"
+      - "Read page content"
+      - "Take screenshots"
+      - "Navigate forward/backward"
+      - "Reload pages"
+    restrictions:
+      - "Read-only browsing — no form submission, clicking buttons, or typing"
+      - "No accessing authenticated services"
+      - "No downloading files"
+      - "No executing JavaScript on pages"
+    usage: "Use to visually verify web UI, check rendered output, or view web content"

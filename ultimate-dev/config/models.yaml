@@ -1,0 +1,143 @@
+# Model Configuration — Mapping agent roles to model tiers and settings
+
+version: "2.1.0"
+
+# Model tiers define which models are used for different complexity levels
+tiers:
+  high:
+    description: "Complex reasoning, architecture, and critical decisions"
+    characteristics:
+      - deep reasoning
+      - long context
+      - high accuracy
+    recommended_for:
+      - architecture_design
+      - security_analysis
+      - complex_planning
+      - system_design
+    token_budget:
+      input: 32000
+      output: 8192
+    temperature: 0.3
+    top_p: 0.9
+
+  medium:
+    description: "Implementation tasks requiring good reasoning"
+    characteristics:
+      - strong coding
+      - balanced speed/quality
+      - good following instructions
+    recommended_for:
+      - code_implementation
+      - debugging
+      - testing
+      - code_review
+    token_budget:
+      input: 16000
+      output: 4096
+    temperature: 0.5
+    top_p: 0.95
+
+  low:
+    description: "Straightforward tasks, documentation, simple edits"
+    characteristics:
+      - fast execution
+      - good at following templates
+      - cost-efficient
+    recommended_for:
+      - documentation
+      - simple_edits
+      - formatting
+      - boilerplate
+    token_budget:
+      input: 8000
+      output: 2048
+    temperature: 0.7
+    top_p: 0.95
+
+# Per-agent model preferences
+agent_models:
+  planner:
+    preferred_tier: high
+    fallback_tier: medium
+    system_prompt_token_budget: 4096
+    context_window_preference: long
+
+  architect:
+    preferred_tier: high
+    fallback_tier: medium
+    system_prompt_token_budget: 4096
+    context_window_preference: long
+
+  backend:
+    preferred_tier: medium
+    fallback_tier: high
+    system_prompt_token_budget: 2048
+    context_window_preference: medium
+
+  frontend:
+    preferred_tier: medium
+    fallback_tier: high
+    system_prompt_token_budget: 2048
+    context_window_preference: medium
+
+  devops:
+    preferred_tier: medium
+    fallback_tier: medium
+    system_prompt_token_budget: 2048
+    context_window_preference: medium
+
+  tester:
+    preferred_tier: medium
+    fallback_tier: medium
+    system_prompt_token_budget: 2048
+    context_window_preference: medium
+
+  security:
+    preferred_tier: high
+    fallback_tier: medium
+    system_prompt_token_budget: 4096
+    context_window_preference: long
+
+  debugger:
+    preferred_tier: medium
+    fallback_tier: high
+    system_prompt_token_budget: 2048
+    context_window_preference: medium
+
+  reviewer:
+    preferred_tier: medium
+    fallback_tier: medium
+    system_prompt_token_budget: 2048
+    context_window_preference: medium
+
+  writer:
+    preferred_tier: low
+    fallback_tier: medium
+    system_prompt_token_budget: 1024
+    context_window_preference: short
+
+# Cost controls
+cost_limits:
+  max_tokens_per_task: 50000
+  max_tokens_per_session: 200000
+  warn_at_percentage: 80
+  hard_stop_at_percentage: 100
+
+# Context budget management
+context_budgets:
+  per_agent:
+    max_files: 20
+    max_file_size_kb: 100
+    max_context_tokens: 16000
+    priority_order:
+      - task_description
+      - relevant_source_files
+      - related_tests
+      - documentation
+      - other_agent_outputs
+
+  shared:
+    max_total_tokens: 64000
+    eviction_policy: lru  # least recently used
+    pin_task_context: true  # Never evict the original task

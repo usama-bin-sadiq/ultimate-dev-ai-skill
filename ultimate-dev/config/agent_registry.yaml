@@ -1,0 +1,187 @@
+# Agent Registry — Defines available agent roles and their capabilities
+# Used by the router to select the best agent for a given task
+
+agents:
+  planner:
+    description: "High-level planning and task decomposition agent"
+    capabilities:
+      - task-decomposition
+      - dependency-analysis
+      - priority-ordering
+      - roadmap-creation
+    model_tier: high
+    max_concurrent: 1
+    timeout_seconds: 120
+    required_context:
+      - project-structure
+      - requirements
+
+  architect:
+    description: "System design and architecture decisions"
+    capabilities:
+      - system-design
+      - adr-creation
+      - api-design
+      - database-schema
+      - infrastructure
+    model_tier: high
+    max_concurrent: 1
+    timeout_seconds: 180
+    required_context:
+      - project-structure
+      - existing-architecture
+
+  backend:
+    description: "Backend implementation — APIs, services, databases"
+    capabilities:
+      - api-implementation
+      - database-operations
+      - business-logic
+      - authentication
+      - middleware
+    model_tier: medium
+    max_concurrent: 3
+    timeout_seconds: 300
+    required_context:
+      - project-structure
+      - api-specs
+
+  frontend:
+    description: "Frontend implementation — UI components, styling, interactions"
+    capabilities:
+      - component-development
+      - styling
+      - state-management
+      - routing
+      - accessibility
+    model_tier: medium
+    max_concurrent: 3
+    timeout_seconds: 300
+    required_context:
+      - project-structure
+      - design-specs
+
+  devops:
+    description: "Infrastructure, CI/CD, deployment, and operations"
+    capabilities:
+      - docker
+      - kubernetes
+      - ci-cd
+      - terraform
+      - monitoring
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 240
+    required_context:
+      - infrastructure-specs
+      - deployment-target
+
+  tester:
+    description: "Test creation, execution, and quality assurance"
+    capabilities:
+      - unit-testing
+      - integration-testing
+      - e2e-testing
+      - coverage-analysis
+      - test-strategy
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 240
+    required_context:
+      - source-code
+      - test-requirements
+
+  security:
+    description: "Security review, vulnerability analysis, and hardening"
+    capabilities:
+      - vulnerability-scanning
+      - security-review
+      - authentication-analysis
+      - dependency-audit
+      - compliance-check
+    model_tier: high
+    max_concurrent: 1
+    timeout_seconds: 180
+    required_context:
+      - source-code
+      - security-policy
+
+  debugger:
+    description: "Debugging, root cause analysis, and fix implementation"
+    capabilities:
+      - error-analysis
+      - stack-trace-reading
+      - log-analysis
+      - fix-implementation
+      - regression-prevention
+    model_tier: medium
+    max_concurrent: 1
+    timeout_seconds: 300
+    required_context:
+      - error-logs
+      - source-code
+
+  reviewer:
+    description: "Code review, quality analysis, and improvement suggestions"
+    capabilities:
+      - code-review
+      - style-checking
+      - performance-analysis
+      - best-practices
+      - refactoring
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 180
+    required_context:
+      - diff
+      - coding-standards
+
+  writer:
+    description: "Documentation, READMEs, guides, and technical writing"
+    capabilities:
+      - documentation
+      - api-docs
+      - changelogs
+      - tutorials
+      - adr-writing
+    model_tier: low
+    max_concurrent: 2
+    timeout_seconds: 120
+    required_context:
+      - project-structure
+      - content-requirements
+
+routing_rules:
+  - match:
+      intent: "implement-feature"
+      complexity: "high"
+    delegate_to: ["planner", "architect", "backend", "frontend", "tester"]
+
+  - match:
+      intent: "implement-feature"
+      complexity: "low"
+    delegate_to: ["backend"]
+
+  - match:
+      intent: "fix-bug"
+    delegate_to: ["debugger"]
+
+  - match:
+      intent: "review-code"
+    delegate_to: ["reviewer"]
+
+  - match:
+      intent: "run-tests"
+    delegate_to: ["tester"]
+
+  - match:
+      intent: "security-audit"
+    delegate_to: ["security"]
+
+  - match:
+      intent: "deploy"
+    delegate_to: ["devops"]
+
+  - match:
+      intent: "write-documentation"
+    delegate_to: ["writer"]

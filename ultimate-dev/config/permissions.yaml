@@ -1,0 +1,199 @@
+# Permission Configuration — What each agent role can do
+
+version: "2.1.0"
+
+# File system permissions
+filesystem:
+  # Read permissions (all agents can read any file by default)
+  read:
+    default: allow
+    exceptions:
+      - path: ".env*"
+        require_context: true  # Only when directly relevant
+      - path: "**/secrets/**"
+        require_context: true
+
+  # Write permissions
+  write:
+    planner:
+      allowed_paths:
+        - "docs/**"
+        - "TODO.md"
+        - "PLAN.md"
+        - "CHANGELOG.md"
+      denied_paths:
+        - "src/**"
+        - "tests/**"
+        - "*.config.*"
+
+    architect:
+      allowed_paths:
+        - "docs/architecture/**"
+        - "docs/adr/**"
+        - "ADR-*.md"
+        - "docs/api/**"
+      denied_paths:
+        - "src/**"  # Architecture agent designs, others implement
+
+    backend:
+      allowed_paths:
+        - "src/**"
+        - "lib/**"
+        - "api/**"
+        - "migrations/**"
+        - "seeds/**"
+        - "tests/**"
+      denied_paths:
+        - "docs/architecture/**"
+        - ".github/**"
+
+    frontend:
+      allowed_paths:
+        - "src/**"
+        - "components/**"
+        - "pages/**"
+        - "styles/**"
+        - "public/**"
+        - "tests/**"
+      denied_paths:
+        - "docs/architecture/**"
+        - ".github/**"
+
+    devops:
+      allowed_paths:
+        - "Dockerfile*"
+        - "docker-compose*"
+        - ".github/**"
+        - "k8s/**"
+        - "terraform/**"
+        - "scripts/**"
+        - "Makefile"
+        - ".env.example"
+      denied_paths:
+        - "src/**"
+
+    tester:
+      allowed_paths:
+        - "tests/**"
+        - "test/**"
+        - "**/*.test.*"
+        - "**/*.spec.*"
+        - "jest.config.*"
+        - "vitest.config.*"
+        - "cypress/**"
+        - "playwright.config.*"
+      denied_paths:
+        - "src/**"  # Tests read source but don't modify it
+
+    security:
+      allowed_paths:
+        - "docs/security/**"
+        - "SECURITY.md"
+      denied_paths:
+        - "src/**"
+        - "tests/**"
+
+    debugger:
+      allowed_paths:
+        - "src/**"
+        - "lib/**"
+        - "tests/**"
+        - "logs/**"
+      denied_paths:
+        - ".github/**"
+
+    reviewer:
+      allowed_paths:
+        - "docs/reviews/**"
+      denied_paths:
+        - "src/**"  # Reviewer reports but doesn't modify code
+
+    writer:
+      allowed_paths:
+        - "docs/**"
+        - "README.md"
+        - "CHANGELOG.md"
+        - "CONTRIBUTING.md"
+        - "SECURITY.md"
+      denied_paths:
+        - "src/**"
+
+# Command execution permissions
+commands:
+  safe_commands:
+    - "ls"
+    - "cat"
+    - "head"
+    - "tail"
+    - "grep"
+    - "find"
+    - "wc"
+    - "diff"
+    - "git status"
+    - "git log"
+    - "git diff"
+    - "git show"
+    - "npm test"
+    - "npm run lint"
+    - "npm run typecheck"
+    - "pytest"
+    - "cargo check"
+    - "go vet"
+    - "cargo test"
+    - "go test"
+
+  requires_approval:
+    - "git commit"
+    - "git push"
+    - "git merge"
+    - "git rebase"
+    - "git tag"
+    - "npm publish"
+    - "docker build"
+    - "docker push"
+    - "terraform apply"
+    - "kubectl apply"
+
+  forbidden:
+    - "rm -rf /"
+    - "sudo"
+    - "chmod 777"
+    - "curl | sh"
+    - "eval"
+    - "exec"
+
+# Model access permissions
+model_access:
+  high_tier:
+    agents: [planner, architect, security]
+    max_tokens: 8192
+    temperature: 0.3
+
+  medium_tier:
+    agents: [backend, frontend, devops, tester, debugger, reviewer]
+    max_tokens: 4096
+    temperature: 0.5
+
+  low_tier:
+    agents: [writer]
+    max_tokens: 2048
+    temperature: 0.7
+
+# Context access permissions
+context_access:
+  project_root:
+    agents: all
+    description: "Full read access to project root for understanding structure"
+
+  sensitive_files:
+    agents: [backend, devops]
+    require_justification: true
+    description: "Access to .env, credentials, secrets — must justify need"
+
+  other_agents_output:
+    agents: all
+    description: "Agents can read outputs of other agents via shared context"
+
+  user_conversation:
+    agents: all
+    description: "All agents can access the user's original request and conversation"

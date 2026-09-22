@@ -1,0 +1,81 @@
+# Changelog
+
+All notable changes to the ultimate-dev skill will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [2.1.0] - 2026-09-22
+
+### Added
+- Three-Layer Architecture documentation (Skills → Agents → Modules) with clear loading rules
+- Agent Selection Tiebreaker in `router/classification-rules.md` (exact match → technology → domain generic → universal)
+- Max 1 agent per domain rule to prevent token waste
+- Framework-specific anti_triggers on all frontend agents (react excludes vue/angular/svelte, etc.)
+- Validation script now checks: anti_triggers, three-layer architecture, agent selection rules, router completeness
+- 49 total validation checks (up from 36)
+
+### Changed
+- `router/classification-rules.md`: Added Step 4 (Agent Selection) with tiebreaker logic and anti-trigger exclusion
+- `SKILL.md`: Replaced "Module Loading" section with "Three-Layer Architecture" section clarifying Skills vs Agents vs Modules
+- `SKILL.md`: Updated Selection Priority to include technology match and max-1-per-domain rule
+- All frontend agent `anti_triggers` expanded to exclude other frameworks (prevents 4-agent overlap on single task)
+- Version bumped to 2.1.0 across all files (SKILL.md, VERSION, README, manifest, configs)
+
+### Fixed
+- Frontend agent trigger overlap: react-specialist, vue-specialist, css-architect, accessibility-engineer, perf-specialist all had generic anti_triggers — now each excludes other frameworks
+- Module vs Skill confusion: SKILL.md now explicitly states "No triple-loading" — an agent that references a module does NOT also load the parent skill
+- Validation script hardcoded version check — now reads from VERSION file dynamically
+
+## [2.0.0] - 2026-09-22
+
+### Added
+- 120 agents across 34+ categories (up from 50 personas)
+- 17 meta-cognitive sub-skills (technology-agnostic)
+- 45 internal pattern modules
+- 5 shared agent fragments in `agents/_shared/`
+- LangChain 4 patterns wired into mandatory Operating Loop (Step 4: Pattern Selection)
+- Decision Tree for pattern selection (Skills, Subagents, Handoffs, Router)
+- Tier-Based Execution system (TINY/SMALL/LARGE/HUGE) with token budgets
+- Self-evolution capability (`skills/self-evolve/`) — auto-generates new skills from experience
+- Auto-generated manifest via `scripts/generate-manifest.py` (never hand-edit)
+- Pre-commit hook with 36 validation checks
+- Install scripts for Mac/Linux (`install.sh`) and Windows (`install.ps1`)
+- 6 workflows referencing actual agents (default, research, implementation, review, debugging, emergency)
+- `config/` with models, workflow, permissions, security, context_budgets, agent_registry
+- `router/` with classification-rules, token-budgets, precedence-rules, decomposition, grounding-rules, etc.
+- README.md with usage examples (4 scenarios: simple, multi-domain, sequential, unknown technology)
+
+### Changed
+- SKILL.md rewritten from 516 to 218 lines — pure orchestrator, no reference docs
+- Personas directory fully migrated to agents (deleted `personas/`)
+- Agent format unified to 10 YAML frontmatter fields
+- 3 duplicate agents removed (sre-engineer kept in devops/, ml-engineer kept in ai-ml/, cloud-architect kept in architecture/)
+- All module paths fixed (old `modules/specialized/` → actual `modules/<category>/`)
+- All versions synced to 2.0.0
+
+### Removed
+- `personas/` directory (migrated to `agents/`)
+- 3 duplicate agent definitions
+- Hardcoded model names from tier system (now uses runtime-provided context window)
+
+## [0.1.0] - 2026-01-01
+
+### Added
+- Initial release of ultimate-dev skill
+- Core directory structure
+- README.md with project overview
+- SKILL.md with skill definition
+- skill-manifest.yaml with metadata
+- VERSION file tracking releases
+- Basic agent framework
+- Module system
+- Router for agent selection
+
+---
+
+## Versioning
+
+- **Major** (X.0.0): Breaking changes to the skill interface
+- **Minor** (0.X.0): New features, backward compatible
+- **Patch** (0.0.X): Bug fixes, backward compatible

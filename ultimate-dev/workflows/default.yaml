@@ -1,0 +1,75 @@
+# Default Workflow
+# The standard workflow for any task that doesn't specify a different workflow.
+# Covers: detect → classify → route → execute → verify → review
+
+name: default
+description: >
+  Standard workflow for general tasks. Detects the problem, classifies it,
+  routes to the right agent, executes the work, verifies results, and reviews.
+
+steps:
+  - id: detect
+    name: "Detect & Understand"
+    description: >
+      Read the task, understand the objective, gather context about the codebase.
+      Identify what needs to change and what already exists.
+    agent: codebase-investigator
+    actions:
+      - Read task description and acceptance criteria
+      - Scan codebase for relevant files
+      - Identify existing patterns and conventions
+    outputs: [context, affected_files, patterns]
+
+  - id: classify
+    name: "Classify & Route"
+    description: >
+      Determine task size, domains involved, risk level, and select the
+      appropriate architecture pattern (Skills, Subagents, Handoffs, Router).
+    agent: orchestrator
+    actions:
+      - Classify size: atomic / moderate / complex
+      - Identify domains: frontend, backend, security, etc.
+      - Assess risk: low / medium / high / critical
+      - Select pattern from decision tree
+    outputs: [size, domains, risk, pattern]
+
+  - id: execute
+    name: "Execute"
+    description: >
+      Execute the task using the selected pattern and agents.
+      For atomic tasks: single specialist. For complex: orchestrate multiple.
+    agent: auto  # Determined by pattern selection
+    actions:
+      - Load relevant module from modules/<dept>/<module>.md
+      - Spawn selected agent(s) based on pattern
+      - Execute the change
+      - Write results
+    outputs: [result, files_changed]
+    on_failure: retry_once
+
+  - id: verify
+    name: "Verify"
+    description: >
+      Run tests, linting, and builds to verify the change works.
+      No "it should work" — show actual output.
+    agent: code-reviewer
+    actions:
+      - Run project tests
+      - Run linter/formatter
+      - Run build
+      - Check for regressions
+    outputs: [verification_report]
+    depends_on: [execute]
+
+  - id: review
+    name: "Review"
+    description: >
+      Security, performance, and correctness review of the change.
+    agent: security-auditor
+    actions:
+      - Security review (if risk > low)
+      - Performance review (if hot path)
+      - Correctness review
+      - Format handoff report
+    outputs: [review_report]
+    depends_on: [verify]

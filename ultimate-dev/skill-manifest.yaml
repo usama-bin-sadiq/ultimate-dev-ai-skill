@@ -1,0 +1,244 @@
+name: ultimate-dev
+version: 2.1.0
+description: "Master software-engineering orchestrator. Adapts to model size: tiny\u2192inline, small\u21921 module, large\u2192\
+  parallel agents, huge\u2192full system. Includes universal specialists that learn ANY technology from the web and auto-generate\
+  \ new agents for future use."
+author: ultimate-dev team
+license: MIT
+repository: https://github.com/usama-bin-sadiq/ultimate-dev-ai-skill/ultimate-dev
+keywords:
+- software-engineering
+- orchestrator
+- multi-domain
+- adaptive
+- agents
+- skills
+- auto-generation
+entry: SKILL.md
+compatible_tools:
+- opencode
+- claude-code
+- codex
+- cursor
+- windsurf
+- cline
+- copilot
+- aider
+- generic
+min_tool_version: 2.0.0
+stats:
+  total_agents: 115
+  total_skills: 17
+  total_modules: 45
+  total_shared: 5
+  departments_covered: 41
+  last_generated: '2026-09-22'
+agents:
+- agents/browser-agent.md
+- agents/cli-help.md
+- agents/codebase-investigator.md
+- agents/generalist.md
+- agents/skill-creator.md
+- agents/universal-technology-specialist.md
+- agents/monorepo/monorepo-architect.md
+- agents/game-dev/game-designer.md
+- agents/game-dev/game-programmer.md
+- agents/game-dev/level-designer.md
+- agents/database/data-engineer.md
+- agents/database/generic-database-specialist.md
+- agents/database/postgres-specialist.md
+- agents/database/sql-optimizer.md
+- agents/documentation/devrel-engineer.md
+- agents/documentation/tech-writer.md
+- agents/devops/generic-devops-specialist.md
+- agents/devops/kubernetes-engineer.md
+- agents/devops/observability-engineer.md
+- agents/devops/pipeline-engineer.md
+- agents/devops/reliability-engineer.md
+- agents/devops/sre-engineer.md
+- agents/devops/terraform-engineer.md
+- agents/paid-media/ads-optimizer.md
+- agents/paid-media/programmatic-buyer.md
+- agents/frontend/accessibility-engineer.md
+- agents/frontend/css-architect.md
+- agents/frontend/generic-frontend-specialist.md
+- agents/frontend/perf-specialist.md
+- agents/frontend/react-specialist.md
+- agents/frontend/vue-specialist.md
+- agents/sales/account-manager.md
+- agents/sales/outbound-strategist.md
+- agents/sales/sales-engineer.md
+- agents/security/compliance-engineer.md
+- agents/security/incident-responder.md
+- agents/security/security-auditor.md
+- agents/security/threat-modeler.md
+- agents/spatial-computing/spatial-ui-designer.md
+- agents/spatial-computing/xr-developer.md
+- agents/healthcare/biotech-researcher.md
+- agents/healthcare/clinical-data-analyst.md
+- agents/healthcare/health-informaticist.md
+- agents/project-management/product-owner.md
+- agents/project-management/release-manager.md
+- agents/project-management/scrum-master.md
+- agents/meta/agent-generator.md
+- agents/meta/auto-persona-generator.md
+- agents/meta/gap-tracker.md
+- agents/meta/skill-maintainer.md
+- agents/legacy/modernizer.md
+- agents/backend/api-designer.md
+- agents/backend/csharp-engineer.md
+- agents/backend/database-tuner.md
+- agents/backend/generic-backend-specialist.md
+- agents/backend/go-engineer.md
+- agents/backend/graphql-engineer.md
+- agents/backend/java-engineer.md
+- agents/backend/nodejs-architect.md
+- agents/backend/python-engineer.md
+- agents/backend/rust-engineer.md
+- agents/real-time/realtime-engineer.md
+- agents/specialized/blockchain-engineer.md
+- agents/specialized/edtech-designer.md
+- agents/specialized/iot-engineer.md
+- agents/specialized/legal-tech.md
+- agents/specialized/quantum-computing.md
+- agents/specialized/supply-chain.md
+- agents/design-handoff/design-spec.md
+- agents/design-handoff/motion-designer.md
+- agents/design-handoff/ux-researcher.md
+- agents/academic/research-methodologist.md
+- agents/search/search-engineer.md
+- agents/testing/generic-testing-specialist.md
+- agents/testing/performance-tester.md
+- agents/testing/qa-engineer.md
+- agents/testing/quality-engineer.md
+- agents/testing/test-architect.md
+- agents/testing/test-automator.md
+- agents/blockchain/smart-contract-developer.md
+- agents/data-engineering/data-pipeline-engineer.md
+- agents/architecture/microservices-architect.md
+- agents/architecture/system-architect.md
+- agents/support/customer-success.md
+- agents/support/support-ops.md
+- agents/support/technical-support-engineer.md
+- agents/ai-ml/generic-ai-ml-specialist.md
+- agents/ai-ml/ml-engineer.md
+- agents/ai-ml/prompt-engineer.md
+- agents/ai-ml/rag-architect.md
+- agents/mobile/mobile-android.md
+- agents/mobile/mobile-flutter.md
+- agents/mobile/mobile-ios.md
+- agents/cloud/cloud-architect.md
+- agents/cloud/cost-optimizer.md
+- agents/cloud/generic-cloud-specialist.md
+- agents/marketing/affiliate-marketer.md
+- agents/marketing/brand-strategist.md
+- agents/marketing/content-strategist.md
+- agents/marketing/email-marketing.md
+- agents/marketing/growth-hacker.md
+- agents/marketing/seo-specialist.md
+- agents/marketing/social-media-manager.md
+- agents/finance/compliance-officer.md
+- agents/finance/financial-analyst.md
+- agents/finance/fintech-analyst.md
+- agents/finance/pricing-strategist.md
+- agents/finance/revenue-operations.md
+- agents/api-patterns/api-architect.md
+- agents/performance/performance-engineer.md
+- agents/caching/cache-engineer.md
+- agents/messaging/event-architect.md
+- agents/gis/cartographer.md
+- agents/gis/spatial-analyst.md
+- agents/git/git-specialist.md
+skills:
+- skills/research/SKILL.md
+- skills/documentation/SKILL.md
+- skills/devops/SKILL.md
+- skills/security/SKILL.md
+- skills/debugging/SKILL.md
+- skills/api-design/SKILL.md
+- skills/testing/SKILL.md
+- skills/architecture/SKILL.md
+- skills/ai-ml/SKILL.md
+- skills/mobile/SKILL.md
+- skills/review/SKILL.md
+- skills/coding/SKILL.md
+- skills/monitoring/SKILL.md
+- skills/performance/SKILL.md
+- skills/data/SKILL.md
+- skills/migration/SKILL.md
+- skills/self-evolve/SKILL.md
+modules:
+- modules/_emerging-tech-handler.md
+- modules/_project-memory-template.md
+- modules/_universal-principles.md
+- modules/academic/academic.md
+- modules/accessibility/accessibility.md
+- modules/agency/client-communication.md
+- modules/agency/design-handoff.md
+- modules/agency/product.md
+- modules/agency/project-management.md
+- modules/ai-ml/ai-ml.md
+- modules/api-patterns/api-patterns.md
+- modules/blockchain/blockchain.md
+- modules/caching/caching.md
+- modules/cloud/cloud.md
+- modules/data-engineering/data-engineering.md
+- modules/engineering/architecture.md
+- modules/engineering/backend.md
+- modules/engineering/database.md
+- modules/engineering/devops.md
+- modules/engineering/documentation.md
+- modules/engineering/frontend.md
+- modules/engineering/mobile.md
+- modules/engineering/security.md
+- modules/engineering/testing-qa.md
+- modules/finance/finance.md
+- modules/game-dev/game-dev.md
+- modules/gis/gis.md
+- modules/healthcare/healthcare.md
+- modules/i18n-l10n/i18n-l10n.md
+- modules/legacy-modernization/legacy-modernization.md
+- modules/marketing/marketing.md
+- modules/messaging/messaging.md
+- modules/monorepo/monorepo.md
+- modules/observability/observability.md
+- modules/open-source/open-source.md
+- modules/paid-media/paid-media.md
+- modules/performance/performance.md
+- modules/real-time/real-time.md
+- modules/research/research.md
+- modules/sales/sales.md
+- modules/search/search.md
+- modules/spatial-computing/spatial-computing.md
+- modules/specialized/specialized.md
+- modules/support/support.md
+- modules/testing-frameworks/testing-frameworks.md
+shared:
+- agents/_shared/never-commits.md
+- agents/_shared/output-format.md
+- agents/_shared/stack-detection.md
+- agents/_shared/tldr-output.md
+- agents/_shared/triage-rubric.md
+scripts:
+- scripts/validate.py
+- scripts/generate-manifest.py
+- scripts/install.sh
+- scripts/install.ps1
+templates:
+- templates/task.md
+- templates/adr.md
+- templates/code-review.md
+- templates/git/commit-conventions.md
+router:
+  description: Classification and routing logic
+  files:
+  - router/classification-rules.md
+  - router/completion-checklist.md
+  - router/decomposition.md
+  - router/gap-promotion-rules.md
+  - router/grounding-rules.md
+  - router/invocation-template.md
+  - router/lite-mode.md
+  - router/precedence-rules.md
+  - router/self-check.md
+  - router/token-budgets.md

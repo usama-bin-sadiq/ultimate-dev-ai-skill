@@ -1,0 +1,139 @@
+# Security Configuration — Security rules and constraints
+
+version: "2.1.0"
+
+# Secrets handling
+secrets:
+  # Patterns that indicate potential secrets
+  detection_patterns:
+    - "(?i)(api[_-]?key|secret[_-]?key|access[_-]?token|auth[_-]?token)"
+    - "(?i)(password|passwd|pwd)\\s*[:=]"
+    - "-----BEGIN (RSA |EC |DSA )?PRIVATE KEY-----"
+    - "(?i)(aws[_-]?access[_-]?key|aws[_-]?secret)"
+    - "(?i)(ghp_|gho_|github_pat_)"
+    - "(?i)(sk-[a-zA-Z0-9]{20,})"
+    - "(?i)(xox[bpsa]-[0-9]{10,})"
+    - "(?i)(AKIA[0-9A-Z]{16})"
+
+  handling:
+    never_display: true
+    never_write_to_logs: true
+    mask_in_outputs: true
+    replacement: "[REDACTED]"
+
+  allowed_in_context:
+    - ".env.example"
+    - ".env.template"
+    - Any file ending in `.example`
+
+  forbidden_in_context:
+    - ".env"
+    - ".env.local"
+    - ".env.production"
+    - "**/secrets/**"
+    - "**/credentials/**"
+    - "**/*.pem"
+    - "**/*.key"
+
+# Code injection prevention
+injection_prevention:
+  # Never execute user-provided code directly
+  eval_disabled: true
+  exec_disabled: true
+
+  # Sanitize inputs before using in commands
+  input_sanitization:
+    enabled: true
+    rules:
+      - strip_shell_metacharacters
+      - validate_file_paths
+      - check_command_whitelist
+
+  # Command injection patterns to block
+  blocked_patterns:
+    - ";\\s*(rm|sudo|chmod)"
+    - "\\|\\s*(sh|bash|zsh)"
+    - "`[^`]*`"  # backtick execution
+    - "\\$\\([^)]*\\)"  # command substitution
+
+# File system security
+filesystem:
+  # Directories that are off-limits
+  forbidden_directories:
+    - ".git"
+    - "node_modules"
+    - "__pycache__"
+    - ".next"
+    - "dist"
+    - "build"
+
+  # File operations that require explicit approval
+  requires_approval:
+    - delete
+    - move
+    - rename
+    - overwrite_existing
+
+  # Maximum file size for reading (prevent memory issues)
+  max_read_size_kb: 500
+
+  # Maximum file size for writing
+  max_write_size_kb: 1000
+
+# Network security
+network:
+  # URLs that are safe to fetch
+  allowed_domains:
+    - "github.com"
+    - "raw.githubusercontent.com"
+    - "docs.*"
+    - "api.*.dev"
+    - "registry.npmjs.org"
+    - "pypi.org"
+    - "crates.io"
+
+  # Domains that are blocked
+  blocked_domains:
+    - "*.ngrok.io"
+    - "*.localtunnel.com"
+    - "requestbin.*"
+    - "webhook.site"
+
+  # Maximum response size for fetched content
+  max_response_size_kb: 500
+
+# Audit logging
+audit:
+  enabled: true
+  log_level: info
+  events_to_log:
+    - agent_delegation
+    - file_write
+    - command_execution
+    - permission_check
+    - secret_detection
+    - error_occurrence
+  retention_days: 30
+
+# Dependency security
+dependencies:
+  # Check for known vulnerabilities
+  vulnerability_check:
+    enabled: true
+    auto_fix: false  # Report but don't auto-fix
+    severity_threshold: medium  # Report medium and above
+
+  # Allowed license families
+  allowed_licenses:
+    - MIT
+    - Apache-2.0
+    - BSD-2-Clause
+    - BSD-3-Clause
+    - ISC
+    - MPL-2.0
+    - GPL-3.0
+    - LGPL-3.0
+
+  blocked_licenses:
+    - AGPL-3.0  # Requires network source disclosure
+    - SSPL-1.0  # Server-side licensing

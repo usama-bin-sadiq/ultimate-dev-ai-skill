@@ -1,0 +1,74 @@
+# Emergency Workflow
+# For production incidents and critical issues.
+
+name: emergency
+description: >
+  Emergency workflow for production incidents. Triage → mitigate → diagnose → fix → post-mortem.
+  Speed is critical. Mitigate first, diagnose second.
+
+steps:
+  - id: triage
+    name: "Triage"
+    description: >
+      Assess severity, identify affected users, determine blast radius.
+      Time is critical — don't over-analyze.
+    agent: incident-responder
+    actions:
+      - Assess severity (P0-P4)
+      - Identify affected users/services
+      - Check monitoring dashboards
+      - Page on-call if needed
+    outputs: [severity, affected_services, blast_radius]
+
+  - id: mitigate
+    name: "Mitigate (Stop the Bleeding)"
+    description: >
+      Rollback, feature flag, scale up — whatever stops the damage.
+      Don't diagnose yet — just stop the bleeding.
+    agent: sre-engineer
+    actions:
+      - Rollback recent deployment (if applicable)
+      - Disable affected feature flag
+      - Scale up affected services
+      - Redirect traffic if needed
+    outputs: [mitigation_action, status]
+    depends_on: [triage]
+
+  - id: diagnose
+    name: "Diagnose Root Cause"
+    description: >
+      Now that the fire is out, find out what caused it.
+    agent: codebase-investigator
+    actions:
+      - Check logs and traces
+      - Review recent changes
+      - Identify the root cause
+      - Document findings
+    outputs: [root_cause, evidence]
+    depends_on: [mitigate]
+
+  - id: fix
+    name: "Deploy Fix"
+    description: >
+      Deploy a proper fix (not just the mitigation).
+    agent: pipeline-engineer
+    actions:
+      - Implement the fix
+      - Test in staging
+      - Deploy to production
+      - Verify fix works
+    outputs: [fix_deployed]
+    depends_on: [diagnose]
+
+  - id: postmortem
+    name: "Post-Mortem"
+    description: >
+      Document what happened, why, and how to prevent it.
+    agent: sre-engineer
+    actions:
+      - Write timeline of events
+      - Document root cause
+      - List action items to prevent recurrence
+      - Schedule follow-up review
+    outputs: [postmortem]
+    depends_on: [fix]

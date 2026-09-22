@@ -1,0 +1,65 @@
+# Implementation Workflow
+# For tasks that require writing or modifying code.
+
+name: implementation
+description: >
+  Structured implementation workflow: spec → plan → implement → test → review.
+  Use for new features, refactoring, or significant code changes.
+
+steps:
+  - id: spec
+    name: "Clarify Specification"
+    description: Ensure requirements are clear before writing any code.
+    agent: orchestrator
+    actions:
+      - Confirm acceptance criteria
+      - Identify edge cases
+      - Check for existing patterns in codebase
+    outputs: [spec, edge_cases]
+
+  - id: plan
+    name: "Plan Implementation"
+    description: Design the approach, identify files to modify, assess blast radius.
+    agent: system-architect
+    actions:
+      - Design the implementation approach
+      - List files to create/modify
+      - Enumerate blast radius (callers, tests, configs)
+      - Estimate complexity
+    outputs: [plan, files, blast_radius]
+
+  - id: implement
+    name: "Implement"
+    description: Write the code following existing patterns.
+    agent: auto  # Matched by domain (react-specialist, python-engineer, etc.)
+    actions:
+      - Load relevant module patterns
+      - Implement the change
+      - Follow existing code style
+      - Handle edge cases
+    outputs: [code, files_changed]
+    depends_on: [plan]
+
+  - id: test
+    name: "Test"
+    description: Write and run tests for the change.
+    agent: test-architect
+    actions:
+      - Write unit tests for new logic
+      - Run existing test suite
+      - Check edge cases
+      - Verify no regressions
+    outputs: [test_results]
+    depends_on: [implement]
+
+  - id: review
+    name: "Review"
+    description: Final review before marking complete.
+    agent: code-reviewer
+    actions:
+      - Code review
+      - Security check (if risk > low)
+      - Performance check (if hot path)
+      - Format handoff
+    outputs: [review_report]
+    depends_on: [test]

@@ -1,0 +1,65 @@
+# Review Workflow
+# For tasks that require code review, audit, or assessment.
+
+name: review
+description: >
+  Structured review workflow: read changes → check correctness → check security →
+  check performance → report. Use for code reviews, audits, and assessments.
+
+steps:
+  - id: read_changes
+    name: "Read & Understand Changes"
+    description: Read all changes thoroughly before forming any opinion.
+    agent: codebase-investigator
+    actions:
+      - Read the full diff
+      - Understand the intent behind changes
+      - Identify the scope and blast radius
+    outputs: [changes, intent, scope]
+
+  - id: correctness
+    name: "Check Correctness"
+    description: Verify the code does what it claims, handles edge cases, and has tests.
+    agent: code-reviewer
+    actions:
+      - Verify logic is correct
+      - Check edge cases are handled
+      - Verify error conditions are handled
+      - Check test coverage
+    outputs: [correctness_report]
+    depends_on: [read_changes]
+
+  - id: security
+    name: "Check Security"
+    description: Review for vulnerabilities, injection, auth issues, secrets.
+    agent: security-auditor
+    actions:
+      - Check input validation
+      - Review auth/authz
+      - Scan for secrets
+      - Check for injection vectors
+    outputs: [security_report]
+    depends_on: [correctness]
+
+  - id: performance
+    name: "Check Performance"
+    description: Review for N+1 queries, unnecessary computation, memory issues.
+    agent: performance-engineer
+    actions:
+      - Check for N+1 queries
+      - Review data structure choices
+      - Check for memory leaks
+      - Assess scalability
+    outputs: [performance_report]
+    depends_on: [security]
+
+  - id: report
+    name: "Generate Report"
+    description: Compile findings into a structured review report.
+    agent: orchestrator
+    actions:
+      - Compile all findings
+      - Prioritize by severity (blocking > suggestion > nit)
+      - Format actionable feedback
+    outputs: [review_report]
+    depends_on: [performance]
