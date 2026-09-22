@@ -1,7 +1,7 @@
 ---
 name: ultimate-dev
 version: "2.1.0"
-description: >
+description: >-
   Master software-engineering orchestrator. Single entry point that autonomously
   detects stack, classifies tasks, selects architecture pattern (Skills/Subagents/Handoffs/Router),
   routes to specialists, executes, verifies, and learns.
@@ -21,12 +21,32 @@ tags:
 
 # Ultimate Dev — Agent Entry Point
 
-This is the **primary agent** for the `ultimate-dev` skill. Invoke this agent directly for any software engineering task.
+This is the **primary agent** for the `ultimate-dev` skill.
+
+Invoke this agent directly for any software-engineering task. The agent is
+responsible for deciding how the task should be classified, routed, executed,
+and verified.
+
+Detailed orchestration policy is defined in:
+
+```text
+agents/orchestrator.md
+````
+
+Classification and routing rules are defined in:
+
+```text
+router/classification-rules.md
+```
+
+Do not load the entire skill directory unless the task requires it. Load only
+the relevant router, agent, skill, module, workflow, or reference files.
 
 ## Quick Start
 
 ```bash
-# Any task - the agent figures out the pattern
+# Any task - the agent determines the execution pattern
+
 @ultimate-dev "Build a React login form with tests"
 
 @ultimate-dev "Deploy to production with zero-downtime"
@@ -36,208 +56,394 @@ This is the **primary agent** for the `ultimate-dev` skill. Invoke this agent di
 @ultimate-dev "Audit codebase for security vulnerabilities"
 ```
 
-## How It Works (Autonomous)
+## How It Works
 
-The **`orchestrator` agent** is the decision-making engine. It runs the 9-step Operating Loop:
+The `orchestrator` is the decision-making engine.
 
-```
-Your Task → orchestrator Agent
+For moderate and complex tasks, it follows the 9-step Operating Loop:
+
+```text
+Your Task → orchestrator
+
     │
-    ├─► 1. CAPTURE   — Understand intent, constraints, acceptance criteria
-    ├─► 2. DETECT    — Read stack (language, framework, tools) via stack-detection.md
-    ├─► 3. CLASSIFY  — Size (atomic/moderate/complex), domains, risk
-    ├─► 4. PATTERN   — Autonomous decision tree (see below)
-    ├─► 5. ROUTE     — Select agents (max 1 per domain, tiebreaker)
-    ├─► 6. EXECUTE   — Spawn sub-agents, execute smallest coherent change
-    ├─► 7. VERIFY    — Run actual tests/lint/build, show output
-    ├─► 8. REVIEW    — Security, performance, correctness
-    └─► 9. LEARN     — Persist patterns to memory/project conventions
-```
-
-### Pattern Decision Tree (Orchestrator's Autonomous Choice)
-
-```
-Task → orchestrator classifies → PATTERN DECISION:
+    ├─► 1. CAPTURE   — Understand intent, constraints, and acceptance criteria
     │
-    ├─► Single domain, one specialist?
-    │       └─ YES → PATTERN A: SKILLS
-    │            → Load skills/<domain>/SKILL.md → Execute inline → Return
+    ├─► 2. DETECT    — Detect stack and relevant project context
     │
-    ├─► Multiple domains, parallel execution?
-    │       └─ YES → PATTERN B: SUBAGENTS
-    │            → orchestrator spawns N agents in parallel
-    │            → Each agent: independent, stateless, domain-specific
-    │            → orchestrator synthesizes results → Return
+    ├─► 3. CLASSIFY  — Determine size, domains, risk, and clarity
     │
-    ├─► Sequential workflow, state carries?
-    │       └─ YES → PATTERN C: HANDOFFS
-    │            → orchestrator chains agents: A → state → B → state → C
-    │            → Handoff state: {context, decisions, artifacts, risks}
+    ├─► 4. PATTERN   — Select the smallest appropriate execution pattern
     │
-    ├─► Classify + dispatch to specialists?
-    │       └─ YES → PATTERN D: ROUTER
-    │            → orchestrator classifies task → dispatches to specialists
-    │            → Collects all outputs → Merges via synthesis
+    ├─► 5. ROUTE     — Select relevant specialists
     │
-    └─► Complex, needs multiple patterns?
-            └─ COMPOSE (e.g., Handoffs with Subagents inside each stage)
+    ├─► 6. EXECUTE   — Execute the smallest coherent change
+    │
+    ├─► 7. VERIFY    — Run appropriate real verification
+    │
+    ├─► 8. REVIEW    — Review correctness, security, performance, and regressions
+    │
+    └─► 9. LEARN     — Persist durable project knowledge when appropriate
 ```
 
-### Sub-Agent Creation (How Orchestrator Spawns Agents)
+Atomic tasks may use a reduced path when additional orchestration would add
+unnecessary overhead.
 
+## Pattern Decision Tree
+
+The orchestrator chooses the pattern autonomously.
+
+```text
+Task → CLASSIFY → PATTERN
+
+    │
+    ├─► Atomic / one domain / no specialist independence required
+    │
+    │       └─► PATTERN A: SKILLS / INLINE
+    │            → Load relevant skill if needed
+    │            → Execute inline
+    │            → Verify
+    │
+    ├─► Multiple independent domains?
+    │
+    │       └─► PATTERN B: SUBAGENTS
+    │            → Select specialists
+    │            → Use real subagents when the host supports them
+    │            → Otherwise execute specialist roles inline
+    │            → Synthesize results
+    │
+    ├─► Sequential stages with dependent state?
+    │
+    │       └─► PATTERN C: HANDOFFS
+    │            → A → state → B → state → C
+    │
+    ├─► Classification followed by specialist dispatch?
+    │
+    │       └─► PATTERN D: ROUTER
+    │            → Classify
+    │            → Select specialists
+    │            → Execute
+    │            → Synthesize
+    │
+    └─► Multiple patterns genuinely required?
+            └─► COMPOSE
+                 → Combine only the necessary patterns
 ```
-For each domain in task:
-    1. Read skill-manifest.yaml → find agents for domain
-    2. Apply tiebreaker:
-         1) EXACT MATCH      (task keyword = agent name)
-         2) TECHNOLOGY MATCH (agent has tech in triggers)
-         3) DOMAIN GENERIC   (generic-<domain>-specialist)
-         4) UNIVERSAL        (universal-technology-specialist)
-    3. Check anti_triggers → exclude if matched
-    4. Spawn ONE agent per domain (never more)
-    5. Pass task context + relevant module patterns
-    6. Collect output → synthesize/chain per pattern
+
+The orchestrator must prefer the smallest safe execution structure.
+
+## Specialist Selection
+
+When specialist routing is required:
+
+```text
+1. Read skill-manifest.yaml
+2. Identify applicable domains
+3. Select the most specific matching specialist
+4. Apply triggers and anti_triggers
+5. Select at most one primary specialist per domain by default
+6. Pass only relevant task context
+7. Execute and collect actual results
+8. Synthesize and verify
 ```
 
-### Memory & Learning (Two Distinct Systems)
+Selection priority:
 
-#### 1. Project Memory (Current Project — Context for Agents)
-Keeps agents aligned during the current session/project. **Per-project, untracked.**
-
-```
-.memory/ultimate-dev/          →  Hidden directory (added to .gitignore)
-    ├── project-memory.md      →  Conventions, decisions, patterns for THIS project
-    ├── adrs/                  →  Architecture Decision Records
-    ├── conventions.md         →  Naming, style, test patterns discovered
-    └── context.md             →  Stack info, key files, team preferences
-```
-
-**Created by:** `codebase-investigator` / `convention-detective` on first run
-**Read by:** ALL agents at startup for consistent decisions
-**Scope:** Current project only
-**Git:** Added to `.gitignore` automatically by installer
-
-#### 2. Self-Evolution (Future Use — Global Skill Growth)
-Auto-generates permanent NEW agents/skills when NO existing match.
-
-```
-skills/_learned/<new-skill>/   →  New meta-cognitive skill (global)
-agents/<domain>/<new-agent>.md →  New specialist agent (global)
-skill-manifest.yaml            →  Updated registry
+```text
+EXACT MATCH
+    ↓
+TECHNOLOGY MATCH
+    ↓
+DOMAIN SPECIALIST
+    ↓
+GENERIC SPECIALIST
+    ↓
+UNIVERSAL TECHNOLOGY SPECIALIST
 ```
 
-**Triggered by:** `self-evolve` skill when NO skill/agent matches task
-**Process:** Research → Execute → Generate skill/agent → Persist globally
-**Scope:** ALL future projects (installed globally)
+### Important Agent Execution Rule
 
-#### 3. Step 9 LEARN (Operating Loop Output)
-```yaml
-# What gets persisted where:
-project_learnings:    → .memory/ultimate-dev/project-memory.md (project scope)
-new_conventions:      → .memory/ultimate-dev/conventions.md (project scope)
-new_patterns:         → skills/_learned/ (global scope, if novel)
-new_agents:           → agents/ (global scope, if novel domain)
+A Markdown instruction to "spawn an agent" does not itself create an independent
+agent.
+
+If the host provides a real subagent mechanism:
+
+```text
+execution_mode: subagent
 ```
+
+Use the actual mechanism and report the real result.
+
+If the host does not provide a real subagent mechanism:
+
+```text
+execution_mode: inline
+```
+
+Load the relevant specialist definition and perform that specialist work in the
+current execution context.
+
+Never claim that an independent agent was spawned, delegated to, or returned a
+result unless that actually happened.
+
+## Memory & Learning
+
+Ultimate Dev uses two distinct memory scopes.
+
+### 1. Project Memory
+
+Project-specific context is stored in:
+
+```text
+.memory/ultimate-dev/
+
+├── project-memory.md
+├── adrs/
+├── conventions.md
+└── context.md
+```
+
+Project memory is:
+
+* per-project
+* normally untracked
+* read when relevant
+* updated only with durable project knowledge
+
+The installer adds `.memory/ultimate-dev/` to `.gitignore` when appropriate.
+
+Project memory may contain:
+
+```text
+project conventions
+architecture decisions
+stable patterns
+important constraints
+stack information
+key project context
+```
+
+It must not contain:
+
+```text
+secrets
+credentials
+private reasoning
+temporary debugging output
+irrelevant conversation details
+```
+
+### 2. Self-Evolution
+
+Global self-evolution is separate from project memory.
+
+Potential global artifacts include:
+
+```text
+skills/_learned/
+agents/
+skill-manifest.yaml
+```
+
+Self-evolution is triggered only when the relevant self-evolution workflow
+determines that a genuinely reusable capability is missing.
+
+It should not generate new agents or skills merely because an existing
+specialist could have been used.
+
+### 3. Step 9 — LEARN
+
+The operating loop may persist durable findings:
+
+```text
+project learnings
+    → .memory/ultimate-dev/project-memory.md
+
+new conventions
+    → .memory/ultimate-dev/conventions.md
+
+new reusable patterns
+    → skills/_learned/ when genuinely novel
+
+new reusable agents
+    → agents/ when genuinely justified
+```
+
+Learning must never replace verification.
 
 ## What You Get
 
-| Task Type | Pattern | Example |
-|-----------|---------|---------|
-| Single feature | A: Skills | "React component" → react-specialist |
-| Multi-domain | B: Subagents | "Full-stack dashboard" → 3 agents in parallel |
-| Deployment | C: Handoffs | "Zero-downtime deploy" → pipeline → db → sre |
-| Research | D: Router | "Best DB for X" → dispatch specialists, merge |
-| Complex | Compose | "Security audit + fixes" → Router + Subagents + Handoffs |
+| Task Type                 | Typical Pattern    | Example                                         |
+| ------------------------- | ------------------ | ----------------------------------------------- |
+| Simple task               | A: Skills / Inline | "Explain this function"                         |
+| Single-domain feature     | A: Skills / Inline | "Add a React component"                         |
+| Multi-domain              | B: Subagents       | "Build a full-stack dashboard"                  |
+| Sequential work           | C: Handoffs        | "Plan → implement → migrate → verify"           |
+| Classification + dispatch | D: Router          | "Investigate the best database approach"        |
+| Complex                   | Compose            | "Security audit + architecture changes + fixes" |
 
-## Agent Registry (118 agents)
+The actual pattern is always selected from the task context rather than from
+the table alone.
 
-| Category | Agents |
-|----------|--------|
-| **Core** | orchestrator, codebase-investigator, skill-creator, universal-technology-specialist |
-| **Frontend** | react-specialist, vue-specialist, css-architect, accessibility-engineer, perf-specialist |
-| **Backend** | nodejs-architect, python-engineer, go-engineer, rust-engineer, java-engineer, graphql-engineer, **generic-shell-specialist**, **tui-specialist** |
-| **Security** | security-auditor, threat-modeler, incident-responder, compliance-engineer |
-| **DevOps** | pipeline-engineer, kubernetes-engineer, terraform-engineer, sre-engineer, observability-engineer |
-| **Database** | postgres-specialist, sql-optimizer, data-engineer |
-| **Architecture** | system-architect, microservices-architect |
-| **Testing** | test-architect, test-automator, qa-engineer, performance-tester |
-| **AI/ML** | ml-engineer, prompt-engineer, rag-architect |
-| **...** | 25+ more categories |
+## Agent Registry
 
-## Sub-Skills (17 meta-cognitive)
+The skill contains specialized agents across domains including:
 
-`self-evolve`, `research`, `coding`, `testing`, `review`, `architecture`, `security`, `devops`, `debugging`, `documentation`, `performance`, `monitoring`, `data`, `api-design`, `migration`, `mobile`, `ai-ml`
+| Category          | Examples                                                                                                                                                      |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Core**          | orchestrator, codebase-investigator, skill-creator, universal-technology-specialist                                                                           |
+| **Frontend**      | react-specialist, vue-specialist, css-architect, accessibility-engineer, perf-specialist                                                                      |
+| **Backend**       | nodejs-architect, python-engineer, go-engineer, rust-engineer, java-engineer, graphql-engineer, generic-shell-specialist, tui-specialist                      |
+| **Security**      | security-auditor, threat-modeler, incident-responder, compliance-engineer                                                                                     |
+| **DevOps**        | pipeline-engineer, kubernetes-engineer, terraform-engineer, sre-engineer, observability-engineer                                                              |
+| **Database**      | postgres-specialist, sql-optimizer, data-engineer                                                                                                             |
+| **Architecture**  | system-architect, microservices-architect                                                                                                                     |
+| **Testing**       | test-architect, test-automator, qa-engineer, performance-tester                                                                                               |
+| **AI/ML**         | ml-engineer, prompt-engineer, rag-architect                                                                                                                   |
+| **Other domains** | Mobile, cloud, blockchain, data engineering, documentation, research, game development, GIS, finance, marketing, sales, support, and specialized technologies |
+
+The registry in `skill-manifest.yaml` is the source of truth for available
+agents.
+
+## Sub-Skills
+
+Available meta-cognitive and domain skills include:
+
+```text
+self-evolve
+research
+coding
+testing
+review
+architecture
+security
+devops
+debugging
+documentation
+performance
+monitoring
+data
+api-design
+migration
+mobile
+ai-ml
+```
+
+The complete skill registry is under:
+
+```text
+skills/
+```
+
+Load only the relevant skill.
 
 ## Workflows
 
-| Workflow | Use For |
-|----------|---------|
-| `default` | General tasks (auto-selects pattern) |
-| `implementation` | Code changes (Handoffs + Subagents) |
-| `research` | Investigation (Router + Skills) |
-| `review` | Code/design review |
-| `debugging` | Bug investigation |
-| `emergency` | Hotfixes |
+| Workflow         | Use For                               |
+| ---------------- | ------------------------------------- |
+| `default`        | General tasks                         |
+| `implementation` | Code changes                          |
+| `research`       | Investigation and research            |
+| `review`         | Code/design review                    |
+| `debugging`      | Bug investigation                     |
+| `emergency`      | Production incidents and urgent fixes |
+
+Workflows provide execution structure but do not replace classification or
+specialist selection.
 
 ## Flags
 
-| Flag | Description |
-|------|-------------|
-| `--help` | Show this help |
-| `--version` | Show version |
-| `--detect` | Only run stack detection |
-| `--workflow <name>` | Force specific workflow |
-| `--dry-run` | Show plan without executing |
+| Flag                | Description                                             |
+| ------------------- | ------------------------------------------------------- |
+| `--help`            | Show help                                               |
+| `--version`         | Show version                                            |
+| `--detect`          | Run stack detection without modifying the project       |
+| `--workflow <name>` | Use a specific workflow                                 |
+| `--dry-run`         | Show the intended execution plan without making changes |
 
 ## Output Format
 
-On every turn, the agent emits:
+For moderate and complex tasks, report concise execution state:
+
 ```yaml
 step: 1-9
 size: atomic | moderate | complex
 domains: [frontend, backend, ...]
 risk: none | data | security | compliance
 pattern: A | B | C | D | compose
-agents: [{domain, agent, reason}]
-verification: {tests: pass, lint: pass, build: pass}
+execution_mode: inline | subagent
+agents:
+  - domain: <domain>
+    agent: <agent>
+    reason: <short reason>
+verification:
+  tests: pass | fail | not_run | not_applicable
+  lint: pass | fail | not_run | not_applicable
+  build: pass | fail | not_run | not_applicable
 ```
 
-## Anti-Patterns (What We Don't Do)
+For atomic tasks, the output may be reduced to:
 
-| ❌ Don't | ✅ Do |
-|----------|-------|
-| Ask "which pattern?" | Autonomous pattern selection |
-| Spawn 4 frontend agents | Max 1 agent per domain |
-| Say "tests should pass" | Show actual test output |
-| Hardcode model tier | Auto-detect from context |
-| Skip verification | Run tests/lint/build every time |
+```yaml
+size: atomic
+pattern: A
+execution_mode: inline
+verification: <actual result>
+```
+
+Only report verification that actually occurred.
+
+Do not expose hidden chain-of-thought or private reasoning.
+
+## Anti-Patterns
+
+| ❌ Don't                                             | ✅ Do                                                   |
+| --------------------------------------------------- | ------------------------------------------------------ |
+| Ask "which pattern?"                                | Select the pattern autonomously                        |
+| Ask "which agent?"                                  | Route to the appropriate specialist                    |
+| Spawn multiple agents for one domain without reason | Default to one primary agent per domain                |
+| Claim an agent was spawned when none was available  | Clearly distinguish `subagent` from `inline` execution |
+| Say "tests should pass"                             | Run relevant checks and report actual results          |
+| Claim tests passed without running them             | Report `not_run` when not executed                     |
+| Hardcode a model tier                               | Let the host/context determine the model               |
+| Load every file in the skill                        | Load only relevant resources                           |
+| Skip verification                                   | Verify according to the task's blast radius            |
+| Perform unrelated refactoring                       | Make the smallest coherent change                      |
+| Store temporary information in memory               | Persist only durable project knowledge                 |
+| Force complex orchestration                         | Use the smallest safe execution structure              |
 
 ## Installation
 
 ```bash
-# Global (all projects)
+# Global - available across projects
 ./scripts/install.sh --global
 
 # Project-specific
 ./scripts/install.sh --project /path/to/project
 ```
 
-**Installer creates/updates `.gitignore`** to exclude `.memory/ultimate-dev/` (project context).
+The installer creates or updates `.gitignore` to exclude:
+
+```text
+.memory/ultimate-dev/
+```
+
+for project-local context.
 
 ## File Structure
 
-```
+```text
 .agents/skills/ultimate-dev/
-├── AGENT.md              ← This file (entry point)
-├── SKILL.md              ← Full orchestrator documentation
+
+├── AGENT.md              ← Primary runtime entry point
+├── SKILL.md              ← Full skill documentation
 ├── skill-manifest.yaml   ← Agent/skill/module registry
 ├── VERSION               ← Version number
-├── agents/               ← 118 specialist agents
-├── skills/               ← 17 meta-cognitive sub-skills
-├── modules/              ← 45 pattern modules
-├── workflows/            ← 7 execution pipelines
-├── router/               ← Classification & routing logic
-├── scripts/              ← Installers & validation
+├── agents/               ← Specialist agents
+├── skills/               ← Reusable skills
+├── modules/              ← Reusable patterns and domain knowledge
+├── workflows/            ← Execution workflows
+├── router/               ← Classification and routing rules
+├── scripts/              ← Installation and validation
 └── ...
 ```
 
@@ -265,4 +471,9 @@ verification: {tests: pass, lint: pass, build: pass}
 
 ---
 
-**The agent IS the orchestrator.** No need to specify patterns, workflows, or agents — it decides autonomously based on your task.
+**The agent IS the orchestrator.**
+
+The user provides the task. Ultimate Dev autonomously determines the appropriate
+classification, pattern, specialists, workflow, execution mode, verification,
+and learning process.
+

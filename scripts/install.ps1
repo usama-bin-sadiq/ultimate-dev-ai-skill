@@ -1,5 +1,5 @@
 # ultimate-dev v2.1.0 — Installer for Windows/macOS/Linux
-# Usage: .\install.ps1 [-Global] [-Project <DIR>] [-Uninstall] [-Yes] [-Help]
+# Usage: .\install.ps1 [-Global] [-Project <DIR>] [-Uninstall] [-Yes] [-CleanMemory] [-CleanGitignore] [-All] [-Help]
 # https://learn.microsoft.com/en-us/powershell/
 
 param(
@@ -7,6 +7,9 @@ param(
     [string]$Project = "",
     [switch]$Uninstall,
     [switch]$Yes,
+    [switch]$CleanMemory,
+    [switch]$CleanGitignore,
+    [switch]$All,
     [switch]$Help
 )
 
@@ -29,7 +32,8 @@ function Write-Logo {
     Write-Host "  │                                                     │" -ForegroundColor Cyan
     Write-Host "  │            " -ForegroundColor Cyan -NoNewline
     Write-Host "ultimate-dev" -ForegroundColor Magenta -NoNewline
-    Write-Host " v$ver                          │" -ForegroundColor Cyan
+    Write-Host " v$ver" -ForegroundColor DarkGray -NoNewline
+    Write-Host "                          │" -ForegroundColor Cyan
     Write-Host "  │            ─────────────────                         │" -ForegroundColor Cyan
     Write-Host "  │  " -ForegroundColor Cyan -NoNewline
     Write-Host "Master Software Engineering Orchestrator" -ForegroundColor Magenta -NoNewline
@@ -91,28 +95,181 @@ function Show-Menu {
 
 # ─── Help ───────────────────────────────────────────────────
 if ($Help) {
-    Write-Host "Usage: .\install.ps1 [-Global|-Project <DIR>|-Uninstall|-Yes|-Help]"
+    Write-Host "Usage: .\install.ps1 [-Global|-Project <DIR>|-Uninstall|-Yes|-CleanMemory|-CleanGitignore|-All|-Help]"
     Write-Host ""
     Write-Host "Options:"
-    Write-Host "  -Global        Install to ~/.agents/skills/ultimate-dev"
-    Write-Host "  -Project DIR   Install to DIR\.agents\skills\ultimate-dev"
-    Write-Host "  -Uninstall     Remove the installation"
-    Write-Host "  -Yes           Skip confirmation prompt"
+    Write-Host "  -Global           Install to ~/.agents/skills/ultimate-dev"
+    Write-Host "  -Project DIR      Install to DIR\.agents\skills\ultimate-dev"
+    Write-Host "  -Uninstall        Remove the installation"
+    Write-Host "  -Yes              Skip confirmation prompt"
+    Write-Host "  -CleanMemory      Also remove .memory/ultimate-dev/ directory (project context)"
+    Write-Host "  -CleanGitignore   Also remove .memory/ultimate-dev/ entry from .gitignore"
+    Write-Host "  -All              Shorthand for -CleanMemory -CleanGitignore"
+    Write-Host "  -Help             Show this help"
     exit 0
+}
+
+if ($All) {
+    $CleanMemory = $true
+    $CleanGitignore = $true
 }
 
 Write-Logo
 
 # ─── Uninstall ──────────────────────────────────────────────
 if ($Uninstall) {
-    Write-Header "Uninstalling"
-    $target = Join-Path $HomeDir ".agents/skills/ultimate-dev"
-    if (Test-Path $target) {
-        Remove-Item -Recurse -Force $target
-        Write-Status "Removed $target"
-    } else {
-        Write-Warn "Nothing to uninstall"
+    Write-Header "Uninstalling ultimate-dev"
+
+    # Determine scope for uninstall (same flow as install)
+    $Scope = ""
+    if (-not $Global -and -not $Project) {
+        if ($Yes) {
+            $Global = $true
+        } else {
+            do {
+                $valid = Show-Menu -Title "Where is the installation?" -Options @(
+                    "Global    — ~/.agents/skills/ultimate-dev/"
+                    "Project   — <project>/.agents/skills/ultimate-dev/"
+                )
+            } while (-not $valid)
+
+            switch ($script:MenuResult) {
+                1 { $Global = $true }
+                2 {
+                    $Scope = "project"
+                    Write-Host ""
+                    Write-Host "  Enter project path:" -ForegroundColor Cyan
+                    Write-Host "  (e.g., C:\my-app or . for current directory)" -ForegroundColor DarkGray
+                    Write-Host ""
+                    Write-Host "  " -NoNewline
+                    $input_path = Read-Host
+                    if ($input_path -eq ".") { $input_path = (Get-Location).Path }
+                    $Project = $input_path
+                    if (-not (Test-Path $Project)) {
+                        Write-Err "Directory not found: $Project"
+                        exit 1
+                    }
+                }
+            }
+        }
     }
+
+    if ($Global) {
+        $Scope = "global"
+        $Target = Join-Path $HomeDir ".agents/skills/ultimate-dev"
+        $ProjectDir = $HomeDir
+    } else {
+        $Scope = "project"
+        if (-not $Project -or $Project -eq "project") { $Project = (Get-Location).Path }
+        $Target = Join-Path $Project ".agents/skills/ultimate-dev"
+        $ProjectDir = $Project
+    }
+
+    $MemoryDir = Join-Path $ProjectDir ".memory/ultimate-dev"
+    $Gitignore = Join-Path $ProjectDir ".gitignore"
+    $MemoryEntry = ".memory/ultimate-dev/"
+
+    # Show what will be removed
+    $foundAny = $false
+
+    if (Test-Path $Target) {
+        Write-Host "  • Skill directory:  $Target" -ForegroundColor White
+        $foundAny = $true
+    } else {
+        Write-Warn "Skill directory not found: $Target"
+    }
+
+    if ($CleanMemory -and (Test-Path $MemoryDir)) {
+        Write-Host "  • Memory directory:  $MemoryDir" -ForegroundColor White
+        $foundAny = $true
+    } elseif ($CleanMemory) {
+        Write-Info "Memory directory not found: $MemoryDir"
+    }
+
+    if ($CleanGitignore -and (Test-Path $Gitignore)) {
+        $content = Get-Content $Gitignore -Raw
+        if ($content -match "^$MemoryEntry$") {
+            Write-Host "  • .gitignore entry:  $MemoryEntry" -ForegroundColor White
+            $foundAny = $true
+        } else {
+            Write-Info ".gitignore entry not found: $MemoryEntry"
+        }
+    } elseif ($CleanGitignore) {
+        Write-Info ".gitignore not found: $Gitignore"
+    }
+
+    if (-not $foundAny) {
+        Write-Warn "Nothing to uninstall"
+        exit 0
+    }
+
+    # Confirm
+    if (-not $Yes) {
+        Write-Host ""
+        do {
+            $valid = Show-Menu -Title "Proceed with uninstall?" -Options @("Yes — Uninstall", "No — Cancel")
+        } while (-not $valid)
+
+        if ($script:MenuResult -ne 1) {
+            Write-Info "Cancelled."
+            exit 0
+        }
+    }
+
+    # Execute uninstall
+    if (Test-Path $Target) {
+        Remove-Item -Recurse -Force $Target
+        Write-Status "Removed $Target"
+    }
+
+    if ($CleanMemory -and (Test-Path $MemoryDir)) {
+        Remove-Item -Recurse -Force $MemoryDir
+        Write-Status "Removed $MemoryDir"
+    }
+
+    if ($CleanGitignore -and (Test-Path $Gitignore)) {
+        $content = Get-Content $Gitignore -Raw
+        if ($content -match "^$MemoryEntry$") {
+            $newContent = $content -replace "`n?$MemoryEntry`n?", "`n"
+            $newContent = $newContent.Trim()
+            if ($newContent -eq "") {
+                Remove-Item -Force $Gitignore
+                Write-Info "Removed empty .gitignore"
+            } else {
+                Set-Content $Gitignore $newContent
+                Write-Status "Removed $MemoryEntry from .gitignore"
+            }
+        }
+    }
+
+    Write-Header "Uninstalled"
+    Write-Host ""
+    Write-Host "  Scope:       $Scope" -ForegroundColor White
+    if (Test-Path $Target) {
+        Write-Warn "Skill directory still exists (may have been recreated)"
+    } else {
+        Write-Status "Skill directory removed"
+    }
+    if ($CleanMemory) {
+        if (Test-Path $MemoryDir) {
+            Write-Warn "Memory directory still exists"
+        } else {
+            Write-Status "Memory directory removed"
+        }
+    }
+    if ($CleanGitignore) {
+        if (Test-Path $Gitignore) {
+            $content = Get-Content $Gitignore -Raw
+            if ($content -match "^$MemoryEntry$") {
+                Write-Warn ".gitignore entry still exists"
+            } else {
+                Write-Status ".gitignore entry removed"
+            }
+        } else {
+            Write-Status ".gitignore entry removed"
+        }
+    }
+    Write-Host ""
     exit 0
 }
 

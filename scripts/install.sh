@@ -21,19 +21,19 @@ trap cleanup EXIT
 print_logo() {
     local ver
     ver="$(cat "$SKILL_DIR/VERSION" 2>/dev/null || echo "2.1.0")"
+    local C="${CYAN}" M="${MAGENTA}" B="${BOLD}" D="${DIM}" N="${NC}"
     printf '\n'
-    printf '  %s┌─────────────────────────────────────────────────────┐%s\n' "$CYAN" "$NC"
-    printf '  %s│%s                                                     %s│%s\n' "$CYAN" "$NC" "$CYAN" "$NC"
-    printf '  %s│%s            %s%s%sultimate-dev%s %sv%s%s                          %s│%s\n' \
-        "$CYAN" "$NC" "$BOLD" "$MAGENTA" "" "$NC" "$DIM" "$ver" "$NC" "$CYAN" "$NC"
-    printf '  %s│%s            %s─────────────────%s                          %s│%s\n' \
-        "$CYAN" "$NC" "$DIM" "$NC" "$CYAN" "$NC"
-    printf '  %s│%s  %sMaster Software Engineering Orchestrator%s              %s│%s\n' \
-        "$CYAN" "$NC" "$MAGENTA" "$NC" "$CYAN" "$NC"
-    printf '  %s│%s  %s120 agents • 17 skills • 45 modules • Any model%s    %s│%s\n' \
-        "$CYAN" "$NC" "$DIM" "$NC" "$CYAN" "$NC"
-    printf '  %s│%s                                                     %s│%s\n' "$CYAN" "$NC" "$CYAN" "$NC"
-    printf '  %s└─────────────────────────────────────────────────────┘%s\n' "$CYAN" "$NC"
+    printf '  %s┌─────────────────────────────────────────────────────┐%s\n' "$C" "$N"
+    printf '  %s│%s                                                     %s│%s\n' "$C" "$N" "$C" "$N"
+    printf '  %s│%s            ' "$C" "$N"
+    printf '%s%sultimate-dev%s ' "$B$M" "$N"
+    printf '%sv%s%s' "$D" "$ver" "$N"
+    printf '                          %s│%s\n' "$C" "$N"
+    printf '  %s│%s            %s─────────────────%s                          %s│%s\n' "$C" "$N" "$D" "$N" "$C" "$N"
+    printf '  %s│%s  %sMaster Software Engineering Orchestrator%s              %s│%s\n' "$C" "$N" "$M" "$N" "$C" "$N"
+    printf '  %s│%s  %s120 agents • 17 skills • 45 modules • Any model%s    %s│%s\n' "$C" "$N" "$D" "$N" "$C" "$N"
+    printf '  %s│%s                                                     %s│%s\n' "$C" "$N" "$C" "$N"
+    printf '  %s└─────────────────────────────────────────────────────┘%s\n' "$C" "$N"
     printf '\n'
 }
 
@@ -100,15 +100,20 @@ SCOPE=""
 PROJECT_DIR=""
 UNINSTALL=false
 AUTO_YES=false
+CLEAN_MEMORY=false
+CLEAN_GITIGNORE=false
 
 while [ $# -gt 0 ]; do
     case "$1" in
-        --global)    SCOPE="global"; shift ;;
-        --project)   SCOPE="project"; PROJECT_DIR="$2"; shift 2 ;;
-        --uninstall) UNINSTALL=true; shift ;;
-        --yes|-y)    AUTO_YES=true; shift ;;
-        --help|-h)   usage; exit 0 ;;
-        *)           err "Unknown option: $1"; usage; exit 1 ;;
+        --global)        SCOPE="global"; shift ;;
+        --project)       SCOPE="project"; PROJECT_DIR="$2"; shift 2 ;;
+        --uninstall)     UNINSTALL=true; shift ;;
+        --yes|-y)        AUTO_YES=true; shift ;;
+        --clean-memory)  CLEAN_MEMORY=true; shift ;;
+        --clean-gitignore) CLEAN_GITIGNORE=true; shift ;;
+        --all)           CLEAN_MEMORY=true; CLEAN_GITIGNORE=true; shift ;;
+        --help|-h)       usage; exit 0 ;;
+        *)               err "Unknown option: $1"; usage; exit 1 ;;
     esac
 done
 
@@ -116,14 +121,137 @@ print_logo
 
 # ─── Uninstall ──────────────────────────────────────────────
 if [ "$UNINSTALL" = true ]; then
-    header "Uninstalling"
-    TARGET="$HOME/.agents/skills/ultimate-dev"
+    header "Uninstalling ultimate-dev"
+
+    # Determine scope for uninstall (same flow as install)
+    if [ -z "$SCOPE" ]; then
+        if [ "$AUTO_YES" = true ]; then
+            SCOPE="global"
+        else
+            until menu_select "Where is the installation?" \
+                "Global    — ~/.agents/skills/ultimate-dev/" \
+                "Project   — <project>/.agents/skills/ultimate-dev/"; do
+                :
+            done
+
+            case "$MENU_RESULT" in
+                1) SCOPE="global" ;;
+                2)
+                    SCOPE="project"
+                    printf '\n'
+                    printf '  %sEnter project path:%s\n' "$CYAN" "$NC"
+                    printf '  %s(e.g., ~/my-app or . for current directory)%s\n' "$DIM" "$NC"
+                    printf '\n  '
+                    read -r PROJECT_DIR
+                    PROJECT_DIR="${PROJECT_DIR/#\~/$HOME}"
+                    if [ ! -d "$PROJECT_DIR" ]; then
+                        err "Directory not found: $PROJECT_DIR"
+                        exit 1
+                    fi
+                    ;;
+            esac
+        fi
+    fi
+
+    if [ "$SCOPE" = "global" ]; then
+        TARGET="$HOME/.agents/skills/ultimate-dev"
+        PROJECT_DIR="$HOME"
+    else
+        PROJECT_DIR="${PROJECT_DIR:-$(pwd)}"
+        TARGET="$PROJECT_DIR/.agents/skills/ultimate-dev"
+    fi
+
+    MEMORY_DIR="$PROJECT_DIR/.memory/ultimate-dev"
+    GITIGNORE="$PROJECT_DIR/.gitignore"
+    MEMORY_ENTRY=".memory/ultimate-dev/"
+
+    # Show what will be removed
+    FOUND_ANY=false
+    if [ -d "$TARGET" ]; then
+        printf '  %s• Skill directory:%s  %s\n' "$BOLD" "$NC" "$TARGET"
+        FOUND_ANY=true
+    else
+        warn "Skill directory not found: $TARGET"
+    fi
+
+    if [ "$CLEAN_MEMORY" = true ] && [ -d "$MEMORY_DIR" ]; then
+        printf '  %s• Memory directory:%s  %s\n' "$BOLD" "$NC" "$MEMORY_DIR"
+        FOUND_ANY=true
+    elif [ "$CLEAN_MEMORY" = true ]; then
+        info "Memory directory not found: $MEMORY_DIR"
+    fi
+
+    if [ "$CLEAN_GITIGNORE" = true ] && [ -f "$GITIGNORE" ] && grep -q "^$MEMORY_ENTRY$" "$GITIGNORE"; then
+        printf '  %s• .gitignore entry:%s  %s\n' "$BOLD" "$NC" "$MEMORY_ENTRY"
+        FOUND_ANY=true
+    elif [ "$CLEAN_GITIGNORE" = true ]; then
+        info ".gitignore entry not found: $MEMORY_ENTRY"
+    fi
+
+    if [ "$FOUND_ANY" = false ]; then
+        warn "Nothing to uninstall"
+        exit 0
+    fi
+
+    # Confirm
+    if [ "$AUTO_YES" = false ]; then
+        printf '\n'
+        until menu_select "Proceed with uninstall?" "Yes — Uninstall" "No — Cancel"; do
+            :
+        done
+        if [ "$MENU_RESULT" -ne 1 ]; then
+            info "Cancelled."
+            exit 0
+        fi
+    fi
+
+    # Execute uninstall
     if [ -d "$TARGET" ]; then
         rm -rf "$TARGET"
         status "Removed $TARGET"
-    else
-        warn "Nothing to uninstall"
     fi
+
+    if [ "$CLEAN_MEMORY" = true ] && [ -d "$MEMORY_DIR" ]; then
+        rm -rf "$MEMORY_DIR"
+        status "Removed $MEMORY_DIR"
+    fi
+
+    if [ "$CLEAN_GITIGNORE" = true ] && [ -f "$GITIGNORE" ]; then
+        if grep -q "^$MEMORY_ENTRY$" "$GITIGNORE"; then
+            sed -i.bak "\|^$MEMORY_ENTRY$|d" "$GITIGNORE"
+            rm -f "$GITIGNORE.bak"
+            if [ ! -s "$GITIGNORE" ]; then
+                rm -f "$GITIGNORE"
+                info "Removed empty .gitignore"
+            else
+                status "Removed $MEMORY_ENTRY from .gitignore"
+            fi
+        fi
+    fi
+
+    header "Uninstalled"
+    printf '\n'
+    printf '  %sScope:%s       %s\n' "$BOLD" "$NC" "$SCOPE"
+    if [ -d "$TARGET" ]; then
+        warn "Skill directory still exists"
+    else
+        status "Skill directory removed"
+    fi
+    if [ "$CLEAN_MEMORY" = true ]; then
+        if [ -d "$MEMORY_DIR" ]; then
+            warn "Memory directory still exists"
+        else
+            status "Memory directory removed"
+        fi
+    fi
+    if [ "$CLEAN_GITIGNORE" = true ]; then
+        if [ -f "$GITIGNORE" ] && grep -q "^$MEMORY_ENTRY$" "$GITIGNORE"; then
+            warn ".gitignore entry still exists"
+        else
+            status ".gitignore entry removed"
+        fi
+    fi
+    printf '\n'
     exit 0
 fi
 
@@ -203,17 +331,19 @@ header "Installing"
 mkdir -p "$(dirname "$TARGET")"
 cp -r "$SKILL_DIR" "$TARGET"
 
-# Manage .gitignore for project memory directory
-GITIGNORE="$PROJECT_DIR/.gitignore"
-MEMORY_ENTRY=".memory/ultimate-dev/"
-if [ -f "$GITIGNORE" ]; then
-    if ! grep -q "^$MEMORY_ENTRY$" "$GITIGNORE"; then
-        printf '\n%s\n' "$MEMORY_ENTRY" >> "$GITIGNORE"
-        info "Added $MEMORY_ENTRY to .gitignore"
+# Manage .gitignore for project memory directory (only for project scope)
+if [ "$SCOPE" = "project" ]; then
+    GITIGNORE="$PROJECT_DIR/.gitignore"
+    MEMORY_ENTRY=".memory/ultimate-dev/"
+    if [ -f "$GITIGNORE" ]; then
+        if ! grep -q "^$MEMORY_ENTRY$" "$GITIGNORE"; then
+            printf '\n%s\n' "$MEMORY_ENTRY" >> "$GITIGNORE"
+            info "Added $MEMORY_ENTRY to .gitignore"
+        fi
+    else
+        printf '%s\n' "$MEMORY_ENTRY" > "$GITIGNORE"
+        info "Created .gitignore with $MEMORY_ENTRY"
     fi
-else
-    printf '%s\n' "$MEMORY_ENTRY" > "$GITIGNORE"
-    info "Created .gitignore with $MEMORY_ENTRY"
 fi
 
 AGENT_COUNT=$(find "$TARGET/agents" -name "*.md" 2>/dev/null | wc -l | tr -d ' ')

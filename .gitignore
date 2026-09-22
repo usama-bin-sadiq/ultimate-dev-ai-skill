@@ -17,3 +17,4 @@ personas/drafts/
 # Logs
 *.log
 .agents
+.memory/ultimate-dev/
