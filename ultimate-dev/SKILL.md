@@ -124,7 +124,7 @@ Task → Detect domain → No dedicated specialist?
 
 ### Agent Registry
 Full agent list with triggers and domains: **`skill-manifest.yaml`**
-- 120 agents across 34+ categories
+- 118 agents across 34+ categories (including **orchestrator** for autonomous pattern selection)
 - 17 meta-cognitive sub-skills in `skills/`
 - 45 internal pattern modules in `modules/`
 
@@ -228,7 +228,7 @@ ultimate-dev/
 ├── skill-manifest.yaml         ← Agent/skill/module registry
 ├── README.md                   ← User documentation
 ├── VERSION                     ← Version number
-├── agents/                     ← 120 specialized agents
+├── agents/                     ← 118 specialized agents (incl. orchestrator)
 │   ├── _shared/                ← Shared fragments (injected into all agents)
 │   ├── frontend/               ← Frontend specialists
 │   ├── backend/                ← Backend specialists

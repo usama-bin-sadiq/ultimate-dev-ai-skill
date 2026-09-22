@@ -14,12 +14,12 @@ Match keywords/intent → Capability Index. No match → `_emerging-tech-handler
 
 | Domain | Keywords |
 |--------|----------|
-| backend | API, server, endpoint, REST, gRPC, worker, queue, service, lambda, auth |
-| frontend | UI, component, page, form, CSS, render, browser, SPA, SSR, responsive |
-| architecture | system design, tech stack, migration, scaling, CQRS, hexagonal |
-| database | schema, query, index, migration, SQL, NoSQL, data model, slow query |
-| security | auth, PII, encryption, XSS, CSRF, vulnerability, secrets, RBAC, compliance |
-| devops | deploy, CI/CD, Docker, K8s, Terraform, cloud, pipeline, monitoring |
+| backend | API, server, endpoint, REST, gRPC, worker, queue, service, lambda, auth, nodejs, python, go, java, graphql |
+| frontend | UI, component, page, form, CSS, render, browser, SPA, SSR, responsive, react, vue, angular, tailwind, accessibility |
+| architecture | system design, tech stack, migration, scaling, CQRS, hexagonal, recommend, evaluate, compare, trade-off |
+| database | schema, query, index, migration, SQL, NoSQL, data model, slow query, postgres, mysql, mongodb, timeseries, analytics |
+| security | auth, PII, encryption, XSS, CSRF, vulnerability, secrets, RBAC, compliance, audit, penetration, threat, hardening |
+| devops | deploy, CI/CD, Docker, K8s, Terraform, cloud, pipeline, monitoring, kubernetes, production, zero-downtime, release |
 | mobile | iOS, Android, React Native, Flutter, Swift, Kotlin, offline sync |
 | testing-qa | test, E2E, unit, integration, coverage, mock, flaky, QA, regression |
 | documentation | README, API docs, ADR, changelog, docstring, runbook |
@@ -32,7 +32,7 @@ Match keywords/intent → Capability Index. No match → `_emerging-tech-handler
 | finance | budget, revenue, cost, unit economics, P&L, pricing, margin |
 | support | ticket, helpdesk, knowledge base, CSAT, escalation, SLA |
 | paid-media | Google Ads, Meta Ads, PPC, retargeting, ROAS, CPC, campaign |
-| research | competitive analysis, market research, literature review, benchmark |
+| research | competitive analysis, market research, literature review, benchmark, recommend, evaluate, compare, analyze, investigate, best |
 | academic | thesis, dissertation, citation, methodology, paper, journal |
 | healthcare | EHR, FHIR, HL7, HIPAA, clinical, patient, interoperability |
 | game-dev | game design, gameplay, Unity, Unreal, multiplayer, monetization |
