@@ -1,9 +1,17 @@
-name: Release
+name: Sync & Release
 
-# Push to main → ensure a GitHub Release + tag exist for the version in
-# ultimate-dev/VERSION, with the matching changelog section as notes.
-# Skips automatically when the release for that tag already exists, so
-# ordinary pushes are no-ops. Bump VERSION + add a changelog entry to release.
+# Push to main →
+#   1. Regenerate README facts (sync-docs.py: version, counts, agent tree)
+#      and auto-commit + push the README if it was stale
+#   2. Ensure a GitHub Release + tag exist for ultimate-dev/VERSION, using
+#      that version's changelog section as notes (no-op if already released)
+#
+# Sync runs BEFORE the release so there is no race between "fix README"
+# and "verify README" — one job, sequential steps.
+# The sync step doubles as the gate: it exits non-zero on drift it cannot
+# fix (missing managed line, skill-manifest.yaml out of date).
+# Auto-commits carry [skip ci] (and GITHUB_TOKEN pushes never re-trigger
+# workflows), so this cannot loop.
 on:
   push:
     branches: [main]
@@ -12,22 +20,38 @@ on:
 permissions:
   contents: write
 
-# Never cancel a release mid-flight; queue behind any in-progress one.
+# Never cancel a release mid-flight; queue behind any in-progress run.
 concurrency:
   group: release
   cancel-in-progress: false
 
 jobs:
-  release:
-    name: Tag & release from VERSION
+  sync-and-release:
+    name: Sync README & release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Refuse to ship a README that contradicts the repo (version, counts, tree).
-      - name: Verify skill docs are in sync
-        run: python3 ultimate-dev/scripts/sync-docs.py --check
+      - name: Sync README with repo facts
+        run: python3 ultimate-dev/scripts/sync-docs.py
+
+      - name: Auto-commit synced README
+        id: commit
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- ultimate-dev/README.md; then
+            echo "README already in sync — nothing to commit."
+            echo "target=${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ultimate-dev/README.md
+          git commit -m "docs: auto-sync README with repo state [skip ci]"
+          git push
+          echo "target=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "Pushed README sync commit."
 
       - name: Create tag + GitHub Release
         env:
@@ -39,6 +63,8 @@ jobs:
           TAG="v${VERSION}"
           CHANGELOG="ultimate-dev/changelog/CHANGELOG.md"
           README_URL="https://github.com/${GITHUB_REPOSITORY}/blob/main/ultimate-dev/README.md"
+          # Tag the synced state if a fix commit was pushed, else this push.
+          TARGET="${{ steps.commit.outputs.target }}"
 
           # Already released? Nothing to do.
           if gh release view "$TAG" >/dev/null 2>&1; then
@@ -69,7 +95,7 @@ jobs:
           } >> notes.md
 
           gh release create "$TAG" \
-            --target "$GITHUB_SHA" \
+            --target "$TARGET" \
             --title "ultimate-dev ${TAG}" \
             --notes-file notes.md
 
