@@ -1,7 +1,5 @@
-# ultimate-dev v2.0.0 — Installer for Windows
-# Usage: .\scripts\install.ps1 [-Global] [-Project <DIR>] [-Uninstall] [-Help]
-#
-# Asks one question: install globally or to a specific project?
+# ultimate-dev v2.1.0 — Installer for Windows
+# Usage: .\install.ps1 [-Global] [-Project <DIR>] [-Uninstall] [-Help]
 
 param(
     [switch]$Global,
@@ -14,142 +12,40 @@ $ErrorActionPreference = "Stop"
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $SkillDir = Join-Path (Split-Path -Parent $ScriptDir) "ultimate-dev"
-$Version = if (Test-Path "$SkillDir\VERSION") { (Get-Content "$SkillDir\VERSION" -Raw).Trim() } else { "2.1.0" }
 
-# ─── HELP ──────────────────────────────────────────────────
 if ($Help) {
-    Write-Host ""
-    Write-Host "ultimate-dev v$Version Installer" -ForegroundColor Cyan
-    Write-Host ""
-    Write-Host "Usage: .\install.ps1 [OPTIONS]"
-    Write-Host ""
-    Write-Host "Options:"
-    Write-Host "  -Global           Install to ~/.agents/skills/ultimate-dev (shared across projects)"
-    Write-Host "  -Project <DIR>   Install to DIR\.agents\skills\ultimate-dev (project-specific)"
-    Write-Host "  -Uninstall        Remove the skill installation"
-    Write-Host "  -Help             Show this help"
-    Write-Host ""
-    Write-Host "Examples:"
-    Write-Host "  .\install.ps1                    # Interactive — asks where to install"
-    Write-Host "  .\install.ps1 -Global            # Install globally"
-    Write-Host "  .\install.ps1 -Project C:\my-app # Install for C:\my-app only"
-    Write-Host ""
+    Write-Host "Usage: .\install.ps1 [-Global|-Project <DIR>|-Uninstall|-Help]"
     exit 0
 }
 
-# ─── HEADER ────────────────────────────────────────────────
-Write-Host ""
-Write-Host "╔══════════════════════════════════════════════════╗" -ForegroundColor Cyan
-Write-Host "║   ultimate-dev v$Version Installer               ║" -ForegroundColor Cyan
-Write-Host "╚══════════════════════════════════════════════════╝" -ForegroundColor Cyan
-Write-Host ""
-
-# ─── FUNCTIONS ─────────────────────────────────────────────
-function Install-Skill {
-    param([string]$Target)
-
-    Write-Host ""
-    Write-Host "Installing to: $Target" -ForegroundColor Cyan
-    Write-Host ""
-
-    # Create target directory
-    New-Item -ItemType Directory -Force -Path $Target | Out-Null
-
-    # Copy core files
-    Copy-Item -Force "$SkillDir\SKILL.md" "$Target\"
-    Copy-Item -Force "$SkillDir\README.md" "$Target\"
-    Copy-Item -Force "$SkillDir\VERSION" "$Target\"
-    Copy-Item -Force "$SkillDir\skill-manifest.yaml" "$Target\"
-
-    # Copy directories (only if they exist and have content)
-    $dirs = @("agents", "skills", "modules", "config", "prompts", "workflows",
-              "schemas", "rules", "router", "templates", "tools", "scripts",
-              "tests", "examples", "evals", "reference", "memory", "changelog")
-
-    foreach ($dir in $dirs) {
-        $sourcePath = Join-Path $SkillDir $dir
-        if (Test-Path $sourcePath) {
-            $items = Get-ChildItem $sourcePath -Force
-            if ($items.Count -gt 0) {
-                Copy-Item -Recurse -Force $sourcePath "$Target\"
-            }
-        }
-    }
-
-    # Verify installation
-    if ((Test-Path "$Target\SKILL.md") -and (Test-Path "$Target\skill-manifest.yaml")) {
-        $agentCount = if (Test-Path "$Target\agents") { (Get-ChildItem "$Target\agents" -Recurse -Filter "*.md").Count } else { 0 }
-        $skillCount = if (Test-Path "$Target\skills") { (Get-ChildItem "$Target\skills" -Recurse -Filter "SKILL.md").Count } else { 0 }
-        $moduleCount = if (Test-Path "$Target\modules") { (Get-ChildItem "$Target\modules" -Recurse -Filter "*.md").Count } else { 0 }
-
-        Write-Host ""
-        Write-Host "✅ Installation successful!" -ForegroundColor Green
-        Write-Host ""
-        Write-Host "  Installed to: $Target" -ForegroundColor White
-        Write-Host "  Version:      $Version" -ForegroundColor White
-        Write-Host "  Agents:       $agentCount" -ForegroundColor White
-        Write-Host "  Skills:       $skillCount" -ForegroundColor White
-        Write-Host "  Modules:      $moduleCount" -ForegroundColor White
-        Write-Host ""
-    } else {
-        Write-Host "❌ Installation failed — core files missing" -ForegroundColor Red
-        exit 1
-    }
-}
-
-function Uninstall-Skill {
-    param([string]$Target)
-    if (Test-Path $Target) {
-        Remove-Item -Recurse -Force $Target
-        Write-Host "✅ Uninstalled: $Target" -ForegroundColor Green
-    } else {
-        Write-Host "⚠️  Nothing to uninstall at: $Target" -ForegroundColor Yellow
-    }
-}
-
-# ─── UNINSTALL ─────────────────────────────────────────────
+# Uninstall
 if ($Uninstall) {
-    Write-Host "Uninstalling ultimate-dev..." -ForegroundColor Yellow
-    Uninstall-Skill "$env:USERPROFILE\.agents\skills\ultimate-dev"
-    Write-Host "Done." -ForegroundColor Green
+    $target = "$env:USERPROFILE\.agents\skills\ultimate-dev"
+    if (Test-Path $target) { Remove-Item -Recurse -Force $target; Write-Host "✅ Uninstalled" -ForegroundColor Green }
+    else { Write-Host "Nothing to uninstall" -ForegroundColor Yellow }
     exit 0
 }
 
-# ─── INTERACTIVE MODE (no arguments) ───────────────────────
+# Interactive mode
 if (-not $Global -and -not $Project) {
-    Write-Host "Where would you like to install ultimate-dev?" -ForegroundColor White
-    Write-Host ""
-    Write-Host "  1) Global    — shared across all projects" -ForegroundColor White
-    Write-Host "                 → ~/.agents/skills/ultimate-dev/" -ForegroundColor Gray
-    Write-Host ""
-    Write-Host "  2) Project   — specific to one project" -ForegroundColor White
-    Write-Host "                 → <project>/.agents/skills/ultimate-dev/" -ForegroundColor Gray
-    Write-Host ""
-    Write-Host "  Press 1 for global, 2 for project, or Esc to quit" -ForegroundColor Cyan
-    Write-Host ""
-
+    Write-Host "`nultimate-dev Installer" -ForegroundColor Cyan
+    Write-Host "`n  1) Global   — ~/.agents/skills/ultimate-dev/"
+    Write-Host "  2) Project  — <project>/.agents/skills/ultimate-dev/`n"
     $key = [Console]::ReadKey($true)
     Write-Host ""
-
     switch ($key.KeyChar) {
         '1' { $Global = $true }
         '2' {
-            Write-Host "Enter project path (e.g., C:\my-app or . for current directory):" -ForegroundColor Cyan
+            Write-Host "Project path:" -ForegroundColor Cyan
             $Project = Read-Host
             if ($Project -eq ".") { $Project = (Get-Location).Path }
-            if (-not (Test-Path $Project)) {
-                Write-Host "❌ Directory does not exist: $Project" -ForegroundColor Red
-                exit 1
-            }
+            if (-not (Test-Path $Project)) { Write-Host "❌ Not found: $Project" -ForegroundColor Red; exit 1 }
         }
-        default {
-            Write-Host "Cancelled." -ForegroundColor Yellow
-            exit 0
-        }
+        default { exit 0 }
     }
 }
 
-# ─── DETERMINE TARGET ──────────────────────────────────────
+# Target
 if ($Global) {
     $Target = "$env:USERPROFILE\.agents\skills\ultimate-dev"
 } else {
@@ -157,30 +53,22 @@ if ($Global) {
     $Target = "$Project\.agents\skills\ultimate-dev"
 }
 
-# ─── CONFIRM ───────────────────────────────────────────────
-$scope = if ($Global) { "global" } else { "project" }
-Write-Host ""
-Write-Host "  Scope:  $scope" -ForegroundColor White
-Write-Host "  Target: $Target" -ForegroundColor White
-Write-Host ""
+# Confirm
+Write-Host "`n  Target: $Target" -ForegroundColor White
 $confirm = Read-Host "Proceed? (y/N)"
-if ($confirm -notmatch '^[Yy]$') {
-    Write-Host "Cancelled." -ForegroundColor Yellow
-    exit 0
-}
+if ($confirm -notmatch '^[Yy]$') { Write-Host "Cancelled." -ForegroundColor Yellow; exit 0 }
 
-# ─── INSTALL ───────────────────────────────────────────────
-Install-Skill $Target
+# Install — just copy the whole directory
+$parentDir = Split-Path -Parent $Target
+if (-not (Test-Path $parentDir)) { New-Item -ItemType Directory -Force -Path $parentDir | Out-Null }
+if (Test-Path $Target) { Remove-Item -Recurse -Force $Target }
+Copy-Item -Recurse -Force $SkillDir $Target
 
-# ─── NEXT STEPS ────────────────────────────────────────────
-Write-Host "Next steps:" -ForegroundColor White
-if ($Global) {
-    Write-Host "  The skill is available to all projects." -ForegroundColor White
-    Write-Host "  Your AI coding tool will auto-detect it." -ForegroundColor White
-} else {
-    Write-Host "  The skill is installed in your project." -ForegroundColor White
-    Write-Host "  Your AI coding tool will auto-detect it." -ForegroundColor White
-}
-Write-Host ""
-Write-Host "  To uninstall: .\install.ps1 -Uninstall" -ForegroundColor Cyan
-Write-Host ""
+$version = if (Test-Path "$Target\VERSION") { (Get-Content "$Target\VERSION" -Raw).Trim() } else { "unknown" }
+$agentCount = if (Test-Path "$Target\agents") { (Get-ChildItem "$Target\agents" -Recurse -Filter "*.md").Count } else { 0 }
+$skillCount = if (Test-Path "$Target\skills") { (Get-ChildItem "$Target\skills" -Recurse -Filter "SKILL.md").Count } else { 0 }
+
+Write-Host "`n✅ Installed to $Target" -ForegroundColor Green
+Write-Host "   Version: $version"
+Write-Host "   Agents: $agentCount"
+Write-Host "   Skills: $skillCount`n"
