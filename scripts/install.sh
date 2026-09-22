@@ -11,6 +11,7 @@ SKILL_DIR="$(dirname "$SCRIPT_DIR")/ultimate-dev"
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
 BLUE='\033[0;34m'; CYAN='\033[0;36m'; MAGENTA='\033[0;35m'
 BOLD='\033[1m'; DIM='\033[2m'; NC='\033[0m'
+BG_BLUE='\033[44m'; BG_GREEN='\033[42m'; BG_CYAN='\033[46m'
 
 # ─── Helpers ────────────────────────────────────────────────
 print_logo() {
@@ -53,6 +54,141 @@ usage() {
     echo ""
 }
 
+# ─── Arrow key menu ─────────────────────────────────────────
+# Renders a menu with arrow key navigation
+# Usage: arrow_menu "title" "option1" "option2" ...
+# Returns: selected index (1-based) in ARROW_MENU_RESULT
+ARROW_MENU_RESULT=""
+arrow_menu() {
+    local title="$1"
+    shift
+    local options=("$@")
+    local count=${#options[@]}
+    local selected=1
+    local error_msg=""
+
+    # Hide cursor
+    echo -ne "\e[?25l"
+
+    while true; do
+        # Clear and draw menu
+        echo -e "  ${BOLD}$title${NC}"
+        echo ""
+
+        for i in "${!options[@]}"; do
+            local idx=$((i + 1))
+            local label="${options[$i]}"
+
+            if [ "$idx" -eq "$selected" ]; then
+                # Selected item — highlighted
+                echo -e "    ${BG_BLUE}  ▸ $idx) $label  ${NC}"
+            else
+                echo -e "    ${DIM}  $idx) $label${NC}"
+            fi
+        done
+
+        echo ""
+
+        # Show error if any
+        if [ -n "$error_msg" ]; then
+            echo -e "  ${RED}✘ $error_msg${NC}"
+            echo ""
+            error_msg=""
+        fi
+
+        echo -e "  ${DIM}↑↓ navigate  •  Enter select  •  q quit${NC}"
+        echo ""
+
+        # Read input — handle arrow keys and regular keys
+        local key=""
+        local escape=false
+
+        while true; do
+            read -rsn1 char
+
+            if [ "$char" = $'\x1b' ; then
+                # Escape sequence — read next 2 chars (arrow keys)
+                read -rsn1 char2
+                read -rsn1 char3
+                case "$char3" in
+                    A) key="up"; break ;;    # Up arrow
+                    B) key="down"; break ;;  # Down arrow
+                esac
+                # Other escape sequences — ignore
+            elif [ "$char" = $'\x0a' ] || [ "$char" = $'\x0d' ]; then
+                key="enter"
+                break
+            elif [ "$char" = "q" ] || [ "$char" = "Q" ]; then
+                key="quit"
+                break
+            elif [ "$char" = "1" ]; then
+                key="num1"
+                break
+            elif [ "$char" = "2" ]; then
+                key="num2"
+                break
+            elif [ "$char" = "3" ]; then
+                key="num3"
+                break
+            elif [ "$char" = "4" ]; then
+                key="num4"
+                break
+            # Ignore all other keys — do nothing
+            fi
+        done
+
+        # Process input
+        case "$key" in
+            up)
+                selected=$((selected - 1))
+                if [ "$selected" -lt 1 ]; then
+                    selected=$count  # Wrap to bottom
+                fi
+                # Move cursor up and clear
+                echo -ne "\e[${count}A"
+                for ((i=0; i<count+3; i++)); do echo -ne "\e[2K\e[1B"; done
+                echo -ne "\e[${count+3}A"
+                ;;
+            down)
+                selected=$((selected + 1))
+                if [ "$selected" -gt "$count" ]; then
+                    selected=1  # Wrap to top
+                fi
+                # Move cursor up and clear
+                echo -ne "\e[${count}A"
+                for ((i=0; i<count+3; i++)); do echo -ne "\e[2K\e[1B"; done
+                echo -ne "\e[${count+3}A"
+                ;;
+            enter)
+                # Show cursor
+                echo -ne "\e[?25h"
+                ARROW_MENU_RESULT=$selected
+                return 0
+                ;;
+            num1|num2|num3|num4)
+                local num=${key#num}
+                if [ "$num" -le "$count" ]; then
+                    # Show cursor
+                    echo -ne "\e[?25h"
+                    ARROW_MENU_RESULT=$num
+                    return 0
+                else
+                    error_msg="Invalid option: $num (choose 1-$count)"
+                    # Move cursor up and redraw
+                    echo -ne "\e[${count}A"
+                    for ((i=0; i<count+3; i++)); do echo -ne "\e[2K\e[1B"; done
+                    echo -ne "\e[${count+3}A"
+                fi
+                ;;
+            quit)
+                echo -ne "\e[?25h"
+                ARROW_MENU_RESULT=0
+                return 1
+                ;;
+        esac
+    done
+}
+
 # ─── Parse args ─────────────────────────────────────────────
 SCOPE=""; PROJECT_DIR=""; UNINSTALL=false
 while [ $# -gt 0 ]; do
@@ -82,25 +218,27 @@ fi
 
 # ─── Interactive mode ───────────────────────────────────────
 if [ -z "$SCOPE" ]; then
-    echo -e "  ${BOLD}Where do you want to install?${NC}"
-    echo ""
-    echo -e "    ${BOLD}1)${NC}  ${GREEN}Global${NC}    ${DIM}→  ~/.agents/skills/ultimate-dev/${NC}"
-    echo -e "        ${DIM}Available to all projects on this machine${NC}"
-    echo ""
-    echo -e "    ${BOLD}2)${NC}  ${CYAN}Project${NC}   ${DIM}→  <project>/.agents/skills/ultimate-dev/${NC}"
-    echo -e "        ${DIM}Isolated to a single project${NC}"
-    echo ""
-    echo -e "    ${DIM}Press ${BOLD}1${NC}${DIM} for global, ${BOLD}2${NC}${DIM} for project, or ${BOLD}q${NC}${DIM} to quit${NC}"
-    echo ""
+    # Main scope menu
+    arrow_menu "Where do you want to install?" \
+        "Global    — ~/.agents/skills/ultimate-dev/" \
+        "Project   — <project>/.agents/skills/ultimate-dev/"
 
-    read -r -n1 -s choice
-    echo ""
+    MENU_EXIT=$?
 
-    case "$choice" in
+    if [ $MENU_EXIT -ne 0 ] || [ "$ARROW_MENU_RESULT" -eq 0 ]; then
+        info "Cancelled."
+        exit 0
+    fi
+
+    case "$ARROW_MENU_RESULT" in
         1) SCOPE="global" ;;
         2)
             SCOPE="project"
-            echo -e "  ${CYAN}Enter project path (e.g., ~/my-app or . for current dir):${NC}"
+            echo ""
+            echo -e "  ${CYAN}Enter project path:${NC}"
+            echo -e "  ${DIM}(e.g., ~/my-app or . for current directory)${NC}"
+            echo ""
+            echo -ne "  "
             read -r PROJECT_DIR
             PROJECT_DIR="${PROJECT_DIR/#\~/$HOME}"
             if [ ! -d "$PROJECT_DIR" ]; then
@@ -108,8 +246,6 @@ if [ -z "$SCOPE" ]; then
                 exit 1
             fi
             ;;
-        q|Q) info "Cancelled."; exit 0 ;;
-        *)   err "Invalid choice."; exit 1 ;;
     esac
 fi
 
@@ -121,7 +257,7 @@ else
     TARGET="$PROJECT_DIR/.agents/skills/ultimate-dev"
 fi
 
-# ─── Confirm ────────────────────────────────────────────────
+# ─── Confirm menu ───────────────────────────────────────────
 header "Ready to install"
 echo ""
 echo -e "  ${BOLD}Source:${NC}  $SKILL_DIR"
@@ -133,13 +269,11 @@ echo ""
 # Check if already installed
 if [ -d "$TARGET" ]; then
     warn "Already installed at $TARGET"
-    read -r -p "  Replace? (y/N) " confirm
-    [[ ! "$confirm" =~ ^[Yy]$ ]] && info "Keeping existing install." && exit 0
-    rm -rf "$TARGET"
 fi
 
-read -r -p "  Proceed? (y/N) " confirm
-if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+arrow_menu "Proceed?" "Yes — Install" "No — Cancel"
+
+if [ "$ARROW_MENU_RESULT" -ne 1 ]; then
     info "Cancelled."
     exit 0
 fi
@@ -147,20 +281,18 @@ fi
 # ─── Install ────────────────────────────────────────────────
 header "Installing"
 
-# Create parent directory
 mkdir -p "$(dirname "$TARGET")"
 
-# Copy the entire skill directory
-echo -ne "  ${DIM}Copying files...${NC}\r"
+# Show progress
+echo -ne "  ${DIM}Copying files...${NC}"
 cp -r "$SKILL_DIR" "$TARGET"
+echo -e "\r  ${GREEN}✔${NC} Copied files    "
 
-# Count what was installed
 AGENT_COUNT=$(find "$TARGET/agents" -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
 SKILL_COUNT=$(find "$TARGET/skills" -name "SKILL.md" 2>/dev/null | wc -l | tr -d ' ')
 MODULE_COUNT=$(find "$TARGET/modules" -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
 FILE_COUNT=$(find "$TARGET" -type f 2>/dev/null | wc -l | tr -d ' ')
 
-echo -e "  ${GREEN}✔${NC} Copied $FILE_COUNT files"
 status "Version $(cat "$TARGET/VERSION")"
 
 # ─── Summary ────────────────────────────────────────────────
@@ -173,7 +305,6 @@ echo -e "  ${BOLD}Modules:${NC}   $MODULE_COUNT"
 echo -e "  ${BOLD}Files:${NC}     $FILE_COUNT"
 echo ""
 
-# ─── Next steps ─────────────────────────────────────────────
 echo -e "  ${BOLD}Next steps:${NC}"
 if [ "$SCOPE" = "global" ]; then
     echo -e "  ${DIM}• Your AI coding tool will auto-detect the skill${NC}"

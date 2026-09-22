@@ -38,6 +38,82 @@ function Write-Err($msg)    { Write-Host "  ✘ $msg" -ForegroundColor Red }
 function Write-Info($msg)   { Write-Host "  ℹ $msg" -ForegroundColor Cyan }
 function Write-Header($msg) { Write-Host "`n  ── $msg ──" -ForegroundColor Blue }
 
+# ─── Arrow key menu ─────────────────────────────────────────
+function Show-Menu {
+    param(
+        [string]$Title,
+        [string[]]$Options
+    )
+
+    $selected = 1
+    $count = $Options.Count
+
+    # Hide cursor
+    [Console]::CursorVisible = $false
+
+    try {
+        while ($true) {
+            # Draw menu
+            Write-Host "  $Title" -ForegroundColor White
+            Write-Host ""
+
+            for ($i = 0; $i -lt $count; $i++) {
+                $num = $i + 1
+                if ($num -eq $selected) {
+                    Write-Host "    ▸ $num) $($Options[$i])" -ForegroundColor White -BackgroundColor DarkBlue
+                } else {
+                    Write-Host "    $num) $($Options[$i])" -ForegroundColor DarkGray
+                }
+            }
+
+            Write-Host ""
+            Write-Host "  ↑↓ navigate  •  Enter select  •  q quit" -ForegroundColor DarkGray
+            Write-Host ""
+
+            # Read key
+            $key = [Console]::ReadKey($true)
+
+            # Clear the menu area (count lines + title + blank + hint)
+            $totalLines = $count + 4
+            [Console]::SetCursorPosition(0, [Console]::CursorTop - $totalLines)
+            for ($i = 0; $i -lt $totalLines; $i++) {
+                Write-Host (" " * ([Console]::WindowWidth - 1))
+            }
+            [Console]::SetCursorPosition(0, [Console]::CursorTop - $totalLines)
+
+            switch ($key.Key) {
+                "UpArrow" {
+                    $selected--
+                    if ($selected -lt 1) { $selected = $count }
+                }
+                "DownArrow" {
+                    $selected++
+                    if ($selected -gt $count) { $selected = 1 }
+                }
+                "Enter" {
+                    [Console]::CursorVisible = $true
+                    return $selected
+                }
+                "Escape" {
+                    [Console]::CursorVisible = $true
+                    return 0
+                }
+                default {
+                    # Check for number keys
+                    $num = [int]$key.KeyChar - 48  # ASCII to int
+                    if ($num -ge 1 -and $num -le $count) {
+                        [Console]::CursorVisible = $true
+                        return $num
+                    }
+                    # Wrong key — do nothing, redraw
+                }
+            }
+        }
+    } finally {
+        [Console]::CursorVisible = $true
+    }
+}
+
 # ─── Help ───────────────────────────────────────────────────
 if ($Help) {
     Write-Host "Usage: .\install.ps1 [-Global|-Project <DIR>|-Uninstall|-Help]"
@@ -66,29 +142,25 @@ if ($Uninstall) {
 
 # ─── Interactive mode ───────────────────────────────────────
 if (-not $Global -and -not $Project) {
-    Write-Host "  Where do you want to install?" -ForegroundColor White
-    Write-Host ""
-    Write-Host "    1)  " -ForegroundColor White -NoNewline
-    Write-Host "Global" -ForegroundColor Green -NoNewline
-    Write-Host "    →  ~/.agents/skills/ultimate-dev/" -ForegroundColor DarkGray
-    Write-Host "        Available to all projects on this machine" -ForegroundColor DarkGray
-    Write-Host ""
-    Write-Host "    2)  " -ForegroundColor White -NoNewline
-    Write-Host "Project" -ForegroundColor Cyan -NoNewline
-    Write-Host "   →  <project>/.agents/skills/ultimate-dev/" -ForegroundColor DarkGray
-    Write-Host "        Isolated to a single project" -ForegroundColor DarkGray
-    Write-Host ""
-    Write-Host "    Press 1 for global, 2 for project, or Esc to quit" -ForegroundColor DarkGray
-    Write-Host ""
+    $result = Show-Menu -Title "Where do you want to install?" -Options @(
+        "Global    — ~/.agents/skills/ultimate-dev/"
+        "Project   — <project>/.agents/skills/ultimate-dev/"
+    )
 
-    $key = [Console]::ReadKey($true)
-    Write-Host ""
+    if ($result -eq 0) {
+        Write-Info "Cancelled."
+        exit 0
+    }
 
-    switch ($key.KeyChar) {
-        '1' { $Global = $true }
-        '2' {
+    switch ($result) {
+        1 { $Global = $true }
+        2 {
             $Project = "project"
-            Write-Host "  Enter project path (e.g., C:\my-app or . for current dir):" -ForegroundColor Cyan
+            Write-Host ""
+            Write-Host "  Enter project path:" -ForegroundColor Cyan
+            Write-Host "  (e.g., C:\my-app or . for current directory)" -ForegroundColor DarkGray
+            Write-Host ""
+            Write-Host "  " -NoNewline
             $input_path = Read-Host
             if ($input_path -eq ".") { $input_path = (Get-Location).Path }
             $Project = $input_path
@@ -97,7 +169,6 @@ if (-not $Global -and -not $Project) {
                 exit 1
             }
         }
-        default { Write-Info "Cancelled."; exit 0 }
     }
 }
 
@@ -112,23 +183,23 @@ if ($Global) {
 # ─── Confirm ────────────────────────────────────────────────
 Write-Header "Ready to install"
 Write-Host ""
+$version = if (Test-Path "$SkillDir\VERSION") { (Get-Content "$SkillDir\VERSION" -Raw).Trim() } else { "unknown" }
 Write-Host "  Source:  $SkillDir" -ForegroundColor White
 Write-Host "  Target:  $Target" -ForegroundColor White
 Write-Host "  Scope:   $(if ($Global) { 'global' } else { 'project' })" -ForegroundColor White
-$version = if (Test-Path "$SkillDir\VERSION") { (Get-Content "$SkillDir\VERSION" -Raw).Trim() } else { "unknown" }
 Write-Host "  Version: $version" -ForegroundColor White
 Write-Host ""
 
-# Check if already installed
 if (Test-Path $Target) {
     Write-Warn "Already installed at $Target"
-    $confirm = Read-Host "  Replace? (y/N)"
-    if ($confirm -notmatch '^[Yy]$') { Write-Info "Keeping existing install."; exit 0 }
-    Remove-Item -Recurse -Force $Target
 }
 
-$confirm = Read-Host "  Proceed? (y/N)"
-if ($confirm -notmatch '^[Yy]$') { Write-Info "Cancelled."; exit 0 }
+$confirm = Show-Menu -Title "Proceed?" -Options @("Yes — Install", "No — Cancel")
+
+if ($confirm -ne 1) {
+    Write-Info "Cancelled."
+    exit 0
+}
 
 # ─── Install ────────────────────────────────────────────────
 Write-Header "Installing"
@@ -155,7 +226,6 @@ Write-Host "  Modules:   $moduleCount" -ForegroundColor White
 Write-Host "  Files:     $fileCount" -ForegroundColor White
 Write-Host ""
 
-# ─── Next steps ─────────────────────────────────────────────
 Write-Host "  Next steps:" -ForegroundColor White
 if ($Global) {
     Write-Host "  • Your AI coding tool will auto-detect the skill" -ForegroundColor DarkGray
