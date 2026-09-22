@@ -40,28 +40,56 @@ Adapts to your model's context window automatically:
 
 ## What's Inside
 
-### 120 Agents across 34+ Categories
+### 118 Agents across 36 Categories
 
+<!-- ud:begin agent-tree -->
 ```
-agents/
-├── frontend/      (6)  react, vue, css, accessibility, perf, generic
-├── backend/       (10) node, python, go, rust, java, csharp, graphql, api, generic
-├── security/      (4)  auditor, threat-modeler, incident-responder, compliance
-├── devops/        (7)  k8s, terraform, pipeline, sre, reliability, observability, generic
-├── testing/       (6)  playwright, jest, pytest, quality, test-automator, generic
-├── database/      (4)  postgres, sql-optimizer, data-engineer, generic
-├── ai-ml/         (4)  ml-engineer, data-scientist, nlp-engineer, generic
-├── marketing/     (7)  growth, content, seo, social, email, brand, affiliate
-├── finance/       (5)  analyst, compliance, pricing, revenue, fintech
-├── specialized/   (6)  blockchain, iot, quantum, xr, supply-chain, edtech
-├── ...30+ more categories
-└── codebase-investigator.md  (built-in)
+agents/ — 118 agents, 36 categories, 7 root-level  [empty: observability]
+├── academic/            ( 1)  research-methodologist
+├── ai-ml/               ( 4)  generic-ai-ml-specialist, ml-engineer, prompt-engineer, rag-architect
+├── api-patterns/        ( 1)  api-architect
+├── architecture/        ( 2)  microservices-architect, system-architect
+├── backend/             (12)  api-designer, csharp-engineer, database-tuner, generic-backend-specialist, generic-shell-specialist, go-engineer, graphql-engineer, java-engineer, nodejs-architect, python-engineer, rust-engineer, tui-specialist
+├── blockchain/          ( 1)  smart-contract-developer
+├── caching/             ( 1)  cache-engineer
+├── cloud/               ( 3)  cloud-architect, cost-optimizer, generic-cloud-specialist
+├── data-engineering/    ( 1)  data-pipeline-engineer
+├── database/            ( 4)  data-engineer, generic-database-specialist, postgres-specialist, sql-optimizer
+├── design-handoff/      ( 3)  design-spec, motion-designer, ux-researcher
+├── devops/              ( 7)  generic-devops-specialist, kubernetes-engineer, observability-engineer, pipeline-engineer, reliability-engineer, sre-engineer, terraform-engineer
+├── documentation/       ( 2)  devrel-engineer, tech-writer
+├── finance/             ( 5)  compliance-officer, financial-analyst, fintech-analyst, pricing-strategist, revenue-operations
+├── frontend/            ( 6)  accessibility-engineer, css-architect, generic-frontend-specialist, perf-specialist, react-specialist, vue-specialist
+├── game-dev/            ( 3)  game-designer, game-programmer, level-designer
+├── gis/                 ( 2)  cartographer, spatial-analyst
+├── git/                 ( 1)  git-specialist
+├── healthcare/          ( 3)  biotech-researcher, clinical-data-analyst, health-informaticist
+├── legacy/              ( 1)  modernizer
+├── marketing/           ( 7)  affiliate-marketer, brand-strategist, content-strategist, email-marketing, growth-hacker, seo-specialist, social-media-manager
+├── messaging/           ( 1)  event-architect
+├── meta/                ( 4)  agent-generator, auto-persona-generator, gap-tracker, skill-maintainer
+├── mobile/              ( 3)  mobile-android, mobile-flutter, mobile-ios
+├── monorepo/            ( 1)  monorepo-architect
+├── paid-media/          ( 2)  ads-optimizer, programmatic-buyer
+├── performance/         ( 1)  performance-engineer
+├── project-management/  ( 3)  product-owner, release-manager, scrum-master
+├── real-time/           ( 1)  realtime-engineer
+├── sales/               ( 3)  account-manager, outbound-strategist, sales-engineer
+├── search/              ( 1)  search-engineer
+├── security/            ( 4)  compliance-engineer, incident-responder, security-auditor, threat-modeler
+├── spatial-computing/   ( 2)  spatial-ui-designer, xr-developer
+├── specialized/         ( 6)  blockchain-engineer, edtech-designer, iot-engineer, legal-tech, quantum-computing, supply-chain
+├── support/             ( 3)  customer-success, support-ops, technical-support-engineer
+├── testing/             ( 6)  generic-testing-specialist, performance-tester, qa-engineer, quality-engineer, test-architect, test-automator
+└── root-level           ( 7)  browser-agent, cli-help, codebase-investigator, generalist, orchestrator, skill-creator, universal-technology-specialist
 ```
+<!-- ud:end agent-tree -->
 
 ### 17 Meta-Cognitive Sub-Skills
 
 Each teaches HOW to think about a domain — technology-agnostic:
 
+<!-- ud:begin skills-table -->
 | Skill | Purpose |
 |-------|---------|
 | `self-evolve` | Auto-generates new skills from experience |
@@ -81,6 +109,7 @@ Each teaches HOW to think about a domain — technology-agnostic:
 | `migration` | Transition anything |
 | `mobile` | Build for any device |
 | `ai-ml` | Build intelligent systems |
+<!-- ud:end skills-table -->
 
 ### Self-Evolution
 
@@ -145,6 +174,12 @@ python3 scripts/validate.py
 # Auto-generate manifest from disk
 python3 scripts/generate-manifest.py
 
+# Re-sync README numbers (version, counts, agent tree) with the repo
+python3 scripts/sync-docs.py
+
+# Verify README is in sync without rewriting (pre-commit/CI)
+python3 scripts/sync-docs.py --check
+
 # Install pre-commit hook
 cp scripts/pre-commit .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
@@ -154,9 +189,13 @@ chmod +x .git/hooks/pre-commit
 
 ```
 ultimate-dev/
-├── SKILL.md                    ← Orchestrator (218 lines)
+├── SKILL.md                    ← Orchestrator (270 lines)
 ├── skill-manifest.yaml         ← Auto-generated registry
-├── agents/                     ← 120 specialized agents
+├── README.md                   ← User documentation (this file)
+├── VERSION                     ← Version number (source of truth)
+├── AGENT.md / CLAUDE.md        ← Agent entry-point docs for other harnesses
+├── adapters/                   ← Harness adapters (claude-code, codex, cursor, generic-cli)
+├── agents/                     ← 118 specialized agents
 ├── skills/                     ← 17 meta-cognitive sub-skills
 ├── modules/                    ← 45 internal pattern modules
 ├── config/                     ← Configuration files
@@ -166,7 +205,7 @@ ultimate-dev/
 ├── rules/                      ← Operational constraints
 ├── router/                     ← Classification & routing logic
 ├── templates/                  ← Reusable templates
-├── scripts/                    ← validate.py, generate-manifest.py, pre-commit
+├── scripts/                    ← validate.py, generate-manifest.py, sync-docs.py, pre-commit
 ├── tools/                      ← Tool integrations
 ├── tests/                      ← Validation tests
 ├── examples/                   ← Usage examples
