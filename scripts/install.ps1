@@ -193,6 +193,20 @@ $parentDir = Split-Path -Parent $Target
 if (-not (Test-Path $parentDir)) { New-Item -ItemType Directory -Force -Path $parentDir | Out-Null }
 Copy-Item -Recurse -Force $SkillDir $Target
 
+# Manage .gitignore for project memory directory
+$gitignore = Join-Path $Project ".gitignore"
+$memoryEntry = ".memory/ultimate-dev/"
+if (Test-Path $gitignore) {
+    $content = Get-Content $gitignore -Raw
+    if ($content -notmatch "^$memoryEntry$") {
+        Add-Content $gitignore "`n$memoryEntry"
+        Write-Info "Added $memoryEntry to .gitignore"
+    }
+} else {
+    Set-Content $gitignore $memoryEntry
+    Write-Info "Created .gitignore with $memoryEntry"
+}
+
 $agentCount = if (Test-Path (Join-Path $Target "agents")) { (Get-ChildItem (Join-Path $Target "agents") -Recurse -Filter "*.md").Count } else { 0 }
 $skillCount = if (Test-Path (Join-Path $Target "skills")) { (Get-ChildItem (Join-Path $Target "skills") -Recurse -Filter "SKILL.md").Count } else { 0 }
 $moduleCount = if (Test-Path (Join-Path $Target "modules")) { (Get-ChildItem (Join-Path $Target "modules") -Recurse -Filter "*.md").Count } else { 0 }

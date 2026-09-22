@@ -38,23 +38,105 @@ This is the **primary agent** for the `ultimate-dev` skill. Invoke this agent di
 
 ## How It Works (Autonomous)
 
+The **`orchestrator` agent** is the decision-making engine. It runs the 9-step Operating Loop:
+
 ```
-Your Task → ultimate-dev Agent
+Your Task → orchestrator Agent
     │
     ├─► 1. CAPTURE   — Understand intent, constraints, acceptance criteria
-    ├─► 2. DETECT    — Read stack (language, framework, tools)
+    ├─► 2. DETECT    — Read stack (language, framework, tools) via stack-detection.md
     ├─► 3. CLASSIFY  — Size (atomic/moderate/complex), domains, risk
-    ├─► 4. PATTERN   — Autonomous decision tree:
-    │     ├─ Single domain?     → PATTERN A: SKILLS
-    │     ├─ Multi + parallel?  → PATTERN B: SUBAGENTS
-    │     ├─ Sequential?        → PATTERN C: HANDOFFS
-    │     ├─ Classify + merge?  → PATTERN D: ROUTER
-    │     └─ Complex?           → COMPOSE patterns
+    ├─► 4. PATTERN   — Autonomous decision tree (see below)
     ├─► 5. ROUTE     — Select agents (max 1 per domain, tiebreaker)
-    ├─► 6. EXECUTE   — Smallest coherent change
-    ├─► 7. VERIFY    — Run actual tests/lint/build
+    ├─► 6. EXECUTE   — Spawn sub-agents, execute smallest coherent change
+    ├─► 7. VERIFY    — Run actual tests/lint/build, show output
     ├─► 8. REVIEW    — Security, performance, correctness
-    └─► 9. LEARN     — Persist patterns for future
+    └─► 9. LEARN     — Persist patterns to memory/project conventions
+```
+
+### Pattern Decision Tree (Orchestrator's Autonomous Choice)
+
+```
+Task → orchestrator classifies → PATTERN DECISION:
+    │
+    ├─► Single domain, one specialist?
+    │       └─ YES → PATTERN A: SKILLS
+    │            → Load skills/<domain>/SKILL.md → Execute inline → Return
+    │
+    ├─► Multiple domains, parallel execution?
+    │       └─ YES → PATTERN B: SUBAGENTS
+    │            → orchestrator spawns N agents in parallel
+    │            → Each agent: independent, stateless, domain-specific
+    │            → orchestrator synthesizes results → Return
+    │
+    ├─► Sequential workflow, state carries?
+    │       └─ YES → PATTERN C: HANDOFFS
+    │            → orchestrator chains agents: A → state → B → state → C
+    │            → Handoff state: {context, decisions, artifacts, risks}
+    │
+    ├─► Classify + dispatch to specialists?
+    │       └─ YES → PATTERN D: ROUTER
+    │            → orchestrator classifies task → dispatches to specialists
+    │            → Collects all outputs → Merges via synthesis
+    │
+    └─► Complex, needs multiple patterns?
+            └─ COMPOSE (e.g., Handoffs with Subagents inside each stage)
+```
+
+### Sub-Agent Creation (How Orchestrator Spawns Agents)
+
+```
+For each domain in task:
+    1. Read skill-manifest.yaml → find agents for domain
+    2. Apply tiebreaker:
+         1) EXACT MATCH      (task keyword = agent name)
+         2) TECHNOLOGY MATCH (agent has tech in triggers)
+         3) DOMAIN GENERIC   (generic-<domain>-specialist)
+         4) UNIVERSAL        (universal-technology-specialist)
+    3. Check anti_triggers → exclude if matched
+    4. Spawn ONE agent per domain (never more)
+    5. Pass task context + relevant module patterns
+    6. Collect output → synthesize/chain per pattern
+```
+
+### Memory & Learning (Two Distinct Systems)
+
+#### 1. Project Memory (Current Project — Context for Agents)
+Keeps agents aligned during the current session/project. **Per-project, untracked.**
+
+```
+.memory/ultimate-dev/          →  Hidden directory (added to .gitignore)
+    ├── project-memory.md      →  Conventions, decisions, patterns for THIS project
+    ├── adrs/                  →  Architecture Decision Records
+    ├── conventions.md         →  Naming, style, test patterns discovered
+    └── context.md             →  Stack info, key files, team preferences
+```
+
+**Created by:** `codebase-investigator` / `convention-detective` on first run
+**Read by:** ALL agents at startup for consistent decisions
+**Scope:** Current project only
+**Git:** Added to `.gitignore` automatically by installer
+
+#### 2. Self-Evolution (Future Use — Global Skill Growth)
+Auto-generates permanent NEW agents/skills when NO existing match.
+
+```
+skills/_learned/<new-skill>/   →  New meta-cognitive skill (global)
+agents/<domain>/<new-agent>.md →  New specialist agent (global)
+skill-manifest.yaml            →  Updated registry
+```
+
+**Triggered by:** `self-evolve` skill when NO skill/agent matches task
+**Process:** Research → Execute → Generate skill/agent → Persist globally
+**Scope:** ALL future projects (installed globally)
+
+#### 3. Step 9 LEARN (Operating Loop Output)
+```yaml
+# What gets persisted where:
+project_learnings:    → .memory/ultimate-dev/project-memory.md (project scope)
+new_conventions:      → .memory/ultimate-dev/conventions.md (project scope)
+new_patterns:         → skills/_learned/ (global scope, if novel)
+new_agents:           → agents/ (global scope, if novel domain)
 ```
 
 ## What You Get
@@ -139,6 +221,8 @@ verification: {tests: pass, lint: pass, build: pass}
 # Project-specific
 ./scripts/install.sh --project /path/to/project
 ```
+
+**Installer creates/updates `.gitignore`** to exclude `.memory/ultimate-dev/` (project context).
 
 ## File Structure
 

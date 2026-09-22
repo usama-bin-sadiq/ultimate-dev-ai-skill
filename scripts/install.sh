@@ -203,6 +203,19 @@ header "Installing"
 mkdir -p "$(dirname "$TARGET")"
 cp -r "$SKILL_DIR" "$TARGET"
 
+# Manage .gitignore for project memory directory
+GITIGNORE="$PROJECT_DIR/.gitignore"
+MEMORY_ENTRY=".memory/ultimate-dev/"
+if [ -f "$GITIGNORE" ]; then
+    if ! grep -q "^$MEMORY_ENTRY$" "$GITIGNORE"; then
+        printf '\n%s\n' "$MEMORY_ENTRY" >> "$GITIGNORE"
+        info "Added $MEMORY_ENTRY to .gitignore"
+    fi
+else
+    printf '%s\n' "$MEMORY_ENTRY" > "$GITIGNORE"
+    info "Created .gitignore with $MEMORY_ENTRY"
+fi
+
 AGENT_COUNT=$(find "$TARGET/agents" -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
 SKILL_COUNT=$(find "$TARGET/skills" -name "SKILL.md" 2>/dev/null | wc -l | tr -d ' ')
 MODULE_COUNT=$(find "$TARGET/modules" -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
