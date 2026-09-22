@@ -13,8 +13,8 @@ param(
 $ErrorActionPreference = "Stop"
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$SkillDir = Split-Path -Parent $ScriptDir
-$Version = if (Test-Path "$SkillDir\VERSION") { (Get-Content "$SkillDir\VERSION" -Raw).Trim() } else { "2.0.0" }
+$SkillDir = Join-Path (Split-Path -Parent $ScriptDir) "ultimate-dev"
+$Version = if (Test-Path "$SkillDir\VERSION") { (Get-Content "$SkillDir\VERSION" -Raw).Trim() } else { "2.1.0" }
 
 # ─── HELP ──────────────────────────────────────────────────
 if ($Help) {

@@ -7,8 +7,8 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-SKILL_DIR="$(dirname "$SCRIPT_DIR")"
-VERSION=$(cat "$SKILL_DIR/VERSION" 2>/dev/null || echo "2.0.0")
+SKILL_DIR="$(dirname "$SCRIPT_DIR")/ultimate-dev"
+VERSION=$(cat "$SKILL_DIR/VERSION" 2>/dev/null || echo "2.1.0")
 
 # Colors
 RED='\033[0;31m'
