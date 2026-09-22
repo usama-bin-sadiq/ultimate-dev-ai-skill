@@ -54,15 +54,15 @@ function Show-Menu {
         [string[]]$Options
     )
 
-    # If console is not interactive (piped/redirected), auto-select first option
-    if (-not [Console]::IsInputRedirected -eq $false) {
-        return 1
-    }
-
     $selected = 1
     $count = $Options.Count
 
-    # Hide cursor
+    # If console input is redirected (piped, non-interactive), auto-select first option
+    if ([Console]::IsInputRedirected) {
+        return 1
+    }
+
+    # Hide cursor — restore on any exit via try/finally
     [Console]::CursorVisible = $false
 
     try {
@@ -105,18 +105,15 @@ function Show-Menu {
                     if ($selected -gt $count) { $selected = 1 }
                 }
                 "Enter" {
-                    [Console]::CursorVisible = $true
                     return $selected
                 }
                 "Escape" {
-                    [Console]::CursorVisible = $true
                     return 0
                 }
                 default {
-                    # Check for number keys
-                    $num = [int]$key.KeyChar - 48  # ASCII to int
+                    # Check for number keys 1-9
+                    $num = [int]$key.KeyChar - 48  # ASCII digit to int
                     if ($num -ge 1 -and $num -le $count) {
-                        [Console]::CursorVisible = $true
                         return $num
                     }
                     # Wrong key — do nothing, redraw
@@ -124,6 +121,7 @@ function Show-Menu {
             }
         }
     } finally {
+        # Always restore cursor — even on Ctrl+C or error
         [Console]::CursorVisible = $true
     }
 }
