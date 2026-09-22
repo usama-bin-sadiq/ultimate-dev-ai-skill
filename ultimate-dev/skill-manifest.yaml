@@ -216,6 +216,7 @@ modules:
 - modules/specialized/specialized.md
 - modules/support/support.md
 - modules/testing-frameworks/testing-frameworks.md
+- modules/testing-frameworks/test-detection.md
 shared:
 - agents/_shared/never-commits.md
 - agents/_shared/output-format.md

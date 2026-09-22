@@ -2,15 +2,18 @@
 name: browser-agent
 domain: browser
 description: >
-  Web automation via Chrome DevTools — navigate, click, fill forms, extract data, screenshot. Requires Chrome 144+. Disabled by default; enable in settings.json.
-triggers: [browser agent, browser, via, web, 144+, data, fill, json, click, forms, chrome, enable]
+  Web automation via Chrome DevTools — navigate, click, fill forms, extract data, screenshot. Requires Chrome 144+. Also supports web search via search engines.
+triggers: [browser agent, browser, via, web, 144+, data, fill, json, click, forms, chrome, enable, search, scrape, extract, navigate, screenshot]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file
   - write_file
+  - edit_file
   - grep_search
-  - glob
+  - glob_search
   - run_shell_command
+  - web_search
+  - browser
 model: inherit
 temperature: 0.2
 max_turns: 50

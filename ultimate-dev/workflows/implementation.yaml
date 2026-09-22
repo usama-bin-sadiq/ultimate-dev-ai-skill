@@ -8,6 +8,12 @@ description: >
   Spec → Plan → Implement → Test → Review.
   Orchestrator may compose with Subagents for parallel test writing.
 
+error_handling:
+  on_step_failure: "retry_once_then_escalate"
+  on_agent_failure: "fallback_to_generic_specialist"
+  on_gate_failure: "block_and_report"
+  max_retries: 2
+
 steps:
   - id: spec
     name: "Clarify Specification"

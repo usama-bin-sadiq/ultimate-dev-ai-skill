@@ -1,69 +1,116 @@
 # Validation Rules
 
 Rules for validating work output, code changes, and deliverables.
+**Technology-agnostic** — applies to ANY language, framework, or stack.
+
+---
 
 ## What to Validate
 
 ### Always Validate:
-- Compilation/syntax — Code must compile without errors.
-- Tests — All existing tests must pass, new tests must be written for new code.
-- Type safety — No `any` types, no unsafe casts, no implicit coercion.
-- Security — No injection vulnerabilities, no exposed secrets, no auth bypasses.
-- Scope — Changes must be within the defined scope.
+- **Compilation/syntax** — Code must compile/build without errors.
+- **Tests** — All existing tests must pass; new tests for new code.
+- **Type safety** — No unsafe types, casts, or coercion per language conventions.
+- **Security** — No injection, exposed secrets, auth bypasses, or unsafe patterns.
+- **Scope** — Changes stay within defined boundaries.
 
 ### Validate When Applicable:
-- Performance — No N+1 queries, no unnecessary re-renders, no memory leaks.
-- Accessibility — UI changes meet WCAG 2.1 AA standards.
-- Documentation — README, API docs, and inline comments are updated.
-- Backward compatibility — Public APIs are not broken without explicit approval.
-- Cross-browser/platform — UI works on target browsers/platforms.
+- **Performance** — No N+1 queries, unnecessary re-renders, memory leaks.
+- **Accessibility** — UI changes meet WCAG 2.1 AA (or platform equivalent).
+- **Documentation** — README, API docs, inline comments updated.
+- **Backward compatibility** — Public APIs/contracts not broken without approval.
+- **Cross-platform** — Works on target platforms/browsers/environments.
+
+---
+
+## Testing Pyramid — MANDATORY BUILD GATES (Pattern-Based)
+
+Every project MUST enforce the testing pyramid. The **pattern** is universal; tools vary.
+
+### Required Test Layers (Run in Order)
+
+| Layer | Purpose | Coverage Target | Gate |
+|-------|---------|-----------------|------|
+| **Unit** | Fast, isolated function/class tests | Lines ≥80%, Branches ≥90% | BLOCKING |
+| **Integration** | Module/service/DB/API interaction tests | Integration points ≥60% | BLOCKING |
+| **E2E** | Full user journeys against real/staged env | Critical paths ≥80% | BLOCKING (main/release) |
+
+### Universal Execution Pattern
+
+1. Detect test framework from project configuration
+2. Run unit tests with coverage thresholds
+3. Run integration tests (if unit passes)
+4. Run E2E tests (if integration passes, on protected branches)
+
+**See:** `modules/testing-frameworks/test-detection.md` for the universal detection/execution pattern.
+
+### Anti-Patterns (REJECTED)
+
+| Anti-Pattern | Why Rejected | Correct Pattern |
+|--------------|--------------|-----------------|
+| Only unit tests | Misses integration failures | All three layers required |
+| Only E2E tests | Slow, flaky, hard to debug | Pyramid: many unit → some integration → few E2E |
+| Skipping tests in CI | Defeats CI purpose | All layers run on every PR |
+| No coverage thresholds | Coverage degrades silently | Enforce minimums per layer |
+| Flaky tests ignored | Erodes trust | Fix or quarantine immediately |
+
+---
 
 ## Validation Methods
 
 ### Automated Validation (Always Run):
-```bash
-# 1. Compilation check
-npx tsc --noEmit  # TypeScript
-python -m py_compile <files>  # Python
-go build ./...  # Go
 
-# 2. Linting
-npx eslint <files>
-npx prettier --check <files>
+**1. Compilation/Build Check**
+- Execute the project's standard build command
+- Must complete with zero errors
+- Use the project's configured build system
 
-# 3. Tests
-npm test
+**2. Linting/Static Analysis**
+- Execute the project's configured linter/static analyzer
+- Must complete with zero errors/warnings (per project policy)
+- Use the project's established tooling and rules
 
-# 4. Security scan
-npm audit
-```
+**3. Tests — PYRAMID ENFORCED**
+- Run unit → integration → e2e in sequence
+- Stop on first failure
+- Enforce coverage thresholds per layer
+- Use the project's test framework (auto-detected)
+
+**4. Security Scan**
+- Execute the project's configured security scanner
+- Check dependencies for known vulnerabilities
+- Use the project's established security tooling
 
 ### Manual Validation (When Needed):
 - Read the diff to verify logical correctness.
 - Trace through code paths mentally.
-- Check edge cases that automated tests might miss.
-- Verify the change works in the browser/terminal.
+- Check edge cases automated tests might miss.
+- Verify the change works in the target environment.
+
+---
 
 ## Acceptance Criteria Rules
 
 Every task must have acceptance criteria. Criteria must be:
 
-1. **Specific** — "Tests pass" not "code works."
-2. **Testable** — Can be verified with a command or observation.
-3. **Complete** — Covers happy path, error cases, and edge cases.
-4. **Achievable** — Realistic given the constraints.
+1. **Specific** — "Returns 200 with user data" not "code works"
+2. **Testable** — Verifiable with a command or observation
+3. **Complete** — Covers happy path, error cases, edge cases
+4. **Achievable** — Realistic given constraints
 
-### Example Criteria:
+### Example Criteria (Language-Agnostic):
 ```
-✓ Returns 200 with user data for valid session
-✓ Returns 401 for expired session
-✓ Returns 401 for null session
-✓ Returns 403 for insufficient permissions
-✓ All existing auth tests pass
-✓ New tests cover null, expired, and valid sessions
-✓ TypeScript compilation: 0 errors
-✓ ESLint: 0 errors
+✓ Valid request returns success with expected data structure
+✓ Expired/invalid credentials return unauthorized error
+✓ Null/missing input returns validation error
+✓ Insufficient permissions return forbidden error
+✓ All existing tests pass
+✓ New tests cover: valid, expired, missing, unauthorized cases
+✓ Compilation/build: 0 errors
+✓ Static analysis/linting: 0 errors
 ```
+
+---
 
 ## Validation Gates
 
@@ -71,23 +118,33 @@ Some validations are gates — work cannot proceed until they pass:
 
 | Gate | Must Pass Before |
 |------|-----------------|
-| Compilation | Any other validation |
-| Existing tests | Handoff |
-| Security review | Deployment |
-| Scope check | Handoff |
+| Compilation/Build | Any other validation |
+| Existing tests | Handoff / merge |
+| Security review | Deployment / release |
+| Scope check | Handoff / merge |
+
+---
 
 ## Rejecting Work
 
 Work should be rejected if:
 
-- Compilation fails.
-- Existing tests are broken (regression).
-- Security vulnerabilities are introduced.
-- Changes exceed the defined scope without approval.
-- Acceptance criteria are not met.
+- Compilation/build fails.
+- Existing tests broken (regression).
+- Security vulnerabilities introduced.
+- Changes exceed scope without approval.
+- Acceptance criteria not met.
 
 When rejecting, provide:
 1. The specific validation that failed.
-2. The evidence (error message, test output).
+2. The evidence (error message, test output, build log).
 3. What needs to be fixed.
 4. A clear path to resolution.
+
+---
+
+## Reference
+
+- **Test Detection Pattern:** `modules/testing-frameworks/test-detection.md` — universal framework detection and execution
+- **Security Rules:** `rules/security.md` — OWASP-aligned, language-agnostic
+- **Coding Standards:** `rules/coding-standards.md` — patterns over syntax

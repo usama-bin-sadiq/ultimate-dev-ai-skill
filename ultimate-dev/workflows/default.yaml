@@ -8,6 +8,12 @@ description: >
   Standard workflow for general tasks. The orchestrator autonomously selects
   the architecture pattern (Skills/Subagents/Handoffs/Router) and executes.
 
+error_handling:
+  on_step_failure: "retry_once_then_escalate"
+  on_agent_failure: "fallback_to_generic_specialist"
+  on_gate_failure: "block_and_report"
+  max_retries: 2
+
 steps:
   - id: detect
     name: "Detect & Understand"
@@ -107,19 +113,70 @@ steps:
     outputs: [final_result, phase_results]
     depends_on: [classify]
 
+  # TEST PYRAMID VALIDATION — MANDATORY (Pattern-based, Language/Framework Agnostic)
+  - id: test_pyramid_unit
+    name: "Test Pyramid — Unit Tests"
+    description: >
+      Run unit tests with coverage thresholds. BLOCKING gate.
+      Pattern: Detect test runner → Execute unit tests → Enforce thresholds.
+      Works with: jest, vitest, pytest, go test, cargo test, mvn test, gradle test, dotnet test, etc.
+    agent: quality-engineer
+    actions:
+      - Detect test framework from project config (package.json, pyproject.toml, Cargo.toml, go.mod, pom.xml, build.gradle, etc.)
+      - Execute unit test command for detected framework
+      - Verify coverage thresholds: lines ≥80%, branches ≥90%, functions ≥80%
+      - Fail build if thresholds not met
+    outputs: [unit_test_report, test_framework, coverage_data]
+    depends_on: [execute_skills, execute_subagents, execute_handoffs, execute_router, execute_compose]
+    gate: BLOCKING
+
+  - id: test_pyramid_integration
+    name: "Test Pyramid — Integration Tests"
+    description: >
+      Run integration tests. BLOCKING gate.
+      Pattern: Detect integration test config → Execute → Enforce thresholds.
+      Works with: jest --testPathPattern=integration, pytest integration/, go test -tags=integration, etc.
+    agent: quality-engineer
+    condition: "{{ test_pyramid_unit.passed == true }}"
+    actions:
+      - Detect integration test configuration from project
+      - Execute integration test command for detected framework
+      - Verify coverage thresholds: lines ≥60%, branches ≥50%
+      - Fail build if tests fail
+    outputs: [integration_test_report, coverage_data]
+    depends_on: [test_pyramid_unit]
+    gate: BLOCKING
+
+  - id: test_pyramid_e2e
+    name: "Test Pyramid — E2E Tests"
+    description: >
+      Run E2E tests against critical user paths. BLOCKING gate on main/release.
+      Pattern: Detect E2E framework → Execute → Enforce critical path coverage.
+      Works with: playwright, cypress, k6, testcafe, webdriverio, etc.
+    agent: performance-tester
+    condition: "{{ test_pyramid_integration.passed == true }}"
+    actions:
+      - Detect E2E test framework from project config
+      - Execute E2E test command for detected framework
+      - Verify critical path coverage: ≥80% of defined critical user journeys
+      - Fail build if tests fail on protected branches (main, release/*)
+    outputs: [e2e_test_report, critical_path_coverage]
+    depends_on: [test_pyramid_integration]
+    gate: BLOCKING
+
   - id: verify
     name: "Verify"
     description: >
-      Run tests, linting, and builds to verify the change works.
+      Run linting, type checking, and builds to verify the change works.
       No "it should work" — show actual output.
     agent: code-reviewer
     actions:
-      - Run project tests
       - Run linter/formatter
+      - Run type checking (tsc, mypy, etc.)
       - Run build
       - Check for regressions
     outputs: [verification_report]
-    depends_on: [execute_skills, execute_subagents, execute_handoffs, execute_router, execute_compose]
+    depends_on: [test_pyramid_e2e]
 
   - id: review
     name: "Review"

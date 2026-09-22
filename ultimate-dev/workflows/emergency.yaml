@@ -6,6 +6,12 @@ description: >
   Emergency workflow for production incidents. Triage → mitigate → diagnose → fix → post-mortem.
   Speed is critical. Mitigate first, diagnose second.
 
+error_handling:
+  on_step_failure: "escalate_immediately"
+  on_agent_failure: "page_on_call"
+  on_gate_failure: "bypass_gates_for_mitigation"
+  max_retries: 1
+
 steps:
   - id: triage
     name: "Triage"

@@ -3,6 +3,11 @@
 # Uses Pattern D (Router) for parallel evidence gathering from multiple domains.
 
 name: research
+error_handling:
+  on_step_failure: "retry_once_then_escalate"
+  on_agent_failure: "fallback_to_generic_specialist"
+  on_gate_failure: "block_and_report"
+  max_retries: 2
 description: >
   Structured research workflow using Router pattern:
   Question → Search (parallel) → Analyze → Synthesize → Recommend.

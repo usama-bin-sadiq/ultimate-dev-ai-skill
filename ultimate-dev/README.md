@@ -338,7 +338,7 @@ ultimate-dev/
 ├── adapters/                   ← Harness adapters (claude-code, codex, cursor, generic-cli)
 ├── agents/                     ← 118 specialized agents
 ├── skills/                     ← 17 meta-cognitive sub-skills
-├── modules/                    ← 45 internal pattern modules
+├── modules/                    ← 46 internal pattern modules
 ├── config/                     ← Configuration files
 ├── prompts/                    ← Shared prompt components
 ├── workflows/                  ← Execution pipelines (with agent refs)

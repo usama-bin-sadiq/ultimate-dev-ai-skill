@@ -43,7 +43,7 @@ agents/_emerging-tech-handler.md
 | security           | auth, PII, encryption, XSS, CSRF, vulnerability, secrets, RBAC, compliance, audit, penetration, threat, hardening      |
 | devops             | deploy, CI/CD, Docker, K8s, Terraform, cloud, pipeline, monitoring, Kubernetes, production, zero-downtime, release     |
 | mobile             | iOS, Android, React Native, Flutter, Swift, Kotlin, offline sync                                                       |
-| testing-qa         | test, E2E, unit, integration, coverage, mock, flaky, QA, regression                                                    |
+| testing-qa         | test, E2E, unit, integration, coverage, mock, flaky, QA, regression, test strategy, test architecture, automation    |
 | documentation      | README, API docs, ADR, changelog, docstring, runbook                                                                   |
 | project-management | sprint, backlog, ticket, story, epic, estimation, retrospective                                                        |
 | product            | requirements, PRD, user story, roadmap, prioritization, feature spec                                                   |
@@ -150,6 +150,21 @@ Examples:
 
 "Build a generic frontend feature"
 → frontend: generic-frontend-specialist
+
+"Create test strategy for microservices"
+→ testing-qa: test-architect
+
+"Automate E2E tests with Playwright"
+→ testing-qa: test-automator
+
+"Run load testing with k6"
+→ testing-qa: performance-tester
+
+"Fix flaky integration tests"
+→ testing-qa: qa-engineer
+
+"Improve code quality with static analysis"
+→ testing-qa: quality-engineer
 ```
 
 For cross-domain work:

@@ -2,6 +2,11 @@
 # For tasks that require finding and fixing bugs.
 
 name: debugging
+error_handling:
+  on_step_failure: "retry_once_then_escalate"
+  on_agent_failure: "fallback_to_generic_specialist"
+  on_gate_failure: "block_and_report"
+  max_retries: 2
 description: >
   Structured debugging workflow: reproduce → hypothesize → isolate → fix → verify.
   Systematic approach to finding and fixing bugs.

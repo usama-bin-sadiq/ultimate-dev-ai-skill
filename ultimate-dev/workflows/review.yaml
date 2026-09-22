@@ -2,6 +2,11 @@
 # For tasks that require code review, audit, or assessment.
 
 name: review
+error_handling:
+  on_step_failure: "retry_once_then_escalate"
+  on_agent_failure: "fallback_to_generic_specialist"
+  on_gate_failure: "block_and_report"
+  max_retries: 2
 description: >
   Structured review workflow: read changes → check correctness → check security →
   check performance → report. Use for code reviews, audits, and assessments.

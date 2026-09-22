@@ -24,6 +24,7 @@ triggers:
   - deploy
   - migrate
   - analyze
+anti_triggers: [write code directly, implement feature, single file edit, simple question]
 tools:
   - read_file
   - write_file

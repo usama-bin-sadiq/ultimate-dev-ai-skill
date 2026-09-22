@@ -151,7 +151,1014 @@ agents:
       - project-structure
       - content-requirements
 
+  cli-help:
+    description: "CLI help and documentation lookup specialist"
+    capabilities:
+      - command-reference
+      - flag-explanation
+      - usage-examples
+      - tool-discovery
+    model_tier: low
+    max_concurrent: 2
+    timeout_seconds: 60
+    required_context:
+      - cli-command
+
+  browser-agent:
+    description: "Web automation and browser-based tasks — navigate, scrape, extract data, screenshot, search"
+    capabilities:
+      - web-navigation
+      - web-scraping
+      - data-extraction
+      - screenshot-capture
+      - form-automation
+      - web-search
+      - javascript-execution
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 300
+    required_context:
+      - target-url
+      - extraction-rules
+
+  codebase-investigator:
+    description: "Analyzes codebase structure, conventions, patterns, and dependencies"
+    capabilities:
+      - codebase-analysis
+      - convention-detection
+      - pattern-recognition
+      - dependency-mapping
+      - tech-stack-detection
+    model_tier: high
+    max_concurrent: 1
+    timeout_seconds: 180
+    required_context:
+      - project-root
+
+  # Backend Specialists
+  nodejs-architect:
+    description: "Node.js/TypeScript backend architecture and implementation"
+    capabilities:
+      - nodejs-architecture
+      - express-nestjs-fastify
+      - typescript
+      - event-driven-systems
+      - microservices
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 300
+    required_context:
+      - project-structure
+      - api-specs
+
+  python-engineer:
+    description: "Python backend development — FastAPI, Django, Flask, async"
+    capabilities:
+      - python-backend
+      - fastapi-django-flask
+      - async-programming
+      - data-processing
+      - ml-integration
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 300
+    required_context:
+      - project-structure
+      - api-specs
+
+  go-engineer:
+    description: "Go backend development — high-performance services, gRPC"
+    capabilities:
+      - golang
+      - grpc
+      - microservices
+      - concurrency
+      - performance-optimization
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 300
+    required_context:
+      - project-structure
+      - api-specs
+
+  rust-engineer:
+    description: "Rust backend — memory-safe, high-performance systems"
+    capabilities:
+      - rust
+      - actix-axum
+      - webassembly
+      - systems-programming
+      - performance
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 300
+    required_context:
+      - project-structure
+      - api-specs
+
+  java-engineer:
+    description: "Java/Kotlin backend — Spring Boot, Quarkus, enterprise"
+    capabilities:
+      - java-kotlin
+      - spring-boot
+      - enterprise-patterns
+      - jvm-optimization
+      - cloud-native
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 300
+    required_context:
+      - project-structure
+      - api-specs
+
+  csharp-engineer:
+    description: "C#/.NET backend — ASP.NET Core, enterprise applications"
+    capabilities:
+      - csharp-dotnet
+      - aspnet-core
+      - entity-framework
+      - azure-integration
+      - enterprise-patterns
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 300
+    required_context:
+      - project-structure
+      - api-specs
+
+  graphql-engineer:
+    description: "GraphQL API design and implementation"
+    capabilities:
+      - graphql-schema
+      - resolvers
+      - federation
+      - subscriptions
+      - performance-optimization
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 300
+    required_context:
+      - api-specs
+      - data-model
+
+  api-designer:
+    description: "API design — REST, GraphQL, gRPC, OpenAPI specs"
+    capabilities:
+      - api-design
+      - openapi-spec
+      - versioning
+      - documentation
+      - contract-testing
+    model_tier: high
+    max_concurrent: 1
+    timeout_seconds: 180
+    required_context:
+      - requirements
+      - data-model
+
+  database-tuner:
+    description: "Database performance tuning and optimization"
+    capabilities:
+      - query-optimization
+      - index-strategy
+      - connection-pooling
+      - partitioning
+      - replication
+    model_tier: medium
+    max_concurrent: 1
+    timeout_seconds: 300
+    required_context:
+      - database-schema
+      - query-patterns
+
+  generic-backend-specialist:
+    description: "General backend implementation for any language/framework"
+    capabilities:
+      - api-implementation
+      - database-operations
+      - business-logic
+      - authentication
+      - middleware
+    model_tier: medium
+    max_concurrent: 3
+    timeout_seconds: 300
+    required_context:
+      - project-structure
+      - api-specs
+
+  # Frontend Specialists
+  react-specialist:
+    description: "React/Next.js frontend development"
+    capabilities:
+      - react
+      - nextjs
+      - hooks
+      - state-management
+      - ssr-ssg
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 300
+    required_context:
+      - project-structure
+      - design-specs
+
+  vue-specialist:
+    description: "Vue/Nuxt frontend development"
+    capabilities:
+      - vue
+      - nuxt
+      - composition-api
+      - pinia
+      - ssr-ssg
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 300
+    required_context:
+      - project-structure
+      - design-specs
+
+  css-architect:
+    description: "CSS architecture, design systems, styling strategies"
+    capabilities:
+      - css-architecture
+      - design-systems
+      - tailwind
+      - css-in-js
+      - responsive-design
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 240
+    required_context:
+      - design-specs
+      - component-library
+
+  accessibility-engineer:
+    description: "Web accessibility — WCAG, ARIA, inclusive design"
+    capabilities:
+      - wcag-compliance
+      - aria
+      - screen-reader-testing
+      - keyboard-navigation
+      - color-contrast
+    model_tier: medium
+    max_concurrent: 1
+    timeout_seconds: 240
+    required_context:
+      - design-specs
+      - component-library
+
+  perf-specialist:
+    description: "Frontend performance optimization"
+    capabilities:
+      - web-vitals
+      - bundle-optimization
+      - lazy-loading
+      - caching-strategies
+      - rendering-optimization
+    model_tier: medium
+    max_concurrent: 1
+    timeout_seconds: 240
+    required_context:
+      - project-structure
+      - performance-budget
+
+  generic-frontend-specialist:
+    description: "General frontend implementation for any framework"
+    capabilities:
+      - component-development
+      - styling
+      - state-management
+      - routing
+      - accessibility
+    model_tier: medium
+    max_concurrent: 3
+    timeout_seconds: 300
+    required_context:
+      - project-structure
+      - design-specs
+
+  # DevOps Specialists
+  kubernetes-engineer:
+    description: "Kubernetes cluster management and deployment"
+    capabilities:
+      - kubernetes
+      - helm
+      - operators
+      - service-mesh
+      - gitops
+    model_tier: medium
+    max_concurrent: 1
+    timeout_seconds: 240
+    required_context:
+      - infrastructure-specs
+      - deployment-target
+
+  observability-engineer:
+    description: "Observability — logging, metrics, tracing, alerting"
+    capabilities:
+      - logging
+      - metrics
+      - distributed-tracing
+      - alerting
+      - dashboards
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 240
+    required_context:
+      - infrastructure-specs
+      - monitoring-requirements
+
+  terraform-engineer:
+    description: "Infrastructure as Code with Terraform"
+    capabilities:
+      - terraform
+      - modules
+      - state-management
+      - multi-cloud
+      - policy-as-code
+    model_tier: medium
+    max_concurrent: 1
+    timeout_seconds: 240
+    required_context:
+      - infrastructure-specs
+      - cloud-provider
+
+  pipeline-engineer:
+    description: "CI/CD pipeline design and implementation"
+    capabilities:
+      - github-actions
+      - gitlab-ci
+      - jenkins
+      - deployment-strategies
+      - pipeline-optimization
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 240
+    required_context:
+      - infrastructure-specs
+      - deployment-target
+
+  sre-engineer:
+    description: "Site Reliability Engineering — SLIs, SLOs, error budgets"
+    capabilities:
+      - sli-slo
+      - error-budgets
+      - incident-response
+      - capacity-planning
+      - chaos-engineering
+    model_tier: medium
+    max_concurrent: 1
+    timeout_seconds: 240
+    required_context:
+      - infrastructure-specs
+      - reliability-requirements
+
+  reliability-engineer:
+    description: "System reliability and resilience engineering"
+    capabilities:
+      - fault-tolerance
+      - circuit-breakers
+      - retry-strategies
+      - bulkheads
+      - graceful-degradation
+    model_tier: medium
+    max_concurrent: 1
+    timeout_seconds: 240
+    required_context:
+      - system-architecture
+      - failure-modes
+
+  generic-devops-specialist:
+    description: "General DevOps — Docker, CI/CD, cloud deployment"
+    capabilities:
+      - docker
+      - kubernetes
+      - ci-cd
+      - terraform
+      - monitoring
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 240
+    required_context:
+      - infrastructure-specs
+      - deployment-target
+
+  # Testing Specialists
+  test-architect:
+    description: "Test strategy, architecture, and framework selection"
+    capabilities:
+      - test-strategy
+      - framework-selection
+      - test-architecture
+      - coverage-goals
+      - quality-gates
+    model_tier: high
+    max_concurrent: 1
+    timeout_seconds: 180
+    required_context:
+      - project-structure
+      - test-requirements
+
+  test-automator:
+    description: "Test automation implementation and maintenance"
+    capabilities:
+      - e2e-automation
+      - playwright
+      - cypress
+      - ci-integration
+      - flaky-test-remediation
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 300
+    required_context:
+      - source-code
+      - test-requirements
+
+  qa-engineer:
+    description: "Quality assurance — test planning, execution, reporting"
+    capabilities:
+      - test-planning
+      - manual-testing
+      - exploratory-testing
+      - bug-reporting
+      - release-validation
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 240
+    required_context:
+      - source-code
+      - test-requirements
+
+  quality-engineer:
+    description: "Software quality — static analysis, code quality, standards"
+    capabilities:
+      - static-analysis
+      - code-quality
+      - linting
+      - complexity-analysis
+      - technical-debt
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 240
+    required_context:
+      - source-code
+      - coding-standards
+
+  performance-tester:
+    description: "Performance and load testing"
+    capabilities:
+      - load-testing
+      - stress-testing
+      - k6
+      - jmeter
+      - bottleneck-analysis
+    model_tier: medium
+    max_concurrent: 1
+    timeout_seconds: 300
+    required_context:
+      - system-architecture
+      - performance-requirements
+
+  generic-testing-specialist:
+    description: "General testing — unit, integration, e2e for any stack"
+    capabilities:
+      - unit-testing
+      - integration-testing
+      - e2e-testing
+      - coverage-analysis
+      - test-strategy
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 240
+    required_context:
+      - source-code
+      - test-requirements
+
+  # Security Specialists
+  security-auditor:
+    description: "Security auditing and vulnerability assessment"
+    capabilities:
+      - vulnerability-scanning
+      - security-review
+      - penetration-testing
+      - compliance-check
+      - threat-modeling
+    model_tier: high
+    max_concurrent: 1
+    timeout_seconds: 180
+    required_context:
+      - source-code
+      - security-policy
+
+  threat-modeler:
+    description: "Threat modeling and security architecture"
+    capabilities:
+      - threat-modeling
+      - attack-trees
+      - risk-assessment
+      - security-requirements
+      - mitigation-strategies
+    model_tier: high
+    max_concurrent: 1
+    timeout_seconds: 180
+    required_context:
+      - system-architecture
+      - security-policy
+
+  incident-responder:
+    description: "Security incident response and forensics"
+    capabilities:
+      - incident-response
+      - forensics
+      - log-analysis
+      - malware-analysis
+      - recovery-planning
+    model_tier: high
+    max_concurrent: 1
+    timeout_seconds: 300
+    required_context:
+      - incident-data
+      - system-logs
+
+  compliance-engineer:
+    description: "Compliance — SOC2, GDPR, HIPAA, PCI-DSS"
+    capabilities:
+      - compliance-frameworks
+      - audit-preparation
+      - policy-creation
+      - evidence-collection
+      - gap-analysis
+    model_tier: high
+    max_concurrent: 1
+    timeout_seconds: 240
+    required_context:
+      - compliance-requirements
+      - system-documentation
+
+  # AI/ML Specialists
+  ml-engineer:
+    description: "Machine learning engineering — training, deployment, MLOps"
+    capabilities:
+      - ml-training
+      - model-deployment
+      - mlops
+      - feature-engineering
+      - model-monitoring
+    model_tier: medium
+    max_concurrent: 1
+    timeout_seconds: 300
+    required_context:
+      - data-schema
+      - ml-requirements
+
+  prompt-engineer:
+    description: "Prompt engineering and LLM application development"
+    capabilities:
+      - prompt-design
+      - rag
+      - agents
+      - evaluation
+      - optimization
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 240
+    required_context:
+      - use-case
+      - model-constraints
+
+  rag-architect:
+    description: "RAG (Retrieval-Augmented Generation) system design"
+    capabilities:
+      - rag-architecture
+      - vector-databases
+      - embedding-strategies
+      - retrieval-optimization
+      - evaluation
+    model_tier: medium
+    max_concurrent: 1
+    timeout_seconds: 300
+    required_context:
+      - data-sources
+      - use-case
+
+  generic-ai-ml-specialist:
+    description: "General AI/ML implementation for any framework"
+    capabilities:
+      - ml-modeling
+      - data-preprocessing
+      - model-evaluation
+      - deployment
+      - monitoring
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 300
+    required_context:
+      - data-schema
+      - ml-requirements
+
+  # Mobile Specialists
+  mobile-android:
+    description: "Android development — Kotlin, Jetpack Compose"
+    capabilities:
+      - kotlin
+      - jetpack-compose
+      - material-design
+      - play-store
+      - performance
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 300
+    required_context:
+      - project-structure
+      - design-specs
+
+  mobile-ios:
+    description: "iOS development — Swift, SwiftUI"
+    capabilities:
+      - swift
+      - swiftui
+      - uikit
+      - app-store
+      - performance
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 300
+    required_context:
+      - project-structure
+      - design-specs
+
+  mobile-flutter:
+    description: "Flutter/Dart cross-platform mobile development"
+    capabilities:
+      - flutter
+      - dart
+      - material-cupertino
+      - platform-channels
+      - performance
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 300
+    required_context:
+      - project-structure
+      - design-specs
+
+  # Cloud Specialists
+  cloud-architect:
+    description: "Cloud architecture — AWS, GCP, Azure, multi-cloud"
+    capabilities:
+      - cloud-architecture
+      - multi-cloud
+      - serverless
+      - containers
+      - cost-optimization
+    model_tier: high
+    max_concurrent: 1
+    timeout_seconds: 180
+    required_context:
+      - requirements
+      - constraints
+
+  cost-optimizer:
+    description: "Cloud cost optimization and FinOps"
+    capabilities:
+      - cost-analysis
+      - rightsizing
+      - reserved-instances
+      - spot-instances
+      - finops
+    model_tier: medium
+    max_concurrent: 1
+    timeout_seconds: 240
+    required_context:
+      - cloud-billing
+      - usage-data
+
+  generic-cloud-specialist:
+    description: "General cloud operations for any provider"
+    capabilities:
+      - cloud-services
+      - deployment
+      - monitoring
+      - security
+      - cost-management
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 240
+    required_context:
+      - infrastructure-specs
+      - cloud-provider
+
+  # Database Specialists
+  data-engineer:
+    description: "Data engineering — pipelines, ETL, warehousing"
+    capabilities:
+      - data-pipelines
+      - etl-elt
+      - data-warehousing
+      - streaming
+      - data-quality
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 300
+    required_context:
+      - data-sources
+      - requirements
+
+  postgres-specialist:
+    description: "PostgreSQL expertise — advanced features, tuning"
+    capabilities:
+      - postgresql
+      - advanced-indexing
+      - partitioning
+      - replication
+      - extensions
+    model_tier: medium
+    max_concurrent: 1
+    timeout_seconds: 300
+    required_context:
+      - database-schema
+      - query-patterns
+
+  sql-optimizer:
+    description: "SQL query optimization across databases"
+    capabilities:
+      - query-optimization
+      - execution-plans
+      - indexing
+      - partitioning
+      - sharding
+    model_tier: medium
+    max_concurrent: 1
+    timeout_seconds: 300
+    required_context:
+      - database-schema
+      - query-patterns
+
+  generic-database-specialist:
+    description: "General database operations for any SQL/NoSQL"
+    capabilities:
+      - database-design
+      - query-optimization
+      - migration
+      - replication
+      - backup-recovery
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 300
+    required_context:
+      - database-schema
+      - requirements
+
+  # Architecture Specialists
+  system-architect:
+    description: "System architecture — high-level design, trade-offs"
+    capabilities:
+      - system-design
+      - adr-creation
+      - scalability
+      - reliability
+      - technology-selection
+    model_tier: high
+    max_concurrent: 1
+    timeout_seconds: 180
+    required_context:
+      - requirements
+      - constraints
+
+  microservices-architect:
+    description: "Microservices architecture — patterns, communication, ops"
+    capabilities:
+      - microservices-patterns
+      - service-mesh
+      - event-driven
+      - api-gateway
+      - distributed-systems
+    model_tier: high
+    max_concurrent: 1
+    timeout_seconds: 180
+    required_context:
+      - requirements
+      - existing-architecture
+
+  # Universal/Specialized
+  universal-technology-specialist:
+    description: "Universal specialist — learns ANY technology from web/docs"
+    capabilities:
+      - technology-research
+      - pattern-application
+      - rapid-prototyping
+      - cross-platform
+      - adapter-creation
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 300
+    required_context:
+      - technology-name
+      - use-case
+
+  generalist:
+    description: "General-purpose agent for any task"
+    capabilities:
+      - research
+      - implementation
+      - debugging
+      - testing
+      - documentation
+    model_tier: medium
+    max_concurrent: 3
+    timeout_seconds: 300
+    required_context:
+      - task-description
+
+  orchestrator:
+    description: "Orchestrator — autonomous pattern selection and agent coordination"
+    capabilities:
+      - pattern-selection
+      - agent-coordination
+      - task-decomposition
+      - result-synthesis
+      - quality-assurance
+    model_tier: high
+    max_concurrent: 1
+    timeout_seconds: 600
+    required_context:
+      - project-structure
+      - requirements
+
+  skill-creator:
+    description: "Auto-generates new skills/agents from experience"
+    capabilities:
+      - skill-generation
+      - agent-generation
+      - pattern-extraction
+      - knowledge-distillation
+    model_tier: high
+    max_concurrent: 1
+    timeout_seconds: 300
+    required_context:
+      - task-history
+      - gaps-identified
+
+  gap-tracker:
+    description: "Tracks capability gaps and triggers agent/skill generation"
+    capabilities:
+      - gap-detection
+      - capability-mapping
+      - auto-generation-trigger
+    model_tier: medium
+    max_concurrent: 1
+    timeout_seconds: 120
+    required_context:
+      - task-history
+      - agent-registry
+
+  # Other key specialists
+  search-engineer:
+    description: "Search engineering — Elasticsearch, Algolia, vector search"
+    capabilities:
+      - search-architecture
+      - relevance-tuning
+      - vector-search
+      - autocomplete
+      - faceted-search
+    model_tier: medium
+    max_concurrent: 1
+    timeout_seconds: 300
+    required_context:
+      - data-schema
+      - search-requirements
+
+  cache-engineer:
+    description: "Caching strategies — Redis, Memcached, CDN, multi-level"
+    capabilities:
+      - cache-architecture
+      - redis
+      - cdn
+      - invalidation
+      - cache-warming
+    model_tier: medium
+    max_concurrent: 1
+    timeout_seconds: 240
+    required_context:
+      - system-architecture
+      - performance-requirements
+
+  event-architect:
+    description: "Event-driven architecture — Kafka, RabbitMQ, event sourcing"
+    capabilities:
+      - event-modeling
+      - kafka
+      - event-sourcing
+      - cqrs
+      - stream-processing
+    model_tier: medium
+    max_concurrent: 1
+    timeout_seconds: 300
+    required_context:
+      - system-architecture
+      - event-requirements
+
+  realtime-engineer:
+    description: "Real-time systems — WebSockets, Server-Sent Events, WebRTC"
+    capabilities:
+      - websockets
+      - sse
+      - webrtc
+      - presence
+      - scaling
+    model_tier: medium
+    max_concurrent: 1
+    timeout_seconds: 300
+    required_context:
+      - system-architecture
+      - realtime-requirements
+
+  git-specialist:
+    description: "Git workflows, history analysis, automation"
+    capabilities:
+      - git-workflows
+      - history-analysis
+      - automation
+      - branching-strategies
+      - conflict-resolution
+    model_tier: low
+    max_concurrent: 2
+    timeout_seconds: 120
+    required_context:
+      - repo-path
+
+  # Sales/Marketing/Finance/Support
+  sales-engineer:
+    description: "Technical sales engineering and demos"
+    capabilities:
+      - technical-demos
+      - proof-of-concept
+      - rfps
+      - solution-architecture
+      - competitive-analysis
+    model_tier: medium
+    max_concurrent: 2
+    timeout_seconds: 240
+    required_context:
+      - product-knowledge
+      - customer-requirements
+
+  growth-hacker:
+    description: "Growth engineering — experimentation, funnels, analytics"
+    capabilities:
+      - experimentation
+      - funnel-optimization
+      - analytics
+      - viral-loops
+      - retention
+    model_tier: medium
+    max_concurrent: 1
+    timeout_seconds: 240
+    required_context:
+      - product-data
+      - growth-goals
+
+  financial-analyst:
+    description: "Financial analysis, modeling, forecasting"
+    capabilities:
+      - financial-modeling
+      - forecasting
+      - valuation
+      - unit-economics
+      - roi-analysis
+    model_tier: medium
+    max_concurrent: 1
+    timeout_seconds: 240
+    required_context:
+      - financial-data
+      - business-model
+
+  technical-support-engineer:
+    description: "Technical support — debugging, troubleshooting, escalation"
+    capabilities:
+      - debugging
+      - troubleshooting
+      - root-cause-analysis
+      - escalation-management
+      - knowledge-base
+    model_tier: medium
+    max_concurrent: 3
+    timeout_seconds: 240
+    required_context:
+      - issue-description
+      - system-access
+
 routing_rules:
+  - match:
+      intent: "web-automation"
+      description: "Browser automation, scraping, navigation, screenshots"
+    delegate_to: ["browser-agent"]
+
+  - match:
+      intent: "web-search"
+      description: "Search the web for information"
+    delegate_to: ["browser-agent"]
+
   - match:
       intent: "implement-feature"
       complexity: "high"

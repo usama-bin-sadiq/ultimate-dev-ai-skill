@@ -1,102 +1,105 @@
 name: Sync & Release
 
-# Push to main →
-#   1. Regenerate README facts (sync-docs.py: version, counts, agent tree)
-#      and auto-commit + push the README if it was stale
-#   2. Ensure a GitHub Release + tag exist for ultimate-dev/VERSION, using
-#      that version's changelog section as notes (no-op if already released)
-#
-# Sync runs BEFORE the release so there is no race between "fix README"
-# and "verify README" — one job, sequential steps.
-# The sync step doubles as the gate: it exits non-zero on drift it cannot
-# fix (missing managed line, skill-manifest.yaml out of date).
-# Auto-commits carry [skip ci] (and GITHUB_TOKEN pushes never re-trigger
-# workflows), so this cannot loop.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
+    inputs:
+      version_type:
+        description: 'Version bump type'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
 
 permissions:
   contents: write
 
-# Never cancel a release mid-flight; queue behind any in-progress run.
-concurrency:
-  group: release
-  cancel-in-progress: false
-
 jobs:
-  sync-and-release:
-    name: Sync README & release
+  release:
+    name: Create Release
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Sync README with repo facts
-        run: python3 ultimate-dev/scripts/sync-docs.py
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-      - name: Auto-commit synced README
-        id: commit
+      - name: Install dependencies
         run: |
-          set -euo pipefail
-          if git diff --quiet -- ultimate-dev/README.md; then
-            echo "README already in sync — nothing to commit."
-            echo "target=${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
+          python -m pip install --upgrade pip
+          pip install pyyaml
+
+      - name: Configure Git
+        run: |
           git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ultimate-dev/README.md
-          git commit -m "docs: auto-sync README with repo state [skip ci]"
-          git push
-          echo "target=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-          echo "Pushed README sync commit."
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Create tag + GitHub Release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Bump version
+        id: version
         run: |
-          set -euo pipefail
+          cd ultimate-dev
+          current=$(cat VERSION)
+          IFS='.' read -r major minor patch <<< "$current"
+          case "${{ github.event.inputs.version_type }}" in
+            major) major=$((major + 1)); minor=0; patch=0 ;;
+            minor) minor=$((minor + 1)); patch=0 ;;
+            patch) patch=$((patch + 1)) ;;
+          esac
+          new_version="$major.$minor.$patch"
+          echo "$new_version" > VERSION
+          echo "new_version=$new_version" >> $GITHUB_OUTPUT
+          echo "old_version=$current" >> $GITHUB_OUTPUT
 
-          VERSION="$(tr -d '[:space:]' < ultimate-dev/VERSION)"
-          TAG="v${VERSION}"
-          CHANGELOG="ultimate-dev/changelog/CHANGELOG.md"
-          README_URL="https://github.com/${GITHUB_REPOSITORY}/blob/main/ultimate-dev/README.md"
-          # Tag the synced state if a fix commit was pushed, else this push.
-          TARGET="${{ steps.commit.outputs.target }}"
+      - name: Generate manifest
+        run: |
+          cd ultimate-dev
+          python scripts/generate-manifest.py
 
-          # Already released? Nothing to do.
-          if gh release view "$TAG" >/dev/null 2>&1; then
-            echo "Release ${TAG} already exists — skipping."
-            exit 0
-          fi
+      - name: Sync docs
+        run: |
+          cd ultimate-dev
+          python scripts/sync-docs.py
 
-          # Extract this version's changelog section (header line dropped,
-          # leading blank lines stripped).
-          awk -v v="$VERSION" '
-            $0 ~ "^## \\[" v "\\]" { grab = 1; next }
-            grab && /^## \[/       { exit }
-            grab                   { print }
-          ' "$CHANGELOG" | awk 'NF { seen = 1 } seen' > notes.md
+      - name: Update changelog
+        run: |
+          cd ultimate-dev
+          date_str=$(date +%Y-%m-%d)
+          # Prepend new version to changelog
+          tmp=$(mktemp)
+          echo "# Changelog" > "$tmp"
+          echo "" >> "$tmp"
+          echo "## [${{ steps.version.outputs.new_version }}] — $date_str" >> "$tmp"
+          echo "" >> "$tmp"
+          echo "### Changed" >> "$tmp"
+          echo "- Version bump to ${{ steps.version.outputs.new_version }}" >> "$tmp"
+          echo "" >> "$tmp"
+          cat changelog/CHANGELOG.md >> "$tmp"
+          mv "$tmp" changelog/CHANGELOG.md
 
-          if [ ! -s notes.md ]; then
-            {
-              echo "No \`## [${VERSION}]\` entry found in \`${CHANGELOG}\`."
-              echo ""
-              echo "See the [changelog](https://github.com/${GITHUB_REPOSITORY}/blob/main/${CHANGELOG})."
-            } > notes.md
-          fi
+      - name: Commit changes
+        run: |
+          git add ultimate-dev/VERSION ultimate-dev/skill-manifest.yaml ultimate-dev/README.md ultimate-dev/changelog/CHANGELOG.md
+          git commit -m "chore: release v${{ steps.version.outputs.new_version }}"
 
-          {
-            echo ""
-            echo "---"
-            echo "**Install:** \`./scripts/install.sh --project .\` — see the [README](${README_URL})"
-          } >> notes.md
+      - name: Create tag
+        run: |
+          git tag -a "v${{ steps.version.outputs.new_version }}" -m "Release v${{ steps.version.outputs.new_version }}"
 
-          gh release create "$TAG" \
-            --target "$TARGET" \
-            --title "ultimate-dev ${TAG}" \
-            --notes-file notes.md
+      - name: Push changes
+        run: |
+          git push origin main --tags
 
-          echo "Created release ${TAG}"
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: "v${{ steps.version.outputs.new_version }}"
+          name: "v${{ steps.version.outputs.new_version }}"
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
