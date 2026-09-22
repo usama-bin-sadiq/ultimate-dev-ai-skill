@@ -14,20 +14,16 @@ BOLD='\033[1m'; DIM='\033[2m'; NC='\033[0m'
 
 # ─── Helpers ────────────────────────────────────────────────
 print_logo() {
+    local ver=$(cat "$(dirname "$0")/../VERSION" 2>/dev/null || echo "2.1.0")
     echo ""
-    echo -e "${CYAN}  ╔═══════════════════════════════════════════════════════╗${NC}"
-    echo -e "${CYAN}  ║                                                       ║${NC}"
-    echo -e "${CYAN}  ║   ${BOLD}██╗   ██╗███╗   ██╗██████╗ ███████╗${NC}${CYAN}                ║${NC}"
-    echo -e "${CYAN}  ║   ${BOLD}██║   ██║████╗  ██║██╔══██╗██╔════╝${NC}${CYAN}                ║${NC}"
-    echo -e "${CYAN}  ║   ${BOLD}██║   ██║██╔██╗ ██║██║  ██║███████╗${NC}${CYAN}                ║${NC}"
-    echo -e "${CYAN}  ║   ${BOLD}██║   ██║██║╚██╗██║██║  ██║╚════██║${NC}${CYAN}                ║${NC}"
-    echo -e "${CYAN}  ║   ${BOLD}╚██████╔╝██║ ╚████║██████╔╝███████║${NC}${CYAN}                ║${NC}"
-    echo -e "${CYAN}  ║   ${BOLD} ╚═════╝ ╚═╝  ╚═══╝╚═════╝ ╚══════╝${NC}${CYAN}                ║${NC}"
-    echo -e "${CYAN}  ║                                                       ║${NC}"
-    echo -e "${CYAN}  ║   ${MAGENTA}Master Software Engineering Orchestrator${NC}${CYAN}              ║${NC}"
-    echo -e "${CYAN}  ║   ${DIM}120 agents • 17 skills • 45 modules • Any model${NC}${CYAN}    ║${NC}"
-    echo -e "${CYAN}  ║                                                       ║${NC}"
-    echo -e "${CYAN}  ╚═══════════════════════════════════════════════════════╝${NC}"
+    echo -e "  ${CYAN}┌─────────────────────────────────────────────────────┐${NC}"
+    echo -e "  ${CYAN}│                                                     │${NC}"
+    echo -e "  ${CYAN}│${NC}            ${BOLD}${MAGENTA}ultimate-dev${NC} ${DIM}v${ver}${NC}                          ${CYAN}│${NC}"
+    echo -e "  ${CYAN}│${NC}            ${DIM}─────────────────${NC}                          ${CYAN}│${NC}"
+    echo -e "  ${CYAN}│${NC}  ${MAGENTA}Master Software Engineering Orchestrator${NC}              ${CYAN}│${NC}"
+    echo -e "  ${CYAN}│${NC}  ${DIM}120 agents • 17 skills • 45 modules • Any model${NC}    ${CYAN}│${NC}"
+    echo -e "  ${CYAN}│${NC}                                                     ${CYAN}│${NC}"
+    echo -e "  ${CYAN}└─────────────────────────────────────────────────────┘${NC}"
     echo ""
 }
 

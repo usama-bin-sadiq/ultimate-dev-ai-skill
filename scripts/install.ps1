@@ -14,25 +14,30 @@ $ErrorActionPreference = "Stop"
 # Cross-platform home directory
 $HomeDir = if ($env:USERPROFILE) { $env:USERPROFILE } else { $env:HOME }
 
-$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ScriptDir = $PSScriptRoot
 $SkillDir = Join-Path (Split-Path -Parent $ScriptDir) "ultimate-dev"
 
 # ─── Helpers ────────────────────────────────────────────────
 function Write-Logo {
+    $ver = if (Test-Path (Join-Path (Split-Path -Parent $PSScriptRoot) "VERSION")) {
+        (Get-Content (Join-Path (Split-Path -Parent $PSScriptRoot) "VERSION") -Raw).Trim()
+    } else { "2.1.0" }
+
     Write-Host ""
-    Write-Host "  ╔═══════════════════════════════════════════════════════╗" -ForegroundColor Cyan
-    Write-Host "  ║                                                       ║" -ForegroundColor Cyan
-    Write-Host "  ║   ██╗   ██╗███╗   ██╗██████╗ ███████╗                ║" -ForegroundColor Cyan
-    Write-Host "  ║   ██║   ██║████╗  ██║██╔══██╗██╔════╝                ║" -ForegroundColor Cyan
-    Write-Host "  ║   ██║   ██║██╔██╗ ██║██║  ██║███████╗                ║" -ForegroundColor Cyan
-    Write-Host "  ║   ██║   ██║██║╚██╗██║██║  ██║╚════██║                ║" -ForegroundColor Cyan
-    Write-Host "  ║   ╚██████╔╝██║ ╚████║██████╔╝███████║                ║" -ForegroundColor Cyan
-    Write-Host "  ║    ╚═════╝ ╚═╝  ╚═══╝╚═════╝ ╚══════╝                ║" -ForegroundColor Cyan
-    Write-Host "  ║                                                       ║" -ForegroundColor Cyan
-    Write-Host "  ║   Master Software Engineering Orchestrator            ║" -ForegroundColor Magenta
-    Write-Host "  ║   120 agents • 17 skills • 45 modules • Any model    ║" -ForegroundColor DarkGray
-    Write-Host "  ║                                                       ║" -ForegroundColor Cyan
-    Write-Host "  ╚═══════════════════════════════════════════════════════╝" -ForegroundColor Cyan
+    Write-Host "  ┌─────────────────────────────────────────────────────┐" -ForegroundColor Cyan
+    Write-Host "  │                                                     │" -ForegroundColor Cyan
+    Write-Host "  │            " -ForegroundColor Cyan -NoNewline
+    Write-Host "ultimate-dev" -ForegroundColor Magenta -NoNewline
+    Write-Host " v$ver                          │" -ForegroundColor Cyan
+    Write-Host "  │            ─────────────────                         │" -ForegroundColor Cyan
+    Write-Host "  │  " -ForegroundColor Cyan -NoNewline
+    Write-Host "Master Software Engineering Orchestrator" -ForegroundColor Magenta -NoNewline
+    Write-Host "              │" -ForegroundColor Cyan
+    Write-Host "  │  " -ForegroundColor Cyan -NoNewline
+    Write-Host "120 agents • 17 skills • 45 modules • Any model" -ForegroundColor DarkGray -NoNewline
+    Write-Host "    │" -ForegroundColor Cyan
+    Write-Host "  │                                                     │" -ForegroundColor Cyan
+    Write-Host "  └─────────────────────────────────────────────────────┘" -ForegroundColor Cyan
     Write-Host ""
 }
 
