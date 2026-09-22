@@ -11,7 +11,6 @@ SKILL_DIR="$(dirname "$SCRIPT_DIR")/ultimate-dev"
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
 BLUE='\033[0;34m'; CYAN='\033[0;36m'; MAGENTA='\033[0;35m'
 BOLD='\033[1m'; DIM='\033[2m'; NC='\033[0m'
-BG_BLUE='\033[44m'; BG_GREEN='\033[42m'; BG_CYAN='\033[46m'
 
 # ─── Helpers ────────────────────────────────────────────────
 print_logo() {
@@ -55,9 +54,6 @@ usage() {
 }
 
 # ─── Arrow key menu ─────────────────────────────────────────
-# Renders a menu with arrow key navigation
-# Usage: arrow_menu "title" "option1" "option2" ...
-# Returns: selected index (1-based) in ARROW_MENU_RESULT
 ARROW_MENU_RESULT=""
 arrow_menu() {
     local title="$1"
@@ -65,120 +61,97 @@ arrow_menu() {
     local options=("$@")
     local count=${#options[@]}
     local selected=1
-    local error_msg=""
 
-    # Hide cursor
+    # Save cursor position, hide cursor
     echo -ne "\e[?25l"
 
     while true; do
-        # Clear and draw menu
+        # Draw title
         echo -e "  ${BOLD}$title${NC}"
         echo ""
 
+        # Draw options
         for i in "${!options[@]}"; do
             local idx=$((i + 1))
-            local label="${options[$i]}"
-
             if [ "$idx" -eq "$selected" ]; then
-                # Selected item — highlighted
-                echo -e "    ${BG_BLUE}  ▸ $idx) $label  ${NC}"
+                echo -e "    ${BLUE}▸${NC} ${BOLD}$idx)${NC} ${options[$i]}"
             else
-                echo -e "    ${DIM}  $idx) $label${NC}"
+                echo -e "      ${DIM}$idx) ${options[$i]}${NC}"
             fi
         done
 
         echo ""
-
-        # Show error if any
-        if [ -n "$error_msg" ]; then
-            echo -e "  ${RED}✘ $error_msg${NC}"
-            echo ""
-            error_msg=""
-        fi
-
         echo -e "  ${DIM}↑↓ navigate  •  Enter select  •  q quit${NC}"
         echo ""
 
-        # Read input — handle arrow keys and regular keys
+        # Read a single keypress
         local key=""
-        local escape=false
-
         while true; do
-            read -rsn1 char
+            IFS= read -rsn1 char
+            local code=$(printf '%d' "'$char" 2>/dev/null || echo "0")
 
-            if [ "$char" = $'\x1b' ; then
-                # Escape sequence — read next 2 chars (arrow keys)
-                read -rsn1 char2
-                read -rsn1 char3
-                case "$char3" in
-                    A) key="up"; break ;;    # Up arrow
-                    B) key="down"; break ;;  # Down arrow
-                esac
-                # Other escape sequences — ignore
-            elif [ "$char" = $'\x0a' ] || [ "$char" = $'\x0d' ]; then
+            if [ "$code" -eq 27 ]; then
+                # Escape — read 2 more bytes for arrow
+                read -rsn1 -t 0.1 _
+                read -rsn1 -t 0.1 arrow
+                local arrow_code=$(printf '%d' "'$arrow" 2>/dev/null || echo "0")
+                if [ "$arrow_code" -eq 65 ]; then
+                    key="up"
+                elif [ "$arrow_code" -eq 66 ]; then
+                    key="down"
+                fi
+                break
+            elif [ "$code" -eq 10 ] || [ "$code" -eq 13 ]; then
                 key="enter"
                 break
             elif [ "$char" = "q" ] || [ "$char" = "Q" ]; then
                 key="quit"
                 break
-            elif [ "$char" = "1" ]; then
+            elif [ "$char" = "1" ] && [ "$count" -ge 1 ]; then
                 key="num1"
                 break
-            elif [ "$char" = "2" ]; then
+            elif [ "$char" = "2" ] && [ "$count" -ge 2 ]; then
                 key="num2"
                 break
-            elif [ "$char" = "3" ]; then
+            elif [ "$char" = "3" ] && [ "$count" -ge 3 ]; then
                 key="num3"
                 break
-            elif [ "$char" = "4" ]; then
+            elif [ "$char" = "4" ] && [ "$count" -ge 4 ]; then
                 key="num4"
                 break
-            # Ignore all other keys — do nothing
             fi
+            # All other keys — ignore, keep reading
         done
 
-        # Process input
+        # Process
         case "$key" in
             up)
                 selected=$((selected - 1))
-                if [ "$selected" -lt 1 ]; then
-                    selected=$count  # Wrap to bottom
-                fi
-                # Move cursor up and clear
-                echo -ne "\e[${count}A"
-                for ((i=0; i<count+3; i++)); do echo -ne "\e[2K\e[1B"; done
-                echo -ne "\e[${count+3}A"
+                [ "$selected" -lt 1 ] && selected=$count
+                # Move up to start of options, clear, redraw
+                local lines=$((count + 4))
+                echo -ne "\e[${lines}A"
+                for ((j=0; j<lines; j++)); do echo -ne "\e[2K\e[1B"; done
+                echo -ne "\e[${lines}A"
                 ;;
             down)
                 selected=$((selected + 1))
-                if [ "$selected" -gt "$count" ]; then
-                    selected=1  # Wrap to top
-                fi
-                # Move cursor up and clear
-                echo -ne "\e[${count}A"
-                for ((i=0; i<count+3; i++)); do echo -ne "\e[2K\e[1B"; done
-                echo -ne "\e[${count+3}A"
+                [ "$selected" -gt "$count" ] && selected=1
+                local lines=$((count + 4))
+                echo -ne "\e[${lines}A"
+                for ((j=0; j<lines; j++)); do echo -ne "\e[2K\e[1B"; done
+                echo -ne "\e[${lines}A"
                 ;;
             enter)
-                # Show cursor
                 echo -ne "\e[?25h"
                 ARROW_MENU_RESULT=$selected
                 return 0
                 ;;
             num1|num2|num3|num4)
                 local num=${key#num}
-                if [ "$num" -le "$count" ]; then
-                    # Show cursor
-                    echo -ne "\e[?25h"
-                    ARROW_MENU_RESULT=$num
-                    return 0
-                else
-                    error_msg="Invalid option: $num (choose 1-$count)"
-                    # Move cursor up and redraw
-                    echo -ne "\e[${count}A"
-                    for ((i=0; i<count+3; i++)); do echo -ne "\e[2K\e[1B"; done
-                    echo -ne "\e[${count+3}A"
-                fi
+                echo -ne "\e[?25h"
+                ARROW_MENU_RESULT=$num
+                return 0
                 ;;
             quit)
                 echo -ne "\e[?25h"
@@ -190,12 +163,13 @@ arrow_menu() {
 }
 
 # ─── Parse args ─────────────────────────────────────────────
-SCOPE=""; PROJECT_DIR=""; UNINSTALL=false
+SCOPE=""; PROJECT_DIR=""; UNINSTALL=false; AUTO_YES=false
 while [ $# -gt 0 ]; do
     case "$1" in
         --global)    SCOPE="global"; shift ;;
         --project)   SCOPE="project"; PROJECT_DIR="$2"; shift 2 ;;
         --uninstall) UNINSTALL=true; shift ;;
+        --yes|-y)    AUTO_YES=true; shift ;;
         --help|-h)   usage; exit 0 ;;
         *)           err "Unknown option: $1"; usage; exit 1 ;;
     esac
@@ -218,13 +192,11 @@ fi
 
 # ─── Interactive mode ───────────────────────────────────────
 if [ -z "$SCOPE" ]; then
-    # Main scope menu
     arrow_menu "Where do you want to install?" \
         "Global    — ~/.agents/skills/ultimate-dev/" \
         "Project   — <project>/.agents/skills/ultimate-dev/"
 
     MENU_EXIT=$?
-
     if [ $MENU_EXIT -ne 0 ] || [ "$ARROW_MENU_RESULT" -eq 0 ]; then
         info "Cancelled."
         exit 0
@@ -257,7 +229,7 @@ else
     TARGET="$PROJECT_DIR/.agents/skills/ultimate-dev"
 fi
 
-# ─── Confirm menu ───────────────────────────────────────────
+# ─── Confirm ────────────────────────────────────────────────
 header "Ready to install"
 echo ""
 echo -e "  ${BOLD}Source:${NC}  $SKILL_DIR"
@@ -266,12 +238,15 @@ echo -e "  ${BOLD}Scope:${NC}   $SCOPE"
 echo -e "  ${BOLD}Version:${NC} $(cat "$SKILL_DIR/VERSION" 2>/dev/null || echo "unknown")"
 echo ""
 
-# Check if already installed
 if [ -d "$TARGET" ]; then
     warn "Already installed at $TARGET"
 fi
 
-arrow_menu "Proceed?" "Yes — Install" "No — Cancel"
+if [ "$AUTO_YES" = true ]; then
+    ARROW_MENU_RESULT=1
+else
+    arrow_menu "Proceed?" "Yes — Install" "No — Cancel"
+fi
 
 if [ "$ARROW_MENU_RESULT" -ne 1 ]; then
     info "Cancelled."
@@ -282,17 +257,14 @@ fi
 header "Installing"
 
 mkdir -p "$(dirname "$TARGET")"
-
-# Show progress
-echo -ne "  ${DIM}Copying files...${NC}"
 cp -r "$SKILL_DIR" "$TARGET"
-echo -e "\r  ${GREEN}✔${NC} Copied files    "
 
 AGENT_COUNT=$(find "$TARGET/agents" -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
 SKILL_COUNT=$(find "$TARGET/skills" -name "SKILL.md" 2>/dev/null | wc -l | tr -d ' ')
 MODULE_COUNT=$(find "$TARGET/modules" -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
 FILE_COUNT=$(find "$TARGET" -type f 2>/dev/null | wc -l | tr -d ' ')
 
+status "Copied $FILE_COUNT files"
 status "Version $(cat "$TARGET/VERSION")"
 
 # ─── Summary ────────────────────────────────────────────────
