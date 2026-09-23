@@ -122,9 +122,9 @@ jobs:
 
       - name: Verify installation
         run: |
-          ls -la ~/.claude/skills/ultimate-dev/
-          test -f ~/.claude/skills/ultimate-dev/SKILL.md
-          test -f ~/.claude/skills/ultimate-dev/skill-manifest.yaml
+          ls -la ~/.agents/skills/ultimate-dev/
+          test -f ~/.agents/skills/ultimate-dev/SKILL.md
+          test -f ~/.agents/skills/ultimate-dev/skill-manifest.yaml
 
       - name: Test project install
         run: |
@@ -132,6 +132,6 @@ jobs:
           cd /tmp/test-project
           git init -q
           ~/ultimate-dev/scripts/install.sh --project . --yes
-          test -f .claude/skills/ultimate-dev/SKILL.md
+          test -f .agents/skills/ultimate-dev/SKILL.md
           test -f .gitignore
           grep -q ".memory/ultimate-dev/" .gitignore

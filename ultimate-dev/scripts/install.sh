@@ -13,7 +13,7 @@ while [[ $# -gt 0 ]]; do
 done
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 if [[ "$GLOBAL" -eq 1 ]]; then
-  DEST="$HOME/.claude/skills/ultimate-dev"
+  DEST="$HOME/.agents/skills/ultimate-dev"
   mkdir -p "$DEST"
   cp -R "$ROOT/." "$DEST/"
   mkdir -p "$HOME/.memory/ultimate-dev"
@@ -22,8 +22,8 @@ if [[ "$GLOBAL" -eq 1 ]]; then
 fi
 if [[ -z "$PROJECT" ]]; then PROJECT="$(pwd)"; fi
 PROJECT="$(cd "$PROJECT" && pwd)"
-mkdir -p "$PROJECT/.claude/skills/ultimate-dev" "$PROJECT/.cursor/rules"
-cp -R "$ROOT/SKILL.md" "$ROOT/runtime" "$ROOT/router" "$ROOT/config" "$ROOT/skills" "$ROOT/modules" "$ROOT/agents" "$PROJECT/.claude/skills/ultimate-dev/" 2>/dev/null || true
+mkdir -p "$PROJECT/.agents/skills/ultimate-dev" "$PROJECT/.cursor/rules"
+cp -R "$ROOT/SKILL.md" "$ROOT/runtime" "$ROOT/router" "$ROOT/config" "$ROOT/skills" "$ROOT/modules" "$ROOT/agents" "$PROJECT/.agents/skills/ultimate-dev/" 2>/dev/null || true
 cp "$ROOT/templates/CLAUDE.md" "$PROJECT/CLAUDE.md" 2>/dev/null || true
 cp "$ROOT/templates/AGENTS.md" "$PROJECT/AGENTS.md" 2>/dev/null || true
 cp "$ROOT/templates/ultimate-dev.mdc" "$PROJECT/.cursor/rules/ultimate-dev.mdc"
