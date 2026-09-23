@@ -52,6 +52,22 @@ ultimate-dev is a **single skill** that replaces dozens of specialized skills. I
 
 Every install creates a memory folder at the project root — `<project>/.memory/ultimate-dev/` (or `~/.memory/ultimate-dev/` for global installs) — seeded with a template, and project-scoped installs add `.memory/ultimate-dev/` to `.gitignore`.
 
+### Manual install (no script — works on any OS/tool)
+
+```bash
+# 1. Copy the skill folder to your tool's skill directory
+# Claude Code (macOS/Linux):
+cp -R . ~/.claude/skills/ultimate-dev/
+# Cursor / generic CLI (project scope):
+cp -R . .claude/skills/ultimate-dev/
+# Any other tool: place under the tool's native skills path, then rename .agents/ → .claude/ if needed
+
+# 2. Create memory folder (optional, for durable state)
+mkdir -p .memory/ultimate-dev/tasks
+
+# 3. Verify: your AI tool should now discover SKILL.md, AGENTS.md and skill-manifest.yaml
+```
+
 > [!TIP]
 > Not sure which tools you have? Run `./scripts/detect-tools.sh` to list installed agentic tools, and `./scripts/verify.sh` to check the package integrity.
 
