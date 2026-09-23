@@ -1,6 +1,6 @@
 ---
 name: ultimate-dev
-version: "2.1.0"
+version: "2.5.0"
 description: >-
   Master software-engineering orchestrator. Single entry point that autonomously
   detects stack, classifies tasks, selects architecture pattern (Skills/Subagents/Handoffs/Router),
@@ -23,9 +23,10 @@ tags:
 
 This is the **primary agent** for the `ultimate-dev` skill.
 
-Invoke this agent directly for any software-engineering task. The agent is
-responsible for deciding how the task should be classified, routed, executed,
-and verified.
+Invoke this agent directly for any software-engineering task. The model using this entry point performs the reasoning and decisions required to
+understand, plan, adapt, and select the appropriate orchestration pattern. The
+entry point then coordinates that decision through the runtime and available
+capabilities.
 
 Detailed orchestration policy is defined in:
 
@@ -58,7 +59,9 @@ the relevant router, agent, skill, module, workflow, or reference files.
 
 ## How It Works
 
-The `orchestrator` is the decision-making engine.
+The **model is the decision-making engine**. The orchestrator is the coordination
+mechanism that applies the model's decisions through Skills, Subagents, Handoffs,
+and Router patterns.
 
 For moderate and complex tasks, it follows the 9-step Operating Loop:
 
@@ -90,7 +93,8 @@ unnecessary overhead.
 
 ## Pattern Decision Tree
 
-The orchestrator chooses the pattern autonomously.
+The model chooses the pattern as part of its reasoning. The orchestrator applies
+the selected pattern and coordinates the required specialists/state transitions.
 
 ```text
 Task → CLASSIFY → PATTERN
@@ -129,7 +133,8 @@ Task → CLASSIFY → PATTERN
                  → Combine only the necessary patterns
 ```
 
-The orchestrator must prefer the smallest safe execution structure.
+The model should prefer the smallest safe execution structure; the orchestrator
+coordinates that selected structure without becoming a second reasoning engine.
 
 ## Specialist Selection
 

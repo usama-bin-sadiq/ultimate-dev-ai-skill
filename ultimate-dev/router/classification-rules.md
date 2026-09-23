@@ -209,7 +209,7 @@ Do not ask the user to choose:
 * whether to use subagents
 * an internal architecture of `ultimate-dev`
 
-Those are orchestrator decisions.
+Those are model / intelligence decisions; the orchestrator coordinates their execution.
 
 ---
 

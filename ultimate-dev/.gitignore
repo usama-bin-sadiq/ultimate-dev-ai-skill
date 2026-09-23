@@ -1,0 +1,22 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local project memory (user-specific)
+.ultimate-dev/
+
+# Draft personas (user-generated)
+personas/drafts/
+
+# Logs
+*.log
+.agents
+.memory/ultimate-dev/
+**/__pycache__/
+*.pyc

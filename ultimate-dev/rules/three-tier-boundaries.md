@@ -93,7 +93,7 @@ If you encounter a boundary violation:
 
 1. **Stop immediately.** Don't continue the action.
 2. **Document the violation.** What happened, who did it, what was affected.
-3. **Report to the orchestrator.** Let them decide how to handle it.
+3. **Report to the orchestrator.** The model / intelligence layer determines the appropriate response; the orchestrator coordinates it.
 4. **Don't cover it up.** Transparency is more important than speed.
 
 ## Applying Boundaries

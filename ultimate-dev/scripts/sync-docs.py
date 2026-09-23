@@ -9,7 +9,7 @@ Two kinds of managed content:
 
   1. Inline facts — plain lines owned by this script, matched by regex
      and rewritten in place (no markers needed), e.g.:
-         # ultimate-dev v2.1.0
+         # ultimate-dev v2.5.0
 
   2. Generated blocks — delimited by HTML comments (invisible when the
      README is rendered):

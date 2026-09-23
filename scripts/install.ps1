@@ -26,7 +26,7 @@ function Write-Logo {
     # Version and counts come from the skill source on disk — never hardcoded
     $ver = if (Test-Path (Join-Path $SkillDir "VERSION")) {
         (Get-Content (Join-Path $SkillDir "VERSION") -Raw).Trim()
-    } else { "2.1.0" }
+    } else { "2.5.0" }
     $agentCount = if (Test-Path (Join-Path $SkillDir "agents")) {
         @(Get-ChildItem (Join-Path $SkillDir "agents") -Recurse -File -Filter "*.md" |
             Where-Object { $_.FullName -notmatch '[\\/]_shared[\\/]' }).Count
