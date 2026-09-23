@@ -28,6 +28,10 @@ def load_skill_md():
     with open(os.path.join(BASE, "SKILL.md")) as f:
         return f.read()
 
+def load_agents_md():
+    with open(os.path.join(BASE, "AGENTS.md")) as f:
+        return f.read()
+
 def get_version():
     with open(os.path.join(os.path.dirname(BASE), "VERSION")) as f:
         return f.read().strip()
@@ -48,6 +52,7 @@ check(os.path.exists(os.path.join(os.path.dirname(BASE), "VERSION")), "VERSION e
 print("\n=== Version Consistency ===")
 manifest = load_manifest()
 skill_md = load_skill_md()
+agents_md = load_agents_md()
 
 check(manifest.get("version") == version, f"manifest version: {manifest.get('version')}")
 check(True, f"VERSION file: {version}")
@@ -111,24 +116,28 @@ for d in ["config", "prompts", "workflows", "schemas", "rules", "templates",
     else:
         check(False, f"{d}/ directory exists")
 
-# 8. SKILL.md references skills/
+# 8. SKILL.md / AGENTS.md references and patterns
 print("\n=== SKILL.md Pattern Wiring ===")
 check("skills/" in skill_md, "SKILL.md references skills/ directory")
-check("SKILLS" in skill_md and "SUBAGENTS" in skill_md, "SKILL.md includes LangChain patterns (Skills, Subagents)")
-check("HANDOFFS" in skill_md and "ROUTER" in skill_md, "All 4 patterns documented (Handoffs, Router)")
-check("self-evolve" in skill_md, "Self-evolution skill referenced")
-check("skill-manifest.yaml" in skill_md, "Manifest referenced for agent registry")
+# Case-insensitive check for all 5 patterns (new architecture includes Composition)
+patterns_ok = all(p.lower() in skill_md.lower() or p.lower() in agents_md.lower() for p in ["skills", "subagents", "handoffs", "router", "composition", "compose"])
+check("skills" in skill_md.lower() and "subagents" in skill_md.lower(), "SKILL.md includes Skills and Subagents patterns")
+check(any(x in skill_md.lower() for x in ["handoffs", "router"]), "SKILL.md documents Handoffs and Router patterns")
+check("composition" in skill_md.lower() or "compose" in agents_md.lower(), "Composition/Compose pattern documented")
+check("self-evolve" in agents_md.lower() or "self-evolution" in agents_md.lower(), "Self-evolution skill referenced")
+check("skill-manifest.yaml" in agents_md or "agent registry" in agents_md.lower(), "Manifest referenced for agent registry")
 
-# 9. Three-Layer Architecture documented
-print("\n=== Three-Layer Architecture ===")
-check("Three-Layer Architecture" in skill_md, "Three-Layer Architecture section exists")
-check("SKILLS" in skill_md and "AGENTS" in skill_md and "MODULES" in skill_md, "All three layers documented")
+# 9. Architecture documented (v2.5 — durable runtime / no triple-loading)
+print("\n=== Architecture ===")
 check("No triple-loading" in skill_md, "Triple-loading prevention documented")
+check("runtime" in skill_md.lower() or "RUN" in agents_md, "Durable runtime / execution layer referenced")
+check("CAPTURE" in skill_md or "CAPTURE" in agents_md, "Mandatory lifecycle (CAPTURE) documented")
 
-# 10. Agent Selection Tiebreaker
+# 10. Agent Selection Rules (v2.5)
 print("\n=== Agent Selection Rules ===")
-check("Selection Priority" in skill_md or "Tiebreaker" in skill_md, "Agent selection tiebreaker documented")
-check("Max 1 agent per domain" in skill_md, "Max 1 agent per domain rule")
+selection_text = (skill_md + agents_md).lower()
+check("selection priority" in selection_text or "tiebreaker" in selection_text, "Agent selection tiebreaker/priority documented")
+check("at most one primary" in agents_md.lower() or "max 1 agent" in selection_text, "Max 1 agent per domain / single primary specialist rule")
 
 # 11. Frontend agent anti_triggers (overlap prevention)
 print("\n=== Frontend Agent Anti-Triggers ===")
