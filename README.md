@@ -166,6 +166,8 @@ Install **once** (global or project scope) — tools auto-discover the skill fro
 
 The full compatibility list lives in [`ultimate-dev/skill-manifest.yaml`](ultimate-dev/skill-manifest.yaml) (`compatible_tools`).
 
+> [!NOTE] **Claude Code users:** Claude reads skills from `.claude/skills/`. If you installed to `.agents/skills/ultimate-dev/`, either rename `.agents/` → `.claude/` or create a symlink (`ln -s .agents/skills/ultimate-dev/.claude/skills/ultimate-dev`) so Claude discovers the skill natively.
+
 ---
 
 ## 💡 Examples
