@@ -131,6 +131,7 @@ jobs:
           mkdir -p /tmp/test-project
           cd /tmp/test-project
           git init -q
+          cp -r $GITHUB_WORKSPACE/ultimate-dev .
           ./ultimate-dev/scripts/install.sh --project . --yes
           test -f .agents/skills/ultimate-dev/SKILL.md
           test -f .gitignore
