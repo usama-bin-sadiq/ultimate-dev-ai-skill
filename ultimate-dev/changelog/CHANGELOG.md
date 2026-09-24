@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.0.2] — 2026-09-24
+
+### Fixed
+- fix: make installers interactive and copy-only (commit 88f3aae95126)
+
+
+# Changelog
+
 ## [3.0.1] — 2026-09-24
 
 ### Fixed
