@@ -1075,6 +1075,12 @@ class EvolutionStore:
 
     list = list_candidates
 
+    def list_active(self) -> list[CandidateRecord]:
+        return [candidate for candidate in self.list_candidates() if candidate.get("active") is True]
+
+    def list_published(self) -> list[CandidateRecord]:
+        return [candidate for candidate in self.list_candidates() if candidate.get("status") == "published"]
+
     def _resolve_evaluators(
         self,
         evaluators: Mapping[str, Any] | None,
@@ -1660,6 +1666,31 @@ class EvolutionStore:
             **kwargs,
         )
 
+    def _mark_lineage_active_unlocked(self, active_record: CandidateRecord | None) -> None:
+        """Maintain one active receipt pointer per candidate lineage."""
+        lineage_id = active_record.get("lineage_id") if active_record is not None else None
+        if lineage_id is None:
+            return
+        for path in sorted(self.candidates_dir.glob("*.json")):
+            try:
+                candidate = self._load_candidate_unlocked(path.stem)
+            except EvolutionContractError:
+                continue
+            if candidate.get("lineage_id") != lineage_id:
+                continue
+            should_be_active = (
+                active_record is not None
+                and candidate.get("candidate_id") == active_record.get("candidate_id")
+            )
+            if candidate.get("active") is should_be_active and (
+                should_be_active or candidate.get("active_version") is None
+            ):
+                continue
+            candidate["active"] = should_be_active
+            candidate["active_version"] = candidate.get("version") if should_be_active else None
+            candidate["updated_at"] = self._now_text()
+            self._persist_candidate_unlocked(candidate)
+
     def _verify_admission_unlocked(self, record: CandidateRecord, *, actor: str | None = None) -> dict[str, Any]:
         if record.get("status") not in {"approved", "published"}:
             raise AdmissionRequired("candidate has not been explicitly admitted")
@@ -1842,6 +1873,7 @@ class EvolutionStore:
                 version_history=history,
             )
             record["canonical_write_performed"] = False
+            self._mark_lineage_active_unlocked(record)
             self._persist_candidate_unlocked(record)
             return record
 
@@ -2066,6 +2098,7 @@ class EvolutionStore:
                 target_record["active"] = True
                 target_record["active_version"] = target_version
                 target_record["updated_at"] = self._now_text()
+                self._mark_lineage_active_unlocked(target_record)
                 self._persist_candidate_unlocked(target_record)
             return record
 
