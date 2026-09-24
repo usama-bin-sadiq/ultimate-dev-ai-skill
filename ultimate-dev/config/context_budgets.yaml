@@ -1,6 +1,6 @@
 # Context Budget Configuration — Controls how context is allocated and managed
 
-version: "3.0.0"
+version: "3.0.1"
 
 # Per-task context budgets
 task_budgets:

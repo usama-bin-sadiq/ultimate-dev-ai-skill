@@ -1,6 +1,6 @@
 # Workflow Configuration — Defines execution flows for common task types
 
-version: "3.0.0"
+version: "3.0.1"
 
 workflows:
   # ─── Default: Simple, sequential task execution ───
