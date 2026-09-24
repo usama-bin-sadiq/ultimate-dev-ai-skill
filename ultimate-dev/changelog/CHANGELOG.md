@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.8.0] — 2026-09-24
+
+### changed
+- chore: release v2.7.0 (minor) (#3)
+
+# Changelog
+
 ## [2.6.0] — 2026-09-24
 
 ### changed
