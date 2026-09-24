@@ -52,6 +52,8 @@ ultimate-dev is a **single skill** that replaces dozens of specialized skills. I
 
 Every install creates a memory folder at the project root — `<project>/.memory/ultimate-dev/` (or `~/.memory/ultimate-dev/` for global installs) — seeded with a template, and project-scoped installs add `.memory/ultimate-dev/` to `.gitignore`.
 
+> **Note for best experience:** Install Python 3.10+ for full runtime functionality (tests, model adapter, durable state verification). The orchestrator works with any model, but Python enables the verification and adapter layers.
+
 ### Manual install (no script — works on any OS/tool)
 
 ```bash
