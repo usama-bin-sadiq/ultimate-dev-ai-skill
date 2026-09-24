@@ -10,6 +10,7 @@ Thumbs.db
 
 # Local project memory (user-specific)
 .ultimate-dev/
+.memory/
 
 # Draft personas (user-generated)
 personas/drafts/
@@ -17,6 +18,13 @@ personas/drafts/
 # Logs
 *.log
 .agents
+
+# Test cache
+.pytest_cache/
+
+# Local project memory
 .memory/ultimate-dev/
+
+# Python cache
 **/__pycache__/
 *.pyc
