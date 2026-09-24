@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0] — 2026-09-24
+
+### breaking
+- Major runtime/platform release: strict JEV-bound execution, durable operations, optional MCP seam, canonical workflow/catalog authority, provenance memory, governed self-evolution, and provider-neutral evaluation.
+
+### added
+- Dependency-free runtime platform components with host-injected adapters and no mandatory provider dependency.
+
+### fixed
+- Corrected release workflows and installers to use the root `VERSION` source of truth.
+
 ## [2.8.0] — 2026-09-24
 
 ### changed

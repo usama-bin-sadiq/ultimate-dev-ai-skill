@@ -180,7 +180,7 @@ jobs:
         id: version
         run: |
           cd ultimate-dev
-          current=$(cat VERSION)
+          current=$(cat ../VERSION)
           IFS='.' read -r major minor patch <<< "$current"
           
           version_type="${{ needs.should-release.outputs.version_type }}"
@@ -192,7 +192,7 @@ jobs:
           esac
           
           new_version="$major.$minor.$patch"
-          echo "$new_version" > VERSION
+          echo "$new_version" > ../VERSION
           echo "new_version=$new_version" >> $GITHUB_OUTPUT
           echo "old_version=$current" >> $GITHUB_OUTPUT
           echo "version_type=$version_type" >> $GITHUB_OUTPUT
@@ -230,7 +230,7 @@ jobs:
 
       - name: Commit changes
         run: |
-          git add ultimate-dev/VERSION ultimate-dev/skill-manifest.yaml ultimate-dev/README.md ultimate-dev/changelog/CHANGELOG.md
+          git add VERSION ultimate-dev/skill-manifest.yaml ultimate-dev/README.md ultimate-dev/changelog/CHANGELOG.md
           git commit -m "chore: release v${{ steps.version.outputs.new_version }}"
 
       - name: Create tag

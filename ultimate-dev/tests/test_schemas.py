@@ -7,6 +7,7 @@ import pytest
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCHEMAS_DIR = os.path.join(BASE, "schemas")
+RUNTIME_SCHEMAS_DIR = os.path.join(BASE, "runtime", "schemas")
 
 
 def get_schema_files():
@@ -35,6 +36,16 @@ class TestSchemas:
             content = yaml.safe_load(f)
         # Basic structure checks
         assert isinstance(content, dict), f"{schema_file} should be a dict"
+
+    @pytest.mark.parametrize("schema_file", ["task-contract.json", "handoff.json", "operation.json"])
+    def test_runtime_schema_parses(self, schema_file):
+        """Runtime JSON contracts should remain parseable and identified."""
+        path = os.path.join(RUNTIME_SCHEMAS_DIR, schema_file)
+        with open(path, encoding="utf-8") as f:
+            content = yaml.safe_load(f)
+        assert isinstance(content, dict), f"{schema_file} should be an object"
+        assert content.get("$schema"), f"{schema_file} should declare a schema dialect"
+        assert content.get("title"), f"{schema_file} should have a title"
 
     def test_error_codes_naming(self):
         """Error codes should follow naming convention."""

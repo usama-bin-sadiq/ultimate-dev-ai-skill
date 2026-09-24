@@ -12,6 +12,12 @@ The ultimate-dev skill is tested at multiple levels:
 4. **Rule Consistency** — Validates that rules don't contradict each other.
 5. **Tool Coverage** — Confirms all registered tools are documented.
 6. **Task Observer Contract** — Validates the Task Observer skill/agent boundary and registration.
+7. **Runtime Hardening** — Validates path containment, JEV packet binding, restart
+   rehydration, operation idempotency/cancellation, policy checks, capability
+   availability, structured executor failures, and evidence-gated completion.
+8. **Platform Components** — Validates the typed workflow/catalog authority,
+   optional MCP seam, provenance-aware memory, governed evolution lifecycle,
+   and provider-neutral evaluation runner.
 
 ## How to Run Tests
 
@@ -96,6 +102,9 @@ python -m pytest tests/test_workflows.py -v
 tests/
 ├── README.md              # This file
 ├── jev/engine.test.mjs   # Host-native JEV conformance tests
+├── runtime/
+│   ├── test_runtime.py
+│   └── test_runtime_hardening.py
 ├── test_task_observer.py  # Task Observer skill/agent contract tests
 ├── test_schemas.py        # Schema validation tests
 ├── test_prompts.py        # Prompt completeness tests

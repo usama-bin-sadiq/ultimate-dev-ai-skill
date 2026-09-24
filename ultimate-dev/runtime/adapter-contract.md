@@ -27,7 +27,9 @@ protocol. They do not own durable task state or make hidden provider choices.
    transition.
 5. A packet with `execution_effect: review` or `stop` is non-executable until
    a new trusted decision is produced.
-6. JEV is optional as an implementation detail, but privileged execution is
+6. The Runtime validates the canonical packet, task ID, selected capability ID,
+   and exact action fingerprint before an approved executor call.
+7. JEV is optional as an implementation detail, but privileged execution is
    not allowed to bypass the decision boundary.
 
 If a host lacks structured output, schema validation, or a decision engine,
@@ -35,3 +37,17 @@ the adapter must degrade to planning/review/stop rather than fail open. A
 missing capability is an explicit result, not a reason to guess a provider.
 
 The runtime owns durable state; adapters own host integration only.
+
+## Optional component rules
+
+- A workflow adapter must use the canonical catalog and route capability-backed
+  steps through the Runtime authorizer; arbitrary handler functions are not
+  authority.
+- An MCP adapter must inject a transport, report health/discovery failures, treat
+  tool metadata as untrusted by default, and make fallback opt-in.
+- Memory records must carry provenance and scope. Memory is context, never
+  authorization, verification, or an audit log.
+- Evolution adapters may stage and evaluate candidates, but canonical publication
+  is a separate governed host action. The bundled store emits receipts only.
+- Evaluation adapters supply real backend callables and an independent verifier;
+  missing components are reported as `not_run` or `uncertain`, never as passes.

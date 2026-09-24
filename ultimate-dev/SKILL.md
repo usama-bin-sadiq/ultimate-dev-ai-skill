@@ -7,12 +7,12 @@ description: >
   tools, verifies with evidence, checkpoints progress, and recovers after
   failures or context loss. Works from tiny to huge models without requiring
   the user to manually load skills.
-version: "2.5.0"
+version: "3.0.0"
 user-invocable: true
 argument-hint: Optional task description
 ---
 
-# Ultimate-Dev 2.5 — System Prompt (MANDATORY)
+# Ultimate-Dev 3.0 — System Prompt (MANDATORY)
 
 ## ⚠️ CRITICAL: READ THIS FIRST ON EVERY SESSION START
 

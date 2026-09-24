@@ -23,7 +23,7 @@ def test_composed_pattern_execution():
         project_root = Path(tmpdir)
         
         # Initialize runtime
-        runtime = Runtime(project_root)
+        runtime = Runtime(project_root, require_jev_decision=False)
         
         # Task contract: Build a simple API with tests + docs (multi-domain)
         contract = {
@@ -108,12 +108,18 @@ def test_composed_pattern_execution():
         # Phase 6: VERIFY (Router synthesizes)
         runtime.transition(task_id, "verifying")
         runtime.record_verification(task_id,
-            passed=["api_code_created", "tests_passed", "docs_generated"],
+            passed=["API endpoint created", "Input validation implemented", "Unit tests pass", "Documentation generated"],
             pending=[],
             evidence={
                 "backend": backend_result,
                 "testing": test_result,
-                "documentation": doc_result
+                "documentation": doc_result,
+                "items": [
+                    {"criterion": "API endpoint created", "passed": True, "source": "backend_result"},
+                    {"criterion": "Input validation implemented", "passed": True, "source": "backend_result"},
+                    {"criterion": "Unit tests pass", "passed": True, "command": "pytest"},
+                    {"criterion": "Documentation generated", "passed": True, "source": "documentation"},
+                ],
             }
         )
         
@@ -138,7 +144,7 @@ def test_composed_pattern_execution():
         # Verify final state
         final_state = runtime.store.load(task_id)
         assert final_state["status"] == "completed"
-        assert final_state["verification"]["passed"] == ["api_code_created", "tests_passed", "docs_generated"]
+        assert final_state["verification"]["passed"] == ["API endpoint created", "Input validation implemented", "Unit tests pass", "Documentation generated"]
         
         print("✅ Composed pattern execution verified:")
         print(f"   - Pattern: compose (Subagent + Handoff + Router)")
@@ -146,13 +152,7 @@ def test_composed_pattern_execution():
         print(f"   - Evidence artifacts: {len(evidence)} domains")
         print(f"   - Verification: {final_state['verification']['passed']}")
         
-        return {
-            "task_id": task_id,
-            "pattern": pattern,
-            "domains": domains,
-            "evidence": evidence,
-            "verification": final_state["verification"]
-        }
+        return None
 
 
 def test_lite_mode_detection():
@@ -175,7 +175,7 @@ def test_lite_mode_detection():
         assert lite.should_use_lite("deploy kubernetes cluster") == False
         
         print("✅ Lite mode detection verified")
-        return True
+        return None
 
 
 def test_bootstrap_cache():
@@ -205,7 +205,7 @@ def test_bootstrap_cache():
         assert cache.get() is None
         
         print("✅ Bootstrap cache verified")
-        return True
+        return None
 
 
 def test_host_fallback_provider():
@@ -225,7 +225,7 @@ def test_host_fallback_provider():
     assert "test prompt" in result
     
     print("✅ Host fallback provider verified")
-    return True
+    return None
 
 
 def test_model_adapter_fallback():
@@ -242,7 +242,7 @@ def test_model_adapter_fallback():
     assert result is not None
     
     print("✅ Model adapter fallback verified")
-    return True
+    return None
 
 
 if __name__ == "__main__":

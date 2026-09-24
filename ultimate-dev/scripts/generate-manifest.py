@@ -120,7 +120,7 @@ def get_version():
     if os.path.exists(version_path):
         with open(version_path) as f:
             return f.read().strip()
-    return "2.5.0"
+    return "3.0.0"
 
 def generate_manifest():
     """Generate the complete skill-manifest.yaml."""

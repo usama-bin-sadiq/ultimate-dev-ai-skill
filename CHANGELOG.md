@@ -1,5 +1,23 @@
 # Changelog
 
+## [3.0.0] - 2026-09-24
+
+### Major runtime/platform release
+
+- Added a strict, durable Python runtime with JEV action binding, restart-safe approval revalidation, policy/capability enforcement, evidence-gated completion, idempotent operations, cancellation, leases, and recovery.
+- Added a typed canonical workflow/catalog authority with a bounded sequential executor and Runtime capability-authorizer boundary.
+- Added an optional dependency-free MCP transport seam with schema/trust/health/fallback/task-handle handling.
+- Added provenance-aware bounded project memory with scope, freshness, supersession, retention, secret refusal, and context projection.
+- Added governed self-evolution candidate staging, independent evaluation, explicit admission, versioning, rollback, and memory-only publication receipts.
+- Added a provider-neutral evaluation runner and no-provider CLI with traces, metrics, repeated trials, redaction, and honest uncertainty states.
+- Synchronized the canonical root `VERSION` release path and corrected installer/workflow references after removing the duplicate inner version file.
+
+### Verification
+
+- 665 Python tests passed.
+- 18 JEV Node tests passed.
+- 52 structure checks passed.
+
 ## [Unreleased]
 
 ### JEV decision boundary

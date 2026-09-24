@@ -1,6 +1,6 @@
 ---
 name: ultimate-dev
-version: "2.5.0"
+version: "3.0.0"
 description: >-
   Master software-engineering orchestrator. Single entry point that autonomously
   detects stack, classifies tasks, selects architecture pattern (Skills/Subagents/Handoffs/Router),

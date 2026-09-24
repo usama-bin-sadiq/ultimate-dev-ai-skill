@@ -47,10 +47,45 @@ select a sandbox or browser provider. A host can inject a capability executor:
 rt = Runtime(project_root, host_executor=adapter.execute)
 ```
 
-When the Runtime is configured with `require_jev_decision=True`, execution is
-blocked until a host-produced decision packet has been recorded. The Python
-JEV package under `runtime/core/jev/` is legacy compatibility material and is
-not imported by the canonical Runtime or SessionManager.
+When the Runtime is configured with `require_jev_decision=True` (the default),
+execution is blocked until a host-produced decision packet has been recorded,
+bound to the task, approved capability ID, and exact action fingerprint. The
+legacy `require_jev_decision=False` constructor option exists only for explicit
+compatibility/test setups; a per-call argument cannot disable a strict Runtime.
+The Python JEV package under `runtime/core/jev/` is legacy compatibility
+material and is not imported by the canonical Runtime or SessionManager.
 
 State remains at `.memory/ultimate-dev/tasks/<task-id>/`, so a fresh session
-can reconstruct the next safe action from disk.
+can reconstruct the next safe action from disk. Mutating `execute_code` calls
+also create durable operation records under `operations/`; repeated calls with
+the same operation ID return the prior result rather than duplicating a side
+effect. `operation.json` documents the portable operation record shape.
+
+## Optional platform components
+
+The runtime keeps platform features dependency-free and host-injected:
+
+- `core/registry.py` and `core/workflow.py` provide a canonical JSON catalog,
+  referential validation, bounded dependency ordering, and a deterministic
+  fail-fast workflow executor. Capability-backed workflow steps routed through
+  `Runtime.execute_workflow()` require an explicit `capability_authorizer`; the
+  authorizer is the host's JEV/policy/operation boundary.
+- `core/mcp.py` is an optional MCP seam. It accepts an injected transport,
+  validates the supported JSON-schema subset, requires explicit trust for
+  untrusted tools, reports health without installing a provider, and exposes
+  explicit fallback and task-handle operations. It never becomes a mandatory
+  runtime dependency.
+- `core/memory.py` stores bounded project memory records with provenance,
+  scope, freshness, supersession/contradiction handling, retention, sensitivity
+  filtering, secret refusal, and deterministic budgeted context projection.
+  `ContextManager(..., memory_store=...)` can project that memory safely.
+- `core/evolution.py` is a governed candidate lifecycle. Proposals are staged
+  and evaluated under `.memory`; publication creates a receipt only and never
+  writes canonical skills, agents, or manifests.
+- `evaluation.py` runs provider-neutral scripted/golden cases through injected
+  classifier, agent, and independent verifier callables. It reports
+  `not_run`/`uncertain` honestly when a backend or verifier is absent; a
+  fixture is not presented as a real model benchmark.
+
+These components are bounded building blocks, not claims of distributed
+consensus, provider installation, or a production multi-tenant deployment.

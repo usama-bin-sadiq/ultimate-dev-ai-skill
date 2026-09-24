@@ -20,7 +20,7 @@ trap cleanup EXIT
 # ─── Helpers ────────────────────────────────────────────────
 print_logo() {
     local ver agents skills modules stats
-    ver="$(cat "$SKILL_DIR/VERSION" 2>/dev/null || echo "2.5.0")"
+    ver="$(cat "$(dirname "$SCRIPT_DIR")/VERSION" 2>/dev/null || echo "3.0.0")"
     agents="$(find "$SKILL_DIR/agents" -name '*.md' -not -path '*/_shared/*' 2>/dev/null | wc -l | tr -d ' ' || true)"
     skills="$(find "$SKILL_DIR/skills" -name 'SKILL.md' 2>/dev/null | wc -l | tr -d ' ' || true)"
     modules="$(find "$SKILL_DIR/modules" -name '*.md' 2>/dev/null | wc -l | tr -d ' ' || true)"

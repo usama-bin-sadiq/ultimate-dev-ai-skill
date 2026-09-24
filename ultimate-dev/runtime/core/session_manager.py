@@ -31,13 +31,51 @@ class SessionConfig:
     remember_choice: bool = True
 
 
+class RuntimeSessionView:
+    """Read-only compatibility view that cannot bypass Runtime authorization."""
+
+    def __init__(self, manager: "SessionManager"):
+        self._manager = manager
+
+    @property
+    def config(self):
+        return self._manager.config
+
+    @property
+    def sandbox_initialized(self):
+        return self._manager.sandbox_initialized
+
+    @property
+    def sandbox_backend(self):
+        return self._manager.sandbox_backend
+
+    def ask_sandbox_preferences(self, interactive: bool = True):
+        return self._manager.ask_sandbox_preferences(interactive=interactive)
+
+    def should_initialize_sandbox(self, task_requires_execution: bool = False, task_description: str = "") -> bool:
+        return self._manager.should_initialize_sandbox(task_requires_execution, task_description)
+
+    def initialize_sandbox(self, force: bool = False) -> bool:
+        return self._manager.initialize_sandbox(force)
+
+    def execute_code(self, *args, **kwargs):
+        return {
+            "success": False,
+            "error": "Direct session execution is blocked; use Runtime.execute_code.",
+            "code": "runtime_authorization_required",
+            "stdout": "",
+            "stderr": "",
+            "exit_code": -1,
+        }
+
+
 class SessionManager:
     """Legacy session API with an optional injected host executor."""
     
     CONFIG_FILE = ".memory/ultimate-dev/session_config.json"
     
     def __init__(self, project_root: str, host_executor=None):
-        self.project_root = Path(project_root)
+        self.project_root = Path(project_root).resolve()
         self.config_path = self.project_root / self.CONFIG_FILE
         self.config = self._load_config()
         self.sandbox_initialized = False
@@ -115,8 +153,10 @@ class SessionManager:
     def execute_code(self, code: str, language: str = "python", task_description: str = "", **kwargs) -> Dict[str, Any]:
         """Delegate execution to an explicitly injected host adapter.
 
-        No local fallback is used. A missing adapter is an honest unavailable
-        result rather than a fabricated successful execution.
+        This is a low-level compatibility seam. Callers that execute
+        task-bound actions should use Runtime.execute_code, which adds task
+        state, JEV, policy, operation, and evidence gates. No local fallback
+        is used; a missing adapter is an honest unavailable result.
         """
         task_desc = task_description or f"Execute {language} code"
         if not self.should_initialize_sandbox(task_requires_execution=True, task_description=task_desc):

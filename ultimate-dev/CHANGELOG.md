@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.0.0] - 2026-09-24
+
+### Major release
+
+- Hardened the durable runtime with strict JEV binding, policy/capability enforcement, evidence-gated completion, idempotent operations, cancellation, leases, and recovery.
+- Added canonical workflow/catalog execution, optional MCP integration seams, provenance-aware memory, governed self-evolution, and provider-neutral evaluation.
+- Synchronized release metadata to the root `VERSION` source of truth.
+
 All notable changes to the ultimate-dev skill will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),

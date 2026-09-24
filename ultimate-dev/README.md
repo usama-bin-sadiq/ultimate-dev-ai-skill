@@ -1,12 +1,12 @@
-# Ultimate-Dev 2.5.0
+# Ultimate-Dev 3.0.0
 
 > Durable, model-agnostic engineering control plane: think, coordinate, execute, verify, recover.
 
-**v2.5 adds a real runtime layer to the existing LangChain-derived orchestration patterns.**
+**v3.0 adds a real runtime layer to the existing LangChain-derived orchestration patterns.**
 The model is not the durable memory. Task state, checkpoints, handoffs, evidence and recovery
 live outside the conversation under `.memory/ultimate-dev/`.
 
-# ultimate-dev v2.8.0
+# ultimate-dev v3.0.0
 
 **Master software-engineering orchestrator** — a single, adaptive skill that replaces dozens of specialized skills. Works with ANY model (tiny to huge) and ANY technology stack.
 
