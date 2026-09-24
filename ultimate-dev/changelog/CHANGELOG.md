@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.0] — 2026-09-24
+
+### changed
+-  (#)
+
+# Changelog
+
 ## [2.5.3] — 2026-09-24
 
 ### changed
