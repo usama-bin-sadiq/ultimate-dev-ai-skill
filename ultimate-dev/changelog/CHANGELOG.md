@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.0.1] — 2026-09-24
+
+### Fixed
+- fix: use configured CICD release environment (commit cb8f8ced5846)
+
+
+# Changelog
+
 ## [3.0.0] — 2026-09-24
 
 ### breaking

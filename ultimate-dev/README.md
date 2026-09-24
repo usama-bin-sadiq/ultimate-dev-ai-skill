@@ -6,7 +6,7 @@
 The model is not the durable memory. Task state, checkpoints, handoffs, evidence and recovery
 live outside the conversation under `.memory/ultimate-dev/`.
 
-# ultimate-dev v3.0.0
+# ultimate-dev v3.0.1
 
 **Master software-engineering orchestrator** — a single, adaptive skill that replaces dozens of specialized skills. Works with ANY model (tiny to huge) and ANY technology stack.
 
