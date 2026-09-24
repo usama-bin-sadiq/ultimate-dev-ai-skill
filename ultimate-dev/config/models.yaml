@@ -1,6 +1,6 @@
 # Model Configuration — Mapping agent roles to model tiers and settings
 
-version: "2.7.0"
+version: "2.8.0"
 
 # Model tiers define which models are used for different complexity levels
 tiers:

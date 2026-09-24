@@ -1,5 +1,5 @@
 name: ultimate-dev
-version: 2.7.0
+version: 2.8.0
 description: "Master software-engineering orchestrator. Adapts to model size: tiny\u2192inline, small\u21921 module, large\u2192\
   parallel agents, huge\u2192full system. Includes universal specialists that learn ANY technology from the web and auto-generate\
   \ new agents for future use."
