@@ -4,6 +4,11 @@ This directory contains tool definitions and configuration for the ultimate-dev 
 
 ## Available Tools
 
+These are illustrative capability names. The host adapter maps them to native
+tools; this package does not bundle a sandbox, browser, shell provider, or
+installer. JEV receives canonical capability descriptors and policy facts before
+any tool is selected.
+
 Agents in this system have access to the following tools:
 
 | Tool | Purpose | Restrictions |
@@ -13,7 +18,7 @@ Agents in this system have access to the following tools:
 | `edit_file` | Targeted file edits | Must preserve existing content |
 | `grep_search` | Search file contents by pattern | Read-only |
 | `glob_search` | Search file paths by pattern | Read-only |
-| `run_shell_command` | Execute shell commands | Sandboxed, no destructive commands |
+| `run_shell_command` | Execute shell commands | Host-provided isolation and approval required |
 | `web_search` | Search the web for information | Read-only |
 | `browser` | Open and interact with browser tabs | Read-only browsing |
 

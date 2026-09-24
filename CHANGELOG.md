@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased]
+
+### JEV decision boundary
+- Added versioned, host-neutral JEV request and decision contracts.
+- Added a dependency-free ECMAScript reference kernel with deterministic guardrails and capability intersection.
+- Decoupled the legacy Python Runtime/SessionManager from the broken JEV import path.
+- Added host-executor and persisted-decision seams; missing capabilities now degrade to review/unavailable.
+- Removed bundled sandbox/browser/provider assumptions from the canonical JEV path.
+
 ## [2.5.0] - 2026-09-24
 
 ### Architecture

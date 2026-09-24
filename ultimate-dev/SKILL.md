@@ -28,9 +28,10 @@ argument-hint: Optional task description
 5. CLASSIFY── Size (atomic|moderate|complex) + Domains + Risk + Dependencies
 6. PATTERN ── Select smallest: A(Skills) | B(Subagents) | C(Handoffs) | D(Router) | Compose
 7. PLAN    ── Break down, assign specialists, set checkpoints
-8. EXECUTE ── Run smallest coherent change with evidence
-9. VERIFY  ── Independent checks (tests, lint, build, manual)
-10. PERSIST── Update state.json, checkpoint, evidence
+8. JEV     ── Validate structured assessment; aggregate NOUL/CHOICE/SCORE; guard and recommend
+9. EXECUTE ── Run smallest coherent change through approved host capabilities
+10. VERIFY ── Independent checks (tests, lint, build, manual)
+11. PERSIST── Update state.json, checkpoint, evidence
 ```
 
 ### IF YOU SKIP ANY STEP → YOU ARE NOT FOLLOWING THE SKILL
@@ -54,6 +55,11 @@ ORCHESTRATOR / PATTERNS
 Coordinate: Skills • Subagents • Handoffs • Router
     │
     ▼
+JEV DECISION KERNEL
+Validate: NOUL • CHOICE • SCORE
+Decide: guardrails • route recommendation • capability intersection
+    │
+    ▼
 ULTIMATE-DEV RUNTIME (Durable State)
 Remember • Execute • Verify • Recover • Policy • Evidence
     │
@@ -61,6 +67,12 @@ Remember • Execute • Verify • Recover • Policy • Evidence
 CAPABILITIES / TOOLS
 Act: filesystem • shell • browser • APIs • MCP • host tools
 ```
+
+JEV is a side-effect-free policy kernel inside the runtime boundary. The model
+proposes; the host supplies capability facts, policy, and approvals. JEV never
+calls a model, installs a provider, executes a tool, or owns durable state. The
+Runtime persists the packet and remains the final authority for action scope,
+confirmation, evidence, and recovery.
 
 **THINK → COORDINATE → REMEMBER/EXECUTE/VERIFY/RECOVER → ACT → PROVE**
 
@@ -75,7 +87,7 @@ Act: filesystem • shell • browser • APIs • MCP • host tools
 - [ ] If task exists → RESUME from `state.json` (NOT from chat history)
 - [ ] If new task → CREATE task state with `CAPTURE` + `CONTRACT`
 - [ ] Run `DISCOVER` → detect stack, conventions, capabilities
-- [ ] Output: `step: 1-9 | size: atomic|moderate|complex | pattern: A|B|C|D|compose | agents: [...] | verification: {...}`
+- [ ] Output: `step: 1-10 | size: atomic|moderate|complex | pattern: A|B|C|D|compose | agents: [...] | verification: {...}`
 
 ---
 
@@ -176,6 +188,25 @@ Use capabilities:
 
 If capability missing → degrade to closest safe pattern.
 
+### JEV decision boundary
+
+Before an execution transition, the host supplies a structured JEV request
+containing the model assessment, capability catalog, policy snapshot, and
+scoped approvals. JEV returns a versioned decision packet with:
+
+- normalized NOUL, CHOICE, and SCORE values;
+- deterministic aggregate scores and hard safety floors;
+- `approve`, `human_review`, or `deny` guardrail action;
+- a recommended orchestration/context path;
+- the intersection of requested, host-available, and policy-allowed capability IDs;
+- explicit missing capabilities and machine-readable reasons.
+
+The model never supplies its own authorization. The host never installs a
+missing provider on JEV's behalf. `human_review` and `stop` are blocking
+states. Scores are confidence/support values, not probabilities. The canonical
+contracts are in `runtime/schemas/`; `runtime/jev/engine.mjs` is an optional
+reference implementation, not a mandatory service or dependency.
+
 ---
 
 ## Safety Gates (Require Confirmation)
@@ -263,7 +294,7 @@ ultimate-dev-preflight:
   task_resumed_or_created: true/false
   discover_completed: true/false
   initialization_output:
-    step: 1-9
+    step: 1-10
     size: atomic|moderate|complex
     pattern: A|B|C|D|compose
     agents: [...]
@@ -278,7 +309,7 @@ Every response MUST include this execution status block:
 
 ```yaml
 ultimate-dev-status:
-  step: 1-9
+  step: 1-10
   size: atomic|moderate|complex
   domains: [list]
   risk: none|data|security|compliance

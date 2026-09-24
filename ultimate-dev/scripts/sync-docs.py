@@ -44,6 +44,7 @@ ROOT = Path(__file__).resolve().parent.parent
 # description, so adding a skill never breaks the sync.
 PURPOSE: dict[str, str] = {
     "self-evolve": "Auto-generates new skills from experience",
+    "task-observer": "Capture reusable methodology from task work",
     "research": "Learn anything",
     "coding": "Build anything",
     "testing": "Verify anything",

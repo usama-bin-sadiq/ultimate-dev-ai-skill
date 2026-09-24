@@ -47,6 +47,49 @@ Ultimate-Dev is a **model-agnostic, durable engineering control plane** that ser
 └─────────────────────────────────────────────────────────────┘
 ```
 
+## JEV Decision Boundary
+
+JEV is a side-effect-free policy kernel inside the Ultimate-Dev runtime. It is
+placed after model/orchestration assessment and before host capability
+execution:
+
+```text
+MODEL / ORCHESTRATION
+    │ structured assessment + capability proposal
+    ▼
+JEV: NOUL + CHOICE + SCORE
+    │ validate → aggregate → guard → recommend
+    ▼
+DECISION PACKET
+    │
+    ▼
+RUNTIME: persist → confirm → execute → verify → recover
+    │
+    ▼
+HOST-NATIVE CAPABILITIES
+```
+
+The model proposes. The host supplies capability availability, isolation,
+policy, and scoped approvals. JEV only combines those facts deterministically;
+it does not call a model, discover tools, install dependencies, or persist
+state. The runtime remains the final policy and evidence authority.
+
+The three heads are:
+
+- NOUL: boolean safety/urgency facts.
+- CHOICE: proposed orchestration path and task class.
+- SCORE: normalized risk, complexity, confidence, and context pressure.
+
+Scores are not probabilities. Safety precedence is `deny > human_review >
+approve`. Human review exposes no executable capability IDs. Missing required
+capabilities are visible review results, never implicit fallbacks. Tool
+selection is intersection-only: `requested ∩ host_available ∩ policy_allowed`.
+
+The canonical contracts are under `ultimate-dev/runtime/schemas/`. The
+reference implementation is `ultimate-dev/runtime/jev/engine.mjs`; hosts may
+implement the same language-neutral contract natively. See
+`docs/adr/0001-jev-host-native-decision-kernel.md`.
+
 ## Core Principles
 
 ### 1. Model Independence
@@ -84,7 +127,7 @@ Ultimate-Dev is a **model-agnostic, durable engineering control plane** that ser
 
 ### Task Lifecycle (9 Steps)
 ```
-CAPTURE → RESUME/CREATE → DISCOVER → CONTRACT → CLASSIFY → PATTERN → PLAN → CHECKPOINT → EXECUTE → OBSERVE → VERIFY → PERSIST → COMPLETE
+CAPTURE → RESUME/CREATE → DISCOVER → CONTRACT → CLASSIFY → PATTERN → PLAN → JEV → CHECKPOINT → EXECUTE → OBSERVE → VERIFY → PERSIST → COMPLETE
 ```
 
 On failure: `DIAGNOSE → RECOVER/ROLLBACK → REPLAN → CHECKPOINT → EXECUTE`
@@ -154,11 +197,18 @@ Each agent has:
 
 ### Engine (`runtime/core/engine.py`)
 - State transitions (validated)
-- Execution recording
+- Persists host-produced JEV decision packets before execution
+- Execution recording through an injected host capability adapter
 - Verification recording
 - Checkpoint/handoff/resume
 
-### ModelAdapter (`runtime/core/model_adapter/`)
+### JEV Decision Kernel (`runtime/jev/engine.mjs`)
+- Pure deterministic NOUL/CHOICE/SCORE aggregation
+- Guardrail, route recommendation, and capability intersection
+- No model, tool, subprocess, installer, browser, container, or network calls
+- JSON Schema contracts remain the language-neutral source of truth
+
+### Legacy ModelAdapter (`runtime/core/model_adapter/`)
 - Auto-discovers providers (Ollama → OpenAI → Anthropic → Local CLI → Host Fallback)
 - Capability-based tier selection
 - Graceful fallback chain

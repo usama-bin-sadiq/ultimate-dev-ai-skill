@@ -50,6 +50,19 @@ Follow the ultimate-dev skill at ~/.agents/skills/ultimate-dev/SKILL.md
 for all engineering tasks.
 ```
 
+## JEV Host-Native Boundary
+
+Before an execution transition, map the host's native tools to canonical
+capability IDs and provide a capability snapshot, policy snapshot, and scoped
+approvals. Send the model assessment and host facts through the JEV contract;
+persist the returned packet; execute only when `execution_effect` is `execute`
+and `guardrail.action` is `approve`.
+
+JEV is a deterministic policy kernel, not a model, subagent, browser, shell,
+container, or installer. If structured output, validation, or a required
+capability is unavailable, stop at planning/review and report the gap. Do not
+install a provider or silently fall back to a different tool.
+
 ## Graceful Degradation
 
 If the host tool lacks features:

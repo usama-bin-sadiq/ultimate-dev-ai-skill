@@ -44,7 +44,7 @@ ls -la .memory/ultimate-dev/tasks/ 2>/dev/null || echo "No existing tasks"
 #    - Run scripts/detect-tools.sh if available
 
 # 7. OUTPUT INITIALIZATION STATUS:
-# step: 1-9 | size: atomic|moderate|complex | pattern: A|B|C|D|compose
+# step: 1-10 | size: atomic|moderate|complex | pattern: A|B|C|D|compose
 # agents: [...] | verification: {...}
 ```
 
@@ -67,7 +67,7 @@ ultimate-dev-preflight:
   task_resumed_or_created: true/false
   discover_completed: true/false
   initialization_output:
-    step: 1-9
+    step: 1-10
     size: atomic|moderate|complex
     pattern: A|B|C|D|compose
     agents: [...]
@@ -82,7 +82,7 @@ Every response MUST include this execution status block:
 
 ```yaml
 ultimate-dev-status:
-  step: 1-9
+  step: 1-10
   size: atomic|moderate|complex
   domains: [list]
   risk: none|data|security|compliance
@@ -169,7 +169,7 @@ the relevant router, agent, skill, module, workflow, or reference files.
 
 The **model is the decision-making engine**. The orchestrator is the coordination mechanism that applies the model's decisions through Skills, Subagents, Handoffs, and Router patterns.
 
-For moderate and complex tasks, it follows the 9-step Operating Loop:
+For moderate and complex tasks, it follows the capability-aware Operating Loop:
 
 ```text
 Your Task → orchestrator
@@ -185,17 +185,36 @@ Your Task → orchestrator
     │
     ├─► 5. ROUTE     — Select relevant specialists
     │
-    ├─► 6. EXECUTE   — Execute the smallest coherent change
+    ├─► 6. JEV        — Validate structured assessment; aggregate heads; guard and recommend
     │
-    ├─► 7. VERIFY    — Run appropriate real verification
+    ├─► 7. EXECUTE   — Execute through approved host capabilities
     │
-    ├─► 8. REVIEW    — Review correctness, security, performance, and regressions
+    ├─► 8. VERIFY    — Run appropriate real verification
     │
-    └─► 9. LEARN     — Persist durable project knowledge when appropriate
+    ├─► 9. REVIEW    — Review correctness, security, performance, and regressions
+    │
+    └─► 10. LEARN    — Persist durable project knowledge when appropriate
 ```
 
 Atomic tasks may use a reduced path when additional orchestration would add
 unnecessary overhead.
+
+## JEV Decision Boundary
+
+Before an execution transition, the host supplies a structured JEV request with
+model assessment, capability facts, policy, and approvals. JEV deterministically
+aggregates NOUL, CHOICE, and SCORE heads and returns a decision packet:
+
+- guardrail action: `approve`, `human_review`, or `deny`;
+- recommended execution path and context profile;
+- canonical capability IDs that are requested, available, and policy-allowed;
+- missing capabilities and machine-readable reasons.
+
+JEV is not a model, subagent, runtime store, sandbox, or browser. It cannot
+call tools, install dependencies, or grant authority. The Runtime persists the
+packet and performs final scope/confirmation checks. `human_review` and `stop`
+are blocking states. See `runtime/jev/README.md` and
+`docs/adr/0001-jev-host-native-decision-kernel.md`.
 
 ## Pattern Decision Tree
 
@@ -422,6 +441,7 @@ Available meta-cognitive and domain skills include:
 
 ```text
 self-evolve
+task-observer
 research
 coding
 testing
@@ -477,7 +497,7 @@ specialist selection.
 For moderate and complex tasks, report concise execution state:
 
 ```yaml
-step: 1-9
+step: 1-10
 size: atomic | moderate | complex
 domains: [frontend, backend, ...]
 risk: none | data | security | compliance

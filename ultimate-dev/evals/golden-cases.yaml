@@ -369,6 +369,27 @@ cases:
     expected_risk: none
     notes: "Promotion requires both personas for coordination"
 
+  - id: task-observer-001
+    task: "Log a reusable skill correction from this completed task"
+    expected_size: atomic
+    expected_domains: [task-observer]
+    expected_risk: none
+    notes: "Observation capture is a bounded meta task"
+
+  - id: task-observer-nearmiss-001
+    task: "Add Grafana dashboards and alerts for API latency"
+    expected_size: moderate
+    expected_domains: [monitoring, devops]
+    expected_risk: none
+    notes: "Observability and alerting are not Task Observer capture"
+
+  - id: task-observer-nearmiss-002
+    task: "Create the new skill now from observation 2"
+    expected_size: moderate
+    expected_domains: [skill-maintainer, self-evolve]
+    expected_risk: none
+    notes: "Explicit skill creation is maintenance, not observation capture"
+
   # === EDGE CASE TESTS ===
   - id: edge-001
     task: "Register a module with invalid YAML in skill-manifest.yaml"

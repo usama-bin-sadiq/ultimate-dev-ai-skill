@@ -37,6 +37,59 @@ This is the canonical architecture. The four layers have strict ownership bounda
                     TOOLS / ENVIRONMENT
 ```
 
+## JEV decision boundary
+
+JEV is a deterministic policy kernel inside the Ultimate-Dev runtime boundary.
+It does not introduce a fifth intelligence layer and it does not own execution:
+
+```text
+MODEL / ORCHESTRATION
+    │ structured assessment + capability proposal
+    ▼
+JEV DECISION KERNEL
+    │ validate → aggregate → guard → recommend route → slim capabilities
+    ▼
+DECISION PACKET
+    │
+    ▼
+ULTIMATE-DEV RUNTIME
+    │ persist → confirm → execute → observe → verify → recover
+    ▼
+HOST-NATIVE CAPABILITIES
+```
+
+The model owns intent, planning, and strategic pattern selection. The host owns
+capability availability, isolation, policy, and approvals. JEV combines those
+facts deterministically and returns an auditable recommendation. The runtime
+remains authoritative for final policy enforcement, durable state, and evidence.
+
+JEV uses three heads:
+
+- **NOUL** — boolean safety and urgency facts.
+- **CHOICE** — proposed orchestration path and task class.
+- **SCORE** — normalized risk, complexity, confidence, and context pressure.
+
+Scores are confidence/support values, not probabilities. Hard safety rules take
+precedence over scores:
+
+```text
+deny > human_review > approve
+```
+
+A human-review packet exposes no executable capability IDs. Missing required
+capabilities produce an explicit review result; JEV never installs a browser,
+container, shell, model provider, or other dependency. Tool slimming is
+intersection-only:
+
+```text
+selected = requested ∩ host_available ∩ policy_allowed
+```
+
+The language-neutral contract lives under `ultimate-dev/runtime/schemas/`.
+`ultimate-dev/runtime/jev/engine.mjs` is a dependency-free reference engine;
+hosts may implement the same contract natively. See
+`docs/adr/0001-jev-host-native-decision-kernel.md`.
+
 ## Ownership boundaries
 
 ### 1. Model / Intelligence = THINK
@@ -76,6 +129,7 @@ The runtime is the durable control plane. It owns:
 - checkpoints
 - execution lifecycle
 - policy and permissions
+- JEV packet persistence and execution gating
 - verification
 - evidence
 - recovery and rollback records
@@ -108,6 +162,8 @@ USER / TASK
 MODEL: understand → reason → plan → decide
     ↓
 PATTERNS: Skills / Subagents / Handoffs / Router
+    ↓
+JEV: validate → aggregate → guard → recommend
     ↓
 RUNTIME: checkpoint → execute → observe → verify → persist
     ↓
@@ -182,3 +238,6 @@ runtime architecture.
 8. LangChain patterns may be replaced or extended without replacing the runtime.
 9. The same runtime contract works across tiny, small, medium, large, and huge models.
 10. Context pressure must not erase the durable task state.
+11. JEV decisions are side-effect-free recommendations; only the runtime may persist or execute.
+12. A missing host capability is reported, never installed or silently substituted.
+13. Human review is a blocking state, not a model-tier upgrade.

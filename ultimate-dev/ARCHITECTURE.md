@@ -89,7 +89,8 @@ Deterministic, in this exact order:
 1. Modify `router/classification-rules.md` or a module
 2. Run classification on a representative set of tasks (from `evals/golden-cases.yaml`)
 3. Verify: correct tier, correct modules loaded, token budget respected
-4. Run `./scripts/verify.sh` to confirm all files are present
+4. Run `node --test ultimate-dev/tests/jev/engine.test.mjs` for the host-native JEV contract
+5. Run `./scripts/verify.sh` to confirm all files are present
 
 ## Project Memory (§15)
 
@@ -173,3 +174,38 @@ The Unresolved section tracks domain gaps — tasks that hit the emerging-tech-h
 ## v2.5 Runtime
 
 The v2.5 runtime is the execution layer for the existing orchestration architecture. It provides durable task state, context, checkpoints, execution, verification, evidence, recovery, and policy without replacing the existing skills, agents, router, or workflows.
+
+### JEV decision kernel
+
+JEV is a side-effect-free policy boundary inside the runtime, not another model
+or orchestration pattern:
+
+```text
+MODEL / ORCHESTRATION
+    │ structured assessment and capability proposal
+    ▼
+JEV: validate → aggregate → guard → recommend
+    │ deterministic decision packet
+    ▼
+RUNTIME: persist → confirm → execute → verify → recover
+    │ canonical capability IDs
+    ▼
+HOST-NATIVE TOOLS
+```
+
+JEV evaluates NOUL (boolean safety facts), CHOICE (proposed path/task class),
+and SCORE (bounded risk, complexity, confidence, and context pressure). The
+host, not the model, supplies availability, isolation, policy, and approvals.
+JEV never calls a model, discovers or installs tools, runs subprocesses, or
+persists state. The runtime remains the final authority for policy, evidence,
+and recovery.
+
+The contract is language-neutral JSON Schema under `runtime/schemas/`. The
+reference implementation is the dependency-free `runtime/jev/engine.mjs`; a
+host may implement the same rules natively. Tool selection is intersection-only
+(`requested ∩ host_available ∩ policy_allowed`), human review is a blocking
+state, and missing capabilities are reported rather than replaced.
+
+The old `runtime/core/jev/` Python package is legacy compatibility material and
+is not imported by the Runtime or SessionManager. See
+`../docs/adr/0001-jev-host-native-decision-kernel.md`.

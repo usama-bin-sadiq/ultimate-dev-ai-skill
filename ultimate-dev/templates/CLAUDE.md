@@ -25,7 +25,7 @@ ls -la .memory/ultimate-dev/tasks/ 2>/dev/null || echo "No existing tasks"
 #    - Run detection if needed
 
 # 7. Output initialization status:
-# step: 1-9 | size: atomic|moderate|complex | pattern: A|B|C|D|compose
+# step: 1-10 | size: atomic|moderate|complex | pattern: A|B|C|D|compose
 # agents: [...] | verification: {...}
 ```
 
@@ -48,7 +48,7 @@ ultimate-dev-preflight:
   task_resumed_or_created: true/false
   discover_completed: true/false
   initialization_output:
-    step: 1-9
+    step: 1-10
     size: atomic|moderate|complex
     pattern: A|B|C|D|compose
     agents: [...]
@@ -61,7 +61,7 @@ ultimate-dev-preflight:
 
 ```yaml
 ultimate-dev-status:
-  step: 1-9
+  step: 1-10
   size: atomic|moderate|complex
   domains: [list]
   risk: none|data|security|compliance
@@ -157,7 +157,7 @@ Persistent project knowledge lives at:
 
 For moderate/complex tasks, the skill reports:
 ```yaml
-step: 1-9
+step: 1-10
 size: atomic | moderate | complex
 domains: [frontend, backend, ...]
 risk: none | data | security | compliance

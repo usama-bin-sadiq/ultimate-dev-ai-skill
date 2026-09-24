@@ -54,7 +54,7 @@ ultimate-dev is a **single skill** that replaces dozens of specialized skills. I
 
 Every install creates a memory folder at the project root — `<project>/.memory/ultimate-dev/` (or `~/.memory/ultimate-dev/` for global installs) — seeded with a template, and project-scoped installs add `.memory/ultimate-dev/` to `.gitignore`.
 
-> **Note for best experience:** Install Python 3.10+ for full runtime functionality (tests, model adapter, durable state verification). The orchestrator works with any model, but Python enables the verification and adapter layers.
+> **Runtime note:** The host-native JEV path has no mandatory Python, Docker, Playwright, package-manager, or external-service dependency. A host supplies its own tools and policy; the reference JSON contract and engine are dependency-free. Legacy Python maintenance utilities remain optional and separate.
 
 📖 **Complete guide:** [User Guide](docs/user/USER_GUIDE.md) for detailed examples and troubleshooting.
 
@@ -117,7 +117,20 @@ flowchart TD
     EX --> RV["Review, learn, persist"]
 ```
 
-### 📐 How It Adapts to Your Model
+
+### JEV host-native decision boundary
+
+```text
+Model / orchestration → JEV decision packet → Runtime → Host-native tools
+```
+
+JEV evaluates structured NOUL, CHOICE, and SCORE facts using deterministic
+policy. It does not call a model, install tools, run a browser, or own durable
+state. Human review and missing capabilities are explicit blocking outcomes.
+The contract is language-neutral JSON Schema; the optional reference engine is
+`ultimate-dev/runtime/jev/engine.mjs`.
+
+### 📐 How it Adapts to Your Model
 
 The context window is auto-detected at runtime — model names are never hardcoded:
 
@@ -237,6 +250,7 @@ ultimate-dev-ai-skill/
 ├── scripts/                 # install.sh, install.ps1, detect-tools.sh, verify.sh
 ├── .github/workflows/       # Sync & Release CI (README sync + auto-release)
 ├── ARCHITECTURE.md          # System design
+├── docs/adr/                # Architecture decision records
 ├── CONTRIBUTING.md          # How to contribute
 └── README.md                # This file
 ```
@@ -251,6 +265,7 @@ ultimate-dev-ai-skill/
 | [ultimate-dev/README.md](ultimate-dev/README.md) | Full skill reference — counts auto-synced on release |
 | [ultimate-dev/SKILL.md](ultimate-dev/SKILL.md) | Skill entry point (orchestrator) |
 | [docs/architecture/ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md) | System design & architecture deep-dive |
+| [docs/adr/0001-jev-host-native-decision-kernel.md](docs/adr/0001-jev-host-native-decision-kernel.md) | JEV host-native decision boundary |
 | [docs/developer/DEVELOPER_GUIDE.md](docs/developer/DEVELOPER_GUIDE.md) | Extending agents, skills, modules, testing |
 | [docs/user/USER_GUIDE.md](docs/user/USER_GUIDE.md) | Complete user guide with examples |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How to contribute |

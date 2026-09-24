@@ -123,4 +123,11 @@ Author: Sydney Runkle (LangChain) — January 14, 2026
 3. **Strengthen Router** — add parallel dispatch and synthesis logic
 4. **Add Handoffs** — state machines in workflows/ for sequential flows
 5. **Context budgets** — config/context_budgets.md mitigates Skills token bloat
-6. **Performance monitoring** — track token usage per pattern in evals/
+6. **Performance monitoring** — track token usage per pattern in evals
+
+## JEV boundary
+
+JEV is not a fifth LangChain pattern. It is a deterministic policy kernel
+between the orchestration layer and the Ultimate-Dev Runtime. It validates
+structured model assessment, applies guardrails, and returns a capability
+allowlist; it does not replace Skills, Subagents, Handoffs, or Router./

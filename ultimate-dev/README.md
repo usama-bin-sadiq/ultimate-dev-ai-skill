@@ -155,11 +155,11 @@ Live counts (agents, categories, sub-skills, modules) are **auto-synced** on eve
 
 ---
 
-### 118 Agents across 36 Categories
+### 119 Agents across 36 Categories
 
 <!-- ud:begin agent-tree -->
 ```
-agents/ — 118 agents, 36 categories, 7 root-level
+agents/ — 119 agents, 36 categories, 7 root-level
 ├── academic/            ( 1)  research-methodologist
 ├── ai-ml/               ( 4)  generic-ai-ml-specialist, ml-engineer, prompt-engineer, rag-architect
 ├── api-patterns/        ( 1)  api-architect
@@ -182,7 +182,7 @@ agents/ — 118 agents, 36 categories, 7 root-level
 ├── legacy/              ( 1)  modernizer
 ├── marketing/           ( 7)  affiliate-marketer, brand-strategist, content-strategist, email-marketing, growth-hacker, seo-specialist, social-media-manager
 ├── messaging/           ( 1)  event-architect
-├── meta/                ( 4)  agent-generator, auto-persona-generator, gap-tracker, skill-maintainer
+├── meta/                ( 5)  agent-generator, auto-persona-generator, gap-tracker, skill-maintainer, task-observer
 ├── mobile/              ( 3)  mobile-android, mobile-flutter, mobile-ios
 ├── monorepo/            ( 1)  monorepo-architect
 ├── paid-media/          ( 2)  ads-optimizer, programmatic-buyer
@@ -200,7 +200,7 @@ agents/ — 118 agents, 36 categories, 7 root-level
 ```
 <!-- ud:end agent-tree -->
 
-### 17 Meta-Cognitive Sub-Skills
+### 18 Meta-Cognitive Sub-Skills
 
 Each teaches HOW to think about a domain — technology-agnostic:
 
@@ -208,6 +208,7 @@ Each teaches HOW to think about a domain — technology-agnostic:
 | Skill | Purpose |
 |-------|---------|
 | `self-evolve` | Auto-generates new skills from experience |
+| `task-observer` | Capture reusable methodology from task work |
 | `research` | Learn anything |
 | `coding` | Build anything |
 | `testing` | Verify anything |
@@ -309,7 +310,10 @@ The full compatibility list lives in [`skill-manifest.yaml`](skill-manifest.yaml
 ## 🛠 Validation & Development
 
 ```bash
-# Run all validation checks
+# Host-native JEV conformance (no package manager required)
+node --test ultimate-dev/tests/jev/engine.test.mjs
+
+# Optional legacy Python validation checks
 python3 scripts/validate.py
 
 # Auto-generate manifest from disk
@@ -326,11 +330,7 @@ cp ultimate-dev/scripts/pre-commit .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 ```
 
-> [!NOTE]
-> `validate.py` and `generate-manifest.py` need PyYAML. One-time setup:
-> ```bash
-> python3 -m pip install pyyaml
-> ```
+> **Host-native JEV tests:** The canonical JEV contract and reference engine use JSON Schema and ECMAScript built-ins. They do not require Python, Docker, Playwright, a package manager, or an external service. The existing Python validation utilities remain optional legacy maintenance tooling.
 
 ---
 
@@ -338,14 +338,14 @@ chmod +x .git/hooks/pre-commit
 
 ```
 ultimate-dev/
-├── SKILL.md                    ← Orchestrator (331 lines)
+├── SKILL.md                    ← Orchestrator (362 lines)
 ├── skill-manifest.yaml         ← Auto-generated registry
 ├── README.md                   ← User documentation (this file)
 ├── VERSION                     ← Version number (source of truth)
 ├── AGENT.md / CLAUDE.md        ← Agent entry-point docs for other harnesses
 ├── adapters/                   ← Harness adapters (claude-code, codex, cursor, generic-cli)
-├── agents/                     ← 118 specialized agents
-├── skills/                     ← 17 meta-cognitive sub-skills
+├── agents/                     ← 119 specialized agents
+├── skills/                     ← 18 meta-cognitive sub-skills
 ├── modules/                    ← 46 internal pattern modules
 ├── config/                     ← Configuration files
 ├── prompts/                    ← Shared prompt components
@@ -356,6 +356,9 @@ ultimate-dev/
 ├── templates/                  ← Reusable templates
 ├── scripts/                    ← validate.py, generate-manifest.py, sync-docs.py, pre-commit
 ├── tools/                      ← Tool integrations
+├── runtime/jev/                ← Host-neutral JEV reference engine
+├── runtime/schemas/            ← Runtime and JEV contracts
+├── tests/jev/                  ← Dependency-free JEV conformance tests
 ├── tests/                      ← Validation tests
 ├── examples/                   ← Usage examples
 ├── evals/                      ← Evaluation cases
@@ -374,6 +377,7 @@ ultimate-dev/
 | [ultimate-dev/README.md](README.md) | Full skill reference — counts auto-synced on release |
 | [ultimate-dev/SKILL.md](SKILL.md) | Skill entry point (orchestrator) |
 | [ARCHITECTURE.md](../ARCHITECTURE.md) | System design for maintainers |
+| [ADR-0001](../docs/adr/0001-jev-host-native-decision-kernel.md) | Host-native JEV decision boundary |
 | [CONTRIBUTING.md](../CONTRIBUTING.md) | How to contribute |
 | [Changelog](changelog/CHANGELOG.md) | Release notes (source for GitHub Releases) |
 | [LICENSE](../LICENSE) | MIT license |

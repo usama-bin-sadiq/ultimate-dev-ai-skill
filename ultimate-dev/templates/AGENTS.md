@@ -58,7 +58,7 @@ Autonomously handles: classification → pattern selection → specialist routin
 ## Output Format
 
 ```yaml
-step: 1-9
+step: 1-10
 size: atomic|moderate|complex
 domains: [frontend, backend]
 risk: none|data|security|compliance

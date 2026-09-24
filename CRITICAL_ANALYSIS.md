@@ -1,5 +1,13 @@
 # Ultimate-Dev Critical Analysis: Promise vs. Reality
 
+> **Update — 2026-09-24:** The JEV migration supersedes the earlier
+> Docker/Playwright execution-layer roadmap below. The canonical decision path
+> is now a host-neutral JSON contract plus a dependency-free reference engine.
+> Host tools are supplied by the host; Ultimate-Dev does not install or claim
+> a bundled sandbox/browser implementation. See
+> `JEV_INTEGRATION_PLAN.md` and
+> `docs/adr/0001-jev-host-native-decision-kernel.md`.
+
 ## Executive Summary
 
 **Current State**: The skill is a well-architected **orchestration framework** with durable state management, but it's NOT a complete "ultimate" development solution. It's an **orchestrator that needs external LLM + tooling** to function.
@@ -16,8 +24,9 @@
 | **"Durable state management"** | ✅ TaskStore with atomic writes, checkpoints, resume | ✅ Delivered |
 | **"118 specialist agents"** | ✅ 118 agent files with frontmatter | ⚠️ Quality varies (many stubs) |
 | **"Self-evolving / auto-generates agents"** | ⚠️ skill-creator agent exists but untested in CI | ❌ Not proven |
-| **"MCP integration"** | ❌ Only in capabilities list, no implementation | ❌ Missing |
-| **"Browser automation"** | ⚠️ browser-agent references chrome-devtools-mcp | ❌ No actual browser automation |
+| **"MCP integration"** | ❌ No bundled client; hosts may expose MCP capabilities | ✅ Optional host capability |
+| **"Browser automation"** | ❌ No bundled browser provider; host adapters may map `browser.*` | ✅ Host-owned capability |
+| **"Code execution sandbox"** | ❌ No bundled sandbox; host adapters must supply isolation | ✅ Host-owned capability |
 | **"Self-adapting to any task"** | ✅ Pattern selection (A/B/C/D/Compose) | ✅ Works |
 | **"Verification-first"** | ✅ Runtime verification, evidence collection | ✅ Delivered |
 | **"Production-ready"** | ⚠️ CI passes but no production deployments | ❌ Unproven |
@@ -55,11 +64,10 @@ Fallback to:      Host tools / Shell / APIs
 
 | Gap | Impact | Effort |
 |---|---|---|
-| **No real tool execution** | Agents produce text, not actions | High |
-| **No MCP implementation** | Can't use 1000+ MCP servers | High |
-| **No real browser automation** | Can't test/debug web apps | Medium |
-| **No code execution sandbox** | Can't run/verify code | High |
-| **No GitHub/GitLab API integration** | Can't manage repos/PRs/issues | Medium |
+| **No bundled tool provider** | Host adapters must map native tools | Medium |
+| **No bundled browser provider** | Browser tasks require host capability mapping | Medium |
+| **No bundled execution isolation** | Untrusted execution requires an explicit host boundary | High |
+| **No bundled MCP client** | MCP remains optional host capability | Low |
 | **No cloud provider SDKs** | Can't deploy/manage infra | High |
 | **Agent quality variance** | 50%+ agents are stubs | Medium |
 | **No telemetry/observability** | Can't measure effectiveness | Low |
@@ -94,84 +102,98 @@ Model → Orchestrator → Runtime → MCP Client → MCP Servers
 
 ### Implementation Priority
 1. **Core orchestration** (✅ Done)
-2. **Host tool execution** (✅ Done via shell/APIs)
-3. **Real code execution sandbox** (Needed)
-5. **MCP client** (Optional - after sandbox works)
+2. **JEV host-native decision boundary** (✅ Done)
+3. **Host capability mapping** (Host-owned follow-up)
+4. **MCP client** (Optional host capability; never a hard dependency)
 
 ---
 
-## 5. Making It Truly "Ultimate" - Roadmap
+## 5. Making It Truly "Ultimate" - Host-Native Roadmap
 
-### Phase 1: Execution Reality (Q1)
-- [ ] Code execution sandbox (Docker/Firecracker)
-- [ ] Real browser automation (Playwright/Puppeteer)
-- [ ] GitHub/GitLab API integration
-- [ ] Actual code verification (not just text)
+### Phase 1: Decision Boundary (Completed)
+- [x] Versioned JEV request/decision JSON Schemas
+- [x] NOUL/CHOICE/SCORE heads and deterministic aggregation
+- [x] Guardrails with `deny > human_review > approve` precedence
+- [x] Capability intersection and context recommendation
+- [x] Host-native adapter seam with no bundled provider dependency
 
-### Phase 2: MCP Integration (Q2)
-- [ ] MCP client protocol implementation
-- [ ] MCP server registry/discovery
-- [ ] Fallback chain: MCP → Host → Error
-- [ ] Popular server configs (filesystem, github, postgres, etc.)
+### Phase 2: Host Capability Mapping (Host-owned)
+- [ ] Each host maps canonical IDs to its native filesystem/shell/browser/API tools
+- [ ] Each host supplies capability availability, isolation, policy, and approvals
+- [ ] Each host records JEV packets as runtime evidence
 
-### Phase 3: Intelligence Layer (Q3)
-- [ ] Agent quality auto-improvement
-- [ ] Cost/latency optimization
-- [ ] Telemetry & effectiveness metrics
-- [ ] Self-healing workflows
+### Phase 3: Optional Integrations
+- [ ] Add MCP as an optional host capability, never a hard dependency
+- [ ] Add provider adapters only when a host explicitly needs them
+- [ ] Keep missing capabilities visible and reviewable
 
-### Phase 4: Production Hardening (Q4)
-- [ ] Multi-tenant support
-- [ ] Enterprise auth/rbac
-- [ ] Audit logging
-- [ ] SLA guarantees
+### Phase 4: Quality and Operations
+- [ ] Expand cross-host conformance fixtures
+- [ ] Add policy/version migration tooling
+- [ ] Measure evidence-backed completion and recovery rates
+
+The project does not claim to ship Docker, Playwright, a browser, a model
+provider, or a sandbox. Those are host capabilities and must be surfaced by the
+host adapter when available.
 
 ---
 
 ## 6. Justification: Is It "Ultimate"?
 
-### Today: **No** - It's an **Excellent Orchestration Framework**
-- ✅ Best-in-class orchestration patterns
-- ✅ Durable state management
-- ✅ Model-agnostic design
-- ✅ Verification-first philosophy
+### Current Position
 
-### With Execution Layer: **Yes** - Could Be
-The architecture is sound. The missing piece is **execution** - turning plans into reality.
+Ultimate-Dev is an orchestration framework with a durable runtime and a
+host-native decision boundary. It is not honest to claim that the repository
+itself ships every execution provider.
+
+What is now implemented:
+
+- ✅ Model-agnostic orchestration patterns
+- ✅ Durable state, checkpoints, handoffs, and evidence
+- ✅ Versioned JEV decision contract and deterministic reference engine
+- ✅ Guarded, capability-first host adapter seam
+- ✅ Honest unavailable/review/stop behavior
+
+What remains host-owned:
+
+- Native filesystem, shell, browser, API, and deployment tools
+- Provider authentication, quotas, and transport
+- MCP integrations when a host chooses to expose them
 
 ### Recommendation
-1. **Rename if needed**: "Ultimate-Dev Orchestrator" vs "Ultimate-Dev"
-2. **Focus on execution first** - MCP is a distraction until sandbox works
-3. **Measure by outcomes** - "PRs merged / bugs fixed / features deployed" not "agents spawned"
+
+1. Keep JEV provider-neutral and side-effect-free.
+2. Let each host map canonical capability IDs to native tools.
+3. Measure evidence-backed outcomes, not agent or provider counts.
+4. Treat missing capabilities as visible review/blocker states.
 
 ---
 
 ## 7. Immediate Action Items
 
-### This Week
-1. **Remove MCP from capabilities** until implemented (honest marketing)
-2. **Add code execution sandbox** (Docker-based, 200 lines)
-2. **Fix browser-agent** to use Playwright directly (not MCP)
+### This change
 
-### This Month
-1. **GitHub API integration** (create PRs, run CI, merge)
-2. **Code execution sandbox** (secure, ephemeral)
-3. **Agent quality gate** - enforce minimum standards
+1. Add JEV JSON Schemas and the dependency-free reference engine.
+2. Decouple the Python Runtime/SessionManager from the broken JEV package.
+3. Add host-executor and JEV-packet persistence seams.
+4. Add direct conformance tests and update architecture documentation.
+
+### Follow-up host work
+
+1. Implement `assess()` and capability mapping in each host adapter.
+2. Add host-specific policy snapshots and approval verification.
+3. Expand cross-host fixtures without adding bundled providers.
 
 ---
 
 ## Conclusion
 
-**The skill is an exceptional orchestration framework masquerading as a complete development platform.**
+The architecture is strongest when it coordinates intelligence and durable
+execution without pretending that one repository should own every provider.
 
-**To justify "Ultimate-Dev":**
-1. Remove unimplemented claims (MCP, browser automation)
-2. Build execution layer FIRST (sandbox + browser + GitHub)
-3. Add MCP as optional enhancement AFTER execution works
-4. Measure by: "Did the PR merge and deploy?" not "Did agents run?"
-
-**The architecture is 90% there. The last 10% (execution) is 90% of the value.**
+The remaining work is host capability mapping and evidence-backed operations,
+not a mandatory Python/Docker/Playwright stack.
 
 ---
 
-*Analysis based on codebase audit as of 2026-09-24. Version: 2.8.0*
+*Analysis updated after codebase audit on 2026-09-24. Version: 2.8.0*

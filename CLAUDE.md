@@ -25,7 +25,7 @@ ls -la .memory/ultimate-dev/tasks/ 2>/dev/null || echo "No existing tasks"
 #    - Run detection if needed
 
 # 7. Output initialization status:
-# step: 1-9 | size: atomic|moderate|complex | pattern: A|B|C|D|compose
+# step: 1-10 | size: atomic|moderate|complex | pattern: A|B|C|D|compose
 # agents: [...] | verification: {...}
 ```
 
@@ -59,6 +59,7 @@ The skill will:
 | Durable state | All state in `.memory/ultimate-dev/tasks/<task-id>/` |
 | Context-loss proof | Fresh session resumes from `state.json`, not chat history |
 | No hardcoded models | Capability-based, degrades gracefully |
+| JEV is a policy kernel | Deterministic, side-effect-free, host-native decision packet |
 
 ---
 
@@ -90,7 +91,7 @@ Persistent project knowledge lives at:
 
 For moderate/complex tasks, the skill reports:
 ```yaml
-step: 1-9
+step: 1-10
 size: atomic | moderate | complex
 domains: [frontend, backend, ...]
 risk: none | data | security | compliance

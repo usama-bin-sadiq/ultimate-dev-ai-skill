@@ -27,8 +27,8 @@ compatible_tools:
 - generic
 min_tool_version: 2.0.0
 stats:
-  total_agents: 118
-  total_skills: 17
+  total_agents: 119
+  total_skills: 18
   total_modules: 46
   total_shared: 5
   departments_covered: 44
@@ -113,6 +113,7 @@ agents:
 - agents/meta/auto-persona-generator.md
 - agents/meta/gap-tracker.md
 - agents/meta/skill-maintainer.md
+- agents/meta/task-observer.md
 - agents/mobile/mobile-android.md
 - agents/mobile/mobile-flutter.md
 - agents/mobile/mobile-ios.md
@@ -169,6 +170,7 @@ skills:
 - skills/review/SKILL.md
 - skills/security/SKILL.md
 - skills/self-evolve/SKILL.md
+- skills/task-observer/SKILL.md
 - skills/testing/SKILL.md
 modules:
 - modules/_emerging-tech-handler.md

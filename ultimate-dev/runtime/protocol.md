@@ -1,13 +1,30 @@
-# Ultimate-Dev 2.5 Runtime Protocol
+# Ultimate-Dev Runtime Protocol
 
-The runtime is the durable control plane. Models reason, orchestrators coordinate, tools act,
-and the runtime owns state, checkpoints, verification, policy, and recovery.
+The runtime is the durable control plane. Models reason, orchestrators
+coordinate, JEV evaluates deterministic policy, tools act, and the runtime owns
+state, checkpoints, verification, recovery, and evidence.
 
 ## Lifecycle
 
-`CAPTURE → RESUME/CREATE → DISCOVER → CONTRACT → CLASSIFY → PATTERN → PLAN → CHECKPOINT → EXECUTE → OBSERVE → VERIFY → PERSIST → COMPLETE`
+```text
+CAPTURE → RESUME/CREATE → DISCOVER → CONTRACT → CLASSIFY → PATTERN
+       → PLAN → JEV ASSESS → CHECKPOINT → EXECUTE → OBSERVE
+       → VERIFY → PERSIST → COMPLETE
+```
 
 On failure: `DIAGNOSE → RECOVER/ROLLBACK → REPLAN → CHECKPOINT → EXECUTE`.
+
+## JEV boundary
+
+The host adapter supplies a structured request containing model assessment,
+capability facts, policy, and approvals. JEV returns a versioned decision
+packet. The Runtime persists that packet before an execution transition and
+only permits a host capability when the packet has `execution_effect:
+execute` and `guardrail.action: approve`.
+
+JEV is a recommendation boundary, not a second runtime. The Runtime remains
+responsible for final action scope checks, confirmation, state transitions,
+evidence, and recovery.
 
 ## Invariants
 
@@ -19,3 +36,7 @@ On failure: `DIAGNOSE → RECOVER/ROLLBACK → REPLAN → CHECKPOINT → EXECUTE
 6. Destructive actions require an explicit policy decision.
 7. Completion requires the task contract and evidence to pass.
 8. Recovery is idempotent where practical and records failed approaches.
+9. JEV has no model, tool, subprocess, installer, browser, container, or network side effects.
+10. Missing host capabilities are reported, never installed or silently substituted.
+11. Human review is a blocking state, not a model-tier upgrade.
+12. Tool selection is intersection-only: requested, host-available, and policy-allowed capabilities.

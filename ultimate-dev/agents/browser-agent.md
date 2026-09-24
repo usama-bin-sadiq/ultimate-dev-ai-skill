@@ -2,8 +2,8 @@
 name: browser-agent
 domain: browser
 description: >
-  Web automation via Chrome DevTools — navigate, click, fill forms, extract data, screenshot. Requires Chrome 144+. Also supports web search via search engines.
-triggers: [browser agent, browser, via, web, 144+, data, fill, json, click, forms, chrome, enable, search, scrape, extract, navigate, screenshot]
+  Host-provided web automation capability for navigation, inspection, forms, extraction, and screenshots. The host adapter owns the browser and its isolation.
+triggers: [browser agent, browser, web, data, fill, json, click, forms, search, scrape, extract, navigate, screenshot]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file
@@ -17,54 +17,47 @@ tools:
 model: inherit
 temperature: 0.2
 max_turns: 50
-last_verified: 2026-09-21
+last_verified: 2026-09-24
 ---
 # Browser Agent
 
-Automates web browser tasks using the Chrome DevTools Protocol via the bundled `chrome-devtools-mcp` server.
+Executes browser tasks through the host's native browser capability. Ultimate-Dev
+maps the canonical `browser.*` capability IDs to the host tool; it does not
+bundle Chrome, a browser server, Playwright, Puppeteer, Selenium, or an
+automatic installer.
 
 ## Capabilities
 
-- Navigate to URLs
-- Click elements, fill forms, select options
-- Extract text, attributes, tables, structured data
-- Take screenshots (full page or element)
-- Execute JavaScript in page context
-- Handle authentication flows, modals, dynamic content
-- Wait for elements, network idle, custom conditions
+When the host advertises the required capability, the agent may:
 
-## Prerequisites
+- navigate to approved URLs
+- inspect text, attributes, tables, and structured data
+- click elements and fill forms after required approval
+- take screenshots
+- evaluate explicitly approved page interactions
+- wait for host-supported conditions
 
-- **Chrome 144+** (any recent stable release)
-- Enabled in `settings.json`:
-```json
-{
-  "agents": {
-    "overrides": {
-      "browser-agent": { "enabled": true }
-    }
-  }
-}
-```
+## Host Requirements
 
-## Session Modes (via `agents.browser.sessionMode`)
+The host must provide and describe:
 
-| Mode | Description |
-|------|-------------|
-| `persistent` | Persistent profile at `~/.gemini/cli-browser-profile/` — cookies, history, settings preserved |
-| `isolated` | Temporary profile deleted after session — clean state |
-| `existing` | Attach to running Chrome with remote debugging on port 9222 |
+- an approved browser capability and its isolation boundary
+- allowed domains and navigation policy
+- confirmation rules for forms, authentication, and external side effects
+- screenshot/evidence storage location
+
+If the host does not provide the capability, report `capability_unavailable` or
+`human_review`. Do not install a browser or silently select a provider.
 
 ## Security
 
-- Domain restrictions via `allowedDomains`
-- Blocks dangerous URL schemes (file://, javascript:, data:, chrome://)
-- Form filling requires user confirmation
-- Action rate limiting (default 100 actions/task)
-- Optional visual model for coordinate-based interaction
+- Domain restrictions come from host policy.
+- Dangerous URL schemes and unapproved external effects are blocked.
+- Form filling, authentication, downloads, and submissions require the policy's
+  approval decision.
+- The Runtime rechecks the actual action and scope after JEV evaluation.
 
 ## Usage
 
-Invoke explicitly: `@browser-agent Go to example.com and extract the pricing table`
-
-Or let the main agent delegate automatically for web research tasks.
+Invoke explicitly with a bounded task, or let the main agent delegate when the
+host has advertised the required browser capability.

@@ -11,18 +11,32 @@ The ultimate-dev skill is tested at multiple levels:
 3. **Workflow Integrity** — Checks that workflows reference valid steps and agents.
 4. **Rule Consistency** — Validates that rules don't contradict each other.
 5. **Tool Coverage** — Confirms all registered tools are documented.
+6. **Task Observer Contract** — Validates the Task Observer skill/agent boundary and registration.
 
 ## How to Run Tests
 
-### Prerequisites
-- Python 3.10+ (for schema validation)
-- Node.js 18+ (for YAML parsing)
+### Host-native JEV tests
 
-### Run All Tests
+The canonical JEV contract and reference engine have no package-manager
+dependency:
+
+```bash
+# From the repository root
+node --test ultimate-dev/tests/jev/engine.test.mjs
+```
+
+### Legacy Python suite
+
+The pre-existing skill validation suite remains optional maintenance tooling.
+Run it only when its already-declared Python dependencies are available:
+
 ```bash
 # From the ultimate-dev directory
 python -m pytest tests/ -v
 ```
+
+The JEV path does not import that suite, a model provider, a sandbox, or a
+browser automation package.
 
 ### Run Specific Test Categories
 ```bash
@@ -69,11 +83,20 @@ python -m pytest tests/test_workflows.py -v
 - Tool IDs follow naming conventions.
 - Restrictions are defined for each tool.
 
+### Task Observer Contract (`test_task_observer.py`)
+- Skill and agent files exist with valid frontmatter.
+- The agent references the skill without duplicating its methodology.
+- The manifest registers both artifacts exactly once.
+- Documentation, routing surfaces, and golden cases include Task Observer.
+- The artifacts remain host-native and introduce no runtime provider.
+
 ## Test Structure
 
 ```
 tests/
 ├── README.md              # This file
+├── jev/engine.test.mjs   # Host-native JEV conformance tests
+├── test_task_observer.py  # Task Observer skill/agent contract tests
 ├── test_schemas.py        # Schema validation tests
 ├── test_prompts.py        # Prompt completeness tests
 ├── test_workflows.py      # Workflow integrity tests

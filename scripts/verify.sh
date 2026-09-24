@@ -204,6 +204,47 @@ else
   WARNINGS=$((WARNINGS + 1))
 fi
 
+# Check the host-native JEV contract and run its dependency-free tests when Node is available.
+echo ""
+echo "JEV decision kernel:"
+for f in \
+  "$SKILL_DIR/runtime/schemas/jev-decision-request.schema.json" \
+  "$SKILL_DIR/runtime/schemas/jev-decision-packet.schema.json" \
+  "$SKILL_DIR/runtime/jev-policy.json" \
+  "$SKILL_DIR/runtime/jev/engine.mjs" \
+  "$SKILL_DIR/runtime/jev/README.md" \
+  "$SKILL_DIR/tests/jev/engine.test.mjs"; do
+  if [ -f "$f" ]; then
+    echo "  ✅ $(basename "$f")"
+  else
+    echo "  ❌ $(basename "$f") missing"
+    ERRORS=$((ERRORS + 1))
+  fi
+done
+if find "$SKILL_DIR/runtime/jev" -type f -name '*.py' -print -quit | grep -q .; then
+  echo "  ❌ Python implementation found in canonical JEV scope"
+  ERRORS=$((ERRORS + 1))
+else
+  echo "  ✅ Canonical JEV scope is Python-free"
+fi
+if grep -Eq 'runtime\.core\.jev|create_jev_core|JevCore' "$SKILL_DIR/runtime/core/session_manager.py" "$SKILL_DIR/runtime/core/engine.py"; then
+  echo "  ❌ legacy JEV import remains in the mandatory runtime path"
+  ERRORS=$((ERRORS + 1))
+else
+  echo "  ✅ Runtime/SessionManager JEV decoupling"
+fi
+if command -v node >/dev/null 2>&1; then
+  if node --test "$SKILL_DIR/tests/jev/engine.test.mjs"; then
+    echo "  ✅ JEV conformance tests"
+  else
+    echo "  ❌ JEV conformance tests failed"
+    ERRORS=$((ERRORS + 1))
+  fi
+else
+  echo "  ⚠️ Node.js unavailable; JEV tests not run"
+  WARNINGS=$((WARNINGS + 1))
+fi
+
 # Summary
 echo ""
 echo "=== Results ==="

@@ -1,47 +1,94 @@
-# Jev Integration Execution Plan
+# JEV Host-Native Integration Plan
 
 ## Goal
-Integrate Jev "System One" decision layer with Ultimate-Dev "System Two" architecture to achieve 9.5+ execution rating.
 
-## Phase 1: Jev Core Infrastructure (Foundation)
-- [ ] 1.1 Create Jev types/enums (NOUL, CHOICE, SCORE, RoutingTarget, etc.)
-- [ ] 1.2 Implement NOUL (Boolean) classifier
-- [ ] 1.3 Implement CHOICE (multi-class) classifier
-- [ ] 1.4 Implement SCORE (risk/scale) classifier
-- [ ] 1.5 Implement Deterministic Typed Aggregator
-- [ ] 1.6 Implement Guardrails (Approve/Deny/Human-Review)
-- [ ] 1.7 Implement Dynamic Routing (Path Router)
-- [ ] 1.8 Implement Context Slimming (Tool Slimmer)
-- [ ] 1.8 Create Jev Core orchestration class
+Add JEV System One as a deterministic decision kernel inside Ultimate-Dev
+without requiring Python, Docker, Playwright, a package manager, a model
+provider, or an external service.
 
-## Phase 2: Runtime Integration
-- [ ] 2.1 Update SessionManager to use Jev for sandbox decisions
-- [ ] 2.2 Update Runtime to use Jev for task classification
-- [ ] 2.3 Connect Jev to Model Adapter for LLM calls
-- [ ] 2.4 Update session initialization flow
+JEV is not a new intelligence layer. The model still owns intent, planning,
+and strategic decisions. JEV evaluates structured facts and returns an
+explainable packet; the Runtime owns persistence, confirmation, execution,
+verification, and recovery.
 
-## Phase 3: Execution Layer Implementation
-- [ ] 3.1 Implement Sandbox Runner (Docker/Podman/Local fallback)
-- [ ] 3.2 Implement Playwright Browser automation
-- [ ] 3.3 Implement GitHub API integration
-- [ ] 3.4 Connect Jev routing to actual execution
+## Architecture
 
-## Phase 4: Testing & Validation
-- [ ] 4.1 Run all existing tests
-- [ ] 4.2 Run Jev-specific tests
-- [ ] 4.3 Run integration tests
-- [ ] 4.4 Run verify.sh
-- [ ] 4.5 Validate all checks pass
+```text
+MODEL / ORCHESTRATION
+    │ assessment + capability proposal
+    ▼
+JEV DECISION KERNEL
+    │ NOUL + CHOICE + SCORE → aggregate → guard → recommend
+    ▼
+DECISION PACKET
+    │
+    ▼
+ULTIMATE-DEV RUNTIME
+    │ persist → confirm → execute → observe → verify → recover
+    ▼
+HOST-NATIVE CAPABILITIES
+```
 
----
+## Completed in this migration
 
-## Execution Order
-1. Create Jev Core types/enums
-2. Implement three classifiers (NOUL, CHOICE, SCORE)
-3. Implement Deterministic Aggregator
-4. Implement Guardrails, Routing, Tool Slimmer
-5. Create JevCore orchestrator
-4. Integrate with SessionManager
-5. Integrate with Runtime
-6. Implement execution layer (sandbox, browser, GitHub)
-7. Run all tests and validation
+- [x] Replace the unsafe Python JEV behavior with a versioned JSON contract.
+- [x] Add a dependency-free reference engine using ECMAScript built-ins only.
+- [x] Keep model intelligence, orchestration, runtime state, and capabilities
+      in their original ownership layers.
+- [x] Add deterministic guardrail precedence: `deny > human_review > approve`.
+- [x] Make human review and missing capabilities execution-blocking.
+- [x] Make capability selection intersection-only and budget-aware.
+- [x] Remove JEV imports from the Python SessionManager/Runtime path.
+- [x] Add a host-executor seam to the legacy Python Runtime.
+- [x] Add direct JEV behavior and contract tests.
+- [x] Update architecture, protocol, adapter, and runtime documentation.
+
+## Contract artifacts
+
+- `ultimate-dev/runtime/schemas/jev-decision-request.schema.json`
+- `ultimate-dev/runtime/schemas/jev-decision-packet.schema.json`
+- `ultimate-dev/runtime/jev-policy.json`
+- `ultimate-dev/runtime/jev/engine.mjs`
+- `ultimate-dev/runtime/jev/README.md`
+- `ultimate-dev/tests/jev/engine.test.mjs`
+
+## Runtime seam
+
+1. The host discovers native capabilities and builds host facts.
+2. The model returns an assessment and capability proposal.
+3. The host evaluates the JEV contract using the reference engine or a native
+   implementation.
+4. The Runtime persists the decision packet.
+5. Only an `approve` packet with `execution_effect: execute` may reach the
+   mapped host capability.
+6. Review/stop packets remain blocked until a new trusted decision is made.
+
+## Explicitly out of scope
+
+- Bundled Docker, Podman, Firecracker, gVisor, or local subprocess fallback.
+- Bundled Playwright, Puppeteer, Selenium, or browser installation.
+- Provider-specific model adapters inside JEV.
+- Automatic dependency installation.
+- Replacing the existing skills, agents, router, workflows, or modules.
+- A repository-wide rewrite of unrelated legacy Python maintenance tooling.
+
+## Verification
+
+```bash
+node --test ultimate-dev/tests/jev/engine.test.mjs
+node -e "for (const f of process.argv.slice(1)) JSON.parse(require('fs').readFileSync(f, 'utf8'))" \
+  ultimate-dev/runtime/schemas/jev-decision-request.schema.json \
+  ultimate-dev/runtime/schemas/jev-decision-packet.schema.json \
+  ultimate-dev/runtime/jev-policy.json
+```
+
+The full legacy suite may be run separately when its existing Python test
+dependencies are already available. It is not a prerequisite for the JEV
+contract or for host operation.
+
+## Migration rule
+
+The old `ultimate-dev/runtime/core/jev/` Python package remains isolated for
+one compatibility window, but it is not a safe behavioral baseline and must not
+be imported by new code. Pre-existing untracked files are preserved for
+separate review.

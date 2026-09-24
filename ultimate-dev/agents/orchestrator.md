@@ -230,7 +230,26 @@ present.
 
 ---
 
-# Step 6: EXECUTE
+# Step 6: JEV DECISION
+
+Before an execution transition, request a host-produced JEV decision packet.
+The model supplies structured assessment and capability intent; the host supplies
+capability facts, policy, isolation, and scoped approvals. JEV validates the
+request, aggregates NOUL/CHOICE/SCORE, applies guardrails, and returns a
+recommendation. It has no model, tool, subprocess, installer, browser, or
+network side effects.
+
+Persist the packet before execution. A `human_review` or `stop` result is
+blocking, and missing capabilities are reported rather than installed or
+silently substituted. Route and context fields are recommendations; the
+Runtime and host adapter remain authoritative.
+
+See `runtime/jev/README.md` and
+`docs/adr/0001-jev-host-native-decision-kernel.md`.
+
+---
+
+# Step 7: EXECUTE
 
 Execute the selected pattern.
 
@@ -453,7 +472,7 @@ Composition must have a concrete reason.
 
 ---
 
-# Step 7: VERIFY
+# Step 8: VERIFY
 
 Verification must use actual checks whenever applicable.
 
@@ -497,7 +516,7 @@ If verification fails:
 
 ---
 
-# Step 8: REVIEW
+# Step 9: REVIEW
 
 Perform targeted review based on blast radius.
 
@@ -519,7 +538,7 @@ Do not manufacture findings simply to make the review appear thorough.
 
 ---
 
-# Step 9: LEARN
+# Step 10: LEARN
 
 Persist durable project-level knowledge when appropriate.
 
@@ -608,7 +627,7 @@ The depth of verification should match the blast radius.
 For moderate and complex tasks, provide a concise execution summary:
 
 ```yaml
-operating_loop_step: 1-9
+operating_loop_step: 1-10
 size: atomic | moderate | complex
 domains: [...]
 risk: none | data | security | compliance
