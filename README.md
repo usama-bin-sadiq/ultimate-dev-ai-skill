@@ -30,6 +30,8 @@ ultimate-dev is a **single skill** that replaces dozens of specialized skills. I
 > [!NOTE]
 > **No hardcoded technologies. Pure patterns and best practices.** Unknown tech is handled by universal specialists that research it from the web and teach themselves.
 
+📖 **Full docs:** [Architecture](docs/architecture/ARCHITECTURE.md) · [Developer Guide](docs/developer/DEVELOPER_GUIDE.md) · [User Guide](docs/user/USER_GUIDE.md)
+
 ---
 
 ## 🚀 Quick Start
@@ -53,6 +55,8 @@ ultimate-dev is a **single skill** that replaces dozens of specialized skills. I
 Every install creates a memory folder at the project root — `<project>/.memory/ultimate-dev/` (or `~/.memory/ultimate-dev/` for global installs) — seeded with a template, and project-scoped installs add `.memory/ultimate-dev/` to `.gitignore`.
 
 > **Note for best experience:** Install Python 3.10+ for full runtime functionality (tests, model adapter, durable state verification). The orchestrator works with any model, but Python enables the verification and adapter layers.
+
+📖 **Complete guide:** [User Guide](docs/user/USER_GUIDE.md) for detailed examples and troubleshooting.
 
 ### Manual install (no script — works on any OS/tool)
 
@@ -246,7 +250,9 @@ ultimate-dev-ai-skill/
 | [README.md](README.md) | You are here — overview & quick start |
 | [ultimate-dev/README.md](ultimate-dev/README.md) | Full skill reference — counts auto-synced on release |
 | [ultimate-dev/SKILL.md](ultimate-dev/SKILL.md) | Skill entry point (orchestrator) |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | System design for maintainers |
+| [docs/architecture/ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md) | System design & architecture deep-dive |
+| [docs/developer/DEVELOPER_GUIDE.md](docs/developer/DEVELOPER_GUIDE.md) | Extending agents, skills, modules, testing |
+| [docs/user/USER_GUIDE.md](docs/user/USER_GUIDE.md) | Complete user guide with examples |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How to contribute |
 | [Changelog](ultimate-dev/changelog/CHANGELOG.md) | Release notes (source for GitHub Releases) |
 | [LICENSE](LICENSE) | MIT license |
