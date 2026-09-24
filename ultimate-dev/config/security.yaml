@@ -1,6 +1,6 @@
 # Security Configuration — Security rules and constraints
 
-version: "2.5.3"
+version: "2.6.0"
 
 # Secrets handling
 secrets:
