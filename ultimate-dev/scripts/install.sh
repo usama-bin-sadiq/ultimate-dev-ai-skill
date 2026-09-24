@@ -40,4 +40,10 @@ cp "$ROOT/templates/ultimate-dev.mdc" "$PROJECT/.cursor/rules/ultimate-dev.mdc"
 mkdir -p "$PROJECT/.memory/ultimate-dev/tasks"
 touch "$PROJECT/.memory/ultimate-dev/.gitignore"
 printf '%s\n' 'tasks/*' > "$PROJECT/.memory/ultimate-dev/.gitignore"
+# Add .memory/ultimate-dev/ to project .gitignore if not present
+if [[ -f "$PROJECT/.gitignore" ]]; then
+  grep -q "^.memory/ultimate-dev/" "$PROJECT/.gitignore" || echo ".memory/ultimate-dev/" >> "$PROJECT/.gitignore"
+else
+  echo ".memory/ultimate-dev/" > "$PROJECT/.gitignore"
+fi
 echo "Installed Ultimate-Dev 2.5 in $PROJECT"
