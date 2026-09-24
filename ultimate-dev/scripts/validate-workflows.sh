@@ -72,12 +72,14 @@ for required in (
     "github.event_name == 'push'",
     'chore: release v',
     'chore: auto-sync manifest and docs',
+    '[skip release]',
     'pull-requests: read',
     'secrets.ULTIMATE_DEV_TOKEN',
     'github.api_url',
     'github.token',
     'environment: release',
     'environment: CICD',
+    'sync-version.py',
     'cancel-in-progress: false',
 ):
     if required not in release:

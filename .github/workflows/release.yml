@@ -140,7 +140,7 @@ jobs:
           # start another release. They are ordinary maintenance outputs, not
           # product releases.
           case "$push_message" in
-            'chore: release v'*|'chore: auto-sync manifest and docs'*)
+            'chore: release v'*|'chore: auto-sync manifest and docs'*|*'[skip release]'*)
               echo 'Generated maintenance commit; skipping recursive release.' >&2
               exit 0
               ;;
@@ -383,6 +383,11 @@ jobs:
           printf 'old_version=%s\n' "$current" >> "$GITHUB_OUTPUT"
           printf 'version_type=%s\n' "$VERSION_TYPE" >> "$GITHUB_OUTPUT"
 
+      - name: Synchronize versioned config
+        run: |
+          cd ultimate-dev
+          python scripts/sync-version.py
+
       - name: Generate manifest
         run: |
           cd ultimate-dev
@@ -417,7 +422,7 @@ jobs:
           NEW_VERSION: ${{ steps.version.outputs.new_version }}
         run: |
           set -euo pipefail
-          git add -- VERSION ultimate-dev/skill-manifest.yaml ultimate-dev/README.md ultimate-dev/changelog/CHANGELOG.md
+          git add -- VERSION ultimate-dev/config ultimate-dev/skill-manifest.yaml ultimate-dev/README.md ultimate-dev/changelog/CHANGELOG.md
           git diff --cached --quiet && {
             echo 'Release produced no file changes' >&2
             exit 1

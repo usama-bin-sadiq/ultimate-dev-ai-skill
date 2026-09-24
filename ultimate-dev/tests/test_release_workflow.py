@@ -18,9 +18,11 @@ def test_release_workflow_handles_main_pushes_without_recursive_releases():
     assert "github.event_name == 'push'" in text
     assert "chore: release v" in text
     assert "chore: auto-sync manifest and docs" in text
+    assert "[skip release]" in text
     assert "pull-requests: read" in text
     assert "secrets.ULTIMATE_DEV_TOKEN" in text
     assert "github.api_url" in text
     assert "github.token" in text
     assert "environment: release" in text
     assert "environment: CICD" in text
+    assert "sync-version.py" in text
