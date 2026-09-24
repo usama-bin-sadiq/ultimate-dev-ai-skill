@@ -1,105 +1,22 @@
-# CLAUDE.md — Ultimate-Dev Skill (Internal)
-
-This file is copied to the project root on install. It ensures the skill bootstraps correctly.
-
-## ⚡ MANDATORY SESSION START (Every Conversation)
-
-```bash
-# 1. VERSION
-cat VERSION
-
-# 2. SKILL CONTRACT
-cat ultimate-dev/SKILL.md
-
-# 3. CHECK EXISTING TASK STATE
-ls -la .memory/ultimate-dev/tasks/ 2>/dev/null
-
-# 4. RESUME or CREATE task state
-```
-
-**Do not proceed until initialization complete.**
-
+---
+name: ultimate-dev
+version: "2.5.0"
+description: >-
+  Master software-engineering orchestrator. Single entry point that autonomously
+  detects stack, classifies tasks, selects architecture pattern (Skills/Subagents/Handoffs/Router),
+  routes to specialists, executes, verifies, and learns.
+  Replaces 100+ specialized skills with one adaptive skill.
+user-invocable: true
+argument-hint: "[task description] | --help | --version | --detect | --workflow <name>"
+author: ultimate-dev team
+license: MIT
+repository: https://github.com/usama-bin-sadiq/ultimate-dev-ai-skill
+tags:
+  - orchestrator
+  - multi-domain
+  - adaptive
+  - autonomous
+  - software-engineering
 ---
 
-## Skill Invocation
-
-```
-@ultimate-dev "task description"
-```
-
-Autonomously handles: classification → pattern selection → specialist routing → execution → verification → persistence.
-
----
-
-## Core Principles (Non-Negotiable)
-
-| Principle | Implementation |
-|-----------|----------------|
-| Smallest pattern | Default A (Skills) unless evidence requires B/C/D/Compose |
-| Verification-first | Run actual checks; "not_run" ≠ "pass" |
-| Durable state | `.memory/ultimate-dev/tasks/<id>/state.json` |
-| Context-loss proof | Resume from state.json, not chat history |
-| Model independence | Capability-based, graceful degradation |
-
----
-
-## Pattern Quick-Ref
-
-| Pattern | When | Example |
-|---------|------|---------|
-| A: Skills | Single domain, inline | "Add a React component" |
-| B: Subagents | Parallel independent domains | "Full-stack dashboard" |
-| C: Handoffs | Sequential dependent stages | "Plan → implement → verify" |
-| D: Router | Classify → dispatch | "Best DB for time-series" |
-| Compose | Multiple patterns needed | "Security audit + fixes" |
-
----
-
-## Output Format
-
-```yaml
-step: 1-9
-size: atomic|moderate|complex
-domains: [frontend, backend]
-risk: none|data|security|compliance
-pattern: A|B|C|D|compose
-execution_mode: inline|subagent
-agents:
-  - domain: backend
-    agent: python-engineer
-    reason: FastAPI implementation
-verification:
-  tests: pass
-  lint: pass
-  build: pass
-```
-
----
-
-## Memory Locations
-
-```
-<project>/.memory/ultimate-dev/
-├── project-memory.md
-├── conventions.md
-├── context.md
-└── tasks/<task-id>/
-    ├── state.json
-    ├── context.json
-    ├── progress.md
-    ├── evidence/
-    ├── checkpoints/
-    └── handoffs/
-```
-
----
-
-## Installation
-
-```bash
-./scripts/install.sh --project . --yes
-```
-
----
-
-*This file is the skill's internal bootstrap. The project-root CLAUDE.md is copied from templates/CLAUDE.md on install.*
+@AGENTS.md
