@@ -47,22 +47,36 @@ jobs:
       version_type: ${{ steps.check.outputs.version_type }}
       release_notes: ${{ steps.check.outputs.release_notes }}
     steps:
+      - name: Checkout push metadata
+        if: github.event_name == 'push'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+
       - name: Determine release need
         id: check
         env:
-          # Repository secret; use a least-privilege fine-grained token with
-          # Contents read/write and Pull requests read access.
+          # The read-only decision job uses the workflow token. The custom
+          # ULTIMATE_DEV_TOKEN is used only by the write-capable release job.
           EVENT_NAME: ${{ github.event_name }}
           MERGED: ${{ github.event.pull_request.merged }}
           PR_LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
           PUSH_REF: ${{ github.ref }}
           PUSH_SHA: ${{ github.sha }}
           PUSH_MESSAGE: ${{ github.head_commit.message }}
-          ULTIMATE_DEV_TOKEN: ${{ secrets.ULTIMATE_DEV_TOKEN }}
+          GITHUB_API_URL: ${{ github.api_url }}
+          REPOSITORY: ${{ github.repository }}
+          API_TOKEN: ${{ github.token }}
           MANUAL_VERSION_TYPE: ${{ inputs.version_type }}
           MANUAL_RELEASE_NOTES: ${{ inputs.release_notes }}
         run: |
           set -euo pipefail
+          push_message=${PUSH_MESSAGE:-}
+          if [ "$EVENT_NAME" = 'push' ] && [ -z "$push_message" ]; then
+            push_message=$(git log -1 --format=%B "$PUSH_SHA" 2>/dev/null || true)
+          fi
           write_scalar() {
             printf '%s=%s\n' "$1" "$2" >> "$GITHUB_OUTPUT"
           }
@@ -125,7 +139,7 @@ jobs:
           # The release commit and generated sync commit must not recursively
           # start another release. They are ordinary maintenance outputs, not
           # product releases.
-          case "$PUSH_MESSAGE" in
+          case "$push_message" in
             'chore: release v'*|'chore: auto-sync manifest and docs'*)
               echo 'Generated maintenance commit; skipping recursive release.' >&2
               exit 0
@@ -144,8 +158,8 @@ jobs:
           pr_payload=$(curl --fail --silent --show-error \
             --header 'Accept: application/vnd.github+json' \
             --header 'X-GitHub-Api-Version: 2022-11-28' \
-            --header "Authorization: Bearer $ULTIMATE_DEV_TOKEN" \
-            "$GITHUB_API/repos/$GITHUB_REPOSITORY/commits/$PUSH_SHA/pulls")
+            --header "Authorization: Bearer $API_TOKEN" \
+            "$GITHUB_API_URL/repos/$REPOSITORY/commits/$PUSH_SHA/pulls")
           release_label=$(printf '%s' "$pr_payload" | jq -r '
             map(select(.merged_at != null) | .labels[]?.name) |
             map(select(. == "release:major" or . == "release:minor" or . == "release:patch")) |
@@ -157,7 +171,7 @@ jobs:
 
           # Direct commits and unlabeled merges receive a deterministic bump:
           # explicit trailers override Conventional Commit inference.
-          lower_message=${PUSH_MESSAGE,,}
+          lower_message=${push_message,,}
           case "$lower_message" in
             *'[release:major]'*|*'breaking change'*|*'!:'*) version_type='major' ;;
             *'[release:minor]'*|*'feat:'*|*'feat '*|*'feature:'*|*'feature '*) version_type='minor' ;;
@@ -201,6 +215,7 @@ jobs:
           python3 - <<'PY'
           import json
           import os
+          import subprocess
           from pathlib import Path
 
           event_name = os.environ.get("EVENT_NAME")
@@ -209,7 +224,17 @@ jobs:
               source = " (manual)"
               labels = []
           elif event_name == "push":
-              commit_message = " ".join(os.environ.get("PUSH_MESSAGE", "").split())
+              commit_message = os.environ.get("PUSH_MESSAGE", "").strip()
+              if not commit_message:
+                  try:
+                      commit_message = subprocess.check_output(
+                          ["git", "log", "-1", "--format=%B", os.environ.get("PUSH_SHA", "HEAD")],
+                          text=True,
+                          stderr=subprocess.DEVNULL,
+                      ).strip()
+                  except (OSError, subprocess.CalledProcessError):
+                      commit_message = ""
+              commit_message = " ".join(commit_message.split())
               short_sha = os.environ.get("PUSH_SHA", "")[:12]
               title = commit_message[:200] or f"Commit {short_sha or 'unknown'}"
               source = f" (commit {short_sha or 'unknown'})"

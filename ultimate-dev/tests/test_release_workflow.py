@@ -20,4 +20,6 @@ def test_release_workflow_handles_main_pushes_without_recursive_releases():
     assert "chore: auto-sync manifest and docs" in text
     assert "pull-requests: read" in text
     assert "secrets.ULTIMATE_DEV_TOKEN" in text
+    assert "github.api_url" in text
+    assert "github.token" in text
     assert "environment: release" in text

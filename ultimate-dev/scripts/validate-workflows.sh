@@ -74,6 +74,8 @@ for required in (
     'chore: auto-sync manifest and docs',
     'pull-requests: read',
     'secrets.ULTIMATE_DEV_TOKEN',
+    'github.api_url',
+    'github.token',
     'environment: release',
     'cancel-in-progress: false',
 ):
