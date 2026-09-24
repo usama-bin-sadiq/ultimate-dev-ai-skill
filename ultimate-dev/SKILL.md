@@ -245,3 +245,87 @@ TASK RECEIVED
 - [ ] Did I skip any mandatory lifecycle step?
 
 **If NO to any → FIX before proceeding.**
+
+---
+
+## ⛔ HARDENED ENFORCEMENT RULES (ZERO TOLERANCE)
+
+### PRE-FLIGHT CHECKLIST (MUST COMPLETE BEFORE FIRST RESPONSE)
+
+**Every session, before ANY response, you MUST output this block:**
+
+```yaml
+ultimate-dev-preflight:
+  version_read: true/false
+  skill_md_read: true/false
+  agents_md_read: true/false
+  task_state_checked: true/false
+  task_resumed_or_created: true/false
+  discover_completed: true/false
+  initialization_output:
+    step: 1-9
+    size: atomic|moderate|complex
+    pattern: A|B|C|D|compose
+    agents: [...]
+    verification: {...}
+```
+
+**If this block is MISSING from your first response → YOU FAILED INITIALIZATION**
+
+### MANDATORY OUTPUT FORMAT (Every Task Response)
+
+Every response MUST include this execution status block:
+
+```yaml
+ultimate-dev-status:
+  step: 1-9
+  size: atomic|moderate|complex
+  domains: [list]
+  risk: none|data|security|compliance
+  pattern: A|B|C|D|compose
+  execution_mode: inline|subagent
+  agents:
+    - domain: <domain>
+      agent: <agent>
+      reason: <short reason>
+  verification:
+    tests: pass|fail|not_run|not_applicable
+    lint: pass|fail|not_run|not_applicable
+    build: pass|fail|not_run|not_applicable
+  state_persisted: true/false
+  checkpoint_created: true/false
+  blockers: [list] or []
+```
+
+### ZERO-TOLERANCE VIOLATIONS (AUTO-FAIL)
+
+| Violation | Consequence |
+|-----------|-------------|
+| Missing preflight block on first response | **FAIL** — Re-initialize immediately |
+| Missing status block on task response | **FAIL** — Add before proceeding |
+| Claiming "done" without verification evidence | **FAIL** — Must run actual checks |
+| Reporting `pass` for unrun checks | **FAIL** — Must report `not_run` |
+| Skipping state persistence | **FAIL** — Persist immediately |
+| Using chat history instead of `state.json` for resume | **FAIL** — Resume from durable state |
+| Spawning multiple agents per domain without justification | **FAIL** — One primary per domain |
+| Hardcoding model names/tiers | **FAIL** — Use capabilities only |
+| Skipping mandatory lifecycle step | **FAIL** — Complete the step |
+
+### SELF-CORRECTION PROTOCOL
+
+If you detect ANY violation in your own output:
+1. **STOP** immediately
+2. **ACKNOWLEDGE** the violation explicitly
+3. **CORRECT** the output with proper format
+4. **RE-EXECUTE** the step correctly
+5. **PERSIST** the correction
+
+**Do not proceed until corrected.**
+
+---
+
+## COMPLIANCE VERIFICATION (Automated Check)
+
+The system validates your output against these rules. Non-compliant responses are rejected.
+
+**Your compliance is not optional — it's the skill contract.**

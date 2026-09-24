@@ -33,9 +33,76 @@ ls -la .memory/ultimate-dev/tasks/ 2>/dev/null || echo "No existing tasks"
 
 ---
 
-## Skill Invocation
+## ⛔ HARDENED ENFORCEMENT (ZERO TOLERANCE)
 
-Use the skill directly for any software engineering task:
+### PRE-FLIGHT CHECKLIST (Every Session, Before First Response)
+
+You MUST output this block in your first response:
+
+```yaml
+ultimate-dev-preflight:
+  version_read: true/false
+  skill_md_read: true/false
+  agents_md_read: true/false
+  task_state_checked: true/false
+  task_resumed_or_created: true/false
+  discover_completed: true/false
+  initialization_output:
+    step: 1-9
+    size: atomic|moderate|complex
+    pattern: A|B|C|D|compose
+    agents: [...]
+    verification: {...}
+```
+
+**Missing this block = FAILED INITIALIZATION**
+
+### MANDATORY STATUS BLOCK (Every Task Response)
+
+```yaml
+ultimate-dev-status:
+  step: 1-9
+  size: atomic|moderate|complex
+  domains: [list]
+  risk: none|data|security|compliance
+  pattern: A|B|C|D|compose
+  execution_mode: inline|subagent
+  agents:
+    - domain: <domain>
+      agent: <agent>
+      reason: <short reason>
+  verification:
+    tests: pass|fail|not_run|not_applicable
+    lint: pass|fail|not_run|not_applicable
+    build: pass|fail|not_run|not_applicable
+  state_persisted: true/false
+  checkpoint_created: true/false
+  blockers: [list] or []
+```
+
+### ZERO-TOLERANCE VIOLATIONS
+
+| Violation | Consequence |
+|-----------|-------------|
+| Missing preflight/status block | **FAIL** — Re-initialize/Add immediately |
+| "Done" without verification evidence | **FAIL** — Run actual checks |
+| Reporting `pass` for unrun checks | **FAIL** — Must report `not_run` |
+| Skipping state persistence | **FAIL** — Persist immediately |
+| Using chat history for resume | **FAIL** — Use `state.json` |
+| Multiple agents per domain | **FAIL** — One primary per domain |
+| Hardcoded model names | **FAIL** — Use capabilities only |
+| Skipping mandatory lifecycle step | **FAIL** — Complete the step |
+
+### SELF-CORRECTION
+
+If you detect a violation:
+1. **STOP** → 2. **ACKNOWLEDGE** → 3. **CORRECT** → 4. **RE-EXECUTE** → 5. **PERSIST**
+
+**Do not proceed until corrected.**
+
+---
+
+## Skill Invocation
 
 ```
 @ultimate-dev "your task description here"
@@ -130,16 +197,6 @@ verification:
 | `ultimate-dev/skill-manifest.yaml` | Auto-generated agent/skill registry |
 | `ultimate-dev/scripts/validate.py` | Structure validation |
 | `ultimate-dev/scripts/sync-docs.py` | README auto-sync |
-
----
-
-## CI/CD (Auto-Release)
-
-- PR to `main` with `release:patch|minor|major` label → auto-release on merge
-- Manual: `gh workflow run release.yml -f version_type=patch`
-- Creates tag, updates changelog, publishes GitHub Release
-
----
 
 *This file is read by Claude Code, Cursor, and other tools on session start.*
 *Keep it at project root for automatic skill bootstrap.*

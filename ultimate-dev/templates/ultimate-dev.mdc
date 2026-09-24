@@ -20,6 +20,65 @@ ls -la .memory/ultimate-dev/tasks/ 2>/dev/null
 
 ---
 
+## ⛔ HARDENED ENFORCEMENT (ZERO TOLERANCE)
+
+### PRE-FLIGHT CHECKLIST (Every Session)
+
+Output this block in first response:
+```yaml
+ultimate-dev-preflight:
+  version_read: true/false
+  skill_md_read: true/false
+  agents_md_read: true/false
+  task_state_checked: true/false
+  task_resumed_or_created: true/false
+  discover_completed: true/false
+  initialization_output:
+    step: 1-9
+    size: atomic|moderate|complex
+    pattern: A|B|C|D|compose
+    agents: [...]
+    verification: {...}
+```
+
+### MANDATORY STATUS BLOCK (Every Response)
+
+```yaml
+ultimate-dev-status:
+  step: 1-9
+  size: atomic|moderate|complex
+  domains: [list]
+  risk: none|data|security|compliance
+  pattern: A|B|C|D|compose
+  execution_mode: inline|subagent
+  agents:
+    - domain: <domain>
+      agent: <agent>
+      reason: <short reason>
+  verification:
+    tests: pass|fail|not_run|not_applicable
+    lint: pass|fail|not_run|not_applicable
+    build: pass|fail|not_run|not_applicable
+  state_persisted: true/false
+  checkpoint_created: true/false
+  blockers: [list] or []
+```
+
+### ZERO-TOLERANCE VIOLATIONS
+
+| Violation | Consequence |
+|-----------|-------------|
+| Missing preflight/status block | **FAIL** — Re-initialize/Add |
+| "Done" without evidence | **FAIL** — Run actual checks |
+| `pass` for unrun checks | **FAIL** — Report `not_run` |
+| Skip state persistence | **FAIL** — Persist immediately |
+| Chat history for resume | **FAIL** — Use `state.json` |
+| Multiple agents/domain | **FAIL** — One primary |
+| Hardcoded model names | **FAIL** — Use capabilities |
+| Skip lifecycle step | **FAIL** — Complete step |
+
+---
+
 ## Skill Invocation
 
 Use `@ultimate-dev "task"` for any software engineering task.

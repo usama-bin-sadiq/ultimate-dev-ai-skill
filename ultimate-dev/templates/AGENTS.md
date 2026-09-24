@@ -38,7 +38,7 @@ Autonomously handles: classification → pattern selection → specialist routin
 | Smallest pattern | Default A (Skills) unless evidence requires B/C/D/Compose |
 | Verification-first | Run actual checks; "not_run" ≠ "pass" |
 | Durable state | `.memory/ultimate-dev/tasks/<id>/state.json` |
-| Context-loss proof | Resume from state.json, not chat history |
+| Context-loss proof | Resume from `state.json`, not chat history |
 | Model independence | Capability-based, graceful degradation |
 
 ---
