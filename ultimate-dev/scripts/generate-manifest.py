@@ -26,64 +26,74 @@ def parse_frontmatter(filepath):
     return None
 
 def scan_agents():
-    """Scan agents/ directory and return organized agent list."""
+    """Scan agents/ directory and return organized agent list - deterministic order."""
     agents_dir = os.path.join(BASE, "agents")
     agents = []
     
+    # Get all .md files first, then sort by full relative path for deterministic order
+    all_files = []
     for root, dirs, files in os.walk(agents_dir):
+        # Sort dirs for consistent traversal
+        dirs.sort()
         for f in sorted(files):
             if not f.endswith('.md') or f.startswith('.'):
                 continue
-            
             filepath = os.path.join(root, f)
             rel_path = os.path.relpath(filepath, BASE)
-            
-            # Skip _shared (they're fragments, not agents)
             if '_shared' in rel_path:
                 continue
-            
-            fm = parse_frontmatter(filepath)
-            if fm:
-                agents.append({
-                    "path": rel_path,
-                    "name": fm.get("name", f.replace(".md", "")),
-                    "domain": fm.get("domain", "unknown"),
-                    "triggers": fm.get("triggers", []),
-                })
-            else:
-                # No frontmatter — still register
-                agents.append({
-                    "path": rel_path,
-                    "name": f.replace(".md", ""),
-                    "domain": "unknown",
-                    "triggers": [],
-                })
+            all_files.append(rel_path)
+    
+    # Sort all paths for deterministic order
+    all_files.sort()
+    
+    for rel_path in all_files:
+        filepath = os.path.join(BASE, rel_path)
+        fm = parse_frontmatter(filepath)
+        if fm:
+            agents.append({
+                "path": rel_path,
+                "name": fm.get("name", os.path.basename(rel_path).replace(".md", "")),
+                "domain": fm.get("domain", "unknown"),
+                "triggers": fm.get("triggers", []),
+            })
+        else:
+            agents.append({
+                "path": rel_path,
+                "name": os.path.basename(rel_path).replace(".md", ""),
+                "domain": "unknown",
+                "triggers": [],
+            })
     
     return agents
 
 def scan_skills():
-    """Scan skills/ directory and return skill list."""
+    """Scan skills/ directory and return skill list - deterministic order."""
     skills_dir = os.path.join(BASE, "skills")
     skills = []
     
     if not os.path.exists(skills_dir):
         return skills
     
+    all_skills = []
     for root, dirs, files in os.walk(skills_dir):
+        dirs.sort()
         for f in sorted(files):
             if f == "SKILL.md":
                 filepath = os.path.join(root, f)
                 rel_path = os.path.relpath(filepath, BASE)
-                skills.append(rel_path)
+                all_skills.append(rel_path)
     
-    return skills
+    all_skills.sort()
+    return all_skills
 
 def scan_modules():
-    """Scan modules/ directory and return module list."""
+    """Scan modules/ directory and return module list - deterministic order."""
     modules_dir = os.path.join(BASE, "modules")
     modules = []
     
     for root, dirs, files in os.walk(modules_dir):
+        dirs.sort()
         for f in sorted(files):
             if f.endswith('.md') and not f.startswith('.'):
                 filepath = os.path.join(root, f)
@@ -106,7 +116,7 @@ def scan_shared():
 
 def get_version():
     """Read version from VERSION file."""
-    version_path = os.path.join(BASE, "VERSION")
+    version_path = os.path.join(os.path.dirname(BASE), "VERSION")
     if os.path.exists(version_path):
         with open(version_path) as f:
             return f.read().strip()
@@ -132,7 +142,7 @@ def generate_manifest():
         "description": "Master software-engineering orchestrator. Adapts to model size: tiny→inline, small→1 module, large→parallel agents, huge→full system. Includes universal specialists that learn ANY technology from the web and auto-generate new agents for future use.",
         "author": existing.get("author", "ultimate-dev team"),
         "license": existing.get("license", "MIT"),
-        "repository": existing.get("repository", ""),
+        "repository": existing.get("repository", "https://github.com/usama-bin-sadiq/ultimate-dev-ai-skill/ultimate-dev"),
         "keywords": existing.get("keywords", [
             "multi-agent", "orchestrator", "software-engineering",
             "code-generation", "code-review", "architecture",
