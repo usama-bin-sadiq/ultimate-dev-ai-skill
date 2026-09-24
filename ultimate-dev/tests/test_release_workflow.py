@@ -23,3 +23,4 @@ def test_release_workflow_handles_main_pushes_without_recursive_releases():
     assert "github.api_url" in text
     assert "github.token" in text
     assert "environment: release" in text
+    assert "environment: CICD" in text

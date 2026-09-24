@@ -227,10 +227,10 @@ Actions:
 - Commit + tag + push
 - Create GitHub Release
 
-The repository secret `ULTIMATE_DEV_TOKEN` supplies the token used by the
-release job. It should be a least-privilege fine-grained token with Contents
-read/write and Pull requests read access. The `release` environment remains
-the required approval boundary.
+The `CICD` environment secret `ULTIMATE_DEV_TOKEN` supplies the token used by
+the write-capable release job. It should be a least-privilege fine-grained token
+with Contents read/write and Pull requests read access. The separate `release`
+environment remains the required approval boundary.
 
 ---
 

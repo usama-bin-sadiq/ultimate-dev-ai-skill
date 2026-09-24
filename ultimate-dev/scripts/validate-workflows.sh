@@ -77,6 +77,7 @@ for required in (
     'github.api_url',
     'github.token',
     'environment: release',
+    'environment: CICD',
     'cancel-in-progress: false',
 ):
     if required not in release:

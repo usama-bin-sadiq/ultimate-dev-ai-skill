@@ -52,13 +52,16 @@ Go to: **Settings → Branches → Add rule**
 
 ### Release secret
 
-The release workflow uses the existing repository secret `ULTIMATE_DEV_TOKEN`.
-It must be a least-privilege fine-grained token with:
+The release workflow uses the existing environment secret
+`ULTIMATE_DEV_TOKEN` from the `CICD` environment. It must be a
+least-privilege fine-grained token with:
 
 - **Contents:** Read and write
 - **Pull requests:** Read
 
-Keep the `release` environment approval and branch/tag protection enabled.
+The separate `release` environment remains the approval gate; the write job
+runs in `CICD` so the configured secret is available. Keep branch/tag
+protection enabled.
 
 ### Branch name pattern: `develop` (if used)
 

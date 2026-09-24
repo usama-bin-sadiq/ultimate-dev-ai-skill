@@ -288,8 +288,8 @@ jobs:
               stream.write(f"entry<<{delimiter}\n{value}\n{delimiter}\n")
           PY
 
-  create-release:
-    name: Create Release
+  release-gate:
+    name: Release Approval Gate
     needs: [should-release, generate-changelog]
     if: >-
       needs.should-release.outputs.should_release == 'true' &&
@@ -301,9 +301,31 @@ jobs:
          github.event.pull_request.head.repo.full_name == github.repository)
       )
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-    # Configure this environment with required reviewers and tag protection.
+    timeout-minutes: 5
     environment: release
+    permissions:
+      contents: read
+    steps:
+      - name: Confirm release environment gate
+        run: echo 'Release environment gate approved.'
+
+  create-release:
+    name: Create Release
+    needs: [should-release, generate-changelog, release-gate]
+    if: >-
+      needs.should-release.outputs.should_release == 'true' &&
+      needs.release-gate.result == 'success' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+         github.event.pull_request.merged == true &&
+         github.event.pull_request.head.repo.full_name == github.repository)
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # ULTIMATE_DEV_TOKEN is configured in the existing CICD environment.
+    environment: CICD
     permissions:
       contents: write
     steps:
