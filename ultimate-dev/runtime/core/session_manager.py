@@ -10,6 +10,9 @@ from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 
+# Jev integration
+from runtime.core.jev import JevCore, JevContext, create_jev_core
+
 
 class SandboxMode(Enum):
     DISABLED = "disabled"          # No sandbox at all
@@ -38,6 +41,9 @@ class SessionManager:
         self.config = self._load_config()
         self.sandbox_initialized = False
         self.sandbox_backend = None
+        
+        # Jev Core integration
+        self.jev_core = None
         
     def _load_config(self) -> SessionConfig:
         """Load session config from file."""
@@ -159,13 +165,24 @@ class SessionManager:
         choice = input("\nAuto-install missing dependencies? [y/N]: ").strip().lower()
         self.config.auto_install_deps = choice in ('y', 'yes')
     
-    def should_initialize_sandbox(self, task_requires_execution: bool = False) -> bool:
-        """Determine if sandbox should be initialized."""
+    def should_initialize_sandbox(self, task_requires_execution: bool = False, task_description: str = "") -> bool:
+        """Determine if sandbox should be initialized using Jev for decision making."""
         if self.config.sandbox_mode == SandboxMode.DISABLED:
             return False
         if self.config.sandbox_mode == SandboxMode.ALWAYS:
             return True
         if self.config.sandbox_mode == SandboxMode.ON_DEMAND:
+            # Use Jev for intelligent decision making
+            if self.jev_core and task_description:
+                jev_decision = self.jev_core.classify(JevContext(
+                    user_input=task_description,
+                    langchain_state={},
+                    available_tools=[],
+                    session_config={"sandbox_mode": self.config.sandbox_mode.value},
+                    project_root=str(self.project_root)
+                ))
+                # Use Jev's decision for execution
+                return jev_decision.get("should_execute", task_requires_execution)
             return task_requires_execution
         return False
     
@@ -212,12 +229,14 @@ class SessionManager:
         print("ℹ️  No sandbox backend available - execution disabled")
         return False
     
-    def execute_code(self, code: str, language: str = "python", **kwargs) -> Dict[str, Any]:
+    def execute_code(self, code: str, language: str = "python", task_description: str = "", **kwargs) -> Dict[str, Any]:
         """
-        Execute code in sandbox (lazy initialization).
+        Execute code in sandbox (lazy initialization with Jev decision making).
         Returns result dict with stdout, stderr, exit_code, etc.
         """
-        if not self.should_initialize_sandbox(task_requires_execution=True):
+        # Use Jev for intelligent decision making
+        task_desc = task_description or f"Execute {language} code"
+        if not self.should_initialize_sandbox(task_requires_execution=True, task_description=task_desc):
             return {
                 "success": False,
                 "error": "Sandbox not initialized. Enable sandbox mode or ensure task requires execution.",
