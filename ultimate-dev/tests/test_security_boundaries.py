@@ -132,6 +132,47 @@ def test_posix_installer_is_staged_idempotent_and_refuses_memory_deletion():
         assert not (project / ".memory").exists()
 
 
+def test_posix_uninstall_preserves_nonempty_project_memory():
+    import tempfile
+
+    installer = PACKAGE_ROOT / "scripts" / "install.sh"
+    with tempfile.TemporaryDirectory(prefix="ultimate-dev-memory-") as directory:
+        project = Path(directory)
+        memory = project / ".memory" / "ultimate-dev"
+        memory.mkdir(parents=True)
+        keep = memory / "keep.txt"
+        keep.write_text("user data\n", encoding="utf-8")
+        install = subprocess.run(
+            [str(installer), "--project", str(project), "--yes"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert install.returncode == 0, install.stdout + install.stderr
+        assert keep.read_text(encoding="utf-8") == "user data\n"
+        uninstall = subprocess.run(
+            [str(installer), "--project", str(project), "--uninstall", "--yes"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert uninstall.returncode == 0, uninstall.stdout + uninstall.stderr
+        assert keep.is_file()
+        assert keep.read_text(encoding="utf-8") == "user data\n"
+        refused = subprocess.run(
+            [str(installer), "--project", str(project), "--clean-memory", "--yes"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert refused.returncode != 0
+        assert "memory deletion is disabled" in refused.stderr
+        assert keep.read_text(encoding="utf-8") == "user data\n"
+
+
 def test_posix_installer_refuses_symlinked_install_parent():
     import tempfile
 
@@ -239,6 +280,10 @@ def test_powershell_installer_is_staged_and_idempotent_when_available():
     with tempfile.TemporaryDirectory(prefix="ultimate-dev-pwsh-install-") as directory:
         project = Path(directory)
         (project / ".gitignore").write_text("sentinel-entry\n", encoding="utf-8")
+        memory = project / ".memory" / "ultimate-dev"
+        memory.mkdir(parents=True)
+        keep = memory / "keep.txt"
+        keep.write_text("user data\n", encoding="utf-8")
         for _ in range(2):
             result = subprocess.run(
                 [powershell, "-NoLogo", "-NoProfile", "-File", str(installer), "-Project", str(project), "-Yes"],
@@ -253,7 +298,7 @@ def test_powershell_installer_is_staged_and_idempotent_when_available():
         assert (target / "SKILL.md").is_file()
         assert not (target / "ultimate-dev").exists()
         assert not (target / "runtime/core/browser/automation.py").exists()
-        assert not (project / ".memory").exists()
+        assert keep.read_text(encoding="utf-8") == "user data\n"
         assert (project / ".gitignore").read_text(encoding="utf-8") == "sentinel-entry\n"
         assert not (project / "AGENTS.md").exists()
         assert not (project / "CLAUDE.md").exists()
@@ -269,6 +314,16 @@ def test_powershell_installer_is_staged_and_idempotent_when_available():
         )
         assert result.returncode != 0
         assert "Memory deletion is disabled" in result.stderr
+        uninstall = subprocess.run(
+            [powershell, "-NoLogo", "-NoProfile", "-File", str(installer), "-Project", str(project), "-Uninstall", "-Yes"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert uninstall.returncode == 0, uninstall.stdout + uninstall.stderr
+        assert keep.read_text(encoding="utf-8") == "user data\n"
+        assert not target.exists()
 
 
 def test_powershell_installer_ignores_existing_claude_symlink_when_available():

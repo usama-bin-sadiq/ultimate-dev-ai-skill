@@ -185,13 +185,24 @@ jobs:
           cp -R "$GITHUB_WORKSPACE/ultimate-dev" .
           # The installer deliberately reads the repository-root VERSION source.
           cp "$GITHUB_WORKSPACE/VERSION" ./VERSION
+          printf '%s\n' 'sentinel-entry' > .gitignore
+          mkdir -p .memory/ultimate-dev/tasks
+          printf '%s\n' 'keep-user-memory' > .memory/ultimate-dev/keep.txt
           ./ultimate-dev/scripts/install.sh --project . --yes
           ./ultimate-dev/scripts/install.sh --project . --yes
           test -f .agents/skills/ultimate-dev/VERSION
           test -f .agents/skills/ultimate-dev/SKILL.md
-          test -f .gitignore
-          grep -Fqx '.memory/ultimate-dev/' .gitignore
+          test "$(cat .gitignore)" = 'sentinel-entry'
+          test -f .memory/ultimate-dev/keep.txt
           test ! -e .agents/skills/ultimate-dev/ultimate-dev
+          test -z "$(find .agents/skills/ultimate-dev -type l -print -quit)"
+          ./ultimate-dev/scripts/install.sh --project . --uninstall --yes
+          test -f .memory/ultimate-dev/keep.txt
+          if ./ultimate-dev/scripts/install.sh --project . --clean-memory --yes; then
+            echo 'clean-memory unexpectedly succeeded' >&2
+            exit 1
+          fi
+          test -f .memory/ultimate-dev/keep.txt
 
   pr-quality:
     name: PR Quality Check
