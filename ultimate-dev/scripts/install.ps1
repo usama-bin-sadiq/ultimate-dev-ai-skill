@@ -1,6 +1,6 @@
-# Install the Ultimate-Dev skill from a repository checkout (PowerShell).
-# The root VERSION file is the sole version source.  A sibling staging
-# directory is validated and swapped into place; memory is never hard-deleted.
+# Install the Ultimate-Dev skill by copying the inner skill payload.
+# The installer is interactive when no scope is supplied. It never creates
+# symlinks or writes files outside the selected skill destination.
 
 [CmdletBinding()]
 param(
@@ -15,14 +15,17 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-
 $ScriptDir = $PSScriptRoot
-$SkillDir = Split-Path -Parent $ScriptDir
-$RepoRoot = Split-Path -Parent $SkillDir
+$SkillDir = (Resolve-Path -LiteralPath (Split-Path -Parent $ScriptDir)).Path
+$RepoRoot = (Resolve-Path -LiteralPath (Split-Path -Parent $SkillDir)).Path
 $VersionFile = Join-Path $RepoRoot 'VERSION'
+if (-not (Test-Path -LiteralPath $VersionFile -PathType Leaf)) {
+    $VersionFile = Join-Path $SkillDir 'VERSION'
+}
 
 function Write-Info([string]$Message) { Write-Host "  ℹ $Message" -ForegroundColor Cyan }
 function Write-Status([string]$Message) { Write-Host "  ✔ $Message" -ForegroundColor Green }
+function Write-Warn([string]$Message) { Write-Host "  ⚠ $Message" -ForegroundColor Yellow }
 function Write-Err([string]$Message) { Write-Host "  ✘ $Message" -ForegroundColor Red }
 
 function Get-CanonicalVersion {
@@ -36,19 +39,32 @@ function Get-CanonicalVersion {
     return $value
 }
 
+function Expand-HomePath([string]$Path) {
+    if ($Path -eq '~') { return $HOME }
+    if ($Path.StartsWith('~/')) { return Join-Path $HOME $Path.Substring(2) }
+    return $Path
+}
+
+function Resolve-ProjectDirectory([string]$Path) {
+    $expanded = Expand-HomePath $Path
+    if ([string]::IsNullOrWhiteSpace($expanded)) { $expanded = '.' }
+    if (-not (Test-Path -LiteralPath $expanded -PathType Container)) {
+        throw "Project directory not found: $expanded"
+    }
+    return (Resolve-Path -LiteralPath $expanded).Path
+}
+
 function Assert-NotReparsePoint([string]$Path) {
     if (Test-Path -LiteralPath $Path) {
         $item = Get-Item -LiteralPath $Path -Force
         if (($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) -ne 0) {
-            throw "Refusing to modify reparse point: $Path"
+            throw "Refusing to use reparse point: $Path"
         }
     }
 }
 
 function Remove-StagedPath([string]$Path, [string]$Parent) {
-    if ([string]::IsNullOrWhiteSpace($Path) -or -not (Test-Path -LiteralPath $Path)) {
-        return
-    }
+    if ([string]::IsNullOrWhiteSpace($Path) -or -not (Test-Path -LiteralPath $Path)) { return }
     $full = [System.IO.Path]::GetFullPath($Path)
     $parentFull = [System.IO.Path]::GetFullPath($Parent).TrimEnd([char[]]"\/") + [System.IO.Path]::DirectorySeparatorChar
     if (-not $full.StartsWith($parentFull, [StringComparison]::OrdinalIgnoreCase)) {
@@ -57,80 +73,42 @@ function Remove-StagedPath([string]$Path, [string]$Parent) {
     Remove-Item -LiteralPath $full -Recurse -Force
 }
 
-function Remove-GitignoreEntry([string]$ProjectDir) {
-    $gitignore = Join-Path $ProjectDir '.gitignore'
-    $entry = '.memory/ultimate-dev/'
-    if (-not (Test-Path -LiteralPath $gitignore -PathType Leaf)) { return }
-    Assert-NotReparsePoint $gitignore
-    $lines = @(Get-Content -LiteralPath $gitignore)
-    $remaining = @($lines | Where-Object { $_ -cne $entry })
-    if ($remaining.Count -eq $lines.Count) { return }
-    $tmp = Join-Path $ProjectDir ('.gitignore.tmp.' + [guid]::NewGuid().ToString('N'))
-    try {
-        if ($remaining.Count -gt 0) {
-            Set-Content -LiteralPath $tmp -Value $remaining -Encoding utf8
-        } else {
-            Set-Content -LiteralPath $tmp -Value '' -Encoding utf8
+function Select-Scope {
+    if ($Global) { return 'global' }
+    if (-not [string]::IsNullOrWhiteSpace($Project)) { return 'project' }
+    if ($Yes) { return 'global' }
+
+    Write-Host "`n  Ultimate-Dev installer" -ForegroundColor Cyan
+    Write-Host "  Copy the inner skill folder; no symlinks or extra project files.`n"
+    while ($true) {
+        Write-Host "  1) Global  — ~/.agents/skills/ultimate-dev/"
+        Write-Host "  2) Project — <project>/.agents/skills/ultimate-dev/"
+        Write-Host "  q) Cancel`n"
+        $choice = (Read-Host '  Enter number (or q to cancel)').Trim().ToLowerInvariant()
+        if ($choice -eq '1') { return 'global' }
+        if ($choice -eq '2') {
+            $inputPath = (Read-Host '  Project directory (Enter for current directory)')
+            $script:Project = if ([string]::IsNullOrWhiteSpace($inputPath)) { '.' } else { $inputPath }
+            return 'project'
         }
-        Move-Item -LiteralPath $tmp -Destination $gitignore -Force
-    } finally {
-        if (Test-Path -LiteralPath $tmp) { Remove-Item -LiteralPath $tmp -Force }
-    }
-}
-
-function Ensure-MemoryScaffolding([string]$ProjectDir, [string]$Target, [bool]$IsGlobal) {
-    $memoryRoot = Join-Path $ProjectDir '.memory'
-    $memoryDir = Join-Path $memoryRoot 'ultimate-dev'
-    Assert-NotReparsePoint $memoryRoot
-    Assert-NotReparsePoint $memoryDir
-    New-Item -ItemType Directory -Force -Path (Join-Path $memoryDir 'tasks') | Out-Null
-
-    $memoryIgnore = Join-Path $memoryDir '.gitignore'
-    if (-not (Test-Path -LiteralPath $memoryIgnore)) {
-        $tmp = Join-Path $memoryDir ('.gitignore.tmp.' + [guid]::NewGuid().ToString('N'))
-        Set-Content -LiteralPath $tmp -Value 'tasks/*' -Encoding utf8
-        Move-Item -LiteralPath $tmp -Destination $memoryIgnore -Force
-    }
-
-    $seed = Join-Path $memoryDir 'project-memory.md'
-    $template = Join-Path $Target 'memory/project-memory.md'
-    if (-not (Test-Path -LiteralPath $seed) -and (Test-Path -LiteralPath $template -PathType Leaf)) {
-        $tmp = Join-Path $memoryDir ('project-memory.tmp.' + [guid]::NewGuid().ToString('N'))
-        Copy-Item -LiteralPath $template -Destination $tmp -Force
-        Move-Item -LiteralPath $tmp -Destination $seed -Force
-    }
-
-    # Global installs must not modify a repository's ignore file.  Project
-    # installs add exactly one managed entry, preserving all existing content.
-    if (-not $IsGlobal) {
-        $gitignore = Join-Path $ProjectDir '.gitignore'
-        $entry = '.memory/ultimate-dev/'
-        Assert-NotReparsePoint $gitignore
-        $existing = if (Test-Path -LiteralPath $gitignore -PathType Leaf) {
-            @(Get-Content -LiteralPath $gitignore)
-        } else { @() }
-        if ($existing -notcontains $entry) {
-            $tmp = Join-Path $ProjectDir ('.gitignore.tmp.' + [guid]::NewGuid().ToString('N'))
-            $newContent = if ($existing.Count -gt 0) {
-                ((($existing -join "`n") -replace "[`r`n]+$", '') + "`n" + $entry + "`n")
-            } else {
-                ($entry + "`n")
-            }
-            Set-Content -LiteralPath $tmp -Value $newContent -Encoding utf8 -NoNewline
-            Move-Item -LiteralPath $tmp -Destination $gitignore -Force
+        if ($choice -eq 'q' -or $choice -eq '') {
+            Write-Info 'Cancelled.'
+            exit 0
         }
+        Write-Warn "Invalid choice. Enter 1, 2, or q."
     }
 }
 
 if ($Help) {
-    Write-Host 'Usage: install.ps1 [--Global|--Project DIR] [--Yes] [--Uninstall] [--CleanGitignore]'
-    Write-Host 'Memory deletion is disabled; use the runtime retention workflow.'
+    Write-Host 'Usage: install.ps1 [--Global|--Project DIR] [--Yes] [--Uninstall]'
+    Write-Host 'With no scope, the installer interactively asks Global or Project.'
+    Write-Host 'Only the inner skill folder is copied; no symlink or extra project file is created.'
     exit 0
 }
 
 if ($All) { $CleanMemory = $true; $CleanGitignore = $true }
 if ($CleanMemory) {
-    throw 'Memory deletion is disabled; use the runtime retention workflow with a dry-run and confirmation.'
+    throw 'Memory deletion is disabled; this installer only manages the skill folder.'
 }
 
 $version = Get-CanonicalVersion
@@ -140,68 +118,59 @@ if ($Global -and -not [string]::IsNullOrWhiteSpace($Project)) {
 $homeDir = if ($env:USERPROFILE) { $env:USERPROFILE } else { $env:HOME }
 if ($Global -and [string]::IsNullOrWhiteSpace($homeDir)) { throw 'HOME/USERPROFILE is not set.' }
 
-if ($Global) {
+$scope = Select-Scope
+if ($scope -eq 'global') {
     $projectDir = (Resolve-Path -LiteralPath $homeDir).Path
     $target = Join-Path $projectDir '.agents/skills/ultimate-dev'
-    $isGlobal = $true
 } else {
-    $projectInput = if ([string]::IsNullOrWhiteSpace($Project)) { (Get-Location).Path } else { $Project }
-    $projectDir = (Resolve-Path -LiteralPath $projectInput).Path
+    $projectDir = Resolve-ProjectDirectory $Project
     $target = Join-Path $projectDir '.agents/skills/ultimate-dev'
-    $isGlobal = $false
 }
-
+$targetParent = Split-Path -Parent $target
 foreach ($pathComponent in @(
     (Join-Path $projectDir '.agents'),
-    (Join-Path $projectDir '.agents/skills'),
-    (Join-Path $projectDir '.claude'),
-    (Join-Path $projectDir '.cursor')
+    (Join-Path $projectDir '.agents/skills')
 )) {
     Assert-NotReparsePoint $pathComponent
 }
-$targetParent = Split-Path -Parent $target
 New-Item -ItemType Directory -Force -Path $targetParent | Out-Null
 $targetParent = (Resolve-Path -LiteralPath $targetParent).Path
+Assert-NotReparsePoint $targetParent
 Assert-NotReparsePoint $target
 if ((Test-Path -LiteralPath $target) -and -not (Get-Item -LiteralPath $target -Force).PSIsContainer) {
     throw "Skill target exists but is not a directory: $target"
 }
-$memoryRoot = Join-Path $projectDir '.memory'
-$memoryDir = Join-Path $memoryRoot 'ultimate-dev'
-Assert-NotReparsePoint $memoryRoot
-Assert-NotReparsePoint $memoryDir
-if ((Test-Path -LiteralPath $memoryRoot) -and -not (Get-Item -LiteralPath $memoryRoot -Force).PSIsContainer) {
-    throw "Project memory root is not a directory: $memoryRoot"
-}
-if ((Test-Path -LiteralPath $memoryDir) -and -not (Get-Item -LiteralPath $memoryDir -Force).PSIsContainer) {
-    throw "Project memory path is not a directory: $memoryDir"
-}
-$projectGitignore = Join-Path $projectDir '.gitignore'
-if (-not $isGlobal -and (Test-Path -LiteralPath $projectGitignore)) {
-    Assert-NotReparsePoint $projectGitignore
-    if ((Get-Item -LiteralPath $projectGitignore -Force).PSIsContainer) {
-        throw "Project .gitignore is not a regular file: $projectGitignore"
-    }
-}
-$memoryIgnore = Join-Path $memoryDir '.gitignore'
-if (Test-Path -LiteralPath $memoryIgnore) {
-    Assert-NotReparsePoint $memoryIgnore
-    if ((Get-Item -LiteralPath $memoryIgnore -Force).PSIsContainer) {
-        throw "Memory .gitignore is not a regular file: $memoryIgnore"
-    }
-}
 
 if ($Uninstall) {
-    if (-not $Yes) { throw 'Uninstall requires explicit -Yes confirmation.' }
+    Write-Host "`n  Uninstall target: $target"
+    if (-not $Yes) {
+        $confirm = (Read-Host '  Proceed? [y/N]').Trim()
+        if ($confirm -notmatch '^(?i:y|yes)$') {
+            Write-Info 'Cancelled.'
+            exit 0
+        }
+    }
     if (Test-Path -LiteralPath $target -PathType Container) {
         Remove-Item -LiteralPath $target -Recurse -Force
         Write-Status "Removed $target"
     } else {
         Write-Info "Skill target not found: $target"
     }
-    if ($CleanGitignore) { Remove-GitignoreEntry $projectDir }
-    Write-Info 'Project memory was not deleted; use the retention workflow for memory cleanup.'
+    if ($CleanGitignore) { Write-Info 'No project .gitignore is managed by this installer.' }
+    Write-Info 'No memory, templates, or host configuration files were changed.'
     exit 0
+}
+
+Write-Host "`n  Source: $SkillDir"
+Write-Host "  Target: $target"
+Write-Host "  Scope:  $scope"
+Write-Host "  Version: $version`n"
+if (-not $Yes) {
+    $confirm = (Read-Host '  Proceed? [y/N]').Trim()
+    if ($confirm -notmatch '^(?i:y|yes)$') {
+        Write-Info 'Cancelled.'
+        exit 0
+    }
 }
 
 $lock = Join-Path $targetParent '.ultimate-dev.install.lock'
@@ -219,12 +188,13 @@ try {
     Get-ChildItem -LiteralPath $SkillDir -Force | ForEach-Object {
         Copy-Item -LiteralPath $_.FullName -Destination $stage -Recurse -Force
     }
+
     $reparse = Get-ChildItem -LiteralPath $stage -Recurse -Force |
         Where-Object { ($_.Attributes -band [System.IO.FileAttributes]::ReparsePoint) -ne 0 } |
         Select-Object -First 1
-    if ($reparse) { throw "Staged payload contains a reparse point: $($reparse.FullName)" }
-    Copy-Item -LiteralPath $VersionFile -Destination (Join-Path $stage 'VERSION') -Force
+    if ($reparse) { throw "Source skill payload contains a reparse point: $($reparse.FullName)" }
 
+    Copy-Item -LiteralPath $VersionFile -Destination (Join-Path $stage 'VERSION') -Force
     foreach ($relative in @(
         'runtime/core/browser/automation.py',
         'runtime/core/sandbox/runner.py',
@@ -254,6 +224,11 @@ try {
         }
     }
 
+    $agentCount = @(Get-ChildItem -LiteralPath (Join-Path $stage 'agents') -Recurse -File -Filter '*.md' |
+        Where-Object { $_.FullName -notmatch '[\\/]_shared[\\/]' }).Count
+    $skillCount = @(Get-ChildItem -LiteralPath (Join-Path $stage 'skills') -Recurse -File -Filter 'SKILL.md').Count
+    if ($agentCount -lt 1 -or $skillCount -lt 1) { throw 'Staged payload has no agent/skill content.' }
+
     if (Test-Path -LiteralPath $target -PathType Container) {
         $backup = Join-Path $targetParent ('.ultimate-dev.backup.' + [guid]::NewGuid().ToString('N'))
         Move-Item -LiteralPath $target -Destination $backup -Force
@@ -273,9 +248,10 @@ try {
         $backup = $null
     }
 
-    Ensure-MemoryScaffolding $projectDir $target $isGlobal
-    Write-Status "Installed Ultimate-Dev $version at $target"
-    Write-Info "Project memory: $(Join-Path $projectDir '.memory/ultimate-dev') (deletion is retention-managed)"
+    $fileCount = @(Get-ChildItem -LiteralPath $target -Recurse -File).Count
+    Write-Status "Copied the inner skill folder to $target"
+    Write-Status "Version $version · $agentCount agents · $skillCount skills · $fileCount files"
+    Write-Info 'No symlink, memory, template, or host configuration file was created.'
 } catch {
     if ($backup -and (Test-Path -LiteralPath $backup) -and -not (Test-Path -LiteralPath $target)) {
         Move-Item -LiteralPath $backup -Destination $target -Force

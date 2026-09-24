@@ -93,6 +93,7 @@ def test_posix_installer_is_staged_idempotent_and_refuses_memory_deletion():
     installer = PACKAGE_ROOT / "scripts" / "install.sh"
     with tempfile.TemporaryDirectory(prefix="ultimate-dev-install-") as directory:
         project = Path(directory)
+        (project / ".gitignore").write_text("sentinel-entry\n", encoding="utf-8")
         for _ in range(2):
             result = subprocess.run(
                 [str(installer), "--project", str(project), "--yes"],
@@ -111,7 +112,13 @@ def test_posix_installer_is_staged_idempotent_and_refuses_memory_deletion():
         assert not (target / "runtime/core/browser/automation.py").exists()
         assert not (target / "runtime/core/sandbox/runner.py").exists()
         assert not (target / "runtime/core/jev/bridge.py").exists()
-        assert ".memory/ultimate-dev/" in (project / ".gitignore").read_text().splitlines()
+        assert not (project / ".memory").exists()
+        assert (project / ".gitignore").read_text(encoding="utf-8") == "sentinel-entry\n"
+        assert not (project / "AGENTS.md").exists()
+        assert not (project / "CLAUDE.md").exists()
+        assert not (project / ".cursor").exists()
+        assert not (project / ".claude").exists()
+        assert not any(path.is_symlink() for path in target.rglob("*"))
 
         result = subprocess.run(
             [str(installer), "--project", str(project), "--clean-memory", "--yes"],
@@ -122,15 +129,101 @@ def test_posix_installer_is_staged_idempotent_and_refuses_memory_deletion():
         )
         assert result.returncode != 0
         assert "memory deletion is disabled" in result.stderr
-        assert (project / ".memory/ultimate-dev").is_dir()
+        assert not (project / ".memory").exists()
 
 
-def test_powershell_installer_contains_staged_versioned_payload_guards():
+def test_posix_installer_refuses_symlinked_install_parent():
+    import tempfile
+
+    installer = PACKAGE_ROOT / "scripts" / "install.sh"
+    with tempfile.TemporaryDirectory(prefix="ultimate-dev-symlink-") as directory:
+        root = Path(directory)
+        project = root / "project"
+        outside = root / "outside"
+        project.mkdir()
+        outside.mkdir()
+        try:
+            (project / ".agents").symlink_to(outside, target_is_directory=True)
+        except OSError:
+            pytest.skip("symlinks are unavailable")
+        result = subprocess.run(
+            [str(installer), "--project", str(project), "--yes"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert result.returncode != 0
+        assert "symlinked install path" in result.stderr
+        assert not any(outside.iterdir())
+
+
+def test_posix_installer_ignores_existing_claude_symlink():
+    import tempfile
+
+    installer = PACKAGE_ROOT / "scripts" / "install.sh"
+    with tempfile.TemporaryDirectory(prefix="ultimate-dev-claude-link-") as directory:
+        root = Path(directory)
+        project = root / "project"
+        outside = root / "outside"
+        project.mkdir()
+        outside.mkdir()
+        (project / ".claude" / "skills").mkdir(parents=True)
+        link = project / ".claude" / "skills" / "ultimate-dev"
+        try:
+            link.symlink_to(outside, target_is_directory=True)
+        except OSError:
+            pytest.skip("symlinks are unavailable")
+        result = subprocess.run(
+            [str(installer), "--project", str(project), "--yes"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert result.returncode == 0, result.stdout + result.stderr
+        assert link.is_symlink()
+        assert not (project / ".memory").exists()
+        assert not (project / ".gitignore").exists()
+        assert not (project / ".cursor").exists()
+        assert not (project / "AGENTS.md").exists()
+        assert not (project / "CLAUDE.md").exists()
+
+
+def test_posix_installer_is_interactive_and_copy_only():
+    import tempfile
+
+    installer = PACKAGE_ROOT / "scripts" / "install.sh"
+    with tempfile.TemporaryDirectory(prefix="ultimate-dev-interactive-") as directory:
+        project = Path(directory)
+        result = subprocess.run(
+            [str(installer)],
+            cwd=REPO_ROOT,
+            input=f"2\n{project}\ny\n",
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=30,
+        )
+        assert result.returncode == 0, result.stdout + result.stderr
+        target = project / ".agents" / "skills" / "ultimate-dev"
+        assert (target / "SKILL.md").is_file()
+        assert not (project / ".memory").exists()
+        assert not (project / ".gitignore").exists()
+        assert not (project / "AGENTS.md").exists()
+        assert not (project / "CLAUDE.md").exists()
+        assert not (project / ".cursor").exists()
+        assert not (project / ".claude").exists()
+
+
+def test_powershell_installer_contains_copy_only_guards():
     source = (PACKAGE_ROOT / "scripts" / "install.ps1").read_text(encoding="utf-8")
     assert "Join-Path $RepoRoot 'VERSION'" in source
     assert "Move-Item -LiteralPath $stage -Destination $target" in source
     assert "Memory deletion is disabled" in source
     assert "Remove-Item -LiteralPath $memoryDir" not in source
+    assert "Ensure-MemoryScaffolding" not in source
+    assert "SymbolicLink" not in source
     assert "runtime/core/browser/automation.py" in source
     assert "runtime/core/sandbox/runner.py" in source
     assert "runtime/core/jev/bridge.py" in source
@@ -145,6 +238,7 @@ def test_powershell_installer_is_staged_and_idempotent_when_available():
     installer = PACKAGE_ROOT / "scripts" / "install.ps1"
     with tempfile.TemporaryDirectory(prefix="ultimate-dev-pwsh-install-") as directory:
         project = Path(directory)
+        (project / ".gitignore").write_text("sentinel-entry\n", encoding="utf-8")
         for _ in range(2):
             result = subprocess.run(
                 [powershell, "-NoLogo", "-NoProfile", "-File", str(installer), "-Project", str(project), "-Yes"],
@@ -157,7 +251,15 @@ def test_powershell_installer_is_staged_and_idempotent_when_available():
         target = project / ".agents" / "skills" / "ultimate-dev"
         assert (target / "VERSION").read_text().strip() == (REPO_ROOT / "VERSION").read_text().strip()
         assert (target / "SKILL.md").is_file()
+        assert not (target / "ultimate-dev").exists()
         assert not (target / "runtime/core/browser/automation.py").exists()
+        assert not (project / ".memory").exists()
+        assert (project / ".gitignore").read_text(encoding="utf-8") == "sentinel-entry\n"
+        assert not (project / "AGENTS.md").exists()
+        assert not (project / "CLAUDE.md").exists()
+        assert not (project / ".cursor").exists()
+        assert not (project / ".claude").exists()
+        assert not any(path.is_symlink() for path in target.rglob("*"))
         result = subprocess.run(
             [powershell, "-NoLogo", "-NoProfile", "-File", str(installer), "-Project", str(project), "-CleanMemory", "-Yes"],
             cwd=REPO_ROOT,
@@ -167,6 +269,71 @@ def test_powershell_installer_is_staged_and_idempotent_when_available():
         )
         assert result.returncode != 0
         assert "Memory deletion is disabled" in result.stderr
+
+
+def test_powershell_installer_ignores_existing_claude_symlink_when_available():
+    import tempfile
+
+    powershell = shutil.which("pwsh-preview") or shutil.which("pwsh")
+    if not powershell:
+        pytest.skip("PowerShell is not available")
+    installer = PACKAGE_ROOT / "scripts" / "install.ps1"
+    with tempfile.TemporaryDirectory(prefix="ultimate-dev-pwsh-claude-link-") as directory:
+        root = Path(directory)
+        project = root / "project"
+        outside = root / "outside"
+        project.mkdir()
+        outside.mkdir()
+        (project / ".claude" / "skills").mkdir(parents=True)
+        link = project / ".claude" / "skills" / "ultimate-dev"
+        try:
+            link.symlink_to(outside, target_is_directory=True)
+        except OSError:
+            pytest.skip("symlinks are unavailable")
+        result = subprocess.run(
+            [powershell, "-NoLogo", "-NoProfile", "-File", str(installer), "-Project", str(project), "-Yes"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=30,
+        )
+        assert result.returncode == 0, result.stdout + result.stderr
+        assert link.is_symlink()
+        assert not (project / ".memory").exists()
+        assert not (project / ".gitignore").exists()
+        assert not (project / ".cursor").exists()
+        assert not (project / "AGENTS.md").exists()
+        assert not (project / "CLAUDE.md").exists()
+
+
+def test_powershell_installer_is_interactive_and_copy_only_when_available():
+    import tempfile
+
+    powershell = shutil.which("pwsh-preview") or shutil.which("pwsh")
+    if not powershell:
+        pytest.skip("PowerShell is not available")
+    installer = PACKAGE_ROOT / "scripts" / "install.ps1"
+    with tempfile.TemporaryDirectory(prefix="ultimate-dev-pwsh-interactive-") as directory:
+        project = Path(directory)
+        result = subprocess.run(
+            [powershell, "-NoLogo", "-NoProfile", "-File", str(installer)],
+            cwd=REPO_ROOT,
+            input=f"2\n{project}\ny\n",
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=30,
+        )
+        assert result.returncode == 0, result.stdout + result.stderr
+        target = project / ".agents" / "skills" / "ultimate-dev"
+        assert (target / "SKILL.md").is_file()
+        assert not (project / ".memory").exists()
+        assert not (project / ".gitignore").exists()
+        assert not (project / "AGENTS.md").exists()
+        assert not (project / "CLAUDE.md").exists()
+        assert not (project / ".cursor").exists()
+        assert not (project / ".claude").exists()
 
 
 def test_workflow_files_have_explicit_permissions_and_concurrency():
