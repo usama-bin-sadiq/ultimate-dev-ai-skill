@@ -1,0 +1,83 @@
+name: Auto-fix Manifest & Sync
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: ['*']
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-fix:
+    name: Auto-fix Manifest & Sync
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.ULTIMATE_DEV_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml
+
+      - name: Generate manifest
+        id: manifest
+        run: |
+          cd ultimate-dev
+          python scripts/generate-manifest.py
+          
+          # Check if manifest changed
+          if git diff --quiet skill-manifest.yaml; then
+            echo "manifest_changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "manifest_changed=true" >> $GITHUB_OUTPUT
+            git diff skill-manifest.yaml
+          fi
+
+      - name: Sync docs
+        id: sync
+        run: |
+          cd ultimate-dev
+          python scripts/sync-docs.py
+          
+          if git diff --quiet README.md; then
+            echo "readme_changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "readme_changed=true" >> $GITHUB_OUTPUT
+            git diff README.md
+          fi
+
+      - name: Commit & push changes
+        if: steps.manifest.outputs.manifest_changed == 'true' || steps.sync.outputs.readme_changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          cd ultimate-dev
+          
+          # Build commit message
+          MSG="chore: auto-sync manifest and docs"
+          if [ "${{ steps.manifest.outputs.manifest_changed }}" = "true" ]; then
+            MSG="$MSG (manifest)"
+          fi
+          if [ "${{ steps.sync.outputs.readme_changed }}" = "true" ]; then
+            MSG="$MSG (README)"
+          fi
+          
+          git add skill-manifest.yaml README.md
+          git commit -m "$MSG"
+          
+          # Push to the same branch
+          git push origin HEAD:${{ github.head_ref || github.ref_name }}
