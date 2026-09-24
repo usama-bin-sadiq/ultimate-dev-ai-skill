@@ -6,7 +6,7 @@
 **One skill that adapts to any model size and covers every domain.**
 
 [![Release](https://img.shields.io/github/v/release/usama-bin-sadiq/ultimate-dev-ai-skill?sort=semver)](https://github.com/usama-bin-sadiq/ultimate-dev-ai-skill/releases)
-[![Sync & Release](https://github.com/usama-bin-sadiq/ultimate-dev-ai-skill/actions/workflows/release.yml/badge.svg)](https://github.com/usama-bin-sadiq/ultimate-dev-ai-skill/actions/workflows/release.yml)
+[![Sync & Release](https://github.com/usama-bin-sadiq/ultimate-dev-ai-skill/workflows/Auto%20Release%20on%20Merge/badge.svg)](https://github.com/usama-bin-sadiq/ultimate-dev-ai-skill/actions/workflows/release.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow)](LICENSE)
 ![Models](https://img.shields.io/badge/models-adaptive-orange)
 ![Tools](https://img.shields.io/badge/tools-any-blue)
