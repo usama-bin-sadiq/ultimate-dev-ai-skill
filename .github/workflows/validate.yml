@@ -136,3 +136,58 @@ jobs:
           test -f .agents/skills/ultimate-dev/SKILL.md
           test -f .gitignore
           grep -q ".memory/ultimate-dev/" .gitignore
+
+  # New: Check PR quality
+  pr-quality:
+    name: PR Quality Check
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check PR title follows conventional commits
+        run: |
+          TITLE="${{ github.event.pull_request.title }}"
+          echo "PR Title: $TITLE"
+          
+          # Check for conventional commit format
+          if echo "$TITLE" | grep -qE '^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert)(\(.+\))?: .+'; then
+            echo "✅ PR title follows conventional commits"
+          else
+            echo "⚠️ PR title should follow conventional commits: type(scope): description"
+            echo "Examples:"
+            echo "  feat: add new feature"
+            echo "  fix(agent): resolve bug in python-engineer"
+            echo "  docs: update installation guide"
+            # Don't fail, just warn
+          fi
+
+      - name: Check PR has description
+        run: |
+          BODY="${{ github.event.pull_request.body }}"
+          if [ -z "$BODY" ] || [ "$BODY" = "null" ]; then
+            echo "⚠️ PR description is empty — please fill out the template"
+          else
+            echo "✅ PR has description"
+          fi
+
+      - name: Check PR has labels
+        run: |
+          LABELS=$(echo '${{ toJson(github.event.pull_request.labels.*.name) }}')
+          if [ "$LABELS" = "[]" ]; then
+            echo "⚠️ PR has no labels — add at least one: feature, bug, docs, release:patch/minor/major, hotfix, breaking, ci"
+          else
+            echo "✅ PR has labels: $LABELS"
+          fi
+
+      - name: Check for release label if targeting main
+        if: github.event.pull_request.base.ref == 'main'
+        run: |
+          LABELS=$(echo '${{ toJson(github.event.pull_request.labels.*.name) }}')
+          if echo "$LABELS" | grep -qE '"release:(patch|minor|major)"'; then
+            echo "✅ Release label found — will auto-release on merge"
+          else
+            echo "ℹ️ No release label — add 'release:patch', 'release:minor', or 'release:major' to trigger auto-release on merge"
+          fi

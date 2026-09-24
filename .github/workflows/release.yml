@@ -1,8 +1,12 @@
-name: Sync & Release
+name: Auto Release on Merge
 
 on:
-  push:
+  # Trigger when PR is merged to main
+  pull_request:
+    types: [closed]
     branches: [main]
+  
+  # Also allow manual trigger
   workflow_dispatch:
     inputs:
       version_type:
@@ -13,13 +17,135 @@ on:
           - patch
           - minor
           - major
+      release_notes:
+        description: 'Optional custom release notes'
+        required: false
+        type: string
 
 permissions:
   contents: write
+  pull-requests: read
 
 jobs:
-  release:
+  # Determine if we should release
+  should-release:
+    name: Determine Release Need
+    runs-on: ubuntu-latest
+    outputs:
+      should_release: ${{ steps.check.outputs.should_release }}
+      version_type: ${{ steps.check.outputs.version_type }}
+      release_notes: ${{ steps.check.outputs.release_notes }}
+    steps:
+      - name: Check if PR was merged
+        id: check
+        run: |
+          # Only process merged PRs, not just closed
+          if [ "${{ github.event.pull_request.merged }}" != "true" ]; then
+            echo "should_release=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Get PR labels
+          labels=$(echo '${{ toJson(github.event.pull_request.labels.*.name) }}')
+          
+          # Check for release labels
+          if echo "$labels" | grep -q '"release:major"'; then
+            echo "should_release=true" >> $GITHUB_OUTPUT
+            echo "version_type=major" >> $GITHUB_OUTPUT
+          elif echo "$labels" | grep -q '"release:minor"'; then
+            echo "should_release=true" >> $GITHUB_OUTPUT
+            echo "version_type=minor" >> $GITHUB_OUTPUT
+          elif echo "$labels" | grep -q '"release:patch"'; then
+            echo "should_release=true" >> $GITHUB_OUTPUT
+            echo "version_type=patch" >> $GITHUB_OUTPUT
+          elif echo "$labels" | grep -q '"release"'; then
+            echo "should_release=true" >> $GITHUB_OUTPUT
+            echo "version_type=patch" >> $GITHUB_OUTPUT
+          else
+            # Check commit messages for conventional commits
+            echo "should_release=true" >> $GITHUB_OUTPUT
+            echo "version_type=patch" >> $GITHUB_OUTPUT
+          fi
+          
+          # Extract release notes from PR body if available
+          pr_body=$(echo '${{ github.event.pull_request.body }}' | jq -Rs .)
+          echo "release_notes=$pr_body" >> $GITHUB_OUTPUT
+
+  # Generate changelog from PR
+  generate-changelog:
+    name: Generate Changelog Entry
+    needs: should-release
+    if: needs.should-release.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      changelog_entry: ${{ steps.changelog.outputs.entry }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.ULTIMATE_DEV_TOKEN }}
+
+      - name: Generate changelog entry from PR
+        id: changelog
+        run: |
+          cd ultimate-dev
+          
+          # Get PR info
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_BODY="${{ github.event.pull_request.body }}"
+          PR_LABELS=$(echo '${{ toJson(github.event.pull_request.labels.*.name) }}')
+          
+          # Determine type from labels or title
+          TYPE="changed"
+          if echo "$PR_LABELS" | grep -q '"feature"'; then
+            TYPE="added"
+          elif echo "$PR_LABELS" | grep -q '"bug"'; then
+            TYPE="fixed"
+          elif echo "$PR_LABELS" | grep -q '"docs"'; then
+            TYPE="docs"
+          elif echo "$PR_LABELS" | grep -q '"breaking"'; then
+            TYPE="breaking"
+          elif echo "$PR_TITLE" | grep -qi "^feat"; then
+            TYPE="added"
+          elif echo "$PR_TITLE" | grep -qi "^fix"; then
+            TYPE="fixed"
+          elif echo "$PR_TITLE" | grep -qi "^docs"; then
+            TYPE="docs"
+          elif echo "$PR_TITLE" | grep -qi "^breaking\|^refactor"; then
+            TYPE="changed"
+          fi
+          
+          # Create changelog entry
+          DATE=$(date +%Y-%m-%d)
+          ENTRY="- $PR_TITLE (#$PR_NUMBER)"
+          
+          # Read existing changelog
+          CHANGELOG_FILE="changelog/CHANGELOG.md"
+          if [ -f "$CHANGELOG_FILE" ]; then
+            # Insert after the version header
+            awk -v entry="$ENTRY" -v type="$TYPE" -v date="$DATE" '
+              /^## \[/ && !printed {
+                print ""
+                print "### " toupper(substr(type,1,1)) substr(type,2)
+                print entry
+                printed=1
+              }
+              { print }
+            ' "$CHANGELOG_FILE" > "${CHANGELOG_FILE}.tmp" && mv "${CHANGELOG_FILE}.tmp" "$CHANGELOG_FILE"
+          fi
+          
+          # Output the entry for release notes
+          echo "entry<<EOF" >> $GITHUB_OUTPUT
+          echo "### $TYPE" >> $GITHUB_OUTPUT
+          echo "$ENTRY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+  # Create the actual release
+  create-release:
     name: Create Release
+    needs: [should-release, generate-changelog]
+    if: needs.should-release.outputs.should_release == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -48,15 +174,20 @@ jobs:
           cd ultimate-dev
           current=$(cat VERSION)
           IFS='.' read -r major minor patch <<< "$current"
-          case "${{ github.event.inputs.version_type }}" in
+          
+          version_type="${{ needs.should-release.outputs.version_type }}"
+          
+          case "$version_type" in
             major) major=$((major + 1)); minor=0; patch=0 ;;
             minor) minor=$((minor + 1)); patch=0 ;;
             patch) patch=$((patch + 1)) ;;
           esac
+          
           new_version="$major.$minor.$patch"
           echo "$new_version" > VERSION
           echo "new_version=$new_version" >> $GITHUB_OUTPUT
           echo "old_version=$current" >> $GITHUB_OUTPUT
+          echo "version_type=$version_type" >> $GITHUB_OUTPUT
 
       - name: Generate manifest
         run: |
@@ -68,21 +199,26 @@ jobs:
           cd ultimate-dev
           python scripts/sync-docs.py
 
-      - name: Update changelog
+      - name: Prepare changelog
         run: |
           cd ultimate-dev
+          # The changelog entry was already added by generate-changelog job
+          # Just ensure proper formatting
           date_str=$(date +%Y-%m-%d)
-          # Prepend new version to changelog
-          tmp=$(mktemp)
-          echo "# Changelog" > "$tmp"
-          echo "" >> "$tmp"
-          echo "## [${{ steps.version.outputs.new_version }}] — $date_str" >> "$tmp"
-          echo "" >> "$tmp"
-          echo "### Changed" >> "$tmp"
-          echo "- Version bump to ${{ steps.version.outputs.new_version }}" >> "$tmp"
-          echo "" >> "$tmp"
-          cat changelog/CHANGELOG.md >> "$tmp"
-          mv "$tmp" changelog/CHANGELOG.md
+          
+          # If this is a new version, add version header
+          if ! grep -q "## \[${{ steps.version.outputs.new_version }}\]" changelog/CHANGELOG.md; then
+            tmp=$(mktemp)
+            echo "# Changelog" > "$tmp"
+            echo "" >> "$tmp"
+            echo "## [${{ steps.version.outputs.new_version }}] — $date_str" >> "$tmp"
+            echo "" >> "$tmp"
+            # Add the entry from generate-changelog
+            echo "${{ needs.generate-changelog.outputs.changelog_entry }}" >> "$tmp"
+            echo "" >> "$tmp"
+            cat changelog/CHANGELOG.md >> "$tmp"
+            mv "$tmp" changelog/CHANGELOG.md
+          fi
 
       - name: Commit changes
         run: |
@@ -102,6 +238,10 @@ jobs:
         with:
           tag_name: "v${{ steps.version.outputs.new_version }}"
           name: "v${{ steps.version.outputs.new_version }}"
-          generate_release_notes: true
+          body: |
+            ${{ needs.generate-changelog.outputs.changelog_entry }}
+            
+            **Full Changelog**: https://github.com/${{ github.repository }}/compare/v${{ steps.version.outputs.old_version }}...v${{ steps.version.outputs.new_version }}
+          generate_release_notes: false
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ULTIMATE_DEV_TOKEN }}
