@@ -12,6 +12,8 @@ from __future__ import annotations
 
 import inspect
 import json
+import queue
+import threading
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 from typing import Any
@@ -55,6 +57,31 @@ RESULT_STATUSES = frozenset({"succeeded", "failed", "skipped"})
 HANDLER_RESULT_STATUSES = frozenset({"success", "succeeded", "ok", "failed", "failure", "skipped"})
 MAX_EXECUTION_BYTES = 4 * MAX_JSON_BYTES
 MAX_HANDLERS = MAX_WORKFLOW_STEPS
+DEFAULT_STEP_TIMEOUT_SECONDS = 300.0
+
+
+class WorkflowStepTimeout(WorkflowExecutionError):
+    """A handler exceeded its bounded execution deadline."""
+
+
+def _call_with_timeout(call: Callable[[], Any], timeout_seconds: float) -> Any:
+    result_queue: queue.Queue[tuple[bool, Any]] = queue.Queue(maxsize=1)
+
+    def runner() -> None:
+        try:
+            result_queue.put((True, call()))
+        except BaseException as exc:
+            result_queue.put((False, exc))
+
+    worker = threading.Thread(target=runner, name="ultimate-workflow-step", daemon=True)
+    worker.start()
+    try:
+        ok, value = result_queue.get(timeout=timeout_seconds)
+    except queue.Empty as exc:
+        raise WorkflowStepTimeout("workflow step exceeded its deadline") from exc
+    if ok:
+        return value
+    raise value
 
 
 def _positive_limit(value: Any, label: str) -> int:
@@ -359,6 +386,7 @@ class WorkflowExecutor:
         max_result_bytes: int = MAX_JSON_BYTES,
         max_context_bytes: int = MAX_JSON_BYTES,
         max_total_bytes: int = MAX_EXECUTION_BYTES,
+        step_timeout_seconds: float = DEFAULT_STEP_TIMEOUT_SECONDS,
     ) -> None:
         if not isinstance(catalog, WorkflowCatalog):
             raise WorkflowExecutionError("catalog must be a WorkflowCatalog")
@@ -368,6 +396,9 @@ class WorkflowExecutor:
         self.max_result_bytes = _positive_limit(max_result_bytes, "max_result_bytes")
         self.max_context_bytes = _positive_limit(max_context_bytes, "max_context_bytes")
         self.max_total_bytes = _positive_limit(max_total_bytes, "max_total_bytes")
+        if isinstance(step_timeout_seconds, bool) or not isinstance(step_timeout_seconds, (int, float)) or step_timeout_seconds <= 0:
+            raise WorkflowExecutionError("step_timeout_seconds must be positive")
+        self.step_timeout_seconds = float(step_timeout_seconds)
         self.handlers: dict[str, StepHandler] = {}
         if handlers is not None:
             self._set_handlers(handlers)
@@ -496,7 +527,7 @@ class WorkflowExecutor:
         try:
             signature = inspect.signature(handler)
         except (TypeError, ValueError):
-            return handler(context)
+            return _call_with_timeout(lambda: handler(context), self.step_timeout_seconds)
 
         positional: list[Any] = []
         keyword: dict[str, Any] = {}
@@ -532,7 +563,7 @@ class WorkflowExecutor:
         if has_varkw:
             for key, value in payload.to_dict().items():
                 keyword.setdefault(key, value)
-        return handler(*positional, **keyword)
+        return _call_with_timeout(lambda: handler(*positional, **keyword), self.step_timeout_seconds)
 
     def _normalise_handler_result(
         self,
@@ -745,6 +776,15 @@ class WorkflowExecutor:
                         context=dict(context),
                         results=dict(results),
                     )
+                except WorkflowStepTimeout as exc:
+                    status = "failed"
+                    output = None
+                    error = {
+                        "code": "handler_timeout",
+                        "type": type(exc).__name__,
+                        "message": str(exc)[:4096],
+                        "uncertain": True,
+                    }
                 except Exception as exc:  # handlers are an injected boundary
                     status = "failed"
                     output = None

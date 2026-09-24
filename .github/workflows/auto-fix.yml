@@ -4,21 +4,90 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
   push:
-    branches: ['*']
+    branches: [main]
+  workflow_dispatch:
 
+# Pull requests receive validation only.  The write-capable job below is
+# restricted to the protected main branch or an explicit manual run there.
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
+
+concurrency:
+  group: ultimate-dev-write-${{ github.repository }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
-  auto-fix:
-    name: Auto-fix Manifest & Sync
+  validate-generated:
+    name: Validate Generated Files (Read-only)
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    if: github.actor != 'github-actions[bot]'
+    timeout-minutes: 15
+    permissions:
+      contents: read
     steps:
-      - name: Checkout
+      - name: Checkout untrusted PR without credentials
         uses: actions/checkout@v4
         with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install validation dependency
+        run: |
+          python -m pip install --disable-pip-version-check --no-input \
+            "PyYAML==6.0.2"
+
+      - name: Generate manifest for validation
+        run: |
+          cd ultimate-dev
+          python scripts/generate-manifest.py
+
+      - name: Validate manifest
+        run: |
+          cd ultimate-dev
+          if ! git diff --quiet -- skill-manifest.yaml; then
+            echo 'skill-manifest.yaml is out of sync' >&2
+            git diff -- skill-manifest.yaml
+            exit 1
+          fi
+
+      - name: Sync docs for validation
+        run: |
+          cd ultimate-dev
+          python scripts/sync-docs.py
+
+      - name: Validate README
+        run: |
+          cd ultimate-dev
+          if ! git diff --quiet -- README.md; then
+            echo 'README.md is out of sync' >&2
+            git diff -- README.md
+            exit 1
+          fi
+
+  auto-fix:
+    name: Auto-fix Manifest & Sync (Trusted Main)
+    if: >-
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: auto-fix
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout trusted main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -27,23 +96,21 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Install generation dependency
         run: |
-          python -m pip install --upgrade pip
-          pip install pyyaml
+          python -m pip install --disable-pip-version-check --no-input \
+            "PyYAML==6.0.2"
 
       - name: Generate manifest
         id: manifest
         run: |
           cd ultimate-dev
           python scripts/generate-manifest.py
-          
-          # Check if manifest changed
-          if git diff --quiet skill-manifest.yaml; then
-            echo "manifest_changed=false" >> $GITHUB_OUTPUT
+          if git diff --quiet -- skill-manifest.yaml; then
+            echo 'manifest_changed=false' >> "$GITHUB_OUTPUT"
           else
-            echo "manifest_changed=true" >> $GITHUB_OUTPUT
-            git diff skill-manifest.yaml
+            echo 'manifest_changed=true' >> "$GITHUB_OUTPUT"
+            git diff -- skill-manifest.yaml
           fi
 
       - name: Sync docs
@@ -51,33 +118,30 @@ jobs:
         run: |
           cd ultimate-dev
           python scripts/sync-docs.py
-          
-          if git diff --quiet README.md; then
-            echo "readme_changed=false" >> $GITHUB_OUTPUT
+          if git diff --quiet -- README.md; then
+            echo 'readme_changed=false' >> "$GITHUB_OUTPUT"
           else
-            echo "readme_changed=true" >> $GITHUB_OUTPUT
-            git diff README.md
+            echo 'readme_changed=true' >> "$GITHUB_OUTPUT"
+            git diff -- README.md
           fi
 
-      - name: Commit & push changes
+      - name: Commit and push generated changes
         if: steps.manifest.outputs.manifest_changed == 'true' || steps.sync.outputs.readme_changed == 'true'
+        env:
+          MANIFEST_CHANGED: ${{ steps.manifest.outputs.manifest_changed }}
+          README_CHANGED: ${{ steps.sync.outputs.readme_changed }}
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
           cd ultimate-dev
-          
-          # Build commit message
-          MSG="chore: auto-sync manifest and docs"
-          if [ "${{ steps.manifest.outputs.manifest_changed }}" = "true" ]; then
-            MSG="$MSG (manifest)"
+          message='chore: auto-sync manifest and docs'
+          if [ "$MANIFEST_CHANGED" = 'true' ]; then
+            message="$message (manifest)"
           fi
-          if [ "${{ steps.sync.outputs.readme_changed }}" = "true" ]; then
-            MSG="$MSG (README)"
+          if [ "$README_CHANGED" = 'true' ]; then
+            message="$message (README)"
           fi
-          
-          git add skill-manifest.yaml README.md
-          git commit -m "$MSG"
-          
-          # Push to the same branch
-          git push origin HEAD:${{ github.head_ref || github.ref_name }}
+          git add -- skill-manifest.yaml README.md
+          git commit -m "$message"
+          git push origin HEAD:main

@@ -84,7 +84,7 @@ class RuntimeHardeningTests(unittest.TestCase):
             runtime = Runtime(tmp, require_jev_decision=False)
             state = runtime.start({"goal": "cancel"})
             tid = state["task_id"]
-            runtime.store.save_operation(tid, "op-cancel", {
+            runtime._store.save_operation(tid, "op-cancel", {
                 "operation_id": "op-cancel",
                 "task_id": tid,
                 "attempt": 1,
@@ -220,10 +220,8 @@ class RuntimeHardeningTests(unittest.TestCase):
                 runtime.record_jev_decision(tid, unhashable, action_fingerprint="0" * 64)
             empty = packet(tid, selected=())
             prepared = runtime.prepare_execution_action(tid, "print('x')")
-            runtime.record_jev_decision(tid, empty, action_fingerprint=prepared["fingerprint"])
-            runtime.transition(tid, "planning")
-            runtime.transition(tid, "planned")
-            self.assertEqual(runtime.execute_code(tid, "print('x')", approval_confirmed=True)["code"], "jev_decision_required")
+            with self.assertRaises(ContractError):
+                runtime.record_jev_decision(tid, empty, action_fingerprint=prepared["fingerprint"])
 
     def test_persisted_decision_is_revalidated_and_nested_copy_is_immutable(self):
         calls = []
@@ -295,13 +293,26 @@ class RuntimeHardeningTests(unittest.TestCase):
                 runtime.record_jev_decision(tid, decision, action_fingerprint=second["fingerprint"])
             self.assertEqual(runtime.execute_code(tid, "print('a')", env="prod")["code"], "jev_decision_required")
 
+    def test_task_state_event_quota_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            runtime = Runtime(tmp, require_jev_decision=False)
+            state = runtime.start({"goal": "quota"})
+            tid = state["task_id"]
+            original = __import__("runtime.core.state", fromlist=["MAX_EVENTS"]).MAX_EVENTS
+            try:
+                __import__("runtime.core.state", fromlist=["MAX_EVENTS"]).MAX_EVENTS = 1
+                with self.assertRaises(ValueError):
+                    runtime._store.append_event(tid, {"type": "one"})
+            finally:
+                __import__("runtime.core.state", fromlist=["MAX_EVENTS"]).MAX_EVENTS = original
+
     def test_concurrent_events_do_not_overwrite_state(self):
         with tempfile.TemporaryDirectory() as tmp:
             runtime = Runtime(tmp, require_jev_decision=False)
             state = runtime.start({"goal": "record"})
             tid = state["task_id"]
             with ThreadPoolExecutor(max_workers=4) as pool:
-                list(pool.map(lambda value: runtime.store.append_event(tid, {"type": "probe", "value": value}), range(20)))
+                list(pool.map(lambda value: runtime._store.append_event(tid, {"type": "probe", "value": value}), range(20)))
             final = runtime.store.load(tid)
             self.assertEqual(len([event for event in final["events"] if event["type"] == "probe"]), 20)
 
@@ -333,12 +344,31 @@ class RuntimeHardeningTests(unittest.TestCase):
             with self.assertRaises(ContractError):
                 Runtime(root, require_jev_decision=False)
 
+    def test_task_health_reports_stale_operations(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            runtime = Runtime(tmp, require_jev_decision=False)
+            state = runtime.start({"goal": "health"})
+            tid = state["task_id"]
+            runtime._store.save_operation(tid, "op-stale", {
+                "operation_id": "op-stale",
+                "task_id": tid,
+                "attempt": 1,
+                "idempotency_key": "stale",
+                "action_fingerprint": "0" * 64,
+                "capability_id": "shell.execute",
+                "status": "running",
+                "lease_expires_at_epoch": 0,
+            })
+            health = runtime.task_health(tid)
+            self.assertEqual(health["stale_operations"], 1)
+            self.assertFalse(health["healthy"])
+
     def test_expired_operation_lease_is_recovered_as_uncertain(self):
         with tempfile.TemporaryDirectory() as tmp:
             runtime = Runtime(tmp, require_jev_decision=False)
             state = runtime.start({"goal": "recover"})
             tid = state["task_id"]
-            runtime.store.save_operation(tid, "op-stale", {
+            runtime._store.save_operation(tid, "op-stale", {
                 "operation_id": "op-stale",
                 "task_id": tid,
                 "attempt": 1,
@@ -509,6 +539,102 @@ class RuntimeHardeningTests(unittest.TestCase):
             with self.assertRaises(PermissionError):
                 runtime.transition(tid, "completed")
 
+    def test_runtime_close_is_idempotent_and_preserves_task_state(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            class Executor:
+                def __init__(self):
+                    self.closed = 0
+
+                def __call__(self, **kwargs):
+                    return {"success": True}
+
+                def close(self):
+                    self.closed += 1
+
+            executor = Executor()
+            runtime = Runtime(tmp, require_jev_decision=False, host_executor=executor)
+            state = runtime.start({"goal": "close"})
+            tid = state["task_id"]
+            self.assertTrue(runtime.session_start()["ready"])
+            self.assertTrue(runtime.session_end()["success"])
+            self.assertEqual(executor.closed, 1)
+            self.assertEqual(runtime.execute_code(tid, "print('x')")["code"], "runtime_closed")
+            self.assertTrue(runtime.shutdown()["repeated"])
+            self.assertEqual(executor.closed, 1)
+            self.assertTrue((runtime.store.task_dir(tid) / "state.json").exists())
+
+    def test_runtime_close_bridges_async_host_resources(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            class AsyncResource:
+                def __init__(self):
+                    self.closed = False
+
+                def __call__(self, **kwargs):
+                    return {"success": True}
+
+                async def close(self):
+                    self.closed = True
+
+            resource = AsyncResource()
+            runtime = Runtime(tmp, require_jev_decision=False, host_executor=resource)
+            result = runtime.close()
+            self.assertTrue(result["success"])
+            self.assertTrue(resource.closed)
+
+    def test_close_failure_remains_retryable_and_blocks_new_execution(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            class FailingResource:
+                def __init__(self):
+                    self.calls = 0
+
+                def __call__(self, **kwargs):
+                    return {"success": True}
+
+                def close(self):
+                    self.calls += 1
+                    if self.calls == 1:
+                        raise RuntimeError("close unavailable")
+
+            resource = FailingResource()
+            runtime = Runtime(tmp, require_jev_decision=False, host_executor=resource)
+            first = runtime.close()
+            self.assertFalse(first["success"])
+            self.assertTrue(first["retryable"])
+            self.assertFalse(runtime._closed)
+            self.assertEqual(runtime.execute_code("missing", "print('x')")["code"], "task_not_found")
+            second = runtime.close()
+            self.assertTrue(second["success"])
+            self.assertTrue(runtime._closed)
+            self.assertEqual(runtime.execute_code("missing", "print('x')")["code"], "runtime_closed")
+
+    def test_durable_evidence_and_operation_results_redact_common_secrets(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            def executor(**kwargs):
+                return {"success": True, "stdout": "token=supersecret", "stderr": "", "exit_code": 0}
+
+            runtime = Runtime(tmp, require_jev_decision=False, host_executor=executor)
+            state = runtime.start({
+                "goal": "redact",
+                "acceptance_criteria": ["redacted"],
+                "api_token": "contract-supersecret",
+            })
+            tid = state["task_id"]
+            self.assertNotIn("contract-supersecret", json.dumps(runtime.store.load(tid)))
+            runtime.transition(tid, "planning")
+            runtime.transition(tid, "planned")
+            result = runtime.execute_code(tid, "print('x')", operation_id="op-redact")
+            persisted = runtime.store.load_operation(tid, result["operation_id"])
+            self.assertNotIn("supersecret", json.dumps(persisted))
+            runtime.transition(tid, "observing")
+            runtime.transition(tid, "verifying")
+            runtime.record_verification(
+                tid,
+                evidence={"items": [{"criterion": "redacted", "passed": True, "source": "token=supersecret"}]},
+            )
+            evidence = runtime.store.task_dir(tid) / "evidence"
+            contents = "\n".join(path.read_text() for path in evidence.glob("*.json"))
+            self.assertNotIn("supersecret", contents)
+
     def test_completion_requires_criteria_and_evidence(self):
         with tempfile.TemporaryDirectory() as tmp:
             runtime = Runtime(tmp, require_jev_decision=False)
@@ -579,7 +705,9 @@ class RuntimeHardeningTests(unittest.TestCase):
             result = runtime.execute_code(tid, "print('x')")
             self.assertEqual(result["code"], "executor_error")
             operation_id = result["operation_id"]
-            self.assertEqual(runtime.store.load_operation(tid, operation_id)["status"], "failed")
+            persisted = runtime.store.load_operation(tid, operation_id)
+            self.assertEqual(persisted["status"], "uncertain")
+            self.assertFalse(persisted.get("retry_allowed", False))
 
     def test_optional_capability_registry_blocks_unavailable_capability(self):
         registry = CapabilityRegistry()
@@ -593,7 +721,158 @@ class RuntimeHardeningTests(unittest.TestCase):
             result = runtime.execute_code(tid, "print('x')")
             self.assertEqual(result["code"], "capability_unavailable")
             self.assertEqual(runtime.store.load_operation(tid, result["operation_id"])["status"], "failed")
+    def test_jev_gated_runtime_uses_secure_policy_defaults(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            runtime = Runtime(tmp)
+            self.assertIn("write", runtime.policy.confirmation_required)
+            self.assertIn("network", runtime.policy.confirmation_required)
+            self.assertEqual(runtime.policy.check_capability("shell.execute", {"write"}).get("reason"), "confirmation_required")
 
+    def test_shape_only_evidence_cannot_complete_when_trust_is_required(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            runtime = Runtime(tmp, require_jev_decision=False, require_trusted_evidence=True)
+            state = runtime.start({"goal": "trusted evidence", "acceptance_criteria": ["tests pass"]})
+            tid = state["task_id"]
+            runtime.transition(tid, "planning")
+            runtime.transition(tid, "planned")
+            runtime.transition(tid, "executing")
+            runtime.transition(tid, "observing")
+            runtime.transition(tid, "verifying")
+            runtime.record_verification(
+                tid,
+                evidence={"items": [{"criterion": "tests pass", "passed": True, "command": "pytest"}]},
+            )
+            with self.assertRaises(PermissionError):
+                runtime.transition(tid, "completed")
 
-if __name__ == "__main__":
-    unittest.main()
+    def test_contradictory_success_and_uncertain_is_normalized_to_uncertain(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            runtime = Runtime(
+                tmp,
+                require_jev_decision=False,
+                host_executor=lambda **kwargs: {"success": True, "uncertain": True},
+            )
+            state = runtime.start({"goal": "contradictory result"})
+            tid = state["task_id"]
+            runtime.transition(tid, "planning")
+            runtime.transition(tid, "planned")
+            result = runtime.execute_code(tid, "print('x')", operation_id="op-contradictory")
+            self.assertEqual(result["operation_status"], "uncertain")
+            self.assertFalse(result["success"])
+            self.assertTrue(result.get("contradictory_success"))
+
+    def test_uncertain_operation_requires_reconciliation_before_retry(self):
+        calls = []
+
+        def executor(**kwargs):
+            calls.append(kwargs["operation_id"])
+            if len(calls) == 1:
+                return {"success": False, "uncertain": True, "stdout": "timeout", "stderr": "", "exit_code": -1}
+            return {"success": True, "stdout": "", "stderr": "", "exit_code": 0}
+
+        with tempfile.TemporaryDirectory() as tmp:
+            runtime = Runtime(tmp, require_jev_decision=False, host_executor=executor)
+            state = runtime.start({"goal": "uncertain"})
+            tid = state["task_id"]
+            runtime.transition(tid, "planning")
+            runtime.transition(tid, "planned")
+            first = runtime.execute_code(tid, "print('x')", operation_id="op-uncertain")
+            self.assertEqual(first["operation_status"], "uncertain")
+            denied = runtime.execute_code(tid, "print('x')", operation_id="op-uncertain", retry=True)
+            self.assertEqual(denied["code"], "operation_reconciliation_required")
+            self.assertEqual(len(calls), 1)
+            runtime.reconcile_operation(
+                tid,
+                "op-uncertain",
+                outcome="not_executed",
+                evidence={"readback": "no external record"},
+                reconciled_by="test",
+            )
+            retried = runtime.execute_code(tid, "print('x')", operation_id="op-uncertain", retry=True)
+            self.assertTrue(retried["success"])
+            self.assertEqual(len(calls), 2)
+
+    def test_execute_allowlist_is_exact_and_empty_allowlist_denies(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            calls = []
+            runtime = Runtime(
+                tmp,
+                require_jev_decision=False,
+                host_executor=lambda **kwargs: calls.append(kwargs) or {"success": True},
+            )
+            state = runtime.start({"goal": "allowlist", "allowed_actions": ["execute"]})
+            tid = state["task_id"]
+            runtime.transition(tid, "planning")
+            runtime.transition(tid, "planned")
+            denied = runtime.execute_code(tid, "print('x')")
+            self.assertEqual(denied["code"], "contract_action_not_allowed")
+            self.assertEqual(calls, [])
+
+            second = Runtime(tmp, require_jev_decision=False, host_executor=lambda **kwargs: {"success": True})
+            state = second.start({"goal": "empty allowlist", "task_id": "task-empty-allowlist", "allowed_actions": []})
+            second.transition(state["task_id"], "planning")
+            second.transition(state["task_id"], "planned")
+            empty_denied = second.execute_code(state["task_id"], "print('x')")
+            self.assertEqual(empty_denied["code"], "contract_action_not_allowed")
+
+    def test_code_effect_classification_cannot_be_narrowed_by_caller(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            runtime = Runtime(tmp, require_jev_decision=False)
+            prepared = runtime.prepare_execution_action(
+                "task-effects",
+                "open('output.txt', 'w').write('x')",
+                effects={"execute"},
+            )
+            self.assertIn("write", prepared["action"]["effects"])
+
+    def test_same_idempotency_key_is_reserved_atomically(self):
+        calls = []
+
+        def executor(**kwargs):
+            calls.append(kwargs["operation_id"])
+            return {"success": True, "stdout": "", "stderr": "", "exit_code": 0}
+
+        with tempfile.TemporaryDirectory() as tmp:
+            first = Runtime(tmp, require_jev_decision=False, host_executor=executor)
+            state = first.start({"goal": "idempotency race", "task_id": "task-idempotency"})
+            tid = state["task_id"]
+            first.transition(tid, "planning")
+            first.transition(tid, "planned")
+            first.transition(tid, "executing")
+            second = Runtime(tmp, require_jev_decision=False, host_executor=executor)
+            with ThreadPoolExecutor(max_workers=2) as pool:
+                results = list(
+                    pool.map(
+                        lambda pair: pair[0].execute_code(
+                            tid,
+                            "print('x')",
+                            operation_id=pair[1],
+                            idempotency_key="same-key",
+                        ),
+                        [(first, "op-race-a"), (second, "op-race-b")],
+                    )
+                )
+            self.assertEqual(len(calls), 1)
+            self.assertTrue(any(item.get("replayed") for item in results) or any(item.get("success") for item in results))
+
+    def test_public_store_cannot_mutate_protected_state(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            runtime = Runtime(tmp, require_jev_decision=False)
+            state = runtime.start({"goal": "public store"})
+            with self.assertRaises(PermissionError):
+                runtime.store.update_internal(state["task_id"], status="completed")
+            with self.assertRaises(PermissionError):
+                runtime.store.save_internal(state["task_id"], "state.json", {})
+
+    def test_executable_packet_with_missing_capabilities_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            runtime = Runtime(tmp, require_jev_decision=True)
+            state = runtime.start({"goal": "packet invariants"})
+            tid = state["task_id"]
+            runtime.transition(tid, "planning")
+            runtime.transition(tid, "planned")
+            prepared = runtime.prepare_execution_action(tid, "print('x')")
+            invalid = packet(tid, selected=("shell.execute",))
+            invalid["capability_plan"]["missing_capabilities"] = ["filesystem.read"]
+            with self.assertRaises(ContractError):
+                runtime.record_jev_decision(tid, invalid, action_fingerprint=prepared["fingerprint"])

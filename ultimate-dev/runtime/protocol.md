@@ -49,3 +49,12 @@ evidence, and recovery.
 18. Memory context is provenance-scoped, freshness-aware, bounded, and refuses credential material.
 19. Self-evolution candidates cannot publish canonical files without passing evaluation and explicit admission.
 20. Evaluation reports backend provenance and distinguishes `not_run`/`uncertain` from a verified pass.
+21. Pause, interruption, and abandonment are explicit lifecycle transitions; ambiguity in a new user message fails closed.
+22. Task cleanup is dry-run by default, preserves active/uncertain work, and requires an exact confirmation token for deletion.
+23. Host resource cleanup is idempotent and separate from evidence retention.
+24. Executable operation results carry worker, attempt, and fencing ownership; uncertain results require reconciliation before retry.
+25. Caller-supplied code effects are expanded by a conservative classifier and trusted capability declarations.
+26. State, events, operations, and route metadata are bounded; task events are hash-chained locally.
+27. Memory and evolution retention use explicit plans, durable confirmations where destructive, and bounded receipts/logs.
+28. Task-scoped lifecycle cleanup never closes runtime-owned shared resources.
+29. Host session hooks and supervisors are opt-in; they never imply distributed or OS-level guarantees.

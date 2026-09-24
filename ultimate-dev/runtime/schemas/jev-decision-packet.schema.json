@@ -137,6 +137,7 @@
       }
     },
     "capability_plan": {
+      "description": "Executable packets require a non-empty selected set with no missing capabilities; semantic validation must also prove that selected descriptors cover every proposed effect.",
       "type": "object",
       "additionalProperties": false,
       "required": ["selected", "omitted", "missing_capabilities"],
@@ -217,6 +218,257 @@
       }
     }
   },
+  "allOf": [
+    {
+      "if": {
+        "required": ["execution_effect"],
+        "properties": {
+          "execution_effect": {
+            "const": "execute"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "ok": {
+            "const": true
+          },
+          "errors": {
+            "maxItems": 0
+          },
+          "guardrail": {
+            "properties": {
+              "action": {
+                "const": "approve"
+              }
+            }
+          },
+          "route": {
+            "properties": {
+              "path": {
+                "enum": ["lightweight", "flagship"]
+              }
+            }
+          },
+          "capability_plan": {
+            "properties": {
+              "selected": {
+                "minItems": 1
+              },
+              "missing_capabilities": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        "not": {
+          "properties": {
+            "guardrail": {
+              "properties": {
+                "reasons": {
+                  "contains": {
+                    "required": ["code"],
+                    "properties": {
+                      "code": {
+                        "enum": [
+                          "approval_required",
+                          "approval_expired",
+                          "approval_future_dated",
+                          "approval_invalid",
+                          "approval_scope_mismatch",
+                          "approval_stale",
+                          "approval_window_too_long",
+                          "evaluation_time_required",
+                          "capability_budget_insufficient",
+                          "capability_effect_not_declared",
+                          "destructive_effect",
+                          "destructive_signal",
+                          "effect_coverage_incomplete",
+                          "high_risk",
+                          "human_approval_required",
+                          "irreversible_or_unknown",
+                          "low_confidence",
+                          "missing_isolation",
+                          "missing_required_evidence",
+                          "model_requested_review",
+                          "policy_review_capability",
+                          "policy_denied_capability",
+                          "policy_denied_effect",
+                          "policy_sensitive",
+                          "production_side_effect",
+                          "required_capability_unavailable",
+                          "invalid_request"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["execution_effect"],
+        "properties": {
+          "execution_effect": {
+            "enum": ["review", "clarify", "stop"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "capability_plan": {
+            "properties": {
+              "selected": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["guardrail"],
+        "properties": {
+          "guardrail": {
+            "required": ["action"],
+            "properties": {
+              "action": {
+                "const": "deny"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "execution_effect": {
+            "const": "stop"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["guardrail"],
+        "properties": {
+          "guardrail": {
+            "required": ["action"],
+            "properties": {
+              "action": {
+                "const": "human_review"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "execution_effect": {
+            "const": "review"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["heads"],
+        "properties": {
+          "heads": {
+            "required": ["noul"],
+            "properties": {
+              "noul": {
+                "required": ["destructive"],
+                "properties": {
+                  "destructive": {
+                    "const": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "execution_effect": {
+            "enum": ["review", "clarify", "stop"]
+          },
+          "guardrail": {
+            "properties": {
+              "action": {
+                "enum": ["human_review", "deny"]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["execution_effect"],
+        "properties": {
+          "execution_effect": {
+            "const": "stop"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "guardrail": {
+            "properties": {
+              "action": {
+                "const": "deny"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["guardrail"],
+        "properties": {
+          "guardrail": {
+            "required": ["action"],
+            "properties": {
+              "action": {
+                "const": "approve"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "execution_effect": {
+            "enum": ["execute", "clarify"]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["ok"],
+        "properties": {
+          "ok": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "errors": {
+            "maxItems": 0
+          }
+        }
+      }
+    }
+  ],
   "$defs": {
     "capabilityId": {
       "type": "string",

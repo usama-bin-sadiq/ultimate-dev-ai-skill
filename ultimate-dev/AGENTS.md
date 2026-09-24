@@ -48,6 +48,13 @@ ls -la .memory/ultimate-dev/tasks/ 2>/dev/null || echo "No existing tasks"
 # agents: [...] | verification: {...}
 ```
 
+### Session interruption, routing, and cleanup
+
+- Route every new user message through `Runtime.route_user_message()` before mutating the active task. Ambiguous, clarification, or unknown routes must not execute.
+- On interruption, call `interrupt_task()` or `pause_task()`, persist the checkpoint, and inspect `task_health()` before resuming. Never replay an `uncertain` operation without explicit verification.
+- On graceful session close, call `close()`/`shutdown()` so injected host resources are released. Task state and evidence are retained.
+- Use `python -m runtime.task_admin ... cleanup --dry-run` before any retention/archive/delete operation. Deletion requires an exact confirmation token.
+
 **IF YOU SKIP THIS → YOU ARE NOT FOLLOWING THE SKILL**
 
 ---

@@ -4,102 +4,65 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, edited]
 
+# PR metadata is untrusted.  This workflow is deliberately read-only; any
+# label/comment/release writeback must run from a separately trusted workflow
+# after validation and approval.
 permissions:
   contents: read
-  pull-requests: write
+
+concurrency:
+  group: pr-check-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
   pr-template-check:
-    name: PR Template Compliance
+    name: PR Template Compliance (Read-only)
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      missing_sections: ${{ steps.pr-check.outputs.missing_sections }}
+      conventional_title: ${{ steps.pr-check.outputs.conventional_title }}
+      has_release_label: ${{ steps.pr-check.outputs.has_release_label }}
     steps:
-      - name: Checkout
+      - name: Checkout metadata validation context
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
 
-      - name: Check PR body has required sections
+      - name: Check PR metadata
         id: pr-check
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
+          PR_LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
         run: |
-          BODY="${{ github.event.pull_request.body }}"
-          TITLE="${{ github.event.pull_request.title }}"
-          
-          # Check for required template sections
-          MISSING=""
-          
-          if ! echo "$BODY" | grep -q "## Description"; then
-            MISSING="$MISSING\n- ## Description"
-          fi
-          
-          if ! echo "$BODY" | grep -q "## Type of Change"; then
-            MISSING="$MISSING\n- ## Type of Change"
-          fi
-          
-          if ! echo "$BODY" | grep -q "## Release Impact"; then
-            MISSING="$MISSING\n- ## Release Impact"
-          fi
-          
-          if ! echo "$BODY" | grep -q "## Checklist"; then
-            MISSING="$MISSING\n- ## Checklist"
-          fi
-          
-          if ! echo "$BODY" | grep -q "## Related Issues"; then
-            MISSING="$MISSING\n- ## Related Issues"
-          fi
-          
-          if [ -n "$MISSING" ]; then
-            echo "missing_sections=true" >> $GITHUB_OUTPUT
-            echo "missing=$MISSING" >> $GITHUB_OUTPUT
-            echo "::error::PR template sections missing:$MISSING"
-          else
-            echo "missing_sections=false" >> $GITHUB_OUTPUT
-          fi
-          
-          # Check conventional commit title
-          if echo "$TITLE" | grep -qE '^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert)(\(.+\))?: .+'; then
-            echo "conventional_title=true" >> $GITHUB_OUTPUT
-            echo "✅ PR title follows conventional commits"
-          else
-            echo "conventional_title=false" >> $GITHUB_OUTPUT
-            echo "::warning::PR title should follow conventional commits: type(scope): description"
-          fi
-          
-          # Check for release label on main branch PRs
-          BASE_REF="${{ github.event.pull_request.base.ref }}"
-          if [ "$BASE_REF" = "main" ]; then
-            LABELS=$(echo '${{ toJson(github.event.pull_request.labels.*.name) }}')
-            if echo "$LABELS" | grep -qE '"release:(patch|minor|major)"'; then
-              echo "has_release_label=true" >> $GITHUB_OUTPUT
-              echo "✅ Release label found"
-            else
-              echo "has_release_label=false" >> $GITHUB_OUTPUT
-              echo "::warning::PR targeting main should have release label: release:patch, release:minor, or release:major"
+          set -euo pipefail
+          missing_sections=false
+          for section in '## Description' '## Type of Change' '## Release Impact' '## Checklist' '## Related Issues'; do
+            if ! printf '%s\n' "$PR_BODY" | grep -Fq -- "$section"; then
+              missing_sections=true
             fi
+          done
+          printf 'missing_sections=%s\n' "$missing_sections" >> "$GITHUB_OUTPUT"
+
+          if printf '%s\n' "$PR_TITLE" | grep -qE '^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert)(\(.+\))?: .+'; then
+            conventional_title=true
+          else
+            conventional_title=false
           fi
+          printf 'conventional_title=%s\n' "$conventional_title" >> "$GITHUB_OUTPUT"
 
-      - name: Add compliance label
-        if: steps.pr-check.outputs.missing_sections == 'false' && steps.pr-check.outputs.conventional_title == 'true'
-        run: |
-          gh pr edit ${{ github.event.pull_request.number }} --add-label "pr:compliant" || true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Remove compliance label
-        if: steps.pr-check.outputs.missing_sections == 'true' || steps.pr-check.outputs.conventional_title == 'false'
-        run: |
-          gh pr edit ${{ github.event.pull_request.number }} --remove-label "pr:compliant" || true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Comment on non-compliant PR
-        if: steps.pr-check.outputs.missing_sections == 'true'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const missing = `${{ steps.pr-check.outputs.missing }}`;
-            await github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `⚠️ **PR Template Incomplete**\n\nMissing required sections:${missing}\n\nPlease update the PR description to follow the template.`
-            });
+          if [ "$PR_BASE_REF" = 'main' ] && printf '%s' "$PR_LABELS" | jq -e 'any(.[]; . == "release:patch" or . == "release:minor" or . == "release:major")' >/dev/null; then
+            has_release_label=true
+          else
+            has_release_label=false
+          fi
+          printf 'has_release_label=%s\n' "$has_release_label" >> "$GITHUB_OUTPUT"

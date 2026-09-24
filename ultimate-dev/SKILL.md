@@ -88,6 +88,10 @@ confirmation, evidence, and recovery.
 - [ ] If new task → CREATE task state with `CAPTURE` + `CONTRACT`
 - [ ] Run `DISCOVER` → detect stack, conventions, capabilities
 - [ ] Output: `step: 1-10 | size: atomic|moderate|complex | pattern: A|B|C|D|compose | agents: [...] | verification: {...}`
+- [ ] For a new user message, call `Runtime.route_user_message()` before mutating the active task; ambiguous routes must ask for clarification.
+- [ ] On session interruption, call `interrupt_task()`/`resume_task()` and inspect `task_health()`; never blindly replay uncertain operations.
+- [ ] On graceful session close, call `close()`/`shutdown()`; task evidence remains durable.
+- [ ] Use `task_admin cleanup --dry-run` before any task retention/archive/delete operation.
 
 ---
 

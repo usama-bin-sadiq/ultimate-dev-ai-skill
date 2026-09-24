@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from .contracts import validate_capability_id
+from .contracts import CAPABILITY_EFFECTS, normalize_effects, validate_capability_id
 
 DESTRUCTIVE_ACTIONS = frozenset({
     "delete_data",
@@ -36,16 +36,36 @@ class Policy:
         elif isinstance(confirmation_required, str):
             values = {confirmation_required}
         else:
-            values = set(confirmation_required)
-        self.confirmation_required = set(values)
-        self.denied_capabilities = set(denied_capabilities or ())
-        self.denied_effects = set(denied_effects or ())
+            try:
+                values = set(confirmation_required)
+            except TypeError as exc:
+                raise ValueError("confirmation_required must be an iterable of strings") from exc
+        if any(not isinstance(value, str) or not value for value in values):
+            raise ValueError("confirmation_required must contain non-empty strings")
+        self.confirmation_required = frozenset(values)
+        try:
+            self.denied_capabilities = frozenset(denied_capabilities or ())
+            self.denied_effects = frozenset(denied_effects or ())
+        except TypeError as exc:
+            raise ValueError("policy denials must be iterable") from exc
         for capability_id in self.denied_capabilities:
             validate_capability_id(capability_id)
+        unknown_effects = self.denied_effects - CAPABILITY_EFFECTS
+        if unknown_effects or any(not isinstance(value, str) or not value for value in self.denied_effects):
+            raise ValueError("denied_effects contains an invalid effect")
+
+    @classmethod
+    def secure_defaults(cls) -> "Policy":
+        """Return a side-effect-confirming policy for JEV-gated runtimes."""
+        return cls(
+            confirmation_required=set(DESTRUCTIVE_ACTIONS) | {"execute", "write", "network", "communicate"},
+        )
 
     def check(self, action: str, confirmed: bool = False) -> dict:
         if not isinstance(action, str) or not action:
             raise ValueError("policy action must be a non-empty string")
+        if not isinstance(confirmed, bool):
+            raise ValueError("policy confirmation must be boolean")
         if action in self.denied_capabilities or action in self.denied_effects:
             return {
                 "allowed": False,
@@ -69,13 +89,13 @@ class Policy:
     ) -> dict:
         """Check a canonical capability and its declared side effects."""
         validate_capability_id(capability_id)
-        if isinstance(effects, str):
-            effect_set = {effects}
-        else:
-            effect_set = {str(effect) for effect in effects}
+        if not isinstance(confirmed, bool) or not isinstance(irreversible, bool):
+            raise ValueError("policy confirmation and irreversible must be boolean")
+        effect_set = set(normalize_effects(effects))
         denied = capability_id in self.denied_capabilities or bool(effect_set.intersection(self.denied_effects))
         required = (
             capability_id in self.confirmation_required
+            or bool(effect_set.intersection(self.confirmation_required))
             or bool(effect_set.intersection(DESTRUCTIVE_EFFECTS))
             or irreversible
         )

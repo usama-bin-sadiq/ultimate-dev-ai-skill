@@ -50,6 +50,16 @@ Go to: **Settings → Branches → Add rule**
 - ✅ Allow force pushes: **No**
 - ✅ Allow deletions: **No**
 
+### Release secret
+
+The release workflow uses the existing repository secret `ULTIMATE_DEV_TOKEN`.
+It must be a least-privilege fine-grained token with:
+
+- **Contents:** Read and write
+- **Pull requests:** Read
+
+Keep the `release` environment approval and branch/tag protection enabled.
+
 ### Branch name pattern: `develop` (if used)
 
 Same as `main` but without release automation.

@@ -29,8 +29,16 @@ const PATTERNS = Object.freeze([
 const PATHS = Object.freeze(["lightweight", "flagship", "human_review", "none"]);
 const TASK_SIZES = Object.freeze(["atomic", "moderate", "complex"]);
 const ISOLATION_LEVELS = Object.freeze(["host_managed", "user_approved", "none"]);
+const REVERSIBILITIES = Object.freeze(["reversible", "partially_reversible", "irreversible", "unknown"]);
+const APPROVAL_SCOPE_REQUIRED_KEYS = Object.freeze(["task_id", "operation", "reversibility", "effects", "action_scope"]);
+const APPROVAL_SCOPE_OPTIONAL_KEYS = Object.freeze(["policy_version", "capability_catalog_version"]);
+const APPROVAL_SCOPE_KEYS = Object.freeze([...APPROVAL_SCOPE_REQUIRED_KEYS, ...APPROVAL_SCOPE_OPTIONAL_KEYS]);
+const ACTION_SCOPE_KEYS = Object.freeze(["description", "project_root", "targets"]);
 const CAPABILITY_ID = /^[a-z][a-z0-9_]*(?:\.[a-z][a-z0-9_]*)+$/;
-const DATE_TIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/;
+const DATE_TIME = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d+)?(Z|[+-]\d{2}:\d{2})$/;
+const DEFAULT_APPROVAL_MAX_AGE_SECONDS = 15 * 60;
+const MAX_APPROVAL_MAX_AGE_SECONDS = 24 * 60 * 60;
+const MAX_APPROVAL_LIFETIME_SECONDS = 24 * 60 * 60;
 const THRESHOLD_KEYS = Object.freeze([
   "review_risk",
   "review_confidence",
@@ -38,6 +46,35 @@ const THRESHOLD_KEYS = Object.freeze([
   "high_context_pressure",
   "deep_complexity",
   "deep_confidence",
+]);
+const BLOCKING_REASON_CODES = new Set([
+  "approval_required",
+  "approval_expired",
+  "approval_future_dated",
+  "approval_invalid",
+  "approval_scope_mismatch",
+  "approval_stale",
+  "approval_window_too_long",
+  "evaluation_time_required",
+  "capability_budget_insufficient",
+  "capability_effect_not_declared",
+  "destructive_effect",
+  "destructive_signal",
+  "effect_coverage_incomplete",
+  "high_risk",
+  "human_approval_required",
+  "irreversible_or_unknown",
+  "low_confidence",
+  "missing_isolation",
+  "missing_required_evidence",
+  "model_requested_review",
+  "policy_review_capability",
+  "policy_denied_capability",
+  "policy_denied_effect",
+  "policy_sensitive",
+  "production_side_effect",
+  "required_capability_unavailable",
+  "invalid_request",
 ]);
 
 const has = (value, key) => Object.prototype.hasOwnProperty.call(value, key);
@@ -189,21 +226,25 @@ function validateScores(value, errors) {
   return scores;
 }
 
+function validateActionScope(value, prefix, errors) {
+  const scope = objectValue(value, prefix, errors);
+  if (!scope) return null;
+  checkKeys(scope, ACTION_SCOPE_KEYS, ACTION_SCOPE_KEYS, prefix, errors);
+  stringValue(scope.description, `${prefix}.description`, errors, { max: 2000 });
+  if (scope.project_root !== null && !nonEmpty(scope.project_root)) {
+    errors.push(error("invalid_string", "project_root must be a non-empty string or null.", `${prefix}.project_root`, "Use null when the action is not project-scoped."));
+  }
+  stringArray(scope.targets, `${prefix}.targets`, errors);
+  return scope;
+}
+
 function validateAction(value, errors) {
   const action = objectValue(value, "model_assessment.proposal.action", errors);
   if (!action) return null;
   checkKeys(action, ["operation", "reversibility", "scope"], ["operation", "reversibility", "scope"], "model_assessment.proposal.action", errors);
   enumValue(action.operation, EFFECTS, "model_assessment.proposal.action.operation", errors);
-  enumValue(action.reversibility, ["reversible", "partially_reversible", "irreversible", "unknown"], "model_assessment.proposal.action.reversibility", errors);
-  const scope = objectValue(action.scope, "model_assessment.proposal.action.scope", errors);
-  if (scope) {
-    checkKeys(scope, ["description", "project_root", "targets"], ["description", "project_root", "targets"], "model_assessment.proposal.action.scope", errors);
-    stringValue(scope.description, "model_assessment.proposal.action.scope.description", errors, { max: 2000 });
-    if (scope.project_root !== null && !nonEmpty(scope.project_root)) {
-      errors.push(error("invalid_string", "project_root must be a non-empty string or null.", "model_assessment.proposal.action.scope.project_root", "Use null when the action is not project-scoped."));
-    }
-    stringArray(scope.targets, "model_assessment.proposal.action.scope.targets", errors);
-  }
+  enumValue(action.reversibility, REVERSIBILITIES, "model_assessment.proposal.action.reversibility", errors);
+  validateActionScope(action.scope, "model_assessment.proposal.action.scope", errors);
   return action;
 }
 
@@ -260,8 +301,8 @@ function validateCapabilityDescriptor(value, prefix, errors) {
 function validatePolicy(value, errors) {
   const policy = objectValue(value, "host_facts.policy", errors);
   if (!policy) return null;
-  const keys = ["policy_version", "denied_capability_ids", "review_capability_ids", "denied_effects", "approval_required_effects", "isolation_required_effects", "thresholds", "max_capabilities"];
-  checkKeys(policy, keys, keys, "host_facts.policy", errors);
+  const keys = ["policy_version", "denied_capability_ids", "review_capability_ids", "denied_effects", "approval_required_effects", "isolation_required_effects", "thresholds", "max_capabilities", "approval_max_age_seconds"];
+  checkKeys(policy, keys, keys.filter((key) => key !== "approval_max_age_seconds"), "host_facts.policy", errors);
   stringValue(policy.policy_version, "host_facts.policy.policy_version", errors, { max: 200 });
   capabilityIdArray(policy.denied_capability_ids, "host_facts.policy.denied_capability_ids", errors);
   capabilityIdArray(policy.review_capability_ids, "host_facts.policy.review_capability_ids", errors);
@@ -278,29 +319,130 @@ function validatePolicy(value, errors) {
   if (!Number.isInteger(policy.max_capabilities) || policy.max_capabilities < 1 || policy.max_capabilities > 64) {
     errors.push(error("invalid_range", "max_capabilities must be an integer from 1 through 64.", "host_facts.policy.max_capabilities", "Set a bounded host capability budget."));
   }
+  if (has(policy, "approval_max_age_seconds") && (!Number.isInteger(policy.approval_max_age_seconds) || policy.approval_max_age_seconds < 1 || policy.approval_max_age_seconds > MAX_APPROVAL_MAX_AGE_SECONDS)) {
+    errors.push(error("invalid_range", `approval_max_age_seconds must be an integer from 1 through ${MAX_APPROVAL_MAX_AGE_SECONDS}.`, "host_facts.policy.approval_max_age_seconds", "Set a bounded approval freshness window."));
+  }
   return policy;
+}
+
+// Parse only caller-supplied timestamps. The reference kernel never reads the
+// ambient clock; evaluation time is an explicit input.
+function timestampMilliseconds(value) {
+  if (typeof value !== "string") return null;
+  const match = DATE_TIME.exec(value);
+  if (!match) return null;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const hour = Number(match[4]);
+  const minute = Number(match[5]);
+  const second = Number(match[6]);
+  const zone = match[7];
+  const leapYear = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+  const daysInMonth = [31, leapYear ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  if (month < 1 || month > 12 || day < 1 || day > daysInMonth[month - 1] || hour > 23 || minute > 59 || second > 59) return null;
+  if (zone !== "Z") {
+    const offsetHour = Number(zone.slice(1, 3));
+    const offsetMinute = Number(zone.slice(4, 6));
+    if (offsetHour > 23 || offsetMinute > 59) return null;
+  }
+  const milliseconds = Date.parse(value);
+  return Number.isFinite(milliseconds) ? milliseconds : null;
+}
+
+function validateTimestamp(value, prefix, errors) {
+  const milliseconds = timestampMilliseconds(value);
+  if (milliseconds === null) {
+    errors.push(error("invalid_format", "Expected a valid ISO-8601 date-time string.", prefix, "Use a value such as 2026-09-24T00:00:00Z."));
+  }
+  return milliseconds;
+}
+
+function validateApprovalScope(value, prefix, errors) {
+  const scope = objectValue(value, prefix, errors);
+  if (!scope) return null;
+  checkKeys(scope, APPROVAL_SCOPE_KEYS, APPROVAL_SCOPE_REQUIRED_KEYS, prefix, errors);
+  stringValue(scope.task_id, `${prefix}.task_id`, errors, { max: 200 });
+  if (has(scope, "policy_version")) stringValue(scope.policy_version, `${prefix}.policy_version`, errors, { max: 200 });
+  if (has(scope, "capability_catalog_version")) stringValue(scope.capability_catalog_version, `${prefix}.capability_catalog_version`, errors, { max: 200 });
+  enumValue(scope.operation, EFFECTS, `${prefix}.operation`, errors);
+  enumValue(scope.reversibility, REVERSIBILITIES, `${prefix}.reversibility`, errors);
+  const effects = arrayValue(scope.effects, `${prefix}.effects`, errors);
+  if (effects.length === 0) errors.push(error("empty_effects", "An approval scope must declare at least one effect.", `${prefix}.effects`, "Bind the approval to the complete proposed effect set."));
+  effects.forEach((item, index) => enumValue(item, EFFECTS, `${prefix}.effects[${index}]`, errors));
+  if (!unique(effects)) errors.push(error("duplicate_value", "Approval scope effects must be unique.", `${prefix}.effects`, "Remove duplicate effects."));
+  if (effects.length > 0 && !effects.includes(scope.operation)) {
+    errors.push(error("approval_scope_effect_mismatch", "The approval scope operation must be included in its effects.", `${prefix}.operation`, "Include the operation in scope.effects."));
+  }
+  validateActionScope(scope.action_scope, `${prefix}.action_scope`, errors);
+  return scope;
 }
 
 function validateApproval(value, prefix, errors) {
   const approval = objectValue(value, prefix, errors);
   if (!approval) return null;
-  const keys = ["capability_id", "effect", "scope", "confirmed_at"];
+  const keys = ["capability_id", "effect", "scope", "confirmed_at", "expires_at"];
   checkKeys(approval, keys, keys, prefix, errors);
   capabilityId(approval.capability_id, `${prefix}.capability_id`, errors);
   enumValue(approval.effect, EFFECTS, `${prefix}.effect`, errors);
-  stringValue(approval.scope, `${prefix}.scope`, errors, { max: 2000 });
-  if (!nonEmpty(approval.confirmed_at) || !DATE_TIME.test(approval.confirmed_at)) {
-    errors.push(error("invalid_format", "confirmed_at must be an ISO-8601 date-time string.", `${prefix}.confirmed_at`, "Use a value such as 2026-09-24T00:00:00Z."));
+  const scope = validateApprovalScope(approval.scope, `${prefix}.scope`, errors);
+  if (scope && Array.isArray(scope.effects) && scope.effects.length > 0 && !scope.effects.includes(approval.effect)) {
+    errors.push(error("approval_effect_not_in_scope", "The approved effect must be included in the canonical action scope.", `${prefix}.effect`, "Issue an approval for an effect declared by the action scope."));
+  }
+  const confirmedAt = validateTimestamp(approval.confirmed_at, `${prefix}.confirmed_at`, errors);
+  const expiresAt = validateTimestamp(approval.expires_at, `${prefix}.expires_at`, errors);
+  if (confirmedAt !== null && expiresAt !== null && confirmedAt >= expiresAt) {
+    errors.push(error("approval_window_invalid", "confirmed_at must be earlier than expires_at.", prefix, "Use a bounded approval window with confirmed_at before expires_at."));
   }
   return approval;
+}
+
+function resolveEvaluationTime(input, override, errors) {
+  const candidates = [];
+  const add = (value, fieldPath) => {
+    if (value === undefined) return;
+    const milliseconds = timestampMilliseconds(value);
+    if (milliseconds === null) {
+      errors.push(error("invalid_format", "Evaluation time must be a valid ISO-8601 date-time string.", fieldPath, "Pass an explicit evaluation time; the kernel never reads an ambient clock."));
+      return;
+    }
+    candidates.push({ value, milliseconds });
+  };
+
+  if (isRecord(input)) {
+    add(input.evaluation_time, "evaluation_time");
+    add(input.evaluated_at, "evaluated_at");
+    if (isRecord(input.host_facts)) {
+      add(input.host_facts.evaluation_time, "host_facts.evaluation_time");
+      add(input.host_facts.evaluated_at, "host_facts.evaluated_at");
+    }
+  }
+  if (override !== undefined && override !== null) {
+    if (isRecord(override)) {
+      add(override.evaluation_time, "options.evaluation_time");
+      add(override.evaluated_at, "options.evaluated_at");
+      add(override.evaluationTime, "options.evaluationTime");
+      add(override.now, "options.now");
+    } else {
+      add(override, "options.evaluation_time");
+    }
+  }
+  if (candidates.length === 0) return null;
+  const first = candidates[0];
+  if (candidates.some((candidate) => candidate.milliseconds !== first.milliseconds)) {
+    errors.push(error("conflicting_evaluation_time", "All supplied evaluation-time values must agree.", "evaluation_time", "Use one explicit evaluation time for the request and evaluation call."));
+  }
+  return first.milliseconds;
 }
 
 function validateHostFacts(value, errors) {
   const host = objectValue(value, "host_facts", errors);
   if (!host) return null;
-  const keys = ["capability_catalog_version", "capability_catalog", "policy", "approvals"];
-  checkKeys(host, keys, keys, "host_facts", errors);
+  const keys = ["capability_catalog_version", "capability_catalog", "policy", "approvals", "evaluation_time", "evaluated_at"];
+  checkKeys(host, keys, keys.filter((key) => !["evaluation_time", "evaluated_at"].includes(key)), "host_facts", errors);
   stringValue(host.capability_catalog_version, "host_facts.capability_catalog_version", errors, { max: 200 });
+  if (has(host, "evaluation_time")) validateTimestamp(host.evaluation_time, "host_facts.evaluation_time", errors);
+  if (has(host, "evaluated_at")) validateTimestamp(host.evaluated_at, "host_facts.evaluated_at", errors);
   const catalog = arrayValue(host.capability_catalog, "host_facts.capability_catalog", errors);
   const ids = [];
   catalog.forEach((item, index) => {
@@ -314,19 +456,21 @@ function validateHostFacts(value, errors) {
 }
 
 /** Validate a request without evaluating it. */
-export function validateDecisionRequest(input) {
+export function validateDecisionRequest(input, evaluationTime = undefined) {
   const errors = [];
   if (!isRecord(input)) {
     errors.push(error("invalid_type", "The decision request must be an object.", "$", "Provide an object matching jev-decision-request.schema.json."));
-    return { ok: false, errors };
+    return { ok: false, errors, normalized: null };
   }
-  const allowed = ["schema_version", "task_id", "orchestration_state", "model_assessment", "host_facts"];
+  const allowed = ["schema_version", "task_id", "evaluation_time", "evaluated_at", "orchestration_state", "model_assessment", "host_facts"];
   const required = ["schema_version", "task_id", "orchestration_state", "model_assessment", "host_facts"];
   checkKeys(input, allowed, required, "$", errors);
   if (input.schema_version !== JEV_SCHEMA_VERSION) {
     errors.push(error("unsupported_schema_version", `Expected schema_version ${JEV_SCHEMA_VERSION}.`, "schema_version", "Use the version supported by this host adapter."));
   }
   stringValue(input.task_id, "task_id", errors, { max: 200 });
+  if (has(input, "evaluation_time")) validateTimestamp(input.evaluation_time, "evaluation_time", errors);
+  if (has(input, "evaluated_at")) validateTimestamp(input.evaluated_at, "evaluated_at", errors);
   const orchestration = validateOrchestrationState(input.orchestration_state, errors);
   const model = objectValue(input.model_assessment, "model_assessment", errors);
   let signals = null;
@@ -344,11 +488,15 @@ export function validateDecisionRequest(input) {
   if (orchestration && choice && orchestration.pattern !== "undecided" && orchestration.pattern !== choice.pattern) {
     errors.push(error("orchestration_pattern_conflict", "The orchestration state pattern conflicts with the model choice pattern.", "orchestration_state.pattern", "Align the state transition and the model proposal, or set the state pattern to undecided."));
   }
-  return { ok: errors.length === 0, errors, normalized: { orchestration, signals, choice, scores, proposal, host } };
+  const evaluationTimeMs = resolveEvaluationTime(input, evaluationTime, errors);
+  return { ok: errors.length === 0, errors, normalized: { orchestration, signals, choice, scores, proposal, host, evaluationTimeMs } };
 }
 
-function reason(code, message, capabilityIds = []) {
-  return { code, message, capability_ids: [...new Set(capabilityIds)] };
+function reason(code, message, capabilityIds = [], remedy = undefined, fieldPath = undefined) {
+  const result = { code, message, capability_ids: [...new Set(capabilityIds)] };
+  if (remedy !== undefined) result.remedy = remedy;
+  if (fieldPath !== undefined) result.path = fieldPath;
+  return result;
 }
 
 function neutralHeads() {
@@ -364,7 +512,12 @@ function invalidPacket(request, validation) {
   const orchestration = isRecord(root.orchestration_state) ? root.orchestration_state : null;
   const host = isRecord(root.host_facts) ? root.host_facts : null;
   const policy = host && isRecord(host.policy) ? host.policy : null;
-  const errors = validation.errors.map((item) => reason(item.code, item.message, []));
+  const errors = validation.errors.map((item) => {
+    const result = reason(item.code, item.message, []);
+    if (item.path !== undefined) result.path = item.path;
+    if (item.remedy !== undefined) result.remedy = item.remedy;
+    return result;
+  });
   return {
     schema_version: JEV_SCHEMA_VERSION,
     task_id: typeof root.task_id === "string" ? root.task_id : "",
@@ -388,8 +541,96 @@ function sideEffects(effects) {
   return effects.filter((effect) => effect !== "read");
 }
 
-function hasApproval(approvals, capability, effect) {
-  return approvals.some((approval) => approval.capability_id === capability && approval.effect === effect);
+function sortedUnique(values) {
+  return [...new Set(values)].sort();
+}
+
+function sameStringSet(left, right) {
+  const normalizedLeft = sortedUnique(left);
+  const normalizedRight = sortedUnique(right);
+  return normalizedLeft.length === normalizedRight.length && normalizedLeft.every((value, index) => value === normalizedRight[index]);
+}
+
+function approvalScopeMatches(approval, request) {
+  const scope = approval?.scope;
+  const action = request?.model_assessment?.proposal?.action;
+  const proposal = request?.model_assessment?.proposal;
+  if (!isRecord(scope) || !isRecord(action) || !isRecord(action.scope) || !isRecord(scope.action_scope) || !Array.isArray(scope.effects) || !Array.isArray(proposal?.effects)) return false;
+  return scope.task_id === request.task_id
+    && (scope.policy_version === undefined || scope.policy_version === request.host_facts.policy.policy_version)
+    && (scope.capability_catalog_version === undefined || scope.capability_catalog_version === request.host_facts.capability_catalog_version)
+    && scope.operation === action.operation
+    && scope.reversibility === action.reversibility
+    && sameStringSet(scope.effects, proposal.effects)
+    && scope.action_scope.description === action.scope.description
+    && scope.action_scope.project_root === action.scope.project_root
+    && sameStringSet(scope.action_scope.targets, action.scope.targets);
+}
+
+function approvalStatus(approvals, request, capability, effect, evaluationTimeMs, policy) {
+  const candidates = approvals.filter((approval) => approval.capability_id === capability && approval.effect === effect);
+  if (candidates.length === 0) {
+    return {
+      approved: false,
+      code: "approval_required",
+      message: "Scoped host approval is missing for this capability and effect.",
+    };
+  }
+  if (evaluationTimeMs === null || evaluationTimeMs === undefined) {
+    return {
+      approved: false,
+      code: "evaluation_time_required",
+      message: "An explicit evaluation time is required before an approval can be used.",
+    };
+  }
+  const maxAgeSeconds = Number.isInteger(policy.approval_max_age_seconds) ? policy.approval_max_age_seconds : DEFAULT_APPROVAL_MAX_AGE_SECONDS;
+  let issue = null;
+  for (const approval of candidates) {
+    const confirmedAt = timestampMilliseconds(approval.confirmed_at);
+    const expiresAt = timestampMilliseconds(approval.expires_at);
+    if (confirmedAt === null || expiresAt === null) {
+      issue = { code: "approval_invalid", message: "The approval does not contain a valid bounded time window." };
+      continue;
+    }
+    if (!approvalScopeMatches(approval, request)) {
+      issue = { code: "approval_scope_mismatch", message: "The approval is not bound to this task, action, and effect set." };
+      continue;
+    }
+    if (confirmedAt > evaluationTimeMs) {
+      issue = { code: "approval_future_dated", message: "The approval confirmation is later than the evaluation time." };
+      continue;
+    }
+    if (expiresAt <= evaluationTimeMs) {
+      issue = { code: "approval_expired", message: "The approval is expired at the evaluation time." };
+      continue;
+    }
+    if (evaluationTimeMs - confirmedAt > maxAgeSeconds * 1000) {
+      issue = { code: "approval_stale", message: "The approval is older than the host freshness window." };
+      continue;
+    }
+    if (expiresAt - confirmedAt > MAX_APPROVAL_LIFETIME_SECONDS * 1000) {
+      issue = { code: "approval_window_too_long", message: "The approval lifetime exceeds the host's bounded confirmation window." };
+      continue;
+    }
+    return { approved: true, code: "approval_valid", message: "The approval is fresh and bound to the requested action." };
+  }
+  return issue || { code: "approval_required", message: "Scoped host approval is missing for this capability and effect." };
+}
+
+function effectCoverage(proposal, requested, catalog, selectedIds = null) {
+  const covered = new Set();
+  for (const item of requested) {
+    if (selectedIds && !selectedIds.has(item.id)) continue;
+    const descriptor = catalog.get(item.id);
+    if (!descriptor || !descriptor.available) continue;
+    for (const effect of descriptor.effects) {
+      if (proposal.effects.includes(effect)) covered.add(effect);
+    }
+  }
+  return {
+    covered: [...covered].sort(),
+    uncovered: proposal.effects.filter((effect) => !covered.has(effect)).sort(),
+  };
 }
 
 function addOmission(omitted, id, code, message) {
@@ -398,8 +639,16 @@ function addOmission(omitted, id, code, message) {
   }
 }
 
-function buildPacket(request) {
-  const { orchestration, signals, choice, scores, proposal, host } = validateDecisionRequest(request).normalized;
+function orderedRequested(requested) {
+  return requested
+    .map((item, index) => ({ item, index }))
+    .sort((left, right) => Number(right.item.required) - Number(left.item.required) || left.index - right.index)
+    .map(({ item }) => item);
+}
+
+function buildPacket(request, validation = validateDecisionRequest(request), evaluationTime = undefined) {
+  const normalized = validation.normalized || validateDecisionRequest(request, evaluationTime).normalized;
+  const { orchestration, signals, choice, scores, proposal, host, evaluationTimeMs } = normalized;
   const policy = host.policy;
   const catalog = new Map(host.capability_catalog.map((descriptor) => [descriptor.id, descriptor]));
   const requested = proposal.requested_capabilities;
@@ -429,6 +678,12 @@ function buildPacket(request) {
     return descriptor && descriptor.available;
   });
   const reviewReasons = [];
+  if (sideEffects(proposal.effects).length > 0 && (evaluationTimeMs === null || evaluationTimeMs === undefined)) {
+    reviewReasons.push(reason("evaluation_time_required", "Side effects cannot be evaluated without an explicit evaluation time.", requested.map((item) => item.id)));
+  }
+  if (host.approvals.length > 0 && (evaluationTimeMs === null || evaluationTimeMs === undefined)) {
+    reviewReasons.push(reason("evaluation_time_required", "Approvals cannot be evaluated without an explicit evaluation time.", host.approvals.map((approval) => approval.capability_id).filter((id, index, ids) => ids.indexOf(id) === index)));
+  }
   if (missing.length > 0) {
     reviewReasons.push(reason("required_capability_unavailable", "A required capability is not available from the host; no tool was installed or substituted.", missing));
   }
@@ -454,20 +709,29 @@ function buildPacket(request) {
     return descriptor.effects.some((effect) => approvalEffects.has(effect) && proposal.effects.includes(effect));
   });
   const unapproved = [];
+  const approvalIssues = new Map();
   for (const item of approvalCandidates) {
     const descriptor = catalog.get(item.id);
     for (const effect of descriptor.effects.filter((value) => approvalEffects.has(value) && proposal.effects.includes(value))) {
-      if (!hasApproval(host.approvals, item.id, effect)) unapproved.push({ id: item.id, effect });
+      const status = approvalStatus(host.approvals, request, item.id, effect, evaluationTimeMs, policy);
+      if (!status.approved) {
+        unapproved.push({ id: item.id, effect });
+        if (!approvalIssues.has(status.code)) approvalIssues.set(status.code, { message: status.message, ids: new Set() });
+        approvalIssues.get(status.code).ids.add(item.id);
+      }
     }
   }
-  if (unapproved.length > 0) {
-    reviewReasons.push(reason("approval_required", "Scoped host approval is missing for one or more side effects.", unapproved.map((item) => item.id)));
+  for (const [code, issue] of approvalIssues) {
+    reviewReasons.push(reason(code, issue.message, [...issue.ids].sort()));
+  }
+  if (unapproved.length > 0 && !reviewReasons.some((item) => item.code === "approval_required")) {
+    reviewReasons.push(reason("approval_required", "Scoped host approval is missing, invalid, or not fresh for one or more side effects.", unapproved.map((item) => item.id)));
   }
   if (signals.human_approval_required) {
     const effectsToApprove = sideEffects(proposal.effects).length > 0 ? sideEffects(proposal.effects) : [proposal.action.operation];
     const humanApproved = available.length > 0 && requested.every((item) => {
       const descriptor = catalog.get(item.id);
-      return descriptor && effectsToApprove.every((effect) => descriptor.effects.includes(effect) && hasApproval(host.approvals, item.id, effect));
+      return descriptor && effectsToApprove.every((effect) => descriptor.effects.includes(effect) && approvalStatus(host.approvals, request, item.id, effect, evaluationTimeMs, policy).approved);
     });
     if (!humanApproved) {
       reviewReasons.push(reason("human_approval_required", "The model marked this action as requiring human approval.", requested.map((item) => item.id)));
@@ -482,12 +746,18 @@ function buildPacket(request) {
   if (proposal.action.reversibility === "irreversible" || proposal.action.reversibility === "unknown") {
     reviewReasons.push(reason("irreversible_or_unknown", "The action reversibility is irreversible or unknown.", requested.map((item) => item.id)));
   }
+  if (signals.destructive) {
+    reviewReasons.push(reason("destructive_signal", "A destructive signal always requires human review; risk scoring cannot authorize the action.", requested.map((item) => item.id)));
+  }
+  if (proposal.action.operation === "delete" || proposal.effects.includes("delete")) {
+    reviewReasons.push(reason("destructive_effect", "Delete effects always require human review.", requested.map((item) => item.id)));
+  }
   if (signals.evidence_required && proposal.evidence_refs.length === 0) {
     reviewReasons.push(reason("missing_required_evidence", "The action requires evidence references, but none were supplied.", requested.map((item) => item.id)));
   }
 
   const hardRisk = Math.max(
-    signals.destructive ? 0.9 : 0,
+    signals.destructive || proposal.effects.includes("delete") ? 0.9 : 0,
     signals.policy_sensitive ? 0.8 : 0,
     orchestration.environment === "production" && sideEffects(proposal.effects).length > 0 ? 0.8 : 0,
     proposal.action.reversibility === "irreversible" ? 0.9 : proposal.action.reversibility === "unknown" ? 0.7 : 0,
@@ -516,6 +786,20 @@ function buildPacket(request) {
     reviewReasons.push(reason("capability_budget_insufficient", "The required capability set exceeds the host capability budget.", requested.filter((item) => item.required).map((item) => item.id)));
   }
 
+  const ordered = orderedRequested(requested);
+  const plannedSelected = [];
+  for (const item of ordered) {
+    const descriptor = catalog.get(item.id);
+    if (!descriptor || !descriptor.available) continue;
+    if (!descriptor.effects.some((effect) => proposal.effects.includes(effect))) continue;
+    if (plannedSelected.length >= policy.max_capabilities) break;
+    plannedSelected.push(item.id);
+  }
+  const coverage = effectCoverage(proposal, requested, catalog, new Set(plannedSelected));
+  if (coverage.uncovered.length > 0) {
+    reviewReasons.push(reason("effect_coverage_incomplete", `The selected capability set does not cover every proposed effect: ${coverage.uncovered.join(", ")}.`, plannedSelected, "Select descriptors covering every proposed effect before execution.", "model_assessment.proposal.effects"));
+  }
+
   const guardrailAction = denied ? "deny" : reviewReasons.length > 0 ? "human_review" : "approve";
   const guardrailReasons = denied ? denyReasons : reviewReasons.length > 0 ? reviewReasons : [reason("guardrails_passed", "The request passed the deterministic host policy checks.", [])];
   const pathRecommendation = denied ? "none" : guardrailAction === "human_review" ? "human_review" : choice.preferred_path === "none" ? "none" : (choice.preferred_path === "flagship" || aggregate.load >= policy.thresholds.flagship_load || choice.pattern !== "inline" || choice.task_size === "complex") ? "flagship" : "lightweight";
@@ -527,38 +811,34 @@ function buildPacket(request) {
   else routeReasons.push("lightweight_path");
 
   const executionEffect = denied ? "stop" : guardrailAction === "human_review" ? "review" : pathRecommendation === "none" ? "clarify" : "execute";
-  const selected = [];
+  const selected = executionEffect === "execute" ? plannedSelected : [];
   const omitted = [];
-  const candidate = executionEffect === "execute"
-    ? [...requested].sort((left, right) => Number(right.required) - Number(left.required))
-    : [];
-  for (const item of candidate) {
-    const descriptor = catalog.get(item.id);
-    if (!descriptor) {
-      addOmission(omitted, item.id, "capability_unavailable", "The host did not advertise this capability.");
-    } else if (!descriptor.available) {
-      addOmission(omitted, item.id, "capability_unavailable", "The host advertised this capability as unavailable.");
-    } else if (denied || guardrailAction === "human_review") {
-      addOmission(omitted, item.id, guardrailAction === "deny" ? "guardrail_deny" : "guardrail_human_review", "No executable capability is exposed until the guardrail is resolved.");
-    } else if (selected.length >= policy.max_capabilities) {
-      addOmission(omitted, item.id, "capability_budget_exhausted", "The host capability budget was exhausted; the request remains available for a later decision.");
-    } else {
-      selected.push(item.id);
+  if (executionEffect === "execute") {
+    for (const item of ordered) {
+      const descriptor = catalog.get(item.id);
+      if (!descriptor) {
+        addOmission(omitted, item.id, "capability_unavailable", "The host did not advertise this capability.");
+      } else if (!descriptor.available) {
+        addOmission(omitted, item.id, "capability_unavailable", "The host advertised this capability as unavailable.");
+      } else if (!selected.includes(item.id)) {
+        addOmission(omitted, item.id, "capability_budget_exhausted", "The host capability budget was exhausted; the request remains available for a later decision.");
+      }
     }
-  }
-  if (executionEffect !== "execute") {
+  } else {
     requested.forEach((item) => addOmission(omitted, item.id, executionEffect === "review" ? "guardrail_human_review" : "execution_stopped", "No executable capability is exposed by this decision packet."));
   }
 
   const contextProfile = executionEffect !== "execute" || aggregate.context_pressure >= policy.thresholds.high_context_pressure ? "minimal" : (pathRecommendation === "flagship" && aggregate.complexity >= policy.thresholds.deep_complexity && aggregate.confidence >= policy.thresholds.deep_confidence && aggregate.context_pressure < policy.thresholds.high_context_pressure) ? "deep" : "standard";
   const contextReasons = [executionEffect !== "execute" ? "execution_blocked" : aggregate.context_pressure >= policy.thresholds.high_context_pressure ? "high_context_pressure" : contextProfile === "deep" ? "deep_complexity_with_capacity" : "standard_context_budget"];
 
-  const rules = ["validate_request", "evaluate_heads", "aggregate_hard_floors", "evaluate_policy", "select_capabilities", "choose_context_profile"];
+  const rules = ["validate_request", "evaluate_heads", "aggregate_hard_floors", "evaluate_policy", "select_capabilities", "effect_coverage_check", "choose_context_profile"];
   if (denied) rules.push("deny_precedence");
   else if (guardrailAction === "human_review") rules.push("review_precedence");
   else rules.push("approve_precedence");
   if (missing.length > 0) rules.push("missing_capability_degrades_to_review");
-  if (approvalEffects.size > 0) rules.push("approval_check");
+  if (approvalCandidates.length > 0) rules.push("approval_check");
+  if (coverage.uncovered.length > 0) rules.push("effect_coverage_incomplete");
+  if (signals.destructive || proposal.effects.includes("delete")) rules.push("destructive_review_floor");
   if (available.some((item) => catalog.get(item.id).isolation === "none")) rules.push("isolation_check");
 
   return {
@@ -588,9 +868,205 @@ function requiredCount(requested) {
   return requested.filter((item) => item.required).length;
 }
 
+function packetIssue(code, message, fieldPath, remedy = undefined) {
+  return error(code, message, fieldPath, remedy);
+}
+
+function validatePacketReasons(value, fieldPath, errors) {
+  if (!Array.isArray(value)) {
+    errors.push(packetIssue("invalid_type", "Packet reason lists must be arrays.", fieldPath));
+    return [];
+  }
+  value.forEach((item, index) => {
+    if (!isRecord(item) || !nonEmpty(item.code) || !nonEmpty(item.message) || !Array.isArray(item.capability_ids)) {
+      errors.push(packetIssue("invalid_reason", "Each packet reason must contain code, message, and capability_ids.", `${fieldPath}[${index}]`));
+    }
+  });
+  return value;
+}
+
+/**
+ * Validate packet-level invariants and, when the originating request is
+ * supplied, prove that every proposed effect is covered by selected,
+ * available, policy-allowed requested descriptors.
+ */
+export function validateDecisionPacket(packet, request = undefined, evaluationTime = undefined) {
+  const errors = [];
+  if (!isRecord(packet)) {
+    errors.push(packetIssue("invalid_type", "The decision packet must be an object.", "$", "Provide a packet matching jev-decision-packet.schema.json."));
+    return { ok: false, errors };
+  }
+  if (packet.schema_version !== JEV_SCHEMA_VERSION) {
+    errors.push(packetIssue("unsupported_schema_version", `Expected schema_version ${JEV_SCHEMA_VERSION}.`, "schema_version", "Use the version supported by this host adapter."));
+  }
+  if (!["execute", "review", "clarify", "stop"].includes(packet.execution_effect)) {
+    errors.push(packetIssue("invalid_execution_effect", "Packet execution_effect is not a versioned JEV outcome.", "execution_effect", "Use execute, review, clarify, or stop."));
+  }
+  if (!nonEmpty(packet.task_id)) errors.push(packetIssue("invalid_string", "Packet task_id must be a non-empty string.", "task_id", "Bind the packet to the evaluated task."));
+  if (typeof packet.ok !== "boolean") errors.push(packetIssue("invalid_type", "Packet ok must be a boolean.", "ok"));
+  validatePacketReasons(packet.errors, "errors", errors);
+  if (!isRecord(packet.guardrail) || !["approve", "human_review", "deny"].includes(packet.guardrail.action)) {
+    errors.push(packetIssue("invalid_guardrail", "Packet guardrail.action is invalid.", "guardrail.action", "Use approve, human_review, or deny."));
+  } else {
+    validatePacketReasons(packet.guardrail.reasons, "guardrail.reasons", errors);
+  }
+  if (!isRecord(packet.route) || !["lightweight", "flagship", "human_review", "none"].includes(packet.route.path)) {
+    errors.push(packetIssue("invalid_route", "Packet route.path is invalid.", "route.path", "Use a versioned route path."));
+  }
+  if (!isRecord(packet.trace) || packet.trace.deterministic !== true) {
+    errors.push(packetIssue("non_deterministic_packet", "Packet trace must explicitly be deterministic.", "trace.deterministic"));
+  }
+  if (packet.heads?.noul?.destructive === true && packet.execution_effect === "execute") {
+    errors.push(packetIssue("destructive_signal", "Destructive signals cannot appear in an executable packet.", "heads.noul.destructive"));
+  }
+  const plan = isRecord(packet.capability_plan) ? packet.capability_plan : null;
+  const selected = plan && Array.isArray(plan.selected) ? plan.selected : [];
+  const missing = plan && Array.isArray(plan.missing_capabilities) ? plan.missing_capabilities : [];
+  const omitted = plan && Array.isArray(plan.omitted) ? plan.omitted : [];
+  if (!plan || !Array.isArray(plan.selected) || !Array.isArray(plan.missing_capabilities) || !Array.isArray(plan.omitted)) {
+    errors.push(packetIssue("invalid_capability_plan", "Packet capability_plan has an invalid shape.", "capability_plan", "Provide selected, omitted, and missing_capabilities arrays."));
+  }
+  if (selected.length > 0 && new Set(selected).size !== selected.length) {
+    errors.push(packetIssue("duplicate_value", "Packet selected capability IDs must be unique.", "capability_plan.selected"));
+  }
+  if (missing.length > 0 && new Set(missing).size !== missing.length) {
+    errors.push(packetIssue("duplicate_value", "Packet missing capability IDs must be unique.", "capability_plan.missing_capabilities"));
+  }
+  for (const [index, item] of omitted.entries()) {
+    if (!isRecord(item) || !nonEmpty(item.id) || !nonEmpty(item.code) || !nonEmpty(item.message)) {
+      errors.push(packetIssue("invalid_omission", "Packet capability_plan.omitted entries must contain id, code, and message strings.", `capability_plan.omitted[${index}]`));
+    }
+  }
+  for (const [index, id] of selected.entries()) {
+    if (typeof id !== "string" || !CAPABILITY_ID.test(id)) errors.push(packetIssue("invalid_capability_id", "Packet selected capability IDs must be canonical strings.", `capability_plan.selected[${index}]`));
+  }
+  for (const [index, id] of missing.entries()) {
+    if (typeof id !== "string" || !CAPABILITY_ID.test(id)) errors.push(packetIssue("invalid_capability_id", "Packet missing capability IDs must be canonical strings.", `capability_plan.missing_capabilities[${index}]`));
+  }
+  if (packet.execution_effect === "execute") {
+    if (packet.ok !== true) errors.push(packetIssue("executable_packet_not_ok", "Executable packets must set ok=true.", "ok"));
+    if (!Array.isArray(packet.errors) || packet.errors.length !== 0) errors.push(packetIssue("executable_packet_has_errors", "Executable packets cannot contain errors.", "errors"));
+    if (packet.guardrail?.action !== "approve") errors.push(packetIssue("executable_packet_not_approved", "Executable packets require an approve guardrail.", "guardrail.action"));
+    if (selected.length === 0) errors.push(packetIssue("executable_packet_without_selection", "Executable packets must select at least one capability.", "capability_plan.selected"));
+    if (missing.length > 0) errors.push(packetIssue("executable_packet_has_missing_capabilities", "Executable packets cannot contain missing capabilities.", "capability_plan.missing_capabilities"));
+    for (const id of missing) {
+      if (selected.includes(id)) errors.push(packetIssue("contradictory_capability_coverage", "A capability cannot be both selected and reported missing.", "capability_plan"));
+    }
+    if (packet.route?.path !== "lightweight" && packet.route?.path !== "flagship") errors.push(packetIssue("executable_packet_route", "Executable packets require a lightweight or flagship route.", "route.path"));
+    const reasonCodes = Array.isArray(packet.guardrail?.reasons) ? packet.guardrail.reasons.map((item) => item?.code) : [];
+    if (reasonCodes.some((code) => BLOCKING_REASON_CODES.has(code))) {
+      errors.push(packetIssue("executable_packet_has_blocking_reason", "Executable packets cannot contain a blocking guardrail reason.", "guardrail.reasons", "Resolve the blocking reason before selecting capabilities."));
+    }
+  } else {
+    if (selected.length > 0) errors.push(packetIssue("non_executable_packet_has_selection", "Non-executable packets cannot select capabilities.", "capability_plan.selected"));
+    if (packet.guardrail?.action === "deny" && packet.execution_effect !== "stop") errors.push(packetIssue("deny_packet_not_stopped", "Denied packets must stop execution.", "execution_effect"));
+    if (packet.guardrail?.action === "human_review" && packet.execution_effect !== "review") errors.push(packetIssue("review_packet_not_reviewed", "Human-review packets must remain in review.", "execution_effect"));
+    if (packet.guardrail?.action === "approve" && ["review", "stop"].includes(packet.execution_effect)) errors.push(packetIssue("approved_packet_is_blocked", "An approved guardrail cannot produce a blocked execution effect.", "execution_effect"));
+  }
+  if (packet.ok === true && Array.isArray(packet.errors) && packet.errors.length > 0) {
+    errors.push(packetIssue("ok_packet_has_errors", "A packet cannot be marked ok while carrying errors.", "errors"));
+  }
+  if (packet.ok === false && packet.guardrail?.action === "approve") {
+    errors.push(packetIssue("failed_packet_approved", "A packet marked not-ok cannot carry an approve guardrail.", "guardrail.action"));
+  }
+
+  if (request !== undefined) {
+    const requestValidation = validateDecisionRequest(request, evaluationTime);
+    if (!requestValidation.ok) {
+      errors.push(packetIssue("invalid_originating_request", "The originating request is not valid for packet semantic validation.", "$"));
+    } else {
+      const normalized = requestValidation.normalized;
+      if (packet.task_id !== request.task_id) errors.push(packetIssue("packet_task_mismatch", "Packet task_id does not match the originating request.", "task_id"));
+      if (packet.orchestration_state_id !== normalized.orchestration.state_id) errors.push(packetIssue("packet_state_mismatch", "Packet orchestration state does not match the originating request.", "orchestration_state_id"));
+      if (packet.capability_catalog_version !== normalized.host.capability_catalog_version) errors.push(packetIssue("packet_catalog_mismatch", "Packet capability catalog version does not match the originating request.", "capability_catalog_version"));
+      if (packet.policy_version !== normalized.host.policy.policy_version) errors.push(packetIssue("packet_policy_mismatch", "Packet policy version does not match the originating request.", "policy_version"));
+      if (!isRecord(packet.heads)) {
+        errors.push(packetIssue("invalid_packet_heads", "Packet heads are missing or malformed.", "heads"));
+      } else {
+        const expectedNoul = normalized.signals;
+        const actualNoul = isRecord(packet.heads.noul) ? packet.heads.noul : {};
+        for (const key of ["urgent", "destructive", "policy_sensitive", "human_approval_required", "evidence_required"]) {
+          if (actualNoul[key] !== expectedNoul[key]) errors.push(packetIssue("packet_noul_mismatch", `Packet head ${key} does not match the originating request.`, `heads.noul.${key}`));
+        }
+        const expectedChoice = normalized.choice;
+        const actualChoice = isRecord(packet.heads.choice) ? packet.heads.choice : {};
+        for (const key of ["pattern", "task_size", "preferred_path", "primary_domain"]) {
+          if (actualChoice[key] !== expectedChoice[key]) errors.push(packetIssue("packet_choice_mismatch", `Packet head ${key} does not match the originating request.`, `heads.choice.${key}`));
+        }
+        const expectedScore = normalized.scores;
+        const actualScore = isRecord(packet.heads.score) ? packet.heads.score : {};
+        for (const key of ["risk", "complexity", "urgency", "confidence", "context_pressure"]) {
+          if (actualScore[key] !== expectedScore[key]) errors.push(packetIssue("packet_score_mismatch", `Packet head ${key} does not match the originating request.`, `heads.score.${key}`));
+        }
+      }
+      if (packet.execution_effect === "execute") {
+        const catalog = new Map(normalized.host.capability_catalog.map((descriptor) => [descriptor.id, descriptor]));
+        const requested = new Map(normalized.proposal.requested_capabilities.map((item) => [item.id, item]));
+        const proposal = normalized.proposal;
+        const policy = normalized.host.policy;
+        if (proposal.effects.some((effect) => policy.denied_effects.includes(effect))) errors.push(packetIssue("policy_denied_effect", "A packet cannot execute an effect denied by the originating policy.", "capability_plan.selected"));
+        if (normalized.signals.destructive || proposal.action.operation === "delete" || proposal.effects.includes("delete")) errors.push(packetIssue("destructive_signal", "Destructive signals and delete effects cannot be executable.", "guardrail.action"));
+        if (proposal.action.reversibility === "irreversible" || proposal.action.reversibility === "unknown") errors.push(packetIssue("irreversible_or_unknown", "Irreversible or unknown actions cannot be executable.", "guardrail.action"));
+        if (normalized.signals.policy_sensitive) errors.push(packetIssue("policy_sensitive", "Policy-sensitive actions cannot be executable without review.", "guardrail.action"));
+        if (normalized.orchestration.environment === "production" && sideEffects(proposal.effects).length > 0) errors.push(packetIssue("production_side_effect", "Production side effects cannot be executable without review.", "guardrail.action"));
+        if (normalized.choice.preferred_path === "human_review") errors.push(packetIssue("model_requested_review", "A model-requested human-review path cannot be executable.", "guardrail.action"));
+        if (normalized.signals.evidence_required && proposal.evidence_refs.length === 0) errors.push(packetIssue("missing_required_evidence", "Executable actions cannot omit required evidence references.", "guardrail.action"));
+        if (normalized.scores.confidence < policy.thresholds.review_confidence) errors.push(packetIssue("low_confidence", "Executable actions require confidence at or above the host review threshold.", "guardrail.action"));
+        for (const id of selected) {
+          if (typeof id !== "string" || !requested.has(id)) errors.push(packetIssue("selected_capability_not_requested", "Every selected capability must be requested by the originating action.", "capability_plan.selected"));
+          const descriptor = catalog.get(id);
+          if (!descriptor || !descriptor.available) errors.push(packetIssue("selected_capability_unavailable", "Every selected capability must be available in the originating host facts.", "capability_plan.selected"));
+          if (policy.denied_capability_ids.includes(id)) errors.push(packetIssue("selected_capability_denied", "A policy-denied capability cannot appear in an executable selection.", "capability_plan.selected"));
+          if (descriptor && policy.review_capability_ids.includes(id)) errors.push(packetIssue("policy_review_capability", "A policy-review capability cannot appear in an executable selection.", "capability_plan.selected"));
+          if (descriptor && descriptor.effects.some((effect) => policy.isolation_required_effects.includes(effect)) && descriptor.isolation === "none") errors.push(packetIssue("missing_isolation", "A selected capability lacks the required isolation boundary.", "capability_plan.selected"));
+        }
+        const approvalEffects = new Set(policy.approval_required_effects);
+        for (const id of selected) {
+          const descriptor = catalog.get(id);
+          if (descriptor && !descriptor.reversible) {
+            descriptor.effects.filter((effect) => effect !== "read").forEach((effect) => approvalEffects.add(effect));
+          }
+        }
+        for (const id of selected) {
+          const descriptor = catalog.get(id);
+          if (!descriptor) continue;
+          for (const effect of descriptor.effects.filter((value) => approvalEffects.has(value) && proposal.effects.includes(value))) {
+            const status = approvalStatus(normalized.host.approvals, request, id, effect, normalized.evaluationTimeMs, policy);
+            if (!status.approved) errors.push(packetIssue(status.code, status.message, "guardrail.reasons"));
+          }
+        }
+        if (normalized.signals.human_approval_required) {
+          const effectsToApprove = sideEffects(proposal.effects).length > 0 ? sideEffects(proposal.effects) : [proposal.action.operation];
+          const humanApproved = requested.size > 0 && [...requested.values()].every((item) => {
+            const descriptor = catalog.get(item.id);
+            return descriptor && effectsToApprove.every((effect) => descriptor.effects.includes(effect) && approvalStatus(normalized.host.approvals, request, item.id, effect, normalized.evaluationTimeMs, policy).approved);
+          });
+          if (!humanApproved) errors.push(packetIssue("human_approval_required", "The action requires human approval that is not present and fresh.", "guardrail.action"));
+        }
+        for (const item of normalized.proposal.requested_capabilities.filter((candidate) => candidate.required)) {
+          if (!selected.includes(item.id)) errors.push(packetIssue("required_capability_not_selected", "Every required requested capability must be selected before execution.", "capability_plan.selected"));
+        }
+        const selectedSet = new Set(selected);
+        const coverage = effectCoverage(normalized.proposal, normalized.proposal.requested_capabilities, catalog, selectedSet);
+        if (coverage.uncovered.length > 0) {
+          errors.push(packetIssue("effect_coverage_incomplete", `The selected capability set does not cover every proposed effect: ${coverage.uncovered.join(", ")}.`, "capability_plan.selected", "Select descriptors covering every proposed effect."));
+        }
+        if (missing.length > 0 && selected.length > 0) errors.push(packetIssue("contradictory_capability_coverage", "A packet cannot both report missing capabilities and select executable capabilities.", "capability_plan"));
+        for (const item of omitted) {
+          if (isRecord(item) && selected.includes(item.id)) errors.push(packetIssue("contradictory_capability_omission", "A selected capability cannot also be omitted.", "capability_plan.omitted"));
+        }
+      }
+    }
+  }
+  return { ok: errors.length === 0, errors };
+}
+
 /** Evaluate a request and return a deterministic, side-effect-free decision packet. */
-export function decide(request) {
-  const validation = validateDecisionRequest(request);
+export function decide(request, evaluationTime = undefined) {
+  const validation = validateDecisionRequest(request, evaluationTime);
   if (!validation.ok) return invalidPacket(request, validation);
-  return buildPacket(request);
+  const packet = buildPacket(request, validation, evaluationTime);
+  const semantic = validateDecisionPacket(packet, request, evaluationTime);
+  if (!semantic.ok) return invalidPacket(request, semantic);
+  return packet;
 }

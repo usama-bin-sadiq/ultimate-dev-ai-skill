@@ -6,8 +6,11 @@ Supports multiple providers with auto-fallback.
 import os
 import json
 import subprocess
-import requests
-from typing import Dict, Any, Optional, List
+try:
+    import requests
+except ImportError:  # optional provider transport
+    requests = None
+from typing import Dict, Any, Optional, List, Callable
 from abc import ABC, abstractmethod
 from pathlib import Path
 
@@ -39,6 +42,8 @@ class OllamaProvider(ModelProvider):
         self.model = model
     
     def is_available(self) -> bool:
+        if requests is None:
+            return False
         try:
             r = requests.get(f"{self.base_url}/api/tags", timeout=2)
             return r.status_code == 200
@@ -46,6 +51,8 @@ class OllamaProvider(ModelProvider):
             return False
     
     def complete(self, prompt: str, **kwargs) -> str:
+        if requests is None:
+            raise RuntimeError("optional requests dependency is unavailable")
         response = requests.post(
             f"{self.base_url}/api/generate",
             json={
@@ -77,14 +84,17 @@ class OllamaProvider(ModelProvider):
 class OpenAIProvider(ModelProvider):
     """OpenAI API."""
     
-    def __init__(self, api_key: Optional[str] = None, model: str = "gpt-4o-mini"):
+    def __init__(self, api_key: Optional[str] = None, model: str = "gpt-4o-mini", *, assume_available: bool = False):
         self.api_key = api_key or os.environ.get("OPENAI_API_KEY")
         self.model = model
+        self.assume_available = bool(assume_available)
     
     def is_available(self) -> bool:
-        return bool(self.api_key)
+        return bool(self.api_key) and self.assume_available
     
     def complete(self, prompt: str, **kwargs) -> str:
+        if requests is None:
+            raise RuntimeError("optional requests dependency is unavailable")
         if not self.api_key:
             raise RuntimeError("OpenAI API key not set")
         
@@ -123,14 +133,17 @@ class OpenAIProvider(ModelProvider):
 class AnthropicProvider(ModelProvider):
     """Anthropic Claude API."""
     
-    def __init__(self, api_key: Optional[str] = None, model: str = "claude-3-5-sonnet-20241022"):
+    def __init__(self, api_key: Optional[str] = None, model: str = "claude-3-5-sonnet-20241022", *, assume_available: bool = False):
         self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY")
         self.model = model
+        self.assume_available = bool(assume_available)
     
     def is_available(self) -> bool:
-        return bool(self.api_key)
+        return bool(self.api_key) and self.assume_available
     
     def complete(self, prompt: str, **kwargs) -> str:
+        if requests is None:
+            raise RuntimeError("optional requests dependency is unavailable")
         if not self.api_key:
             raise RuntimeError("Anthropic API key not set")
         
@@ -208,30 +221,31 @@ class LocalCLIProvider(ModelProvider):
 
 
 class HostFallbackProvider(ModelProvider):
-    """
-    Fallback provider that represents the host model running this skill.
-    This is always available because the skill runs on a host that has an LLM.
-    """
-    
+    """Explicit host callback provider; never fabricates a completion."""
+
+    def __init__(self, callback: Optional[Callable[[str, Dict[str, Any]], str]] = None):
+        self.callback = callback
+
     def is_available(self) -> bool:
-        return True  # Always available
-    
+        return callable(self.callback)
+
     def complete(self, prompt: str, **kwargs) -> str:
-        # This signals to the host to use its own model
-        # The host (Claude Code, Cursor, etc.) should intercept this
-        # and use its own model to generate the response
-        return f"[HOST_FALLBACK] {prompt}"
-    
+        if not callable(self.callback):
+            raise RuntimeError("host fallback requires an explicit host callback")
+        value = self.callback(prompt, dict(kwargs))
+        if not isinstance(value, str) or not value:
+            raise RuntimeError("host fallback callback returned no completion")
+        return value
+
     def get_capabilities(self) -> Dict[str, Any]:
-        # Host model capabilities are unknown but assumed capable
         return {
             "provider": "host_fallback",
             "model": "host_model",
-            "reasoning": "strong",
-            "context_window": 32768,
-            "supports_temperature": True,
-            "max_output_tokens": 8192,
-            "host_native": True
+            "reasoning": "unknown",
+            "context_window": 0,
+            "supports_temperature": False,
+            "max_output_tokens": 0,
+            "host_native": True,
         }
 
 
@@ -270,23 +284,32 @@ class ModelAdapter:
         
         # 2. OpenAI (cloud)
         if os.environ.get("OPENAI_API_KEY"):
-            self.providers.append(OpenAIProvider(
-                model=self.config.get("openai_model", "gpt-4o-mini")
-            ))
+            provider = OpenAIProvider(
+                model=self.config.get("openai_model", "gpt-4o-mini"),
+                assume_available=bool(self.config.get("assume_cloud_available", False)),
+            )
+            if provider.is_available():
+                self.providers.append(provider)
         
         # 3. Anthropic (cloud)
         if os.environ.get("ANTHROPIC_API_KEY"):
-            self.providers.append(AnthropicProvider(
-                model=self.config.get("anthropic_model", "claude-3-5-sonnet-20241022")
-            ))
+            provider = AnthropicProvider(
+                model=self.config.get("anthropic_model", "claude-3-5-sonnet-20241022"),
+                assume_available=bool(self.config.get("assume_cloud_available", False)),
+            )
+            if provider.is_available():
+                self.providers.append(provider)
         
         # 4. Local CLI (custom)
         local_cmd = self.config.get("local_command")
         if local_cmd:
             self.providers.append(LocalCLIProvider(local_cmd, "custom"))
         
-        # 5. HOST FALLBACK — always available (the model running this skill)
-        self.providers.append(HostFallbackProvider())
+        # Host fallback is opt-in and must be backed by a real callback.  A
+        # placeholder string is never a valid model completion.
+        host_callback = self.config.get("host_callback")
+        if self.config.get("allow_host_fallback") and callable(host_callback):
+            self.providers.append(HostFallbackProvider(host_callback))
         
         # Select best available provider
         if self.providers:
@@ -297,21 +320,29 @@ class ModelAdapter:
         return self.current_provider
     
     def complete(self, prompt: str, **kwargs) -> str:
-        """Generate completion with fallback."""
+        """Generate a completion, failing rather than fabricating a fallback."""
+        return self.complete_with_provenance(prompt, **kwargs)["text"]
+
+    def complete_with_provenance(self, prompt: str, **kwargs) -> Dict[str, Any]:
+        """Return text plus explicit provider/fallback provenance."""
         if not self.current_provider:
-            raise RuntimeError("No model provider available. Configure Ollama, OpenAI, or Anthropic.")
-        
-        try:
-            return self.current_provider.complete(prompt, **kwargs)
-        except Exception as e:
-            # Try fallback providers
-            for provider in self.providers[1:]:
-                try:
-                    self.current_provider = provider
-                    return provider.complete(prompt, **kwargs)
-                except:
-                    continue
-            raise RuntimeError(f"All providers failed: {e}")
+            raise RuntimeError("No model provider available. Configure an explicit host or provider callback.")
+        errors = []
+        for provider in self.providers:
+            if not provider.is_available():
+                continue
+            try:
+                text = provider.complete(prompt, **kwargs)
+                self.current_provider = provider
+                return {
+                    "text": text,
+                    "provider": provider.get_capabilities().get("provider", "unknown"),
+                    "fallback": provider is not self.providers[0],
+                    "status": "success",
+                }
+            except Exception as exc:
+                errors.append(f"{type(provider).__name__}:{type(exc).__name__}")
+        raise RuntimeError("All configured model providers failed: " + ", ".join(errors))
     
     def get_capabilities(self) -> Dict[str, Any]:
         """Get capabilities of current provider."""

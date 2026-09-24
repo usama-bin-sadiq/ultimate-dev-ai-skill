@@ -8,6 +8,8 @@ import json
 import tempfile
 from pathlib import Path
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from runtime.core.engine import Runtime
@@ -209,38 +211,38 @@ def test_bootstrap_cache():
 
 
 def test_host_fallback_provider():
-    """Test host fallback provider always available."""
+    """Host fallback is explicit and never fabricates a completion."""
     provider = HostFallbackProvider()
-    
-    assert provider.is_available() == True
-    
+    assert provider.is_available() is False
+    with pytest.raises(RuntimeError):
+        provider.complete("test prompt")
+
+    provider = HostFallbackProvider(lambda prompt, options: f"host:{prompt}")
+    assert provider.is_available() is True
     caps = provider.get_capabilities()
     assert caps["provider"] == "host_fallback"
-    assert caps["host_native"] == True
-    assert caps["reasoning"] == "strong"
-    
-    # Host fallback signals host to use its own model
-    result = provider.complete("test prompt")
-    assert "[HOST_FALLBACK]" in result
-    assert "test prompt" in result
-    
+    assert caps["host_native"] is True
+    assert provider.complete("test prompt") == "host:test prompt"
+
     print("✅ Host fallback provider verified")
     return None
 
 
 def test_model_adapter_fallback():
-    """Test model adapter falls back to host when no providers."""
+    """Model adapter fails closed unless a real provider/callback is configured."""
     adapter = ModelAdapter(config={})
-    
-    # Should have host fallback as last resort
-    assert adapter.current_provider is not None
-    caps = adapter.get_capabilities()
-    assert caps["provider"] in ["host_fallback", "ollama", "openai", "anthropic", "local_cli"]
-    
-    # Complete should work even with no external providers
-    result = adapter.complete("test")
-    assert result is not None
-    
+    assert adapter.current_provider is None
+    with pytest.raises(RuntimeError):
+        adapter.complete("test")
+
+    explicit = ModelAdapter(config={
+        "allow_host_fallback": True,
+        "host_callback": lambda prompt, options: "host:test",
+    })
+    result = explicit.complete_with_provenance("test")
+    assert result["text"] == "host:test"
+    assert result["provider"] == "host_fallback"
+
     print("✅ Model adapter fallback verified")
     return None
 

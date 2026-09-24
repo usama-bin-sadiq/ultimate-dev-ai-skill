@@ -6,17 +6,38 @@ on:
   pull_request:
     branches: [main, develop]
 
+# Validation is read-only.  Write-capable automation lives in separately gated
+# jobs/workflows and never receives a pull-request token.
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
 jobs:
   validate:
     name: Validate Skill Structure
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Set up Node.js for host-native JEV tests
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+
+      - name: Check workflow security invariants
+        run: bash ./ultimate-dev/scripts/validate-workflows.sh
 
       - name: Run JEV conformance tests
         run: node --test ultimate-dev/tests/jev/engine.test.mjs
@@ -26,10 +47,10 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Install validation dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install pyyaml pytest requests
+          python -m pip install --disable-pip-version-check --no-input \
+            "PyYAML==6.0.2" "pytest==8.3.5" "requests==2.32.3"
 
       - name: Run structure validation
         run: |
@@ -49,8 +70,13 @@ jobs:
   verify-package:
     name: Verify Package Integrity
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Run verify.sh
         run: |
@@ -60,18 +86,23 @@ jobs:
   generate-manifest:
     name: Auto-generate Manifest
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Install validation dependency
         run: |
-          python -m pip install --upgrade pip
-          pip install pyyaml
+          python -m pip install --disable-pip-version-check --no-input \
+            "PyYAML==6.0.2"
 
       - name: Generate manifest
         run: |
@@ -81,27 +112,32 @@ jobs:
       - name: Check for changes
         run: |
           cd ultimate-dev
-          if ! git diff --quiet skill-manifest.yaml; then
-            echo "⚠️ skill-manifest.yaml is out of sync — run generate-manifest.py locally"
-            git diff skill-manifest.yaml
+          if ! git diff --quiet -- skill-manifest.yaml; then
+            echo "skill-manifest.yaml is out of sync; run generate-manifest.py locally" >&2
+            git diff -- skill-manifest.yaml
             exit 1
           fi
 
   sync-docs:
     name: Sync Documentation
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Install validation dependency
         run: |
-          python -m pip install --upgrade pip
-          pip install pyyaml
+          python -m pip install --disable-pip-version-check --no-input \
+            "PyYAML==6.0.2"
 
       - name: Sync docs
         run: |
@@ -111,17 +147,22 @@ jobs:
       - name: Check for changes
         run: |
           cd ultimate-dev
-          if ! git diff --quiet README.md; then
-            echo "⚠️ README.md is out of sync — run sync-docs.py locally"
-            git diff README.md
+          if ! git diff --quiet -- README.md; then
+            echo "README.md is out of sync; run sync-docs.py locally" >&2
+            git diff -- README.md
             exit 1
           fi
 
   test-install:
     name: Test Installation
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Test global install
         run: |
@@ -130,72 +171,74 @@ jobs:
 
       - name: Verify installation
         run: |
-          ls -la ~/.agents/skills/ultimate-dev/
-          test -f ~/.agents/skills/ultimate-dev/SKILL.md
-          test -f ~/.agents/skills/ultimate-dev/skill-manifest.yaml
+          test -f "$HOME/.agents/skills/ultimate-dev/SKILL.md"
+          test -f "$HOME/.agents/skills/ultimate-dev/VERSION"
+          test -f "$HOME/.agents/skills/ultimate-dev/skill-manifest.yaml"
 
-      - name: Test project install
+      - name: Test project install and reinstall
         run: |
-          mkdir -p /tmp/test-project
-          cd /tmp/test-project
+          test_root="$(mktemp -d)"
+          trap 'rm -rf "$test_root"' EXIT
+          mkdir -p "$test_root"
+          cd "$test_root"
           git init -q
-          cp -r $GITHUB_WORKSPACE/ultimate-dev .
+          cp -R "$GITHUB_WORKSPACE/ultimate-dev" .
+          # The installer deliberately reads the repository-root VERSION source.
+          cp "$GITHUB_WORKSPACE/VERSION" ./VERSION
           ./ultimate-dev/scripts/install.sh --project . --yes
+          ./ultimate-dev/scripts/install.sh --project . --yes
+          test -f .agents/skills/ultimate-dev/VERSION
           test -f .agents/skills/ultimate-dev/SKILL.md
           test -f .gitignore
-          grep -q ".memory/ultimate-dev/" .gitignore
+          grep -Fqx '.memory/ultimate-dev/' .gitignore
+          test ! -e .agents/skills/ultimate-dev/ultimate-dev
 
-  # New: Check PR quality
   pr-quality:
     name: PR Quality Check
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
       - name: Check PR title follows conventional commits
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
-          TITLE="${{ github.event.pull_request.title }}"
-          echo "PR Title: $TITLE"
-          
-          # Check for conventional commit format
-          if echo "$TITLE" | grep -qE '^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert)(\(.+\))?: .+'; then
-            echo "✅ PR title follows conventional commits"
+          printf 'PR Title: %s\n' "$PR_TITLE"
+          if printf '%s\n' "$PR_TITLE" | grep -qE '^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert)(\(.+\))?: .+'; then
+            echo 'PR title follows conventional commits'
           else
-            echo "⚠️ PR title should follow conventional commits: type(scope): description"
-            echo "Examples:"
-            echo "  feat: add new feature"
-            echo "  fix(agent): resolve bug in python-engineer"
-            echo "  docs: update installation guide"
-            # Don't fail, just warn
+            echo 'Warning: PR title should follow conventional commits: type(scope): description'
           fi
 
       - name: Check PR has description
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
         run: |
-          BODY="${{ github.event.pull_request.body }}"
-          if [ -z "$BODY" ] || [ "$BODY" = "null" ]; then
-            echo "⚠️ PR description is empty — please fill out the template"
+          if [ -z "$PR_BODY" ] || [ "$PR_BODY" = "null" ]; then
+            echo 'Warning: PR description is empty; fill out the template'
           else
-            echo "✅ PR has description"
+            echo 'PR has a description'
           fi
 
       - name: Check PR has labels
+        env:
+          PR_LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
         run: |
-          LABELS=$(echo '${{ toJson(github.event.pull_request.labels.*.name) }}')
-          if [ "$LABELS" = "[]" ]; then
-            echo "⚠️ PR has no labels — add at least one: feature, bug, docs, release:patch/minor/major, hotfix, breaking, ci"
+          if printf '%s' "$PR_LABELS" | jq -e 'length > 0' >/dev/null; then
+            echo 'PR has labels'
           else
-            echo "✅ PR has labels: $LABELS"
+            echo 'Warning: PR has no labels'
           fi
 
       - name: Check for release label if targeting main
         if: github.event.pull_request.base.ref == 'main'
+        env:
+          PR_LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
         run: |
-          LABELS=$(echo '${{ toJson(github.event.pull_request.labels.*.name) }}')
-          if echo "$LABELS" | grep -qE '"release:(patch|minor|major)"'; then
-            echo "✅ Release label found — will auto-release on merge"
+          if printf '%s' "$PR_LABELS" | jq -e 'any(.[]; . == "release:patch" or . == "release:minor" or . == "release:major")' >/dev/null; then
+            echo 'Release label found'
           else
-            echo "ℹ️ No release label — add 'release:patch', 'release:minor', or 'release:major' to trigger auto-release on merge"
+            echo 'No release label; a merged PR will not auto-release'
           fi

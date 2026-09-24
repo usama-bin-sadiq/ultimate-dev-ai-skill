@@ -35,6 +35,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Iterator, Mapping
 
+from .redaction import redact_sensitive
+
 try:  # POSIX hosts get a small cross-process mutation lock.
     import fcntl
 except ImportError:  # pragma: no cover - Windows fallback
@@ -45,6 +47,8 @@ SCHEMA_VERSION = "1.0"
 STORAGE_RELATIVE = Path(".memory") / "ultimate-dev" / "evolution"
 MAX_JSON_BYTES = 2_000_000
 MAX_HISTORY = 250
+MAX_EVENT_FILE_BYTES = 8_000_000
+MAX_EVENT_ROTATIONS = 2
 MAX_TRIALS = 100
 
 _IDENTIFIER_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
@@ -257,12 +261,12 @@ def _safe_relative_target(value: Any, label: str) -> str | None:
 def _mapping_or_text(value: Any, label: str, *, allow_text: bool = True) -> Any:
     if isinstance(value, Mapping):
         _json_clone(dict(value), label)
-        return dict(value)
+        return redact_sensitive(dict(value))
     if isinstance(value, (list, tuple)) and value:
         _json_clone(list(value), label)
-        return list(value)
+        return redact_sensitive(list(value))
     if allow_text and isinstance(value, str) and value.strip():
-        return value
+        return str(redact_sensitive(value))
     raise EvolutionContractError(
         f"{label} must be a non-empty object, array, or string"
         if allow_text
@@ -305,7 +309,7 @@ def _normalize_evidence(value: Any) -> list[dict[str, Any]]:
             item = {"value": item}
         if not isinstance(item, Mapping):
             raise EvolutionContractError(f"evidence[{index}] must be an object")
-        normalized = _json_clone(dict(item), f"evidence[{index}]")
+        normalized = redact_sensitive(_json_clone(dict(item), f"evidence[{index}]"))
         if not normalized or not provenance_keys.intersection(normalized):
             raise EvolutionContractError(
                 f"evidence[{index}] must identify its source, command, artifact, verifier, or result"
@@ -603,6 +607,13 @@ class EvolutionStore:
         self._assert_contained(self.events_path)
         self.events_path.parent.mkdir(parents=True, exist_ok=True)
         encoded = _canonical_json(dict(event)) + "\n"
+        if self.events_path.exists() and self.events_path.stat().st_size + len(encoded.encode("utf-8")) > MAX_EVENT_FILE_BYTES:
+            for index in range(MAX_EVENT_ROTATIONS, 0, -1):
+                source = self.events_path if index == 1 else self.events_path.with_name(f"events.jsonl.{index - 1}")
+                destination = self.events_path.with_name(f"events.jsonl.{index}")
+                self._assert_contained(destination)
+                if source.exists():
+                    os.replace(source, destination)
         with open(self.events_path, "a", encoding="utf-8") as handle:
             handle.write(encoded)
             handle.flush()
@@ -826,7 +837,7 @@ class EvolutionStore:
         metadata = {key: value for key, value in data.items() if key not in reserved}
         _normalize_metadata_target(metadata)
         _validate_embedded_targets(metadata, "proposal.metadata")
-        normalized["metadata"] = _json_clone(metadata, "proposal.metadata")
+        normalized["metadata"] = redact_sensitive(_json_clone(metadata, "proposal.metadata"))
         return normalized
 
     def stage(

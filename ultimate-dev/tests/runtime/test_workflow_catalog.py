@@ -228,6 +228,23 @@ class WorkflowCatalogTests(unittest.TestCase):
         self.assertEqual(result.steps[0].error["code"], "capability_unavailable")
         self.assertEqual(calls, [])
 
+    def test_handler_timeout_is_bounded_and_uncertain(self) -> None:
+        import time
+
+        def slow():
+            time.sleep(0.05)
+            return {"value": 1}
+
+        result = WorkflowExecutor(
+            self.catalog,
+            handlers={"prepare": slow, "finish": lambda: {"value": 2}},
+            step_timeout_seconds=0.001,
+        ).execute("ordered")
+        self.assertFalse(result.success)
+        self.assertEqual(result.steps[0].error["code"], "handler_timeout")
+        self.assertTrue(result.steps[0].error["uncertain"])
+        self.assertEqual(result.steps[1].status, "skipped")
+
     def test_handler_exception_is_structured(self) -> None:
         def explode():
             raise RuntimeError("host unavailable")

@@ -12,12 +12,15 @@ The ultimate-dev skill is tested at multiple levels:
 4. **Rule Consistency** — Validates that rules don't contradict each other.
 5. **Tool Coverage** — Confirms all registered tools are documented.
 6. **Task Observer Contract** — Validates the Task Observer skill/agent boundary and registration.
-7. **Runtime Hardening** — Validates path containment, JEV packet binding, restart
-   rehydration, operation idempotency/cancellation, policy checks, capability
-   availability, structured executor failures, and evidence-gated completion.
+7. **Runtime Hardening** — Validates path containment, JEV packet binding,
+   restart rehydration, operation idempotency/cancellation/fencing, trusted
+   evidence, exact allowlists, redaction, state quotas, audit-journal integrity,
+   policy checks, capability availability, structured executor failures, and
+   evidence-gated completion.
 8. **Platform Components** — Validates the typed workflow/catalog authority,
-   optional MCP seam, provenance-aware memory, governed evolution lifecycle,
-   and provider-neutral evaluation runner.
+   optional MCP seam, provenance-aware memory and memory retention, governed
+   evolution lifecycle and bounded event retention, provider-neutral evaluation,
+   lifecycle/session hooks, task routing, archive restore, and task retention.
 
 ## How to Run Tests
 

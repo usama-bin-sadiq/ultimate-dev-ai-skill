@@ -1,67 +1,91 @@
-"""
-Jev Core Types - System One Decision Layer
-Type-safe enums and dataclasses for Jev decision layer.
+"""Typed compatibility definitions for the retired Python JEV implementation.
+
+The Python JEV package is a compatibility surface only.  It is intentionally
+kept importable so old callers receive a useful, typed error instead of a
+partially functioning decision engine.  The supported decision kernel lives in
+``runtime/jev/engine.mjs`` (or an equivalent host-native implementation).
 """
 from __future__ import annotations
-from enum import Enum
+
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Any
-from datetime import datetime
+from enum import Enum
+from typing import Any, Dict, List, Optional
+
+
+class LegacyUnavailableError(RuntimeError):
+    """Raised when a retired compatibility entry point is reached.
+
+    ``code`` is deliberately stable for callers that need to distinguish this
+    boundary from an ordinary programming or provider failure.
+    """
+
+    code = "legacy_unavailable"
+    error_code = code
+
+    def __init__(
+        self,
+        component: str = "runtime.core.jev",
+        operation: str = "legacy entry point",
+    ) -> None:
+        self.component = component
+        self.operation = operation
+        message = (
+            f"{self.code}: {component}.{operation} is unavailable; use the "
+            "host-native JEV contract or runtime/jev/engine.mjs"
+        )
+        super().__init__(message)
+
+    def to_dict(self) -> Dict[str, str]:
+        return {
+            "code": self.code,
+            "component": self.component,
+            "operation": self.operation,
+            "message": str(self),
+        }
+
+
+class UnsafeDevelopmentError(RuntimeError):
+    """Stable error code for explicitly unsafe development-only operations."""
+
+    code = "unsafe-development"
+    error_code = code
+
+    def __init__(
+        self,
+        component: str = "runtime.core",
+        operation: str = "unsafe development operation",
+    ) -> None:
+        self.component = component
+        self.operation = operation
+        message = (
+            f"{self.code}: {component}.{operation} is disabled; this legacy "
+            "surface is not a supported execution boundary"
+        )
+        super().__init__(message)
+
+    def to_dict(self) -> Dict[str, str]:
+        return {
+            "code": self.code,
+            "component": self.component,
+            "operation": self.operation,
+            "message": str(self),
+        }
+
+
+# Compatibility aliases used by older integrations.
+LegacyUnavailable = LegacyUnavailableError
+UnsafeDevelopment = UnsafeDevelopmentError
+LegacyJevUnavailableError = LegacyUnavailableError
+JevLegacyUnavailableError = LegacyUnavailableError
 
 
 class JevDecisionType(Enum):
-    """Guardrail decision types"""
     APPROVE = "approve"
     DENY = "deny"
     HUMAN_REVIEW = "human_review"
 
 
 class RoutingTarget(Enum):
-    """Where to route the task for execution"""
-    EXECUTE_TOOL = "execute_tool"
-    HUMAN_REVIEW = "human_review"
-    LIGHTWEIGHT_BACKEND = "lightweight_backend"
-    BACKEND = "backend"
-    FLAGSHIP_LLM = "flagship_llm"
-
-
-class RiskLevel(Enum):
-    NONE = "none"
-    LOW = "low"
-    MEDIUM = "medium"
-    HIGH = "high"
-    CRITICAL = "critical"
-
-
-class TaskComplexity(Enum):
-    ATOMIC = "atomic"
-    MODERATE = "moderate"
-    COMPLEX = "complex"
-
-
-class ClarityLevel(Enum):
-    CLEAR = "clear"
-    RESOLVABLE = "resolvable"
-    BLOCKED = "blocked"
-
-
-class PatternHint(Enum):
-    A = "A"  # Skills - single domain, inline
-    B = "B"  # Subagents - parallel independent domains
-    C = "C"  # Handoffs - sequential dependent stages
-    D = "D"  # Router - classification and dispatch
-    COMPOSE = "compose"  # Multiple patterns combined
-
-
-class JevDecisionType(Enum):
-    """Guardrail decision types"""
-    APPROVE = "approve"
-    DENY = "deny"
-    HUMAN_REVIEW = "human_review"
-
-
-class RoutingTarget(Enum):
-    """Where to route the task for execution"""
     EXECUTE_TOOL = "execute_tool"
     HUMAN_REVIEW = "human_review"
     LIGHTWEIGHT_BACKEND = "lightweight_backend"
@@ -97,62 +121,32 @@ class PatternHint(Enum):
     COMPOSE = "compose"
 
 
-# Core result types
 @dataclass
 class NOULResult:
-    """Boolean decision result from NOUL classifier."""
     decision: bool
     probability: float
     reasoning: str
     rule_id: str
 
+
 @dataclass
 class ChoiceResult:
-    """Multi-class classification result."""
     selected: str
     probabilities: Dict[str, float]
     reasoning: str
     rule_id: str
 
+
 @dataclass
 class ScoreResult:
-    """Risk/scale scoring result."""
     value: float
     level: RiskLevel
     reasoning: str
     rule_id: str
 
 
-# Core result types
-@dataclass
-class NOULResult:
-    """Boolean decision result from NOUL classifier."""
-    decision: bool
-    probability: float
-    reasoning: str
-    rule_id: str
-
-@dataclass
-class ChoiceResult:
-    """Multi-class classification result."""
-    selected: str
-    probabilities: Dict[str, float]
-    reasoning: str
-    rule_id: str
-
-@dataclass
-class ScoreResult:
-    """Risk/scale scoring result."""
-    value: float
-    level: RiskLevel
-    reasoning: str
-    rule_id: str
-
-
-# Complete classification result
 @dataclass
 class JevClassification:
-    """Complete classification result from Jev."""
     size: str
     domains: List[str]
     risk: str
@@ -162,32 +156,26 @@ class JevClassification:
     confidence: float
 
 
-# Aggregated decision from Jev pipeline
 @dataclass
 class JevAggregatedDecision:
-    """Deterministic aggregation of NOUL + CHOICE + SCORE."""
-    # Required fields first (no defaults)
+    """Legacy data shape retained for import compatibility.
+
+    Constructing this data object does not execute a decision.  All legacy
+    classifiers and routing entry points refuse to produce one.
+    """
+
     guardrail_decision: str
     routing_target: str
     selected_backend: str
-
-    # Guardrails
     guardrail_confidence: float = 0.0
     guardrail_reason: str = ""
     human_review_required: bool = False
-
-    # Dynamic Routing
     routing_confidence: float = 0.0
     routing_reason: str = ""
-    selected_backend: str = "backend"
-
-    # Context Slimming
     pruned_tools: List[str] = field(default_factory=list)
     retained_tools: List[str] = field(default_factory=list)
     slimming_reason: str = ""
     slimming_confidence: float = 0.0
-
-    # Classification Output
     size: str = "moderate"
     domains: List[str] = field(default_factory=list)
     risk_flags: List[str] = field(default_factory=list)
@@ -196,28 +184,26 @@ class JevAggregatedDecision:
     domain_hints: List[str] = field(default_factory=list)
     specialist_hints: List[str] = field(default_factory=list)
     ambiguity_flags: List[str] = field(default_factory=list)
-
-    # Metadata
     processing_time_ms: float = 0.0
     confidence_breakdown: Dict[str, float] = field(default_factory=dict)
-    raw_noul: Optional[Dict] = None
-    raw_choice: Optional[Dict] = None
-    raw_score: Optional[Dict] = None
+    raw_noul: Optional[Dict[str, Any]] = None
+    raw_choice: Optional[Dict[str, Any]] = None
+    raw_score: Optional[Dict[str, Any]] = None
 
 
-# Context and input types
 @dataclass
 class JevInput:
-    """Input to Jev classifier."""
     user_input: str
     langchain_state: Dict[str, Any]
     available_tools: List[Dict[str, Any]]
-    session_config: Dict[str, Any]
+    session_config: Optional[Dict[str, Any]] = None
+
+    def __post_init__(self) -> None:
+        raise LegacyUnavailableError("runtime.core.jev.types", "JevInput")
 
 
 @dataclass
 class JevContext:
-    """Context passed through Jev pipeline."""
     user_input: str
     langchain_state: Dict[str, Any]
     available_tools: List[Dict[str, Any]]
@@ -225,21 +211,31 @@ class JevContext:
     project_root: str
     session_id: Optional[str] = None
 
+    def __post_init__(self) -> None:
+        raise LegacyUnavailableError("runtime.core.jev.types", "JevContext")
+
 
 @dataclass
 class JevDecisionPacket:
-    """Complete decision packet from Jev Core."""
-    aggregated: 'JevAggregatedDecision'
-    guardrail_result: Dict
-    routing_decision: Dict
-    slimming_result: Dict
+    aggregated: JevAggregatedDecision
+    guardrail_result: Dict[str, Any]
+    routing_decision: Dict[str, Any]
+    slimming_result: Dict[str, Any]
     processing_time_ms: float
     should_execute: bool
     should_escalate: bool
 
+    def __post_init__(self) -> None:
+        raise LegacyUnavailableError("runtime.core.jev.types", "JevDecisionPacket")
 
-# Re-export for backward compatibility
+
 __all__ = [
+    "LegacyUnavailableError",
+    "LegacyUnavailable",
+    "UnsafeDevelopment",
+    "LegacyJevUnavailableError",
+    "JevLegacyUnavailableError",
+    "UnsafeDevelopmentError",
     "JevDecisionType",
     "RoutingTarget",
     "RiskLevel",

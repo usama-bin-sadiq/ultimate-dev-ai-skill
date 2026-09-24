@@ -1,3 +1,4 @@
+import time
 import unittest
 
 from runtime.core.capabilities import CapabilityRegistry
@@ -130,6 +131,30 @@ class MCPAdapterTests(unittest.TestCase):
         unavailable = adapter.start_task("read_value", {"key": "x"})
         self.assertEqual(unavailable.status, "unavailable")
         self.assertEqual(unavailable.error_code, "mcp_tasks_unavailable")
+
+    def test_timeout_is_uncertain_and_task_handles_are_validated(self):
+        class BlockingTransport(FakeTransport):
+            def call_tool(self, name, arguments):
+                time.sleep(0.05)
+                return self.result
+
+        adapter = MCPAdapter(BlockingTransport(), timeout_seconds=0.001)
+        result = adapter.call_tool("read_value", {"key": "x"})
+        self.assertEqual(result.status, "uncertain")
+        self.assertEqual(result.error_code, "mcp_call_timeout")
+
+        class TaskTransport(FakeTransport):
+            def create_task(self, name, arguments):
+                return {"task_id": "../escape"}
+
+            def get_task(self, task_id):
+                return []
+
+        task_adapter = MCPAdapter(TaskTransport())
+        created = task_adapter.start_task("read_value", {"key": "x"})
+        self.assertEqual(created.status, "failed")
+        self.assertEqual(created.error_code, "mcp_task_handle_missing")
+        self.assertEqual(task_adapter.get_task("../escape").error_code, "mcp_task_id_invalid")
 
     def test_malformed_tool_descriptor_fails_closed(self):
         class BadTransport(FakeTransport):

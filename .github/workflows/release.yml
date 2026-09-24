@@ -1,36 +1,47 @@
-name: Auto Release on Merge
+name: Auto Release on Main
 
 on:
-  # Trigger when PR is merged to main
+  # Push covers direct commits and every merge path (including merge queues).
+  # The pull_request trigger below preserves explicit PR release labels.
+  push:
+    branches: [main]
   pull_request:
     types: [closed]
     branches: [main]
-  
-  # Also allow manual trigger
   workflow_dispatch:
     inputs:
       version_type:
         description: 'Version bump type'
         required: true
         type: choice
-        options:
-          - patch
-          - minor
-          - major
+        options: [patch, minor, major]
       release_notes:
         description: 'Optional custom release notes'
         required: false
         type: string
 
 permissions:
-  contents: write
-  pull-requests: read
+  contents: read
+
+# Never cancel an in-flight release halfway through.  A single repository-wide
+# group serializes push, merged-PR, and manual releases. Generated maintenance
+# commits are ignored to prevent a release commit from recursively releasing.
+concurrency:
+  group: ultimate-dev-write-${{ github.repository }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
-  # Determine if we should release
   should-release:
     name: Determine Release Need
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
     outputs:
       should_release: ${{ steps.check.outputs.should_release }}
       version_type: ${{ steps.check.outputs.version_type }}
@@ -38,164 +49,292 @@ jobs:
     steps:
       - name: Determine release need
         id: check
+        env:
+          # Repository secret; use a least-privilege fine-grained token with
+          # Contents read/write and Pull requests read access.
+          EVENT_NAME: ${{ github.event_name }}
+          MERGED: ${{ github.event.pull_request.merged }}
+          PR_LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+          PUSH_REF: ${{ github.ref }}
+          PUSH_SHA: ${{ github.sha }}
+          PUSH_MESSAGE: ${{ github.head_commit.message }}
+          ULTIMATE_DEV_TOKEN: ${{ secrets.ULTIMATE_DEV_TOKEN }}
+          MANUAL_VERSION_TYPE: ${{ inputs.version_type }}
+          MANUAL_RELEASE_NOTES: ${{ inputs.release_notes }}
         run: |
-          # Handle manual workflow_dispatch
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "should_release=true" >> $GITHUB_OUTPUT
-            echo "version_type=${{ github.event.inputs.version_type }}" >> $GITHUB_OUTPUT
-            echo "release_notes=${{ github.event.inputs.release_notes }}" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-          
-          # Only process merged PRs, not just closed
-          if [ "${{ github.event.pull_request.merged }}" != "true" ]; then
-            echo "should_release=false" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-          
-          # Get PR labels
-          labels=$(echo '${{ toJson(github.event.pull_request.labels.*.name) }}')
-          
-          # Check for release labels
-          if echo "$labels" | grep -q '"release:major"'; then
-            echo "should_release=true" >> $GITHUB_OUTPUT
-            echo "version_type=major" >> $GITHUB_OUTPUT
-          elif echo "$labels" | grep -q '"release:minor"'; then
-            echo "should_release=true" >> $GITHUB_OUTPUT
-            echo "version_type=minor" >> $GITHUB_OUTPUT
-          elif echo "$labels" | grep -q '"release:patch"'; then
-            echo "should_release=true" >> $GITHUB_OUTPUT
-            echo "version_type=patch" >> $GITHUB_OUTPUT
-          elif echo "$labels" | grep -q '"release"'; then
-            echo "should_release=true" >> $GITHUB_OUTPUT
-            echo "version_type=patch" >> $GITHUB_OUTPUT
-          else
-            # Check commit messages for conventional commits
-            echo "should_release=true" >> $GITHUB_OUTPUT
-            echo "version_type=patch" >> $GITHUB_OUTPUT
-          fi
-          
-          # Extract release notes from PR body if available
-          pr_body=$(echo '${{ github.event.pull_request.body }}' | jq -Rs .)
-          echo "release_notes=$pr_body" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          write_scalar() {
+            printf '%s=%s\n' "$1" "$2" >> "$GITHUB_OUTPUT"
+          }
+          write_notes() {
+            python3 - "$GITHUB_OUTPUT" "$1" <<'PY'
+          import secrets
+          import sys
+          from pathlib import Path
 
-  # Generate changelog from PR
+          output = Path(sys.argv[1])
+          value = sys.argv[2]
+          delimiter = "ULTIMATE_DEV_" + secrets.token_hex(16)
+          while delimiter in value:
+              delimiter = "ULTIMATE_DEV_" + secrets.token_hex(16)
+          with output.open("a", encoding="utf-8") as stream:
+              stream.write(f"release_notes<<{delimiter}\n{value}\n{delimiter}\n")
+          PY
+          }
+
+          if [ "$EVENT_NAME" = 'workflow_dispatch' ]; then
+            case "$MANUAL_VERSION_TYPE" in
+              patch|minor|major) ;;
+              *) echo 'Invalid manual version_type' >&2; exit 2 ;;
+            esac
+            write_scalar should_release true
+            write_scalar version_type "$MANUAL_VERSION_TYPE"
+            write_notes "$MANUAL_RELEASE_NOTES"
+            exit 0
+          fi
+
+          write_scalar should_release false
+          write_scalar version_type ''
+          write_notes ''
+
+          if [ "$EVENT_NAME" = 'pull_request' ]; then
+            if [ "$MERGED" != 'true' ]; then
+              exit 0
+            fi
+
+            version_type=$(printf '%s' "$PR_LABELS" | jq -r '
+              map(select(. == "release:major" or . == "release:minor" or . == "release:patch")) |
+              if index("release:major") then "major"
+              elif index("release:minor") then "minor"
+              elif index("release:patch") then "patch"
+              else empty end')
+            if [ -z "$version_type" ]; then
+              echo 'Merged PR has no explicit release label; the main push event will handle it.' >&2
+              exit 0
+            fi
+
+            write_scalar should_release true
+            write_scalar version_type "$version_type"
+            exit 0
+          fi
+
+          if [ "$EVENT_NAME" != 'push' ] || [ "$PUSH_REF" != 'refs/heads/main' ]; then
+            exit 0
+          fi
+
+          # The release commit and generated sync commit must not recursively
+          # start another release. They are ordinary maintenance outputs, not
+          # product releases.
+          case "$PUSH_MESSAGE" in
+            'chore: release v'*|'chore: auto-sync manifest and docs'*)
+              echo 'Generated maintenance commit; skipping recursive release.' >&2
+              exit 0
+              ;;
+          esac
+
+          if [[ ! "$PUSH_SHA" =~ ^[0-9a-fA-F]{40}$ ]]; then
+            echo 'Invalid push commit SHA; refusing release.' >&2
+            exit 1
+          fi
+
+          # A merged PR with an explicit release label is handled by the
+          # pull_request event.  This API lookup prevents the same merge from
+          # being released twice while allowing unlabeled merges and direct
+          # commits to use the push path.
+          pr_payload=$(curl --fail --silent --show-error \
+            --header 'Accept: application/vnd.github+json' \
+            --header 'X-GitHub-Api-Version: 2022-11-28' \
+            --header "Authorization: Bearer $ULTIMATE_DEV_TOKEN" \
+            "$GITHUB_API/repos/$GITHUB_REPOSITORY/commits/$PUSH_SHA/pulls")
+          release_label=$(printf '%s' "$pr_payload" | jq -r '
+            map(select(.merged_at != null) | .labels[]?.name) |
+            map(select(. == "release:major" or . == "release:minor" or . == "release:patch")) |
+            first // empty')
+          if [ -n "$release_label" ]; then
+            echo "Merged PR with $release_label is handled by the pull_request event." >&2
+            exit 0
+          fi
+
+          # Direct commits and unlabeled merges receive a deterministic bump:
+          # explicit trailers override Conventional Commit inference.
+          lower_message=${PUSH_MESSAGE,,}
+          case "$lower_message" in
+            *'[release:major]'*|*'breaking change'*|*'!:'*) version_type='major' ;;
+            *'[release:minor]'*|*'feat:'*|*'feat '*|*'feature:'*|*'feature '*) version_type='minor' ;;
+            *'[release:patch]'*) version_type='patch' ;;
+            *) version_type='patch' ;;
+          esac
+
+          write_scalar should_release true
+          write_scalar version_type "$version_type"
+
   generate-changelog:
     name: Generate Changelog Entry
     needs: should-release
     if: needs.should-release.outputs.should_release == 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
     outputs:
       changelog_entry: ${{ steps.changelog.outputs.entry }}
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: main
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: false
 
-      - name: Generate changelog entry from PR
+      - name: Generate a bounded changelog entry
         id: changelog
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+          PUSH_SHA: ${{ github.sha }}
+          PUSH_MESSAGE: ${{ github.head_commit.message }}
         run: |
-          cd ultimate-dev
-          
-          # Get PR info
-          PR_NUMBER="${{ github.event.pull_request.number }}"
-          PR_TITLE="${{ github.event.pull_request.title }}"
-          PR_BODY="${{ github.event.pull_request.body }}"
-          PR_LABELS=$(echo '${{ toJson(github.event.pull_request.labels.*.name) }}')
-          
-          # Determine type from labels or title
-          TYPE="changed"
-          if echo "$PR_LABELS" | grep -q '"feature"'; then
-            TYPE="added"
-          elif echo "$PR_LABELS" | grep -q '"bug"'; then
-            TYPE="fixed"
-          elif echo "$PR_LABELS" | grep -q '"docs"'; then
-            TYPE="docs"
-          elif echo "$PR_LABELS" | grep -q '"breaking"'; then
-            TYPE="breaking"
-          elif echo "$PR_TITLE" | grep -qi "^feat"; then
-            TYPE="added"
-          elif echo "$PR_TITLE" | grep -qi "^fix"; then
-            TYPE="fixed"
-          elif echo "$PR_TITLE" | grep -qi "^docs"; then
-            TYPE="docs"
-          elif echo "$PR_TITLE" | grep -qi "^breaking\|^refactor"; then
-            TYPE="changed"
-          fi
-          
-          # Create changelog entry
-          DATE=$(date +%Y-%m-%d)
-          ENTRY="- $PR_TITLE (#$PR_NUMBER)"
-          
-          # Read existing changelog
-          CHANGELOG_FILE="changelog/CHANGELOG.md"
-          if [ -f "$CHANGELOG_FILE" ]; then
-            # Insert after the version header
-            awk -v entry="$ENTRY" -v type="$TYPE" -v date="$DATE" '
-              /^## \[/ && !printed {
-                print ""
-                print "### " toupper(substr(type,1,1)) substr(type,2)
-                print entry
-                printed=1
-              }
-              { print }
-            ' "$CHANGELOG_FILE" > "${CHANGELOG_FILE}.tmp" && mv "${CHANGELOG_FILE}.tmp" "$CHANGELOG_FILE"
-          fi
-          
-          # Output the entry for release notes
-          echo "entry<<EOF" >> $GITHUB_OUTPUT
-          echo "### $TYPE" >> $GITHUB_OUTPUT
-          echo "$ENTRY" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          entry_file="${RUNNER_TEMP}/ultimate-dev-changelog-entry"
+          export ENTRY_FILE="$entry_file"
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
 
-  # Create the actual release
+          event_name = os.environ.get("EVENT_NAME")
+          if event_name == "workflow_dispatch":
+              title = "Manual release"
+              source = " (manual)"
+              labels = []
+          elif event_name == "push":
+              commit_message = " ".join(os.environ.get("PUSH_MESSAGE", "").split())
+              short_sha = os.environ.get("PUSH_SHA", "")[:12]
+              title = commit_message[:200] or f"Commit {short_sha or 'unknown'}"
+              source = f" (commit {short_sha or 'unknown'})"
+              labels = []
+          else:
+              title = " ".join(os.environ.get("PR_TITLE", "").split())
+              title = title[:200]
+              number = os.environ.get("PR_NUMBER", "")
+              if not number.isdigit():
+                  number = "unknown"
+              source = f" (#{number})"
+              try:
+                  labels = json.loads(os.environ.get("PR_LABELS", "[]"))
+              except json.JSONDecodeError:
+                  labels = []
+
+          lowered_title = title.lower()
+          if "feature" in labels:
+              kind = "Added"
+          elif "bug" in labels:
+              kind = "Fixed"
+          elif "docs" in labels:
+              kind = "Documentation"
+          elif "breaking" in labels or lowered_title.startswith("breaking"):
+              kind = "Breaking"
+          elif lowered_title.startswith("feat"):
+              kind = "Added"
+          elif lowered_title.startswith("fix"):
+              kind = "Fixed"
+          elif lowered_title.startswith("docs"):
+              kind = "Documentation"
+          else:
+              kind = "Changed"
+
+          Path(os.environ["ENTRY_FILE"]).write_text(
+              f"### {kind}\n- {title}{source}\n",
+              encoding="utf-8",
+          )
+          PY
+          python3 - "$GITHUB_OUTPUT" "$entry_file" <<'PY'
+          import secrets
+          import sys
+          from pathlib import Path
+
+          output = Path(sys.argv[1])
+          value = Path(sys.argv[2]).read_text(encoding="utf-8")
+          delimiter = "ULTIMATE_DEV_ENTRY_" + secrets.token_hex(16)
+          while delimiter in value:
+              delimiter = "ULTIMATE_DEV_ENTRY_" + secrets.token_hex(16)
+          with output.open("a", encoding="utf-8") as stream:
+              stream.write(f"entry<<{delimiter}\n{value}\n{delimiter}\n")
+          PY
+
   create-release:
     name: Create Release
     needs: [should-release, generate-changelog]
-    if: needs.should-release.outputs.should_release == 'true'
+    if: >-
+      needs.should-release.outputs.should_release == 'true' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+         github.event.pull_request.merged == true &&
+         github.event.pull_request.head.repo.full_name == github.repository)
+      )
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Configure this environment with required reviewers and tag protection.
+    environment: release
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: main
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.ULTIMATE_DEV_TOKEN }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Install release dependency
         run: |
-          python -m pip install --upgrade pip
-          pip install pyyaml
+          python -m pip install --disable-pip-version-check --no-input \
+            "PyYAML==6.0.2"
 
       - name: Configure Git
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
 
       - name: Bump version
         id: version
+        env:
+          VERSION_TYPE: ${{ needs.should-release.outputs.version_type }}
         run: |
-          cd ultimate-dev
-          current=$(cat ../VERSION)
+          set -euo pipefail
+          current=$(tr -d '[:space:]' < VERSION)
+          if ! [[ "$current" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid canonical VERSION: $current" >&2
+            exit 1
+          fi
           IFS='.' read -r major minor patch <<< "$current"
-          
-          version_type="${{ needs.should-release.outputs.version_type }}"
-          
-          case "$version_type" in
+          major=$((10#$major))
+          minor=$((10#$minor))
+          patch=$((10#$patch))
+          case "$VERSION_TYPE" in
             major) major=$((major + 1)); minor=0; patch=0 ;;
             minor) minor=$((minor + 1)); patch=0 ;;
             patch) patch=$((patch + 1)) ;;
+            *) echo "Invalid release version type: $VERSION_TYPE" >&2; exit 1 ;;
           esac
-          
           new_version="$major.$minor.$patch"
-          echo "$new_version" > ../VERSION
-          echo "new_version=$new_version" >> $GITHUB_OUTPUT
-          echo "old_version=$current" >> $GITHUB_OUTPUT
-          echo "version_type=$version_type" >> $GITHUB_OUTPUT
+          if git ls-remote --exit-code --tags origin "refs/tags/v$new_version" >/dev/null 2>&1; then
+            echo "Tag v$new_version already exists; refusing duplicate release" >&2
+            exit 1
+          fi
+          version_tmp=$(mktemp VERSION.tmp.XXXXXX)
+          printf '%s\n' "$new_version" > "$version_tmp"
+          mv -- "$version_tmp" VERSION
+          printf 'new_version=%s\n' "$new_version" >> "$GITHUB_OUTPUT"
+          printf 'old_version=%s\n' "$current" >> "$GITHUB_OUTPUT"
+          printf 'version_type=%s\n' "$VERSION_TYPE" >> "$GITHUB_OUTPUT"
 
       - name: Generate manifest
         run: |
@@ -208,48 +347,56 @@ jobs:
           python scripts/sync-docs.py
 
       - name: Prepare changelog
+        env:
+          NEW_VERSION: ${{ steps.version.outputs.new_version }}
+          CHANGELOG_ENTRY: ${{ needs.generate-changelog.outputs.changelog_entry }}
         run: |
+          set -euo pipefail
           cd ultimate-dev
-          # The changelog entry was already added by generate-changelog job
-          # Just ensure proper formatting
           date_str=$(date +%Y-%m-%d)
-          
-          # If this is a new version, add version header
-          if ! grep -q "## \[${{ steps.version.outputs.new_version }}\]" changelog/CHANGELOG.md; then
-            tmp=$(mktemp)
-            echo "# Changelog" > "$tmp"
-            echo "" >> "$tmp"
-            echo "## [${{ steps.version.outputs.new_version }}] — $date_str" >> "$tmp"
-            echo "" >> "$tmp"
-            # Add the entry from generate-changelog
-            echo "${{ needs.generate-changelog.outputs.changelog_entry }}" >> "$tmp"
-            echo "" >> "$tmp"
-            cat changelog/CHANGELOG.md >> "$tmp"
-            mv "$tmp" changelog/CHANGELOG.md
+          if ! grep -Fqx -- "## [$NEW_VERSION]" changelog/CHANGELOG.md; then
+            tmp=$(mktemp changelog/CHANGELOG.md.tmp.XXXXXX)
+            {
+              printf '%s\n\n' '# Changelog'
+              printf '## [%s] — %s\n\n' "$NEW_VERSION" "$date_str"
+              printf '%s\n\n' "$CHANGELOG_ENTRY"
+              cat changelog/CHANGELOG.md
+            } > "$tmp"
+            mv -- "$tmp" changelog/CHANGELOG.md
           fi
 
-      - name: Commit changes
+      - name: Commit release files
+        env:
+          NEW_VERSION: ${{ steps.version.outputs.new_version }}
         run: |
-          git add VERSION ultimate-dev/skill-manifest.yaml ultimate-dev/README.md ultimate-dev/changelog/CHANGELOG.md
-          git commit -m "chore: release v${{ steps.version.outputs.new_version }}"
+          set -euo pipefail
+          git add -- VERSION ultimate-dev/skill-manifest.yaml ultimate-dev/README.md ultimate-dev/changelog/CHANGELOG.md
+          git diff --cached --quiet && {
+            echo 'Release produced no file changes' >&2
+            exit 1
+          }
+          git commit -m "chore: release v$NEW_VERSION"
 
       - name: Create tag
+        env:
+          NEW_VERSION: ${{ steps.version.outputs.new_version }}
         run: |
-          git tag -a "v${{ steps.version.outputs.new_version }}" -m "Release v${{ steps.version.outputs.new_version }}"
+          set -euo pipefail
+          git tag -a "v$NEW_VERSION" -m "Release v$NEW_VERSION"
 
       - name: Push changes
-        run: |
-          git push origin main --tags
+        run: git push origin main --tags
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: "v${{ steps.version.outputs.new_version }}"
-          name: "v${{ steps.version.outputs.new_version }}"
+          token: ${{ secrets.ULTIMATE_DEV_TOKEN }}
+          tag_name: v${{ steps.version.outputs.new_version }}
+          name: v${{ steps.version.outputs.new_version }}
           body: |
+            ${{ needs.should-release.outputs.release_notes }}
+
             ${{ needs.generate-changelog.outputs.changelog_entry }}
-            
+
             **Full Changelog**: https://github.com/${{ github.repository }}/compare/v${{ steps.version.outputs.old_version }}...v${{ steps.version.outputs.new_version }}
           generate_release_notes: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

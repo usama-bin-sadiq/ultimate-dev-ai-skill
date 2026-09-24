@@ -209,15 +209,28 @@ chore: release v2.5.2
 
 ### On Release (release.yml)
 Triggered by:
+- Any ordinary commit pushed or merged to `main` (including merge queues)
+- A PR merged to `main` with a `release:*` label (the push event detects this and avoids a duplicate)
 - Manual `workflow_dispatch` (patch/minor/major + optional notes)
-- PR merged to `main` with `release:*` label
+
+Version selection:
+- Explicit `release:*` PR labels select the bump for labeled PRs.
+- Push events infer `major` from `BREAKING CHANGE`/`!:` or `[release:major]`,
+  `minor` from `feat:`/`feature:` or `[release:minor]`, and otherwise use `patch`.
+- Generated `chore: release v*` and `chore: auto-sync manifest and docs` commits
+  are ignored so automation cannot recursively release itself.
 
 Actions:
-- Bump version (from label or input)
+- Bump version (from label, commit convention, or input)
 - Regenerate manifest + sync docs
 - Update changelog
 - Commit + tag + push
 - Create GitHub Release
+
+The repository secret `ULTIMATE_DEV_TOKEN` supplies the token used by the
+release job. It should be a least-privilege fine-grained token with Contents
+read/write and Pull requests read access. The `release` environment remains
+the required approval boundary.
 
 ---
 

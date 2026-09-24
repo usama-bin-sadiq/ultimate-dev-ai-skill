@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import { decide, validateDecisionRequest, JEV_SCHEMA_VERSION } from "../../runtime/jev/engine.mjs";
+import { decide, validateDecisionPacket, validateDecisionRequest, JEV_SCHEMA_VERSION } from "../../runtime/jev/engine.mjs";
 
 const policy = (overrides = {}) => ({
   policy_version: "test.policy.v1",
@@ -22,8 +22,33 @@ const policy = (overrides = {}) => ({
   ...overrides,
 });
 
+const approvalScope = ({
+  taskId = "task-jev-001",
+  operation = "write",
+  reversibility = "reversible",
+  effects = [operation],
+  description = "A bounded test scope",
+  projectRoot = null,
+  targets = ["fixture"],
+  policyVersion = "test.policy.v1",
+  catalogVersion = "catalog.test.v1",
+} = {}) => ({
+  task_id: taskId,
+  operation,
+  policy_version: policyVersion,
+  capability_catalog_version: catalogVersion,
+  reversibility,
+  effects,
+  action_scope: {
+    description,
+    project_root: projectRoot,
+    targets,
+  },
+});
+
 const request = ({
   operation = "read",
+  effects = [operation],
   signals = {},
   choice = {},
   scores = {},
@@ -34,9 +59,11 @@ const request = ({
   evidence = ["evidence-1"],
   environment = "development",
   reversibility = "reversible",
+  evaluationTime = "2026-09-24T12:00:00Z",
 } = {}) => ({
   schema_version: "1.0",
   task_id: "task-jev-001",
+  evaluation_time: evaluationTime,
   orchestration_state: {
     state_id: "state-001",
     pattern: "inline",
@@ -82,7 +109,7 @@ const request = ({
         },
       },
       requested_capabilities: requested,
-      effects: [operation],
+      effects,
       evidence_refs: evidence,
     },
   },
@@ -161,7 +188,13 @@ test("a scoped approval allows a reversible side effect", () => {
     policyOverrides: { approval_required_effects: ["write"] },
     catalog: [{ id: "filesystem.write", available: true, reversible: true, isolation: "host_managed", risk: 0.4, effects: ["write"] }],
     requested: [{ id: "filesystem.write", required: true, reason: "Write the approved output." }],
-    approvals: [{ capability_id: "filesystem.write", effect: "write", scope: "fixture", confirmed_at: "2026-09-24T00:00:00Z" }],
+    approvals: [{
+      capability_id: "filesystem.write",
+      effect: "write",
+      scope: approvalScope(),
+      confirmed_at: "2026-09-24T11:55:00Z",
+      expires_at: "2026-09-24T12:05:00Z",
+    }],
   }));
 
   assert.equal(packet.guardrail.action, "approve");
@@ -245,6 +278,195 @@ test("a capability cannot be selected for an undeclared effect", () => {
   assert.ok(packet.guardrail.reasons.some((item) => item.code === "capability_effect_not_declared"));
 });
 
+test("every proposed effect is covered by the selected capability set", () => {
+  for (const sideEffect of ["write", "delete", "network"]) {
+    const packet = decide(request({
+      operation: sideEffect,
+      effects: ["read", sideEffect],
+      requested: [{ id: "filesystem.read", required: true, reason: "Read the relevant files." }],
+      catalog: [{ id: "filesystem.read", available: true, reversible: true, isolation: "host_managed", risk: 0.1, effects: ["read"] }],
+    }));
+
+    assert.equal(packet.guardrail.action, "human_review", `${sideEffect} must require review`);
+    assert.equal(packet.execution_effect, "review");
+    assert.deepEqual(packet.capability_plan.selected, []);
+    const coverageReason = packet.guardrail.reasons.find((item) => item.code === "effect_coverage_incomplete");
+    assert.ok(coverageReason, `${sideEffect} must expose a coverage reason`);
+    assert.equal(coverageReason.path, "model_assessment.proposal.effects");
+  }
+});
+
+test("a complete requested capability set may execute with scoped approval", () => {
+  const packet = decide(request({
+    operation: "write",
+    effects: ["read", "write"],
+    requested: [
+      { id: "filesystem.read", required: true, reason: "Read the relevant files." },
+      { id: "filesystem.write", required: true, reason: "Write the approved output." },
+    ],
+    catalog: [
+      { id: "filesystem.read", available: true, reversible: true, isolation: "host_managed", risk: 0.1, effects: ["read"] },
+      { id: "filesystem.write", available: true, reversible: true, isolation: "host_managed", risk: 0.4, effects: ["write"] },
+    ],
+    policyOverrides: { approval_required_effects: ["write"] },
+    approvals: [{
+      capability_id: "filesystem.write",
+      effect: "write",
+      scope: approvalScope({ effects: ["read", "write"] }),
+      confirmed_at: "2026-09-24T11:55:00Z",
+      expires_at: "2026-09-24T12:05:00Z",
+    }],
+  }));
+
+  assert.equal(packet.guardrail.action, "approve");
+  assert.equal(packet.execution_effect, "execute");
+  assert.deepEqual(packet.capability_plan.selected, ["filesystem.read", "filesystem.write"]);
+});
+
+test("an approval must bind the task and exact action scope", () => {
+  const packet = decide(request({
+    operation: "write",
+    policyOverrides: { approval_required_effects: ["write"] },
+    catalog: [{ id: "filesystem.write", available: true, reversible: true, isolation: "host_managed", risk: 0.4, effects: ["write"] }],
+    requested: [{ id: "filesystem.write", required: true, reason: "Write the approved output." }],
+    approvals: [{
+      capability_id: "filesystem.write",
+      effect: "write",
+      scope: approvalScope({ taskId: "another-task" }),
+      confirmed_at: "2026-09-24T11:55:00Z",
+      expires_at: "2026-09-24T12:05:00Z",
+    }],
+  }));
+
+  assert.equal(packet.guardrail.action, "human_review");
+  assert.equal(packet.execution_effect, "review");
+  assert.deepEqual(packet.capability_plan.selected, []);
+  assert.ok(packet.guardrail.reasons.some((item) => item.code === "approval_scope_mismatch"));
+});
+
+test("approval freshness fails closed without an explicit evaluation time", () => {
+  const input = request({
+    operation: "write",
+    policyOverrides: { approval_required_effects: ["write"] },
+    catalog: [{ id: "filesystem.write", available: true, reversible: true, isolation: "host_managed", risk: 0.4, effects: ["write"] }],
+    requested: [{ id: "filesystem.write", required: true, reason: "Write the approved output." }],
+    approvals: [{
+      capability_id: "filesystem.write",
+      effect: "write",
+      scope: approvalScope(),
+      confirmed_at: "2026-09-24T11:55:00Z",
+      expires_at: "2026-09-24T12:05:00Z",
+    }],
+  });
+  delete input.evaluation_time;
+
+  const packet = decide(input);
+  assert.equal(packet.execution_effect, "review");
+  assert.deepEqual(packet.capability_plan.selected, []);
+  assert.ok(packet.guardrail.reasons.some((item) => item.code === "evaluation_time_required"));
+
+  const sideEffectWithoutTime = request({
+    operation: "write",
+    policyOverrides: { approval_required_effects: [] },
+    catalog: [{ id: "filesystem.write", available: true, reversible: true, isolation: "host_managed", risk: 0.1, effects: ["write"] }],
+    requested: [{ id: "filesystem.write", required: true, reason: "Write a bounded result." }],
+  });
+  delete sideEffectWithoutTime.evaluation_time;
+  const sideEffectPacket = decide(sideEffectWithoutTime);
+  assert.equal(sideEffectPacket.execution_effect, "review");
+  assert.ok(sideEffectPacket.guardrail.reasons.some((item) => item.code === "evaluation_time_required"));
+
+  const explicitlyTimed = decide(input, { evaluation_time: "2026-09-24T12:00:00Z" });
+  assert.equal(explicitlyTimed.execution_effect, "execute");
+});
+
+test("expired, stale, and future approvals are never executable", () => {
+  const cases = [
+    ["2026-09-24T10:00:00Z", "2026-09-24T11:00:00Z", "approval_expired"],
+    ["2026-09-24T00:00:00Z", "2026-09-24T13:00:00Z", "approval_stale"],
+    ["2026-09-24T12:01:00Z", "2026-09-24T12:05:00Z", "approval_future_dated"],
+  ];
+  for (const [confirmedAt, expiresAt, code] of cases) {
+    const packet = decide(request({
+      operation: "write",
+      policyOverrides: { approval_required_effects: ["write"] },
+      catalog: [{ id: "filesystem.write", available: true, reversible: true, isolation: "host_managed", risk: 0.4, effects: ["write"] }],
+      requested: [{ id: "filesystem.write", required: true, reason: "Write the approved output." }],
+      approvals: [{ capability_id: "filesystem.write", effect: "write", scope: approvalScope(), confirmed_at: confirmedAt, expires_at: expiresAt }],
+    }));
+    assert.equal(packet.execution_effect, "review", code);
+    assert.deepEqual(packet.capability_plan.selected, [], code);
+    assert.ok(packet.guardrail.reasons.some((item) => item.code === code), code);
+  }
+});
+
+test("destructive signals force human review even with a permissive policy", () => {
+  const packet = decide(request({
+    operation: "write",
+    signals: { destructive: true },
+    policyOverrides: { approval_required_effects: [] },
+    catalog: [{ id: "filesystem.write", available: true, reversible: true, isolation: "host_managed", risk: 0.1, effects: ["write"] }],
+    requested: [{ id: "filesystem.write", required: true, reason: "Write a bounded result." }],
+  }));
+
+  assert.equal(packet.guardrail.action, "human_review");
+  assert.equal(packet.execution_effect, "review");
+  assert.deepEqual(packet.capability_plan.selected, []);
+  assert.ok(packet.guardrail.reasons.some((item) => item.code === "destructive_signal"));
+
+  const coveredDelete = decide(request({
+    operation: "delete",
+    catalog: [{ id: "filesystem.delete", available: true, reversible: true, isolation: "host_managed", risk: 0.1, effects: ["delete"] }],
+    requested: [{ id: "filesystem.delete", required: true, reason: "Remove the target." }],
+  }));
+  assert.equal(coveredDelete.guardrail.action, "human_review");
+  assert.equal(coveredDelete.execution_effect, "review");
+  assert.ok(coveredDelete.guardrail.reasons.some((item) => item.code === "destructive_effect"));
+});
+
+test("packet semantic validation rejects contradictory executable coverage", () => {
+  const input = request({
+    operation: "write",
+    effects: ["read", "write"],
+    requested: [
+      { id: "filesystem.read", required: true, reason: "Read the relevant files." },
+      { id: "filesystem.write", required: true, reason: "Write the approved output." },
+    ],
+    catalog: [
+      { id: "filesystem.read", available: true, reversible: true, isolation: "host_managed", risk: 0.1, effects: ["read"] },
+      { id: "filesystem.write", available: true, reversible: true, isolation: "host_managed", risk: 0.4, effects: ["write"] },
+    ],
+    policyOverrides: { approval_required_effects: ["write"] },
+    approvals: [{
+      capability_id: "filesystem.write",
+      effect: "write",
+      scope: approvalScope({ effects: ["read", "write"] }),
+      confirmed_at: "2026-09-24T11:55:00Z",
+      expires_at: "2026-09-24T12:05:00Z",
+    }],
+  });
+  const packet = decide(input);
+  assert.equal(validateDecisionPacket(packet, input).ok, true);
+
+  const uncovered = JSON.parse(JSON.stringify(packet));
+  uncovered.capability_plan.selected = ["filesystem.read"];
+  const uncoveredResult = validateDecisionPacket(uncovered, input);
+  assert.equal(uncoveredResult.ok, false);
+  assert.ok(uncoveredResult.errors.some((item) => item.code === "effect_coverage_incomplete"));
+
+  const contradictory = JSON.parse(JSON.stringify(packet));
+  contradictory.capability_plan.missing_capabilities = ["filesystem.write"];
+  const contradictoryResult = validateDecisionPacket(contradictory, input);
+  assert.equal(contradictoryResult.ok, false);
+  assert.ok(contradictoryResult.errors.some((item) => item.code === "executable_packet_has_missing_capabilities"));
+
+  const failed = JSON.parse(JSON.stringify(packet));
+  failed.ok = false;
+  const failedResult = validateDecisionPacket(failed, input);
+  assert.equal(failedResult.ok, false);
+  assert.ok(failedResult.errors.some((item) => item.code === "executable_packet_not_ok"));
+});
+
 test("unisolated execution is not treated as a secure sandbox", () => {
   const packet = decide(request({
     operation: "execute",
@@ -307,6 +529,10 @@ test("the schema version and contract files are stable", async () => {
   assert.equal(packetSchema.properties.schema_version.const, "1.0");
   assert.ok(requestSchema.required.includes("host_facts"));
   assert.ok(packetSchema.required.includes("execution_effect"));
+  assert.ok(requestSchema.$defs.approvalScope);
+  assert.ok(requestSchema.$defs.approval.required.includes("expires_at"));
+  assert.equal(requestSchema.$defs.approval.properties.scope.$ref, "#/$defs/approvalScope");
+  assert.ok(Array.isArray(packetSchema.allOf) && packetSchema.allOf.length >= 3);
   assert.equal(policyFile.max_capabilities, 8);
 });
 
@@ -318,4 +544,12 @@ test("validation is available independently of evaluation", () => {
   const invalid = validateDecisionRequest({ ...request(), schema_version: "2.0" });
   assert.equal(invalid.ok, false);
   assert.ok(invalid.errors.some((item) => item.code === "unsupported_schema_version"));
+
+  const legacyScope = request({
+    operation: "write",
+    approvals: [{ capability_id: "filesystem.write", effect: "write", scope: "fixture", confirmed_at: "2026-09-24T11:55:00Z", expires_at: "2026-09-24T12:05:00Z" }],
+  });
+  const legacyValidation = validateDecisionRequest(legacyScope);
+  assert.equal(legacyValidation.ok, false);
+  assert.ok(legacyValidation.errors.some((item) => item.code === "invalid_type"));
 });

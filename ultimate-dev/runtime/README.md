@@ -89,3 +89,29 @@ The runtime keeps platform features dependency-free and host-injected:
 
 These components are bounded building blocks, not claims of distributed
 consensus, provider installation, or a production multi-tenant deployment.
+
+## Lifecycle, routing, and cleanup
+
+- `core/lifecycle.py` adds explicit `paused`, `interrupted`, and `abandoned`
+  transitions, stale-operation reconciliation, checkpoints, and idempotent host
+  resource cleanup.
+- `core/task_router.py` distinguishes continuation, clarification, new-task,
+  abandon, and ambiguous messages. Ambiguous routes fail closed and cannot
+  execute against the active task.
+- The repository YAML workflow corpus is documentation-only; executable
+  workflows must be supplied as validated typed `WorkflowCatalog` descriptors.
+  This prevents an unvalidated YAML file from becoming an execution authority.
+- `core/retention.py` performs age/status-based task archival and optional
+  deletion. Dry-run is non-destructive; deletion requires an exact confirmation
+  token, archive-before-delete, symlink checks, and preservation of active,
+  failed, blocked, and uncertain work by default. Archived tasks can be
+  restored with `TaskRetentionManager.restore()`; confirmation records are
+  short-lived and durable across separate CLI processes.
+- `core/mcp.py` applies transport deadlines, validates task handles, and marks
+  deadline expiry as uncertain rather than retrying automatically.
+- `python -m runtime.task_admin --project-root <path> ...` exposes status,
+  lifecycle, routing, safe cleanup, and archive restore operations.
+
+The host must still invoke these lifecycle hooks at session boundaries. They
+are durable protocol primitives, not an operating-system service or a universal
+browser/process supervisor.

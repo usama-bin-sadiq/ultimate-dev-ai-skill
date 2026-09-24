@@ -8,7 +8,10 @@ handles. MCP remains an optional capability source, never runtime authority.
 from __future__ import annotations
 
 import inspect
+import math
 import re
+import queue
+import threading
 from dataclasses import dataclass, field
 from typing import Any, Callable, Mapping, Protocol
 
@@ -42,6 +45,8 @@ class MCPTransport(Protocol):
 
 
 _TOOL_NAME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_.-]{0,127}$")
+_TASK_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$")
+DEFAULT_TIMEOUT_SECONDS = 30.0
 
 
 @dataclass(frozen=True)
@@ -166,6 +171,28 @@ def _maybe_await(value: Any) -> Any:
     return value
 
 
+def _invoke_with_timeout(call: Callable[..., Any], timeout_seconds: float) -> Any:
+    if isinstance(timeout_seconds, bool) or not isinstance(timeout_seconds, (int, float)) or not math.isfinite(float(timeout_seconds)) or timeout_seconds <= 0:
+        raise MCPUnavailable("MCP timeout must be a positive finite number")
+    result_queue: queue.Queue[tuple[bool, Any]] = queue.Queue(maxsize=1)
+
+    def invoke() -> None:
+        try:
+            result_queue.put((True, call()))
+        except BaseException as exc:  # transport boundary; preserve the exception type
+            result_queue.put((False, exc))
+
+    worker = threading.Thread(target=invoke, name="ultimate-mcp-call", daemon=True)
+    worker.start()
+    try:
+        ok, value = result_queue.get(timeout=float(timeout_seconds))
+    except queue.Empty as exc:
+        raise MCPOperationUncertain("MCP transport exceeded its deadline") from exc
+    if ok:
+        return value
+    raise value
+
+
 @dataclass
 class MCPToolResult:
     tool: str
@@ -196,13 +223,17 @@ class MCPAdapter:
         source: str = "injected-mcp",
         fallback: Callable[[str, Mapping[str, Any]], Any] | None = None,
         fallback_equivalent: bool = False,
+        timeout_seconds: float = DEFAULT_TIMEOUT_SECONDS,
     ) -> None:
         if transport is None:
             raise MCPUnavailable("an injected MCP transport is required")
+        if isinstance(timeout_seconds, bool) or not isinstance(timeout_seconds, (int, float)) or not math.isfinite(float(timeout_seconds)) or timeout_seconds <= 0:
+            raise MCPUnavailable("timeout_seconds must be a positive finite number")
         self.transport = transport
         self.source = source
         self.fallback = fallback
         self.fallback_equivalent = fallback_equivalent
+        self.timeout_seconds = float(timeout_seconds)
         self._tools: dict[str, MCPToolDescriptor] = {}
         self._server_info: dict[str, Any] = {}
 
@@ -374,6 +405,7 @@ class MCPAdapter:
         *,
         allow_untrusted: bool = False,
         allow_fallback: bool = False,
+        timeout_seconds: float | None = None,
     ) -> MCPToolResult:
         descriptor = self._descriptor(name)
         if not descriptor.available:
@@ -381,15 +413,20 @@ class MCPAdapter:
         if descriptor.trust == "untrusted" and not allow_untrusted:
             return MCPToolResult(name, descriptor.server, "review", error_code="mcp_tool_untrusted")
         try:
+            if not isinstance(arguments, Mapping):
+                raise MCPToolMalformed("MCP arguments must be an object")
             validate_schema(dict(arguments), descriptor.input_schema, "arguments")
         except MCPToolMalformed as exc:
             return MCPToolResult(name, descriptor.server, "rejected", error_code="mcp_input_invalid", result=str(exc))
+        deadline = self.timeout_seconds if timeout_seconds is None else timeout_seconds
         call = getattr(self.transport, "call_tool", None)
         if not callable(call):
             fallback = self._fallback_result(descriptor, arguments, allow_fallback=allow_fallback)
             return fallback or MCPToolResult(name, descriptor.server, "unavailable", error_code="mcp_call_unavailable")
         try:
-            raw = _maybe_await(call(name, dict(arguments)))
+            raw = _maybe_await(_invoke_with_timeout(lambda: call(name, dict(arguments)), deadline))
+        except MCPOperationUncertain as exc:
+            return MCPToolResult(name, descriptor.server, "uncertain", error_code="mcp_call_timeout", result=type(exc).__name__)
         except TimeoutError as exc:
             return MCPToolResult(name, descriptor.server, "uncertain", error_code="mcp_call_uncertain", result=type(exc).__name__)
         except MCPUnavailable:
@@ -420,6 +457,8 @@ class MCPAdapter:
         if descriptor.trust == "untrusted":
             return MCPToolResult(name, descriptor.server, "review", error_code="mcp_tool_untrusted")
         try:
+            if not isinstance(arguments, Mapping):
+                raise MCPToolMalformed("MCP arguments must be an object")
             validate_schema(dict(arguments), descriptor.input_schema, "arguments")
         except (MCPToolMalformed, TypeError, ValueError) as exc:
             return MCPToolResult(name, descriptor.server, "rejected", error_code="mcp_input_invalid", result=str(exc))
@@ -427,29 +466,48 @@ class MCPAdapter:
         if not callable(create):
             return MCPToolResult(name, self.source, "unavailable", error_code="mcp_tasks_unavailable")
         try:
-            raw = _maybe_await(create(name, dict(arguments)))
+            raw = _maybe_await(_invoke_with_timeout(lambda: create(name, dict(arguments)), self.timeout_seconds))
+        except MCPOperationUncertain as exc:
+            return MCPToolResult(name, self.source, "uncertain", error_code="mcp_task_create_timeout", result=type(exc).__name__)
         except Exception as exc:
             return MCPToolResult(name, self.source, "failed", error_code="mcp_task_create_failed", result=type(exc).__name__)
-        if not isinstance(raw, Mapping) or not raw.get("task_id"):
+        if not isinstance(raw, Mapping) or not isinstance(raw.get("task_id"), str) or not _TASK_ID_RE.fullmatch(raw["task_id"]):
             return MCPToolResult(name, self.source, "failed", error_code="mcp_task_handle_missing")
+        if descriptor.output_schema is not None:
+            try:
+                validate_schema(dict(raw), descriptor.output_schema, "task_handle")
+            except MCPToolMalformed as exc:
+                return MCPToolResult(name, self.source, "failed", error_code="mcp_task_output_invalid", result=str(exc))
         return MCPToolResult(name, self.source, "accepted", dict(raw), provenance={"task_id": raw["task_id"]})
 
     def get_task(self, task_id: str) -> MCPToolResult:
+        if not isinstance(task_id, str) or not _TASK_ID_RE.fullmatch(task_id):
+            return MCPToolResult(str(task_id), self.source, "rejected", error_code="mcp_task_id_invalid")
         get = getattr(self.transport, "get_task", None)
         if not callable(get):
             return MCPToolResult(task_id, self.source, "unavailable", error_code="mcp_tasks_unavailable")
         try:
-            raw = _maybe_await(get(task_id))
+            raw = _maybe_await(_invoke_with_timeout(lambda: get(task_id), self.timeout_seconds))
+        except MCPOperationUncertain as exc:
+            return MCPToolResult(task_id, self.source, "uncertain", error_code="mcp_task_read_timeout", result=type(exc).__name__)
         except Exception as exc:
             return MCPToolResult(task_id, self.source, "failed", error_code="mcp_task_read_failed", result=type(exc).__name__)
-        return MCPToolResult(task_id, self.source, "success", raw, provenance={"task_id": task_id})
+        if not isinstance(raw, Mapping):
+            return MCPToolResult(task_id, self.source, "failed", error_code="mcp_task_result_malformed")
+        return MCPToolResult(task_id, self.source, "success", dict(raw), provenance={"task_id": task_id})
 
     def cancel_task(self, task_id: str) -> MCPToolResult:
+        if not isinstance(task_id, str) or not _TASK_ID_RE.fullmatch(task_id):
+            return MCPToolResult(str(task_id), self.source, "rejected", error_code="mcp_task_id_invalid")
         cancel = getattr(self.transport, "cancel_task", None)
         if not callable(cancel):
             return MCPToolResult(task_id, self.source, "unavailable", error_code="mcp_tasks_unavailable")
         try:
-            raw = _maybe_await(cancel(task_id))
+            raw = _maybe_await(_invoke_with_timeout(lambda: cancel(task_id), self.timeout_seconds))
+        except MCPOperationUncertain as exc:
+            return MCPToolResult(task_id, self.source, "uncertain", error_code="mcp_task_cancel_timeout", result=type(exc).__name__)
         except Exception as exc:
             return MCPToolResult(task_id, self.source, "failed", error_code="mcp_task_cancel_failed", result=type(exc).__name__)
-        return MCPToolResult(task_id, self.source, "success", raw, provenance={"task_id": task_id})
+        if not isinstance(raw, Mapping):
+            return MCPToolResult(task_id, self.source, "failed", error_code="mcp_task_result_malformed")
+        return MCPToolResult(task_id, self.source, "success", dict(raw), provenance={"task_id": task_id})
