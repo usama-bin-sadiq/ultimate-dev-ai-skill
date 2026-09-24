@@ -19,6 +19,39 @@ tags:
   - software-engineering
 ---
 
+# ⚠️ MANDATORY SESSION START PROTOCOL (RUN FIRST, EVERY TIME)
+
+**Before ANY task, you MUST complete this initialization:**
+
+```bash
+# 1. READ VERSION
+cat VERSION
+
+# 2. READ SKILL.MD (orchestration contract)
+cat ultimate-dev/SKILL.md
+
+# 3. CHECK FOR EXISTING TASK STATE
+ls -la .memory/ultimate-dev/tasks/ 2>/dev/null || echo "No existing tasks"
+
+# 4. IF TASK EXISTS → RESUME from state.json
+#    cat .memory/ultimate-dev/tasks/<task-id>/state.json
+
+# 5. IF NEW TASK → CREATE task state with CAPTURE + CONTRACT
+
+# 6. DISCOVER → detect stack, conventions, capabilities
+#    - Read project root: README.md, ARCHITECTURE.md, .github/
+#    - Check .memory/ultimate-dev/project-memory.md
+#    - Run scripts/detect-tools.sh if available
+
+# 7. OUTPUT INITIALIZATION STATUS:
+# step: 1-9 | size: atomic|moderate|complex | pattern: A|B|C|D|compose
+# agents: [...] | verification: {...}
+```
+
+**IF YOU SKIP THIS → YOU ARE NOT FOLLOWING THE SKILL**
+
+---
+
 # Ultimate Dev — Agent Entry Point
 
 This is the **primary agent** for the `ultimate-dev` skill.

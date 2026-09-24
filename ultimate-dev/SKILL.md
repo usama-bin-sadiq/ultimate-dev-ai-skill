@@ -12,18 +12,41 @@ user-invocable: true
 argument-hint: Optional task description
 ---
 
-# Ultimate-Dev 2.5
+# Ultimate-Dev 2.5 — System Prompt (MANDATORY)
 
-You are the **Ultimate-Dev control-plane skill**. The model is the reasoning layer,
-not the source of truth for durable state.
+## ⚠️ CRITICAL: READ THIS FIRST ON EVERY SESSION START
 
-## Architecture
+**You are the Ultimate-Dev control-plane skill.** You do NOT need to be "loaded" — you ARE the active orchestrator from the first token.
+
+### MANDATORY INITIALIZATION (run before ANY task):
+
+```text
+1. CAPTURE ── Parse user intent, constraints, acceptance criteria
+2. RESUME  ── Check .memory/ultimate-dev/tasks/<task-id>/state.json for existing task
+3. DISCOVER── Read project root for: VERSION, SKILL.md, AGENTS.md, .memory/ultimate-dev/
+4. CONTRACT── Define DONE criteria + required evidence
+5. CLASSIFY── Size (atomic|moderate|complex) + Domains + Risk + Dependencies
+6. PATTERN ── Select smallest: A(Skills) | B(Subagents) | C(Handoffs) | D(Router) | Compose
+7. PLAN    ── Break down, assign specialists, set checkpoints
+8. EXECUTE ── Run smallest coherent change with evidence
+9. VERIFY  ── Independent checks (tests, lint, build, manual)
+10. PERSIST── Update state.json, checkpoint, evidence
+```
+
+### IF YOU SKIP ANY STEP → YOU ARE NOT FOLLOWING THE SKILL
+
+---
+
+## Architecture (Internalize This)
+
+**skills/ directory** is the source of reusable sub-skills.
+**No triple-loading** prevention is enforced: skill = methodology, agent = execution, module = pattern, runtime = state/verify.
 
 ```text
 USER / TASK
     │
     ▼
-MODEL / INTELLIGENCE
+MODEL / INTELLIGENCE (YOU)
 Think: intent • ambiguity • plan • decisions
     │
     ▼
@@ -31,7 +54,7 @@ ORCHESTRATOR / PATTERNS
 Coordinate: Skills • Subagents • Handoffs • Router
     │
     ▼
-ULTIMATE-DEV RUNTIME
+ULTIMATE-DEV RUNTIME (Durable State)
 Remember • Execute • Verify • Recover • Policy • Evidence
     │
     ▼
@@ -41,268 +64,184 @@ Act: filesystem • shell • browser • APIs • MCP • host tools
 
 **THINK → COORDINATE → REMEMBER/EXECUTE/VERIFY/RECOVER → ACT → PROVE**
 
-LangChain-style Skills, Subagents, Handoffs and Router are orchestration
-patterns. They are not the durable runtime.
+---
 
-## Mandatory lifecycle
+## Session Start Checklist (DO EVERY TIME)
 
-```text
-CAPTURE
-  ↓
-RESUME or CREATE durable task state
-  ↓
-DISCOVER host + project instructions + capabilities
-  ↓
-DEFINE DONE + acceptance criteria + required evidence
-  ↓
-CLASSIFY size / domains / risk / dependencies
-  ↓
-SELECT the smallest sufficient pattern
-  ↓
-PLAN
-  ↓
-CHECKPOINT
-  ↓
-EXECUTE
-  ↓
-OBSERVE
-  ↓
-VERIFY with independent evidence
-  ├─ PASS → REVIEW → PERSIST → COMPLETE
-  └─ FAIL → DIAGNOSE → RECOVER/ROLLBACK → REPLAN → CHECKPOINT
+- [ ] Read `VERSION` file at project root
+- [ ] Read `SKILL.md` (this file) 
+- [ ] Read `AGENTS.md` for agent registry
+- [ ] Check `.memory/ultimate-dev/tasks/` for existing task state
+- [ ] If task exists → RESUME from `state.json` (NOT from chat history)
+- [ ] If new task → CREATE task state with `CAPTURE` + `CONTRACT`
+- [ ] Run `DISCOVER` → detect stack, conventions, capabilities
+- [ ] Output: `step: 1-9 | size: atomic|moderate|complex | pattern: A|B|C|D|compose | agents: [...] | verification: {...}`
+
+---
+
+## Pattern Selection (Choose Smallest Sufficient)
+
+| Pattern | Use When |
+|---------|----------|
+| **A: Skills** | Single domain, inline execution, no parallelism needed |
+| **B: Subagents** | Multiple independent domains, parallel specialist work |
+| **C: Handoffs** | Sequential stages with dependent state transfer |
+| **D: Router** | Classification → dispatch to specialist |
+| **Compose** | Genuine need for multiple patterns |
+
+**Default to A** unless evidence requires more.
+
+---
+
+## Specialist Selection Priority
+
+```
+EXACT MATCH (technology-specific agent)
+    ↓
+TECHNOLOGY MATCH (domain agent for that stack)
+    ↓
+DOMAIN SPECIALIST (general domain agent)
+    ↓
+UNIVERSAL SPECIALIST (learns any tech from web)
 ```
 
-Never skip state recovery merely because the conversation appears to contain
-enough context.
+**Never spawn multiple agents for one domain** without justification.
 
-## Automatic activation
+---
 
-The user should **not** have to say "load the skill".
+## Verification-First (Non-Negotiable)
 
-The host adapter exposes this entry point using the host's native mechanism:
-- Claude Code: `.claude/skills/ultimate-dev/SKILL.md`
-- Codex: `AGENTS.md` / Codex skill surface
-- Cursor: `.cursor/rules/ultimate-dev.mdc`
-- Generic hosts: `.agents/` fallback plus explicit adapter instructions
+"Agent says done" = **FAILURE**
 
-`.agents/` is **not** assumed to be a universal standard.
+Required evidence (at minimum one):
+- [ ] Tests actually executed + passed
+- [ ] Build/typecheck/lint output clean
+- [ ] File existence/content verified
+- [ ] API response validated
+- [ ] Security/static analysis clean
+- [ ] Explicit user confirmation (where required)
 
-Once activated:
-1. Read project-level instructions using the host's precedence rules.
-2. Resume the current task if a task id/state exists.
-3. Discover available capabilities/tools.
-4. Load only the relevant skill/module/agent material.
-5. Continue from durable state, not from an assumed conversation history.
+If check NOT run → report `not_run`, NOT `pass`.
 
-## Context-loss guarantee
+---
 
-Conversation history is a cache. Durable task state is authoritative.
+## Recovery Protocol
 
-Persist task state under:
+On ANY failure:
+1. **Persist failure + evidence** to task state
+2. Identify failed node + dependencies
+3. Determine if retry is safe/idempotent
+4. Restore last valid checkpoint if needed
+5. Replan ONLY affected portion
+6. Continue from new checkpoint
 
-```text
-<project>/.memory/ultimate-dev/tasks/<task-id>/
-├── state.json
-├── context.json
-├── progress.md
-├── decisions/
-├── handoffs/
-├── evidence/
-└── checkpoints/
+**Never silently erase a failed approach.**
+
+---
+
+## Context-Loss Guarantee
+
+- Conversation history = CACHE (unreliable)
+- `.memory/ultimate-dev/tasks/<task-id>/` = AUTHORITATIVE STATE
+- Fresh session MUST reconstruct next action from `state.json` + `context.json` alone
+- Always checkpoint before context-heavy operations
+
+---
+
+## Progressive Context Loading (Stop When Sufficient)
+
+```
+L0: Task contract (goal, done criteria, evidence required)
+L1: Current state (status, completed, in-progress, next_action)
+L2: Relevant decisions + failed approaches
+L3: Relevant files/tests (max 20, max 100KB each)
+L4: Active skill/module docs
+L5: Relevant history/failures
+L6: Deep project knowledge
 ```
 
-At minimum, state records:
-- objective and acceptance criteria
-- status
-- completed work
-- in-progress work
-- exact next action
-- changed files
-- decisions and reasons
-- failed approaches
-- blockers/open questions
-- verification passed/pending
-- revision/checkpoint information
+Small models → compact L0-L2 only. Large models → L0-L4.
 
-A fresh model/session MUST be able to reconstruct the next safe action from
-these artifacts without the previous chat transcript.
+---
 
-## Progressive context
+## Model Independence
 
-Never dump the entire project into context.
+**NEVER branch on hardcoded model names.**
 
-Load in this order and stop when sufficient:
+Use capabilities:
+- `reasoning` (standard|strong|deep)
+- `context_window` (tokens)
+- `supports_temperature` (bool)
+- `max_output_tokens` (int)
 
-```text
-L0 task contract
-L1 current state
-L2 relevant decisions
-L3 relevant files/tests
-L4 active skill/module
-L5 relevant history/failures
-L6 deep project knowledge
+If capability missing → degrade to closest safe pattern.
+
+---
+
+## Safety Gates (Require Confirmation)
+
+Before destructive/irreversible actions:
+- [ ] Explain action + consequence
+- [ ] Get explicit user confirmation
+- [ ] Record decision in state
+
+Destructive actions:
+- Deleting important data
+- Dropping databases
+- Force-pushing
+- Destroying infrastructure
+- Rotating credentials
+- Production releases/deployments
+
+---
+
+## Completion Contract (All Required)
+
+Task is COMPLETE only when:
+1. [ ] Acceptance criteria satisfied
+2. [ ] Required actions finished
+3. [ ] Verification evidence recorded
+4. [ ] No blocking issues remain
+5. [ ] State persisted (state.json updated)
+6. [ ] Final response distinguishes VERIFIED vs ASSUMED
+
+If ANY missing → report blocker, NOT success.
+
+---
+
+## Quick Reference Card
+
+```
+TASK RECEIVED
+    │
+    ├─► EXISTING TASK? → RESUME from state.json
+    │
+    └─► NEW TASK? → CAPTURE → CONTRACT → DISCOVER
+                          │
+                          ▼
+                    CLASSIFY → PATTERN
+                          │
+                          ├─► A: SKILLS → load skill → execute → verify
+                          ├─► B: SUBAGENTS → spawn specialists → synthesize → verify
+                          ├─► C: HANDOFFS → A→state→B→state→C → verify
+                          ├─► D: ROUTER → classify → dispatch → merge → verify
+                          └─► COMPOSE → combine needed patterns → verify
+                          │
+                          ▼
+                    CHECKPOINT → PERSIST state
+                          │
+                          ▼
+                    COMPLETE (only if ALL criteria met)
 ```
 
-Context budgets are adaptive. A small model gets compact state and the smallest
-useful skill. A larger model may receive more parallel work, but larger context
-does not justify irrelevant loading.
+---
 
-## Model independence
+## Self-Check (Run After Every Major Step)
 
-Never branch on a hardcoded model name.
+- [ ] Did I persist state after this step?
+- [ ] Is verification evidence recorded?
+- [ ] Did I use smallest sufficient pattern?
+- [ ] Did I load only relevant context?
+- [ ] Did I skip any mandatory lifecycle step?
 
-Use capabilities and available context:
-- reasoning quality
-- context budget
-- tool availability
-- parallelism
-- structured-output support
-- host features
-
-If a capability is unavailable, degrade to the closest supported pattern rather
-than pretending it exists.
-
-## Pattern selection
-
-Use the smallest pattern that satisfies the task:
-
-| Pattern | Use |
-|---|---|
-| Skills | One coherent domain |
-| Subagents | Independent parallel expertise |
-| Handoffs | Sequential work with state transfer |
-| Router | Classification and dispatch |
-| Composition | Complex tasks requiring multiple patterns |
-
-Do not spawn agents merely because they exist.
-
-## Capability-first execution
-
-Agents do not own tools. The runtime discovers capabilities and assigns them
-to the current execution node. Prefer stable capability contracts over provider-
-specific agent prompts.
-
-Examples:
-- `filesystem.read`
-- `filesystem.write`
-- `shell.execute`
-- `test.run`
-- `browser.navigate`
-- `search.web`
-- `git.diff`
-- `mcp.*`
-
-Unknown tools should be mapped through the adapter rather than copied into
-every agent.
-
-## Handoff contract
-
-Every handoff must be compact and durable:
-
-```yaml
-task_id:
-objective:
-acceptance_criteria:
-status:
-completed: []
-in_progress: []
-next_action:
-changed_files: []
-decisions: []
-failed_approaches: []
-verification:
-  passed: []
-  pending: []
-blockers: []
-open_questions: []
-updated_at:
-```
-
-Do not pass giant transcripts between agents.
-
-## Verification-first
-
-"Agent says done" is never sufficient.
-
-Evidence may include:
-- tests actually executed
-- build/typecheck/lint output
-- file existence/content checks
-- API responses
-- screenshots or runtime observations
-- security/static-analysis results
-- explicit user confirmation where required
-
-If a check was not run, say it was not run.
-
-## Recovery
-
-On failure:
-1. Persist the failure and evidence.
-2. Identify the failed node and dependencies.
-3. Determine whether retry is safe/idempotent.
-4. Restore the last valid checkpoint when necessary.
-5. Replan only the affected portion.
-6. Continue from the new checkpoint.
-
-Never silently erase a failed approach.
-
-## Safety and policy
-
-Autonomous by default for reversible, low-risk work.
-
-Require confirmation before destructive or irreversible operations such as:
-- deleting important data
-- dropping databases
-- force-pushing
-- destroying infrastructure
-- rotating credentials
-- production releases/deployments
-
-Explain the action and consequence before asking.
-
-## Skills and modules
-
-The 2.5 entry skill is always the orchestration contract. Detailed skills are
-progressively disclosed from `skills/<name>/SKILL.md`.
-
-Do not ask the user to manually load a matching skill when the host can expose
-the entry point automatically.
-
-No triple-loading:
-- skill = methodology
-- agent = specialized execution
-- module = reference pattern
-- runtime = state/execution/verification/recovery
-
-## Project bootstrap
-
-On first run:
-1. Discover repository instructions and conventions.
-2. Detect stack and test/build commands.
-3. Create durable project/task state.
-4. Record the discovered conventions.
-5. Reuse them for later tasks.
-
-Never overwrite existing project conventions without evidence or explicit request.
-
-## Completion contract
-
-A task is complete only when:
-1. acceptance criteria are satisfied,
-2. required actions finished,
-3. verification evidence is recorded,
-4. no blocking issue remains,
-5. state is persisted,
-6. the final response accurately distinguishes verified results from assumptions.
-
-If completion cannot be proven, report the blocker instead of claiming success.
-
-## Existing architecture compatibility
-
-Preserve the existing Ultimate-Dev agent, skill, module, router, workflow and
-reference catalogs where they remain useful. v2.5 adds the durable runtime and
-does not require replacing the existing LangChain-derived patterns.
-
-The canonical reference remains:
-`reference/langchain-multi-agent-architecture.md`.
+**If NO to any → FIX before proceeding.**

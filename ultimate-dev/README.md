@@ -6,7 +6,7 @@
 The model is not the durable memory. Task state, checkpoints, handoffs, evidence and recovery
 live outside the conversation under `.memory/ultimate-dev/`.
 
-# ultimate-dev v2.5.2
+# ultimate-dev v2.5.3
 
 **Master software-engineering orchestrator** — a single, adaptive skill that replaces dozens of specialized skills. Works with ANY model (tiny to huge) and ANY technology stack.
 
@@ -338,7 +338,7 @@ chmod +x .git/hooks/pre-commit
 
 ```
 ultimate-dev/
-├── SKILL.md                    ← Orchestrator (308 lines)
+├── SKILL.md                    ← Orchestrator (247 lines)
 ├── skill-manifest.yaml         ← Auto-generated registry
 ├── README.md                   ← User documentation (this file)
 ├── VERSION                     ← Version number (source of truth)
