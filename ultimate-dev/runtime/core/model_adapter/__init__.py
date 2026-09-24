@@ -207,6 +207,34 @@ class LocalCLIProvider(ModelProvider):
         }
 
 
+class HostFallbackProvider(ModelProvider):
+    """
+    Fallback provider that represents the host model running this skill.
+    This is always available because the skill runs on a host that has an LLM.
+    """
+    
+    def is_available(self) -> bool:
+        return True  # Always available
+    
+    def complete(self, prompt: str, **kwargs) -> str:
+        # This signals to the host to use its own model
+        # The host (Claude Code, Cursor, etc.) should intercept this
+        # and use its own model to generate the response
+        return f"[HOST_FALLBACK] {prompt}"
+    
+    def get_capabilities(self) -> Dict[str, Any]:
+        # Host model capabilities are unknown but assumed capable
+        return {
+            "provider": "host_fallback",
+            "model": "host_model",
+            "reasoning": "strong",
+            "context_window": 32768,
+            "supports_temperature": True,
+            "max_output_tokens": 8192,
+            "host_native": True
+        }
+
+
 class ModelAdapter:
     """
     Unified model adapter with auto-discovery and fallback.
@@ -256,6 +284,9 @@ class ModelAdapter:
         local_cmd = self.config.get("local_command")
         if local_cmd:
             self.providers.append(LocalCLIProvider(local_cmd, "custom"))
+        
+        # 5. HOST FALLBACK — always available (the model running this skill)
+        self.providers.append(HostFallbackProvider())
         
         # Select best available provider
         if self.providers:
