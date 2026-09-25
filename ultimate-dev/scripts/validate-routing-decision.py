@@ -80,6 +80,19 @@ def validate(decision: Any) -> dict[str, Any]:
         overlap = sorted(forbidden.intersection(map(str, activated)))
         if overlap:
             errors.append(f"forbidden domain activated: {', '.join(overlap)}")
+    # activated_forbidden_domains is a self-report about what was AVOIDED. It must
+    # never restate the selected domains, which previously made the field
+    # unscoreable noise rather than a measurement of routing discipline.
+    if isinstance(activated, list) and isinstance(domains, list):
+        overlap = sorted({str(item) for item in activated} & {str(item) for item in domains})
+        if overlap:
+            errors.append(
+                "activated_forbidden_domains restates the selected domains: "
+                f"{', '.join(overlap)}; this field lists domains that were avoided"
+            )
+    if isinstance(activated, list) and len(activated) > 3:
+        warnings.append("more than three avoided domains usually means the field is not being used narrowly")
+
     self_check = decision.get("self_check")
     if self_check is not None:
         if not isinstance(self_check, dict):

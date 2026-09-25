@@ -4,6 +4,14 @@ This is the single source of truth for host-replay classification guardrails.
 It is local, provider-free guidance. It does not replace the task envelope,
 capability index, or human review.
 
+## Language is not a signal
+
+Classify the request, never the language it arrives in. Translate the prompt
+mentally into English first, then classify that request. A request written in
+French, Spanish, Arabic, or Japanese classifies exactly as its English
+equivalent would. Language never raises the risk, widens the capability gap, or
+changes the deliverable.
+
 ## Decision order
 
 Classify in this order. Do not choose a specialist first.
@@ -41,10 +49,20 @@ states a defect. Do not call a footer/content edit `code` merely because it is i
 a repository. Do not replace `audit` with financial analysis when the requested
 deliverable is a control finding.
 
+The converse also holds: a request that states a defect — "fix", "correct",
+"broken", "wrong", "typo", "regression" — is `bug-fix`, however small. `rename`,
+`add`, `move`, and `update` describe the operation, not a defect, so those stay
+`code` or `document`.
+
 `comparison` and `recommendation` split on whether a choice was requested.
 Comparing, evaluating, or contrasting options — including asking for sources and
 confidence — is `comparison`. It becomes `recommendation` only when the request
 asks which one to choose, or asks for advice.
+
+`activated_forbidden_domains` is a self-report about what was **avoided**, not
+what was chosen. Leave it empty unless the request genuinely has near-miss
+distractor domains, and never list a domain you also selected. Listing your
+selected domains here is an error, not a signal of caution.
 
 An output that tells the reader **what to do next** is a `plan`, even when it is
 short and even when it was derived from a note, a transcript, or a single
@@ -109,6 +127,12 @@ Size rules that are easy to get wrong:
   external organization — include that party's domain alongside the domain of
   the activity. Testing a vendor's security control is
   `audit-risk-assurance` *and* `procurement-vendors`, not just the first.
+- Read a domain's `signals` before deciding it does not apply. Notes,
+  transcripts, and field notes fall under `office-knowledge-artifacts`;
+  hardware, sensor, and protocol work falls under `specialized-industries`,
+  which lists IoT. A novel case inside a listed signal is still that domain.
+  A request that calls the subject novel or unfamiliar usually still names a
+  domain the index covers; only fall back when no listed signal fits.
 - Compatibility aliases in `evals/domain-aliases.json` are for fixture comparison,
   not live routing output.
 

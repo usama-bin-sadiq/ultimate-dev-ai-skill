@@ -135,6 +135,36 @@ def test_linter_warns_when_none_risk_carries_an_impact_basis():
     assert any("risk 'none'" in item for item in report["warnings"])
 
 
+def test_linter_rejects_forbidden_domains_restating_the_selection():
+    """A self-report about avoided domains must not echo the selected domains."""
+    report = run({
+        "deliverable": "code",
+        "size": "atomic",
+        "domains": ["software-engineering"],
+        "risk": "none",
+        "clarity": "clear",
+        "capability_gap": "none",
+        "route": "coding",
+        "activated_forbidden_domains": ["software-engineering"],
+    })
+    assert not report["ok"]
+    assert any("restates the selected domains" in item for item in report["errors"])
+
+
+def test_linter_accepts_genuinely_avoided_domains():
+    report = run({
+        "deliverable": "answer",
+        "size": "atomic",
+        "domains": ["software-engineering"],
+        "risk": "none",
+        "clarity": "clear",
+        "capability_gap": "none",
+        "route": "documentation",
+        "activated_forbidden_domains": ["legal-privacy-contracts"],
+    })
+    assert report["ok"], report
+
+
 def test_linter_rejects_a_narrative_risk_basis():
     report = run({
         "deliverable": "audit",

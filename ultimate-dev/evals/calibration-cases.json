@@ -387,6 +387,60 @@
         "route": "research"
       },
       "reason": "A comparison becomes a recommendation only when a choice was requested."
+    },
+    {
+      "id": "calibration-language-is-not-a-signal",
+      "kind": "counterexample",
+      "task": "R\u00e9dige le statut de projet et les prochaines actions en fran\u00e7ais.",
+      "expected": {
+        "deliverable": "communication",
+        "size": "moderate",
+        "domains": [
+          "internal-communications"
+        ],
+        "risk": "data",
+        "risk_basis": "reports on project delivery records",
+        "clarity": "clear",
+        "capability_gap": "none",
+        "route": "internal-communications"
+      },
+      "reason": "A French request classifies exactly as its English equivalent; language never raises risk or gap."
+    },
+    {
+      "id": "calibration-assumptions-are-moderate",
+      "kind": "counterexample",
+      "task": "Analyze the budget and explain the assumptions in Spanish.",
+      "expected": {
+        "deliverable": "data-analysis",
+        "size": "moderate",
+        "domains": [
+          "finance-fpa"
+        ],
+        "risk": "compliance",
+        "risk_basis": "budget assumptions depend on approved financial records",
+        "clarity": "resolvable",
+        "capability_gap": "partial",
+        "route": "accounting-finance"
+      },
+      "reason": "Analysis that must state assumptions is at least moderate, never atomic."
+    },
+    {
+      "id": "calibration-no-stretched-domain",
+      "kind": "counterexample",
+      "task": "Build a prototype for a custom sensor protocol.",
+      "expected": {
+        "deliverable": "code",
+        "size": "complex",
+        "domains": [
+          "unknown-unclassified"
+        ],
+        "risk": "data",
+        "risk_basis": "prototype operates on physical sensor telemetry",
+        "clarity": "resolvable",
+        "capability_gap": "partial",
+        "route": "universal-task"
+      },
+      "reason": "A niche one-off subject is unknown-unclassified with a gap, not a stretched broad domain."
     }
   ]
 }
