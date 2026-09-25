@@ -10,7 +10,7 @@ description: >
   pattern, agent, or workflow to use. Covers software engineering, security,
   DevOps, data, architecture, testing, documentation, and business domains.
   Durable state, JEV, approvals, and recovery are optional runtime extensions.
-version: "3.1.1"
+version: "3.1.2"
 user-invocable: true
 argument-hint: "[task description] | --help | --version | --detect | --workflow <name>"
 triggers:
@@ -37,7 +37,7 @@ triggers:
   - which pattern
 ---
 
-# Ultimate-Dev 3.1.1 — Prompt-First Core (MANDATORY)
+# Ultimate-Dev 3.1.2 — Prompt-First Core (MANDATORY)
 
 ## ⚠️ CRITICAL: READ THIS FIRST ON EVERY SESSION START
 

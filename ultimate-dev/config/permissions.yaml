@@ -1,6 +1,6 @@
 # Permission Configuration — What each agent role can do
 
-version: "3.1.1"
+version: "3.1.2"
 
 # File system permissions
 filesystem:

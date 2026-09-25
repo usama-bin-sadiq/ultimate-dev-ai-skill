@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.1.2] — 2026-09-25
+
+### Documentation
+- docs: warn that a stale install keeps old behaviour, and how to check it The installed copy is what the host loads, so repository changes have no effect until a reinstall. A copy left a full version b (commit 4d2a9ffc2222)
+
+
+# Changelog
+
 ## [3.1.1] — 2026-09-25
 
 ### Fixed

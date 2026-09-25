@@ -5,7 +5,7 @@
 # into config/agent-catalog.yaml and released in skill-manifest.yaml. Do not
 # add new concrete specialists here; add their frontmatter under agents/ and
 # regenerate the catalog.
-version: "3.1.1"
+version: "3.1.2"
 registry_kind: abstract-runtime-roles
 concrete_agent_source: ../skill-manifest.yaml
 workflow_roles:
