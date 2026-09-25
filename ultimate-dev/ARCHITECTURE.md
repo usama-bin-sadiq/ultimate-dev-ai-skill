@@ -1,6 +1,9 @@
 # Architecture — ultimate-dev
 
-This document is for people extending or maintaining the skill. For user-facing docs, see README.md.
+This document is for people extending or maintaining the skill. For the
+unified research-backed architecture and internal-only roadmap, see
+`docs/architecture/UNIFIED-AGENT-ROADMAP.md` in the repository root.
+For user-facing docs, see README.md.
 
 ## How Tier 0 / 1 / 2 Work
 
@@ -17,7 +20,9 @@ Tier 0 is small enough to survive context pressure on every task. It is never ev
 
 ### Tier 1 — Domain Modules
 
-Loaded only when classification selects them. **27 modules across 18 departments:**
+Loaded only when classification selects them. The current manifest contains
+**46 modules across 20 capability domains**; the generated manifest and
+capability index are the source of truth for counts.
 
 | Category | Departments | Modules |
 |----------|-------------|---------|
@@ -51,7 +56,7 @@ Loaded only inside a spawned sub-agent or internal mode-switch. Never enters the
 
 Deterministic, in this exact order:
 1. **Size**: atomic / moderate / complex
-2. **Domain match**: against Capability Index keywords (25 domains across 18 departments)
+2. **Domain match**: against the current Capability Index (20 canonical domains)
 3. **Risk flag**: auth, PII, payments, infra credentials, regulated data
 4. **Clarity check**: if complex and ambiguous, ask ONE question before proceeding
 
@@ -94,7 +99,10 @@ Deterministic, in this exact order:
 
 ## Project Memory (§15)
 
-When this skill runs inside a project repo, it maintains a per-project cache at `<repo>/.ultimate-dev/project-memory.md`. This file is NOT part of the canonical package and is never overwritten by updates.
+When this skill runs inside a project repo, it maintains a per-project cache at
+`<repo>/.memory/ultimate-dev/project-memory.md` when durable runtime or a
+user-managed memory workflow is enabled. This file is NOT part of the canonical
+package and is never overwritten by updates.
 
 ### Contents (kept small — this is a cache, not a knowledge base)
 - Detected stack/framework/language versions

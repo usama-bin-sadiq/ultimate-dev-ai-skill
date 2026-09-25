@@ -130,6 +130,11 @@ The full setup and dependency matrix is in
 `ultimate-dev/INSTALLATION.md`. The measured size is a real staged install, not
 the source checkout size.
 
+The research-backed internal architecture roadmap is documented in
+`docs/architecture/UNIFIED-AGENT-ROADMAP.md`. It uses LangChain/LangGraph
+patterns as host-neutral design references without adding a mandatory
+framework dependency.
+
 ## Repository-controlled scoped rating
 
 When external model/provider choice, organization-specific policy evaluation,

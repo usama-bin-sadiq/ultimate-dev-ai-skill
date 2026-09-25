@@ -118,7 +118,7 @@ def test_behavioral_calibration_is_single_source():
     assert "Risk calibration" in calibration
     for entrypoint in (ROOT / "SKILL.md", ROOT / "AGENTS.md"):
         text = entrypoint.read_text(encoding="utf-8")
-        assert "routing/behavioral-calibration.md" in text
+        assert "router/behavioral-calibration.md" in text
         assert "Do not emit legacy labels" not in text
 
 

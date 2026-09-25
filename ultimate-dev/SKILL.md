@@ -134,7 +134,7 @@ authorization.
 ### Behavioral classification guardrails
 
 For host replay, load the single source of truth at
-`routing/behavioral-calibration.md` before selecting a specialist. It defines
+`router/behavioral-calibration.md` before selecting a specialist. It defines
 canonical deliverable, size, domain, risk, capability-gap, and route decisions.
 Keep this file as the short entry point; do not duplicate or reinterpret those
 rules in multiple prompts.
