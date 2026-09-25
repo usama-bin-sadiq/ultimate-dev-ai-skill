@@ -5,6 +5,43 @@ unified research-backed architecture and internal-only roadmap, see
 `docs/architecture/UNIFIED-AGENT-ROADMAP.md` in the repository root.
 For user-facing docs, see README.md.
 
+## Portable control-plane contracts
+
+The prompt-first core is defined by a small set of contracts. They are portable
+YAML/Markdown: any host can implement them, and none requires a package.
+
+| Contract | Owns |
+|---|---|
+| `contracts/task-envelope.yaml` | The four channels: intent, knowledge, action, evidence |
+| `contracts/task-state-machine.yaml` | Lifecycle states, transitions, and terminal-state invariants |
+| `contracts/middleware-hooks.yaml` | Ordered, selective hooks that constrain but never authorize |
+| `contracts/capability-manifest.yaml` | Capability fields, default-deny selection, host boundary |
+| `contracts/subagent-contract.yaml` | Bounded worker isolation, budgets, and output validation |
+| `contracts/handoff-contract.yaml` | Minimal stage handoff and final synthesis fields |
+| `contracts/memory-provenance.yaml` | Provenance, sensitivity, retention, and supersession |
+| `contracts/hitl-interrupt.yaml` | Interrupt reasons and resume requirements |
+| `contracts/four-channels.md` | Portable prose form of the channel contract |
+
+Routing guidance has a single source of truth for decision values:
+
+- `router/behavioral-calibration.md` — deliverable, size, domain, risk,
+  capability-gap values, the one-pass self-check, and the edit and
+  unfamiliar-domain rules.
+- `router/classification-rules.md` — only the mechanics: applying the capability
+  index, selecting a specialist, and handing off work. It must not restate the
+  value vocabularies.
+- `router/progressive-disclosure.md` — metadata/core/reference loading order.
+- `router/context-projection.md` — what each stage may and may not carry.
+
+Local enforcement, all provider-free:
+
+| Script | Purpose |
+|---|---|
+| `scripts/validate-routing-decision.py` | Lints one decision record: vocabulary, route resolution, risk justification, gap coherence, one-pass self-check |
+| `scripts/measure-entrypoint.py` | Budgets always-loaded entrypoints so context cost cannot silently grow |
+| `scripts/replay-gate.py` | Fails a recorded replay on regression, pass-rate drop, forbidden activation, or missing predictions |
+| `scripts/compare-routing-predictions.py` | Field-level comparison; `--fields` restricts scoring to a declared reliable subset |
+
 ## How Tier 0 / 1 / 2 Work
 
 ### Tier 0 — Core Router (SKILL.md)
@@ -91,11 +128,20 @@ Deterministic, in this exact order:
 
 ## How to Test Changes
 
-1. Modify `router/classification-rules.md` or a module
-2. Run classification on a representative set of tasks (from `evals/golden-cases.yaml`)
-3. Verify: correct tier, correct modules loaded, token budget respected
-4. Run `node --test ultimate-dev/tests/jev/engine.test.mjs` for the host-native JEV contract
-5. Run `./scripts/verify.sh` to confirm all files are present
+1. Modify `router/behavioral-calibration.md` for a decision rule, or
+   `router/classification-rules.md` for routing mechanics
+2. Lint the affected decision records:
+   `python3 scripts/validate-routing-decision.py decision.json --strict`
+3. Confirm the counterexamples still hold:
+   `python3 -m pytest tests/test_calibration_cases.py -q`
+4. Run a recorded replay and gate it:
+   `python3 scripts/replay-gate.py --gold gold.json --predictions new.json --baseline old.json`
+5. Run `node --test ultimate-dev/tests/jev/engine.test.mjs` for the host-native JEV contract
+6. Run `python3 scripts/measure-entrypoint.py --strict` if an always-loaded file changed
+7. Run `./scripts/verify.sh` for the full local gate
+
+A prompt change without a replay result is not an improvement. If the replay does
+not move, record the run and leave the rating unchanged.
 
 ## Project Memory (§15)
 

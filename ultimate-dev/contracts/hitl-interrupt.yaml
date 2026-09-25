@@ -1,0 +1,36 @@
+version: "1.0"
+kind: ultimate-dev-hitl-interrupt
+status: portable
+runtime_required: false
+
+principle: "Human review is a state, not a question. Interrupt only where a human decision is genuinely required."
+
+interrupt_reasons:
+  destructive_action: "Irreversible deletion, data loss, or history rewrite."
+  production_change: "Production deployment, migration, or traffic-affecting change."
+  external_side_effect: "Outbound message, purchase, publication, or third-party write."
+  sensitive_data: "Personal, regulated, or confidential data handling."
+  irreversible_decision: "A choice that cannot be cheaply reversed."
+  capability_gap: "Safe completion needs a missing permission, tool, or credential."
+
+required_fields:
+  state: "The lifecycle state the task pauses in."
+  question: "One focused decision request, with the recommended option."
+  options: "The concrete choices and their consequences."
+  impact: "What is blocked, what is reversible, and what is at risk."
+  resume_state: "Exactly what happens after the decision."
+  evidence_so_far: "What is already verified and safe to keep."
+
+rules:
+  - "One decision per interrupt; batch unrelated decisions."
+  - "Never interrupt for a decision the model or the task contract already makes."
+  - "Never treat silence, timeout, or partial reply as approval."
+  - "On approval, resume from `resume_state`; do not restart discovery."
+  - "On rejection or timeout, record `partial` or `blocked` and stop cleanly."
+  - "An interrupt is not a failure of the task; it is a controlled pause."
+
+resume_requirements:
+  - "Re-read the durable state; do not rely on chat history."
+  - "Re-validate that the approved action is still in scope."
+  - "Record the human decision with its source and time."
+  - "Continue the acceptance criteria unchanged unless the decision changed them."

@@ -37,11 +37,19 @@ def _domains(values: list[Any], aliases: dict[str, str]) -> set[str]:
     return {aliases.get(str(value), str(value)) for value in values or []}
 
 
-def compare(gold_path: Path, predictions_path: Path, aliases_path: Path = DEFAULT_ALIASES) -> dict[str, Any]:
+def compare(
+    gold_path: Path,
+    predictions_path: Path,
+    aliases_path: Path = DEFAULT_ALIASES,
+    fields: set[str] | None = None,
+) -> dict[str, Any]:
     gold_rows = _load(gold_path)
     prediction_rows = _load(predictions_path)
     if not isinstance(gold_rows, list) or not isinstance(prediction_rows, list):
         raise ValueError("gold and predictions must be JSON arrays")
+    active = FIELDS if fields is None else {f: FIELDS[f] for f in FIELDS if f in fields}
+    if not active:
+        raise ValueError("field selection left nothing to compare")
     policy = _load(aliases_path) if aliases_path.is_file() else {}
     aliases = policy.get("safe_aliases", {}) if isinstance(policy, dict) else {}
     ambiguous = set(policy.get("ambiguous_labels", [])) if isinstance(policy, dict) else set()
@@ -50,8 +58,8 @@ def compare(gold_path: Path, predictions_path: Path, aliases_path: Path = DEFAUL
     missing = sorted(set(gold) - set(predictions))
     extra = sorted(set(predictions) - set(gold))
     results: list[dict[str, Any]] = []
-    field_totals = {field: 0 for field in FIELDS}
-    field_matches = {field: 0 for field in FIELDS}
+    field_totals = {field: 0 for field in active}
+    field_matches = {field: 0 for field in active}
     passed = failed = unscored = 0
     domain_comparison_unscored_cases = 0
     for identifier, expected in gold.items():
@@ -62,7 +70,7 @@ def compare(gold_path: Path, predictions_path: Path, aliases_path: Path = DEFAUL
             results.append({"id": identifier, "status": "missing_prediction", "mismatches": ["missing_prediction"]})
             failed += 1
             continue
-        for field, expected_key in FIELDS.items():
+        for field, expected_key in active.items():
             if expected_key not in expected:
                 continue
             field_totals[field] += 1
@@ -108,6 +116,7 @@ def compare(gold_path: Path, predictions_path: Path, aliases_path: Path = DEFAUL
             "predictions": str(predictions_path),
         },
         "metrics": {
+            "scored_fields": sorted(active),
             "total_cases": total,
             "scored_cases": scored,
             "passed": passed,
@@ -119,7 +128,7 @@ def compare(gold_path: Path, predictions_path: Path, aliases_path: Path = DEFAUL
             "extra_predictions": len(extra),
             "field_agreement": {
                 field: round(field_matches[field] / field_totals[field], 4)
-                for field in FIELDS if field_totals[field]
+                for field in active if field_totals[field]
             },
         },
         "missing_predictions": missing,
@@ -133,11 +142,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--gold", type=Path, required=True)
     parser.add_argument("--predictions", type=Path, required=True)
     parser.add_argument("--aliases", type=Path, default=DEFAULT_ALIASES)
+    parser.add_argument("--fields", help="comma-separated subset of fields to score")
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--strict", action="store_true")
     args = parser.parse_args(argv)
+    fields = {item.strip() for item in args.fields.split(",") if item.strip()} if args.fields else None
     try:
-        report = compare(args.gold, args.predictions, args.aliases)
+        report = compare(args.gold, args.predictions, args.aliases, fields)
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         print(f"compare-routing-predictions: {exc}")
         return 2

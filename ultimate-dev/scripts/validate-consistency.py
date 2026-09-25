@@ -48,6 +48,13 @@ REQUIRED_CONTRACTS = (
     "contracts/README.md",
     "contracts/four-channels.md",
     "contracts/task-envelope.yaml",
+    "contracts/task-state-machine.yaml",
+    "contracts/middleware-hooks.yaml",
+    "contracts/capability-manifest.yaml",
+    "contracts/subagent-contract.yaml",
+    "contracts/handoff-contract.yaml",
+    "contracts/memory-provenance.yaml",
+    "contracts/hitl-interrupt.yaml",
 )
 DEVELOPMENT_REQUIREMENTS_FILE = ROOT / "requirements-dev.txt"
 REQUIRED_GUIDES = ("INSTALLATION.md",)

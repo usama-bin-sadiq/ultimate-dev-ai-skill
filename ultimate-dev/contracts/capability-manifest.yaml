@@ -1,0 +1,32 @@
+version: "1.0"
+kind: ultimate-dev-capability-manifest
+status: portable
+runtime_required: false
+
+selection:
+  rule: "requested ∩ available ∩ policy_allowed"
+  default: "deny"
+  missing_capability: "report and do not substitute silently"
+
+required_capability_fields:
+  - id
+  - description
+  - scope
+  - side_effect
+  - reversible
+  - isolation
+  - approval
+  - idempotency
+  - timeout
+  - result_schema
+
+side_effect_values: [none, read, write, process, network, production, destructive]
+approval_values: [not_required, recommended, required, human_review]
+reversibility_values: [reversible, compensating, irreversible, unknown]
+isolation_values: [prompt_only, host_injected, process, container, sandbox, external]
+
+host_boundary:
+  model: "host-selected; never selected by the skill"
+  tools: "host-provided; never installed by the skill"
+  policy: "host-supplied; JEV reports and constrains but does not authorize"
+  persistence: "optional; bounded and provenance-scoped"

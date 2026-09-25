@@ -1,0 +1,98 @@
+{
+  "version": "1.0",
+  "kind": "behavioral-calibration-cases",
+  "purpose": "Counterexamples for local decision-linter and replay calibration; not a model benchmark.",
+  "cases": [
+    {
+      "id": "calibration-optimize-vs-defect",
+      "kind": "counterexample",
+      "task": "Optimize this PostgreSQL query; no incorrect result is reported.",
+      "expected": {"deliverable": "code", "size": "moderate", "domains": ["software-engineering"], "risk": "none", "clarity": "clear", "capability_gap": "none", "route": "coding"},
+      "reason": "Optimization without a stated defect is not bug-fix."
+    },
+    {
+      "id": "calibration-missing-input-gap",
+      "kind": "counterexample",
+      "task": "Summarize our brand guidelines for the regional campaign team.",
+      "expected": {"deliverable": "document", "size": "atomic", "domains": ["marketing-sales-support"], "risk": "none", "clarity": "resolvable", "capability_gap": "partial", "route": "documentation"},
+      "reason": "A referenced-but-unsupplied input is a capability gap, not invented content."
+    },
+    {
+      "id": "calibration-diagnose-vs-change",
+      "kind": "counterexample",
+      "task": "Why does my form submission return a 403 after enabling CSRF protection?",
+      "expected": {"deliverable": "answer", "size": "atomic", "domains": ["software-engineering"], "risk": "none", "clarity": "clear", "capability_gap": "none", "route": "debugging"},
+      "reason": "Diagnosing a security symptom does not change a security boundary."
+    },
+    {
+      "id": "calibration-source-edit-vs-content",
+      "kind": "counterexample",
+      "task": "Add a docstring to one function.",
+      "expected": {"deliverable": "code", "size": "atomic", "domains": ["software-engineering"], "risk": "none", "clarity": "clear", "capability_gap": "none", "route": "coding"},
+      "reason": "An edit inside a source file is code, not authored content."
+    },
+    {
+      "id": "calibration-footer-vs-code",
+      "kind": "counterexample",
+      "task": "Update the copyright year in the site footer.",
+      "expected": {"deliverable": "document", "size": "atomic", "domains": ["software-engineering"], "risk": "none", "clarity": "clear", "capability_gap": "none", "route": "documentation"},
+      "reason": "A content edit is not automatically a code deliverable."
+    },
+    {
+      "id": "calibration-ledger-audit",
+      "kind": "counterexample",
+      "task": "Reconcile the general ledger and document control exceptions for month-end close.",
+      "expected": {"deliverable": "audit", "size": "complex", "domains": ["accounting-controls"], "risk": "compliance", "risk_basis": "general-ledger records and control evidence", "clarity": "clear", "capability_gap": "none", "route": "audit-controls"},
+      "reason": "A control finding is an audit deliverable, not financial analysis."
+    },
+    {
+      "id": "calibration-budget-variance",
+      "kind": "counterexample",
+      "task": "Analyze a budget-versus-actual variance and show forecast assumptions.",
+      "expected": {"deliverable": "financial-analysis", "size": "moderate", "domains": ["finance-fpa"], "risk": "compliance", "risk_basis": "organizational financial records and approval boundaries", "clarity": "resolvable", "capability_gap": "none", "route": "accounting-finance"},
+      "reason": "Organizational financial assumptions carry compliance boundaries."
+    },
+    {
+      "id": "calibration-status-update",
+      "kind": "counterexample",
+      "task": "Write an executive status update with decisions, risks, owners, and next actions.",
+      "expected": {"deliverable": "communication", "size": "moderate", "domains": ["internal-communications"], "risk": "none", "clarity": "clear", "capability_gap": "none", "route": "internal-communications"},
+      "reason": "Multiple required sections make this moderate, not atomic, and internal reporting with no sensitive data stays risk none."
+    },
+    {
+      "id": "calibration-unknown-municipal",
+      "kind": "counterexample",
+      "task": "Design a workflow for an unfamiliar municipal water utility during drought.",
+      "expected": {"deliverable": "workflow", "size": "complex", "domains": ["unknown-unclassified"], "risk": "data", "risk_basis": "multi-party operational utility records", "clarity": "resolvable", "capability_gap": "partial", "route": "universal-task"},
+      "reason": "Unknown-domain multi-party coordination needs bounded discovery."
+    },
+    {
+      "id": "calibration-jwt-answer",
+      "kind": "counterexample",
+      "task": "What does the JWT exp claim mean?",
+      "expected": {"deliverable": "answer", "size": "atomic", "domains": ["software-engineering"], "risk": "none", "clarity": "clear", "capability_gap": "none", "route": "documentation"},
+      "reason": "A factual security question is not automatically a security action."
+    },
+    {
+      "id": "calibration-pii-model",
+      "kind": "counterexample",
+      "task": "Add PII fields to the user model.",
+      "expected": {"deliverable": "code", "size": "moderate", "domains": ["software-engineering", "legal-privacy-contracts"], "risk": "security", "risk_basis": "personal data crosses a storage boundary", "clarity": "clear", "capability_gap": "none", "route": "coding"},
+      "reason": "Implementation plus privacy boundary requires security review."
+    },
+    {
+      "id": "calibration-unknown-products",
+      "kind": "counterexample",
+      "task": "Compare two unfamiliar products and cite sources.",
+      "expected": {"deliverable": "comparison", "size": "moderate", "domains": ["unknown-unclassified"], "risk": "none", "clarity": "resolvable", "capability_gap": "partial", "route": "research"},
+      "reason": "Unfamiliar product facts require a bounded gap, not invented knowledge."
+    },
+    {
+      "id": "calibration-ordinary-communication",
+      "kind": "counterexample",
+      "task": "Write a short status message for the team about the completed build.",
+      "expected": {"deliverable": "communication", "size": "atomic", "domains": ["internal-communications"], "risk": "none", "clarity": "clear", "capability_gap": "none", "route": "internal-communications"},
+      "reason": "Ordinary communication is not automatically data risk."
+    }
+  ]
+}

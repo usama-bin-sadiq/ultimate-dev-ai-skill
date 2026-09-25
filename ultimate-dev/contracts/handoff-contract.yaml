@@ -1,0 +1,38 @@
+version: "1.0"
+kind: ultimate-dev-handoff-contract
+status: portable
+runtime_required: false
+
+principle: "A handoff moves the smallest resumable state, never the whole transcript."
+
+handoff_required_fields:
+  stage: "Current stage name and its acceptance criteria."
+  completed: "What is finished and verified."
+  next_action: "The single next action the receiving stage performs."
+  evidence_refs: "Where the artifacts and check results live."
+  unresolved: "Open questions, assumptions, and capability gaps."
+  risk_delta: "Any change in risk, side effect, or data sensitivity."
+  budget_state: "Remaining steps, retries, and context allowance."
+
+handoff_rules:
+  - "Pass a summary plus references, not full worker transcripts."
+  - "Never pass secrets, credentials, or unnecessary personal data forward."
+  - "State uncertainty explicitly; a handoff is not a claim of correctness."
+  - "A stage that cannot state `next_action` is blocked, not ready."
+
+synthesis_required_fields:
+  result: "The answer or artifact the user receives."
+  sources: "The evidence, files, or checks the result rests on."
+  verification: "What was actually run: pass | fail | not_run | not_applicable."
+  limitations: "Gaps, assumptions, and unresolved risk."
+  next_actions: "Concrete follow-ups, or none."
+  capability_gap:
+    level: "none | partial | blocking"
+    missing: []
+
+synthesis_rules:
+  - "The synthesizer owns the final answer; workers never do."
+  - "Contradictory worker results are reported as unresolved, not averaged away."
+  - "Drop worker detail that does not change the user's decision."
+  - "No success language without evidence; `not_run` stays visible."
+  - "A blocked stage is reported as blocked, never as a smaller completed task."

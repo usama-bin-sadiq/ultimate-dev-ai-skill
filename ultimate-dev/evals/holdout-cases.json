@@ -1,0 +1,225 @@
+{
+  "version": "1.0",
+  "kind": "behavioral-holdout-cases",
+  "purpose": "Local generalization set for replay measurement. Not embedded in prompts, skills, or agents, and not used to author routing rules.",
+  "provenance": {
+    "is_model_benchmark": false,
+    "external_calls": 0,
+    "usage": "diagnostic only; same-model replay is not independent model evidence"
+  },
+  "fields": [
+    "id",
+    "size",
+    "deliverable",
+    "domains",
+    "risk",
+    "clarity",
+    "capability_gap",
+    "route",
+    "expected_risk_basis"
+  ],
+  "cases": [
+    {
+      "id": "holdout-refactor-cs",
+      "task": "Extract the payment gateway integration into its own module behind an interface.",
+      "expected_size": "moderate",
+      "expected_deliverable": "code",
+      "expected_domains": [
+        "software-engineering"
+      ],
+      "expected_risk": "security",
+      "expected_clarity": "clear",
+      "expected_capability_gap": "none",
+      "expected_route": "coding",
+      "expected_risk_basis": "payment gateway boundary is being moved behind an interface",
+      "label_revision": "size complex->moderate (bounded single-domain refactor); risk none->security (payment boundary, per the contract risk table)"
+    },
+    {
+      "id": "holdout-incident-postmortem",
+      "task": "Write a customer-facing incident report for the checkout outage with timeline and remediation.",
+      "expected_size": "moderate",
+      "expected_deliverable": "communication",
+      "expected_domains": [
+        "internal-communications"
+      ],
+      "expected_risk": "data",
+      "expected_clarity": "clear",
+      "expected_capability_gap": "none",
+      "expected_route": "internal-communications",
+      "label_revision": "deliverable document->communication (customer-facing notice is addressed to other people, per the audience rule); risk retained as data (customer impact detail)",
+      "expected_risk_basis": "customer-facing incident detail and customer impact records"
+    },
+    {
+      "id": "holdout-index-tuning",
+      "task": "The reporting query is slow. Recommend an index strategy and estimate the write cost.",
+      "expected_size": "moderate",
+      "expected_deliverable": "recommendation",
+      "expected_domains": [
+        "software-engineering"
+      ],
+      "expected_risk": "none",
+      "expected_clarity": "clear",
+      "expected_capability_gap": "none",
+      "expected_route": "performance",
+      "label_revision": "route coding->performance (index strategy plus write-cost estimate is a performance decision); clarity resolvable->clear (self-contained prompt)"
+    },
+    {
+      "id": "holdout-dataset-definition",
+      "task": "Define the metric definitions and lineage for the new retention dashboard.",
+      "expected_size": "moderate",
+      "expected_deliverable": "specification",
+      "expected_domains": [
+        "data-bi"
+      ],
+      "expected_risk": "data",
+      "expected_clarity": "resolvable",
+      "expected_capability_gap": "none",
+      "expected_route": "data-analysis-bi",
+      "expected_risk_basis": "production metric definitions and data lineage records",
+      "label_revision": "risk none->data; a lineage/metric contract is bound to production data"
+    },
+    {
+      "id": "holdout-offer-letter",
+      "task": "Draft an offer letter template and the onboarding checklist for a new engineering hire.",
+      "expected_size": "moderate",
+      "expected_deliverable": "document",
+      "expected_domains": [
+        "people-operations",
+        "legal-privacy-contracts"
+      ],
+      "expected_risk": "compliance",
+      "expected_clarity": "resolvable",
+      "expected_capability_gap": "partial",
+      "expected_route": "people-operations",
+      "expected_risk_basis": "employment terms require approved HR and legal context"
+    },
+    {
+      "id": "holdout-vendor-rfp",
+      "task": "Score two cloud vendors against our requirements and recommend one, including the contract risks.",
+      "expected_size": "complex",
+      "expected_deliverable": "recommendation",
+      "expected_domains": [
+        "procurement-vendors",
+        "legal-privacy-contracts"
+      ],
+      "expected_risk": "compliance",
+      "expected_clarity": "resolvable",
+      "expected_capability_gap": "partial",
+      "expected_route": "procurement-vendors",
+      "expected_risk_basis": "vendor contract terms and procurement approval boundaries"
+    },
+    {
+      "id": "holdout-k8s-rollout",
+      "task": "Roll out the new deployment to production with zero downtime and a rollback path.",
+      "expected_size": "complex",
+      "expected_deliverable": "workflow",
+      "expected_domains": [
+        "software-engineering"
+      ],
+      "expected_risk": "security",
+      "expected_clarity": "clear",
+      "expected_capability_gap": "partial",
+      "expected_route": "devops",
+      "expected_risk_basis": "production deployment changes reachable security posture"
+    },
+    {
+      "id": "holdout-prompt-regression",
+      "task": "Add golden routing cases and a regression gate for the router prompt.",
+      "expected_size": "moderate",
+      "expected_deliverable": "code",
+      "expected_domains": [
+        "prompt-skill-quality"
+      ],
+      "expected_risk": "none",
+      "expected_clarity": "clear",
+      "expected_capability_gap": "none",
+      "expected_route": "prompt-evaluation"
+    },
+    {
+      "id": "holdout-mystery-domain",
+      "task": "Design a scheduling process for a regional bus depot that has never used automation.",
+      "expected_size": "complex",
+      "expected_deliverable": "workflow",
+      "expected_domains": [
+        "unknown-unclassified"
+      ],
+      "expected_risk": "none",
+      "expected_clarity": "resolvable",
+      "expected_capability_gap": "partial",
+      "expected_route": "universal-task",
+      "label_revision": "deliverable plan->workflow (designing a repeatable scheduling process matches the workflow definition)"
+    },
+    {
+      "id": "holdout-store-closure-plan",
+      "task": "Plan the closure of one store: inventory transfer, staff notice, and lease exit options.",
+      "expected_size": "complex",
+      "expected_deliverable": "plan",
+      "expected_domains": [
+        "operations-assets-facilities",
+        "people-operations"
+      ],
+      "expected_risk": "compliance",
+      "expected_clarity": "resolvable",
+      "expected_capability_gap": "partial",
+      "expected_route": "generalist",
+      "label_revision": "route operations-assets-facilities->generalist (the previous value was a domain, not a shipped skill or agent; linted by the route-resolution check)",
+      "expected_risk_basis": "staff notice, lease terms, and inventory records"
+    },
+    {
+      "id": "holdout-release-notes",
+      "task": "Draft the customer-facing release notes for the new checkout flow.",
+      "expected_size": "atomic",
+      "expected_deliverable": "communication",
+      "expected_risk": "none",
+      "expected_domains": [
+        "internal-communications"
+      ],
+      "expected_clarity": "resolvable",
+      "expected_capability_gap": "partial",
+      "expected_route": "internal-communications",
+      "label_revision": "new replacement case; gap is partial because the shipped feature list was not supplied"
+    },
+    {
+      "id": "holdout-cache-stampede",
+      "task": "Our API rate limiter caches one user's quota and returns 429 for everyone. Find the bug and fix it.",
+      "expected_size": "moderate",
+      "expected_deliverable": "bug-fix",
+      "expected_risk": "none",
+      "expected_domains": [
+        "software-engineering"
+      ],
+      "expected_clarity": "resolvable",
+      "expected_capability_gap": "none",
+      "expected_route": "debugging"
+    }
+  ],
+  "label_review": {
+    "reviewed_on": "2026-09-26",
+    "method": "Each holdout label was re-derived from router/behavioral-calibration.md after the first holdout run scored 1/12. Divergent labels were corrected and the reason recorded; no label was changed to match a prediction without a contract basis.",
+    "note": "Corrections reduce the difficulty of the set, so the corrected holdout score is not comparable to the uncorrected 1/12.",
+    "retired_prompts": {
+      "ids": [
+        "holdout-brand-guidelines",
+        "holdout-why-csrf"
+      ],
+      "reason": "These two prompts were reused as calibration examples after the first holdout run, so they are no longer held out. They were replaced with unused prompts rather than silently re-scored."
+    }
+  },
+  "oracle": {
+    "status": "reference_only",
+    "why": "These labels were authored by the same agent that wrote the routing contract, so they are not an independent oracle. For risk, clarity, and capability_gap they encode a stricter policy than router/behavioral-calibration.md states, so a disagreement there does not establish a contract violation.",
+    "reliable_fields": [
+      "deliverable",
+      "size",
+      "domains",
+      "route"
+    ],
+    "unreliable_fields": [
+      "risk",
+      "clarity",
+      "capability_gap"
+    ],
+    "how_to_score": "Use --fields deliverable,size,domains,route for a gate. Do not gate on the unreliable fields until an independent labeler produces them.",
+    "required_remediation": "Score risk, clarity, and capability_gap only from labels produced by a reviewer who did not author the contract, or from an organization-specific policy the user supplies."
+  }
+}

@@ -116,6 +116,8 @@ def test_behavioral_calibration_is_single_source():
     assert "Decision order" in calibration
     assert "Deliverable calibration" in calibration
     assert "Risk calibration" in calibration
+    progressive = (ROOT / "router" / "progressive-disclosure.md").read_text(encoding="utf-8")
+    assert "Three levels" in progressive
     for entrypoint in (ROOT / "SKILL.md", ROOT / "AGENTS.md"):
         text = entrypoint.read_text(encoding="utf-8")
         assert "router/behavioral-calibration.md" in text
@@ -149,14 +151,35 @@ def test_capability_index_has_bounded_entrypoints():
         assert deliverable["output_contract"]
 
 
+def test_routing_vocabulary_has_a_single_canonical_source():
+    classification = (ROOT / "router" / "classification-rules.md").read_text(encoding="utf-8")
+    assert "router/behavioral-calibration.md" in classification
+    # The deliverable enum must not be restated outside the canonical contract.
+    assert "financial-analysis | data-analysis" not in classification
+    assert "Agent Selection" in classification
+    calibration = (ROOT / "router" / "behavioral-calibration.md").read_text(encoding="utf-8")
+    for term in ("answer", "research", "comparison", "bug-fix", "communication"):
+        assert f"`{term}`" in calibration
+    for entrypoint in (ROOT / "SKILL.md", ROOT / "AGENTS.md"):
+        text = entrypoint.read_text(encoding="utf-8")
+        assert "financial-analysis | data-analysis" not in text
+
+
 def test_portable_contracts_and_provider_free_benchmark_are_registered():
     import yaml
 
     manifest = yaml.safe_load((ROOT / "skill-manifest.yaml").read_text(encoding="utf-8"))
     assert manifest["contracts"] == [
         "contracts/README.md",
+        "contracts/capability-manifest.yaml",
         "contracts/four-channels.md",
+        "contracts/handoff-contract.yaml",
+        "contracts/hitl-interrupt.yaml",
+        "contracts/memory-provenance.yaml",
+        "contracts/middleware-hooks.yaml",
+        "contracts/subagent-contract.yaml",
         "contracts/task-envelope.yaml",
+        "contracts/task-state-machine.yaml",
     ]
     assert "scripts/benchmark-prompt-routing.py" in manifest["scripts"]
     assert "scripts/generate-project-context.py" in manifest["scripts"]

@@ -13,6 +13,45 @@ SCRIPT = ROOT / "scripts" / "compare-routing-predictions.py"
 ALIASES = ROOT / "evals" / "domain-aliases.json"
 
 
+def test_comparison_can_score_a_declared_field_subset():
+    with tempfile.TemporaryDirectory() as directory:
+        root = Path(directory)
+        gold = root / "gold.json"
+        predictions = root / "predictions.json"
+        gold.write_text(json.dumps([
+            {"id": "a", "expected_deliverable": "code", "expected_risk": "security", "expected_size": "moderate"},
+        ]), encoding="utf-8")
+        predictions.write_text(json.dumps([
+            {"id": "a", "deliverable": "code", "risk": "none", "size": "moderate"},
+        ]), encoding="utf-8")
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--gold", str(gold), "--predictions", str(predictions),
+             "--fields", "deliverable,size", "--json"],
+            cwd=ROOT, capture_output=True, text=True, check=False,
+        )
+        assert result.returncode == 0, result.stdout + result.stderr
+        report = json.loads(result.stdout)
+        assert report["metrics"]["scored_fields"] == ["deliverable", "size"]
+        assert report["metrics"]["passed"] == 1
+        assert "risk" not in report["metrics"]["field_agreement"]
+
+
+def test_comparison_rejects_an_empty_field_selection():
+    with tempfile.TemporaryDirectory() as directory:
+        root = Path(directory)
+        gold = root / "gold.json"
+        predictions = root / "predictions.json"
+        gold.write_text(json.dumps([{"id": "a", "expected_size": "moderate"}]), encoding="utf-8")
+        predictions.write_text(json.dumps([{"id": "a", "size": "moderate"}]), encoding="utf-8")
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--gold", str(gold), "--predictions", str(predictions),
+             "--fields", "nonexistent", "--json"],
+            cwd=ROOT, capture_output=True, text=True, check=False,
+        )
+        assert result.returncode == 2
+        assert "field selection" in result.stdout
+
+
 def test_comparison_normalizes_safe_aliases_and_quarantines_ambiguous_domains():
     with tempfile.TemporaryDirectory() as directory:
         root = Path(directory)

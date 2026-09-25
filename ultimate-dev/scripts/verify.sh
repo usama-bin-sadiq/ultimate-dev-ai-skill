@@ -41,6 +41,7 @@ if command -v python3 >/dev/null 2>&1 && python3 -c 'import yaml' >/dev/null 2>&
   python3 "$ROOT/scripts/benchmark-prompt-routing.py" --strict >/dev/null
   python3 "$ROOT/scripts/generate-agent-catalog.py" --check
   python3 "$ROOT/scripts/validate-consistency.py"
+  python3 "$ROOT/scripts/measure-entrypoint.py" --strict >/dev/null
   python3 "$ROOT/scripts/measure-install.py" --strict >/dev/null
   python3 "$ROOT/scripts/benchmark-project-context.py" --project "$PROJECT_ROOT" --strict >/dev/null
   python3 "$ROOT/scripts/validate-company-context.py" \

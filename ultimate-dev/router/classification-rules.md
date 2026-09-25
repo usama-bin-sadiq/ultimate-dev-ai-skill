@@ -7,18 +7,24 @@
 Classification determines task size, domains, risk, clarity, and candidate
 routing. It does not by itself determine the final implementation.
 
+**Single source of truth for decision values and their calibration is
+`router/behavioral-calibration.md`.** This file owns only the mechanics:
+how to apply the capability index, select a specialist, and hand off work.
+Do not restate the value vocabularies here; a change must land in one place.
+
 ---
 
 ## Step 1: Size
 
-- **atomic**: single focused function/file/config change, factual question, typo,
-  simple lookup, or isolated explanation
-- **moderate**: one bounded feature/fix, primarily one domain, limited dependencies
-- **complex**: ≥2 materially different domains, architecture change, substantial
-  dependencies, multi-stage work, or coordinated execution
+Apply the size calibration in `router/behavioral-calibration.md`.
+
+- `atomic` — one local, low-coupling action or one concise answer.
+- `moderate` — several dependent steps, one artifact, or a bounded feature.
+- `complex` — multiple systems/domains, staged coordination, migration, regulated
+  judgment, or substantial unfamiliarity needing safe bounded discovery.
 
 Use the smallest accurate classification. Do not classify a task as complex
-only because it touches multiple files.
+only because it touches multiple files. Unknown domain alone is not complexity.
 
 ---
 
@@ -98,23 +104,16 @@ hosts that do not load YAML configuration.
 
 ## Step 3: Risk Flag
 
-Classify risk based on the actual requested change.
-
-Add **security** when the task touches:
-
-* authentication or authorization
-* PII or sensitive data
-* payments
-* secrets or credentials
-* security controls
-* regulated data
-* production deployment with meaningful security impact
-
-Use:
+Apply the risk calibration in `router/behavioral-calibration.md`. Risk follows the
+actual impact of the requested change, not topic sensitivity.
 
 ```text
 risk: none | data | security | compliance
 ```
+
+Add `security` for authentication/authorization, PII or sensitive data,
+payments, secrets or credentials, security controls, regulated data, or a
+production deployment with meaningful security impact.
 
 Multiple risk categories may apply internally. The output should identify the
 highest relevant risk and mention additional material risks when needed.
@@ -210,7 +209,7 @@ select accordingly, unless genuinely independent validation is required.
 
 ## Step 5: Clarity Check
 
-Classify clarity as:
+Classify clarity as defined in `router/behavioral-calibration.md`:
 
 ```text
 clear | resolvable | blocked
@@ -243,18 +242,18 @@ Those are model / intelligence decisions; the orchestrator coordinates their exe
 
 ## Output
 
-For every task, emit a concise classification:
+Emit only the fields required by the task envelope or the replay harness. The
+field vocabulary, allowed values, and calibration examples live in
+`router/behavioral-calibration.md` and `contracts/task-envelope.yaml`; do not
+copy them here. The minimum decision record is:
 
 ```yaml
+deliverable: <canonical value>
 size: atomic | moderate | complex
 clarity: clear | resolvable | blocked
-deliverable: answer | research | comparison | recommendation | plan |
-  requirements | specification | decision | code | bug-fix | review |
-  security-review | audit | financial-analysis | data-analysis | document |
-  spreadsheet | presentation | communication | workflow | creative | learning |
-  unknown
 risk: none | data | security | compliance
-clarity: clear | resolvable | blocked
+risk_basis: <required when risk is not none; one impact clause>
+domains: [<canonical capability-index IDs>]
 agents:
   - selected-agent-name
 capability_gap:
@@ -262,12 +261,13 @@ capability_gap:
   missing: []
 ```
 
-For atomic tasks, `agents` may be empty.
+Lint the record with `scripts/validate-routing-decision.py` when the host can run
+it. It rejects unknown vocabulary, a raised risk with no named impact, and an
+unfamiliar domain reported with no capability gap.
 
-For moderate tasks, select agents only when specialist execution is actually
-needed.
-
-For complex tasks, list the primary agent for each selected domain.
+For atomic tasks, `agents` may be empty. For moderate tasks, select agents only
+when specialist execution is actually needed. For complex tasks, list the
+primary agent for each selected domain.
 
 ---
 

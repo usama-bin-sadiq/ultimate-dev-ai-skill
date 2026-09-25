@@ -126,6 +126,9 @@ print("\n=== Prompt-first Extensions ===")
 for script in (
     "scripts/benchmark-prompt-routing.py",
     "scripts/compare-routing-predictions.py",
+    "scripts/validate-routing-decision.py",
+    "scripts/measure-entrypoint.py",
+    "scripts/replay-gate.py",
     "scripts/generate-project-context.py",
     "scripts/measure-install.py",
     "scripts/benchmark-project-context.py",

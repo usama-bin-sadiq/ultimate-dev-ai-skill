@@ -137,7 +137,11 @@ For host replay, load the single source of truth at
 `router/behavioral-calibration.md` before selecting a specialist. It defines
 canonical deliverable, size, domain, risk, capability-gap, and route decisions.
 Keep this file as the short entry point; do not duplicate or reinterpret those
-rules in multiple prompts.
+rules in multiple prompts. Load references progressively according to
+`router/progressive-disclosure.md`; do not load the full registry by default.
+The portable lifecycle, middleware hooks, and capability boundaries are defined
+in `contracts/task-state-machine.yaml`, `contracts/middleware-hooks.yaml`, and
+`contracts/capability-manifest.yaml`.
 
 ## Four Universal Channels
 

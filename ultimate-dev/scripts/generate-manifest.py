@@ -182,8 +182,15 @@ def generate_manifest():
         },
         "contracts": [
             "contracts/README.md",
+            "contracts/capability-manifest.yaml",
             "contracts/four-channels.md",
+            "contracts/handoff-contract.yaml",
+            "contracts/hitl-interrupt.yaml",
+            "contracts/memory-provenance.yaml",
+            "contracts/middleware-hooks.yaml",
+            "contracts/subagent-contract.yaml",
             "contracts/task-envelope.yaml",
+            "contracts/task-state-machine.yaml",
         ],
         "scripts": [
             "scripts/validate.py",
@@ -193,6 +200,9 @@ def generate_manifest():
             "scripts/validate-consistency.py",
             "scripts/benchmark-prompt-routing.py",
             "scripts/compare-routing-predictions.py",
+            "scripts/validate-routing-decision.py",
+            "scripts/measure-entrypoint.py",
+            "scripts/replay-gate.py",
             "scripts/generate-project-context.py",
             "scripts/measure-install.py",
             "scripts/validate-company-context.py",
@@ -209,6 +219,7 @@ def generate_manifest():
             "files": [
                 "router/classification-rules.md",
                 "router/behavioral-calibration.md",
+                "router/progressive-disclosure.md",
                 "router/completion-checklist.md",
                 "router/decomposition.md",
                 "router/gap-promotion-rules.md",
