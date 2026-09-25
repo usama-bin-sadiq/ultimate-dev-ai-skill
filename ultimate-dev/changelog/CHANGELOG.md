@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.2.0] — 2026-09-25
+
+### Added
+- feat: provision host root instruction files so the skill activates reliably Reported symptom: a large engineering prompt was worked with none of the skill's discipline, and nothing indicated the skill (commit 5a172be61ce9)
+
+
+# Changelog
+
 ## [3.1.2] — 2026-09-25
 
 ### Documentation

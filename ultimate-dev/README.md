@@ -1,4 +1,4 @@
-# Ultimate-Dev 3.1.2
+# Ultimate-Dev 3.2.0
 
 > Prompt-first, model-agnostic agentic skill suite for software agencies and companies.
 
@@ -369,7 +369,7 @@ chmod +x .git/hooks/pre-commit
 
 ```
 ultimate-dev/
-├── SKILL.md                    ← Orchestrator (488 lines)
+├── SKILL.md                    ← Orchestrator (506 lines)
 ├── INSTALLATION.md             ← Size, dependencies, verification, uninstall
 ├── requirements-dev.txt        ← Optional development dependencies
 ├── skill-manifest.yaml         ← Auto-generated registry
