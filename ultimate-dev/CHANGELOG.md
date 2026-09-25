@@ -2,6 +2,28 @@
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-09-26
+
+### Added
+- Portable control-plane contracts: task state machine, middleware hooks, capability manifest, subagent, handoff, memory provenance, and HITL interrupt. All host-neutral, none requiring a runtime.
+- `validate-routing-decision.py`: lints a decision record for vocabulary, route resolution against shipped skills and agents, risk justification, unfamiliar-domain gap coherence, and a bounded one-pass self-check.
+- `measure-entrypoint.py`: budgets always-loaded entrypoints so context cost cannot silently grow; wired into `verify.sh`.
+- `replay-gate.py`: fails a recorded replay on regression, pass-rate drop, forbidden-domain activation, or missing predictions.
+- `validate-task-state.py`: confirms durable task state is a single parseable JSON document, catching YAML-written-as-JSON and concatenated documents.
+- `reference/agentic-security-checklist.md`: OWASP Agentic Top 10 and NIST mapped to controls this package can enforce or verify.
+- `router/progressive-disclosure.md` and `router/context-projection.md` for context cost control.
+- Calibration and holdout fixtures with declared oracle limits; `--fields` scoring in the comparison tool.
+
+### Fixed
+- **Automated releases had been failing since v3.0.2.** `sync-version.py` did not write `SKILL.md`, which `validate-consistency.py` version-checks, so every release bumped `VERSION` and then failed validation. `SKILL.md` is now synced, and its `# Ultimate-Dev X.Y.Z` title moves with the version instead of going stale.
+- Durable task state was unparseable in three places, silently breaking the context-loss guarantee: one state file had an unquoted JSON key, one was YAML written with a `.json` extension, and one held two concatenated JSON documents. All repaired, and the class is now caught mechanically.
+- Routing vocabulary was duplicated between `classification-rules.md` and the calibration contract, which biased classification. The vocabularies now live in one place.
+
+### Changed
+- Measured replay 32 improved from 16/32 to a mean of 29.8/32 across 11 recorded rounds, with deliverable, risk, and size agreement at 0.99 or better. This is a same-model host-context diagnostic, not an independent model benchmark.
+- Two replay gold labels were corrected on independent evidence from `config/capability-index.yaml` signals. A third correction was made and reverted because it aligned the labels to model output rather than to evidence.
+- Documented that accuracy falls as the calibration contract grows past roughly 2400 words, because added rules collide rather than stack.
+
 ### Added
 - Universal task envelope, deliverable-first capability index, unknown/unclassified fallback, and four-channel contracts.
 - Provider-free routing benchmark with 154 golden cases, forbidden-route checks, and explicit non-model provenance.

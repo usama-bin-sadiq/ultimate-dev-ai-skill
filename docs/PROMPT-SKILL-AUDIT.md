@@ -114,14 +114,24 @@ prompt-quality evidence:
 - bounded nested-manifest discovery was added after the full IntelliJ benchmark
   showed that module-local build files are not always at the repository root;
   the scanner is covered by fixture tests and never executes project commands;
-- verification: 802 Python tests, 25 JEV tests, strict prompt audit, strict
+- verification: 842 Python tests, 25 JEV tests, strict prompt audit, strict
   provider-free benchmark, project-context benchmark, consistency, host-native,
   and workflow-security checks;
-- fresh-context behavioral smoke replay: three same-model host sessions; baseline
-  runs scored 13/32, the first guardrail iteration 4/32, and the refined
-  iteration 11/32 raw (17/32 with the final comparison policy, five ambiguous
-  domain cases unscored); this is not an independent model benchmark and remains
-  a quality gap;
+- fresh-context behavioral replay, re-measured across 11 recorded same-model host
+  sessions after the control-plane work: mean **29.8/32**, median 30, max 31,
+  from a 16/32 baseline. Field agreement is deliverable 0.994, risk 0.992,
+  size 0.997, and capability_gap 0.948, with the first three perfect in 9 to 10
+  of 11 rounds. This is a host-context diagnostic on a small model, not an
+  independent model benchmark and not a model-quality score. The residual
+  disagreement is a single rotating case on the `unknown-unclassified` boundary,
+  where the contract permits more than one defensible answer;
+- two replay gold labels were corrected on independent evidence from
+  `config/capability-index.yaml` signals rather than from model output, and a
+  third correction that aligned labels to predictions was reverted;
+- measurement also established a ceiling: accuracy falls as the calibration
+  contract grows past roughly 2400 words, because additional rules collide
+  rather than stack. Three candidate rule sets were tried and reverted on that
+  evidence;
 - the provider-free audit reports **23** legacy expected-domain labels covered
   by 24 defined comparison-only aliases; all 21 ambiguous-label cases were
   migrated case-by-case, so no domain case remains unscored.
