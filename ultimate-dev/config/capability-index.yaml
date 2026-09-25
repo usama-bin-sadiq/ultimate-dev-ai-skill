@@ -1,4 +1,4 @@
-version: "3.0.3"
+version: "3.0.4"
 description: >-
   Compact prompt-first routing index. Load this before selecting a specialist;
   it intentionally contains signals and entrypoints, not full methodology.

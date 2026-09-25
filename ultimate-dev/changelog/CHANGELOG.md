@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.0.4] — 2026-09-25
+
+### Fixed
+- fix: stage every versioned file in the release commit The previous fix made releases succeed but left the pushed main branch broken. The release commit staged only VERSION, config/, the manifest, READ (commit c67a7798b8f9)
+
+
+# Changelog
+
 ## [3.0.3] — 2026-09-25
 
 ### Fixed

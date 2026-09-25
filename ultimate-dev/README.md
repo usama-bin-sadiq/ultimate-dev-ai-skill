@@ -1,4 +1,4 @@
-# Ultimate-Dev 3.0.3
+# Ultimate-Dev 3.0.4
 
 > Prompt-first, model-agnostic agentic skill suite for software agencies and companies.
 
