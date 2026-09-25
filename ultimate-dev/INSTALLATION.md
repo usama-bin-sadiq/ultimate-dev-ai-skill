@@ -246,6 +246,20 @@ unrelated files are not managed by the installer.
 ./scripts/install.sh --generic --global --yes
 ```
 
+**A stale install keeps old behaviour.** The installed copy is what the host
+loads; what is in the repository has no effect until you reinstall. After any
+release, confirm the installed `VERSION` matches the repository `VERSION`:
+
+```bash
+cat ~/.agents/skills/ultimate-dev/VERSION   # installed
+cat VERSION                                  # repository
+```
+
+If they differ, or if the host still behaves like an older version, reinstall and
+restart the host session so its skill cache is rebuilt. A reinstallation also
+clears `.pytest_cache`, `__pycache__`, and `.DS_Store` files that accumulate in
+the installed directory when tools are run there.
+
 ### Uninstall
 
 ```bash
