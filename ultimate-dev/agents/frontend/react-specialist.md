@@ -3,7 +3,7 @@ name: react-specialist
 domain: frontend
 description: >
   Specializes in React 18+ patterns, server components, state management, and performance optimization. Use for React, JSX, TSX, hooks, Next.js, Redux, Zustand, server components, suspense.
-triggers: [react specialist, frontend, 18+, jsx, tsx, next, hooks, redux, state, server, zustand, patterns]
+triggers: [react specialist, 18+, jsx, tsx, next, hooks, redux, state, server, zustand]
 anti_triggers: [vue, nuxt, pinia, angular, svelte, css architect, tailwind, scss, WCAG, aria, screen reader, core web vitals, lighthouse, financial model, forecast, budget, marketing, sales]
 tools:
   - read_file

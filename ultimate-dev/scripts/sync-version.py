@@ -10,12 +10,20 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 VERSION_FILE = ROOT.parent / "VERSION"
 CONFIG_FILES = (
+    ROOT / "config" / "agent_registry.yaml",
+    ROOT / "config" / "capability-index.yaml",
     ROOT / "config" / "context_budgets.yaml",
     ROOT / "config" / "models.yaml",
     ROOT / "config" / "permissions.yaml",
     ROOT / "config" / "security.yaml",
     ROOT / "config" / "workflow.yaml",
 )
+FRONTMATTER_FILES = (
+    ROOT / "AGENT.md",
+    ROOT / "AGENTS.md",
+    ROOT / "CLAUDE.md",
+)
+README_FILE = ROOT / "README.md"
 SEMVER_RE = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+$")
 VERSION_LINE_RE = re.compile(r"^version\s*:")
 
@@ -63,6 +71,32 @@ def sync_file(path: Path, version: str, *, check: bool = False) -> bool:
     return changed
 
 
+def sync_readme(text: str, version: str) -> str:
+    if not SEMVER_RE.fullmatch(version):
+        raise SyncVersionError(f"version is not semantic: {version}")
+    updated, count = re.subn(
+        r"^# Ultimate-Dev \d+\.\d+\.\d+[ \t]*$",
+        f"# Ultimate-Dev {version}",
+        text,
+        count=1,
+        flags=re.MULTILINE,
+    )
+    if count != 1:
+        raise SyncVersionError(f"README: expected one version heading, found {count}")
+    return updated
+
+
+def sync_text_file(path: Path, version: str, *, check: bool = False) -> bool:
+    if not path.is_file():
+        raise SyncVersionError(f"managed file is missing: {path}")
+    original = path.read_text(encoding="utf-8")
+    updated = sync_text(original, version, label=str(path)) if path in FRONTMATTER_FILES else sync_readme(original, version)
+    changed = updated != original
+    if changed and not check:
+        path.write_text(updated, encoding="utf-8")
+    return changed
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true", help="fail if managed config versions differ")
@@ -70,6 +104,11 @@ def main(argv: list[str] | None = None) -> int:
     try:
         version = read_version()
         changed = [str(path) for path in CONFIG_FILES if sync_file(path, version, check=args.check)]
+        changed.extend(
+            str(path)
+            for path in (*FRONTMATTER_FILES, README_FILE)
+            if sync_text_file(path, version, check=args.check)
+        )
     except (OSError, SyncVersionError) as exc:
         print(f"sync-version: {exc}", file=sys.stderr)
         return 1

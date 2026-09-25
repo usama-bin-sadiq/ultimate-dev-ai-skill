@@ -1,5 +1,5 @@
 ---
-name: review-skill
+name: review
 description: >
   Meta-cognitive skill for review. Teaches HOW to evaluate ANY code,
   design, or decision — regardless of language, framework, or domain.
@@ -109,6 +109,13 @@ DON'T block on: Style preferences, naming opinions, minor formatting
 DO suggest:   Better patterns, clearer names, missing tests
 DON'T suggest: Rewriting things that work, over-engineering
 ```
+
+## Operating Contract
+
+- **Inputs:** the complete change or decision, relevant context, and risk constraints.
+- **Output:** prioritized findings with severity, evidence, impact, and recommendation.
+- **Verification:** trace each finding to a file, test, source, or explicit assumption.
+- **When not to use:** do not block on style preferences or review an incomplete change as if final.
 
 ## Review Anti-Patterns
 

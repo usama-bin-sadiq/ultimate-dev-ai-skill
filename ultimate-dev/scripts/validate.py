@@ -46,6 +46,11 @@ print("=" * 60)
 print("\n=== Required Files ===")
 for f in ["SKILL.md", "skill-manifest.yaml", "README.md"]:
     check(os.path.exists(os.path.join(BASE, f)), f"{f} exists")
+for contract in ("contracts/README.md", "contracts/four-channels.md", "contracts/task-envelope.yaml"):
+    check(os.path.exists(os.path.join(BASE, contract)), f"{contract} exists")
+for guide in ("INSTALLATION.md", "requirements-dev.txt"):
+    check(os.path.exists(os.path.join(BASE, guide)), f"{guide} exists")
+check(os.path.exists(os.path.join(BASE, "skills/universal-task/SKILL.md")), "universal-task skill exists")
 check(os.path.exists(os.path.join(os.path.dirname(BASE), "VERSION")), "VERSION exists (root)")
 
 # 2. Version consistency
@@ -116,7 +121,18 @@ for d in ["config", "prompts", "workflows", "schemas", "rules", "templates",
     else:
         check(False, f"{d}/ directory exists")
 
-# 8. SKILL.md / AGENTS.md references and patterns
+# 8. New prompt-first and evaluation entrypoints
+print("\n=== Prompt-first Extensions ===")
+for script in (
+    "scripts/benchmark-prompt-routing.py",
+    "scripts/generate-project-context.py",
+    "scripts/measure-install.py",
+    "scripts/benchmark-project-context.py",
+    "scripts/validate-company-context.py",
+):
+    check(os.path.exists(os.path.join(BASE, script)), f"{script} exists")
+
+# 9. SKILL.md / AGENTS.md references and patterns
 print("\n=== SKILL.md Pattern Wiring ===")
 check("skills/" in skill_md, "SKILL.md references skills/ directory")
 # Case-insensitive check for all 5 patterns (new architecture includes Composition)
@@ -177,10 +193,14 @@ config_dir = os.path.join(BASE, "config")
 if os.path.exists(config_dir):
     for f in sorted(os.listdir(config_dir)):
         if f.endswith(".yaml"):
-            with open(os.path.join(config_dir, f)) as fh:
-                content = fh.read()
-            has_version = "version:" in content
-            has_current = f'"{version}"' in content or f"'{version}'" in content
+            config_path = os.path.join(config_dir, f)
+            with open(config_path) as fh:
+                try:
+                    config_data = yaml.safe_load(fh) or {}
+                except yaml.YAMLError:
+                    config_data = {}
+            has_version = isinstance(config_data, dict) and "version" in config_data
+            has_current = isinstance(config_data, dict) and str(config_data.get("version")) == version
             if has_version:
                 check(has_current, f"config/{f} has version {version}")
             else:

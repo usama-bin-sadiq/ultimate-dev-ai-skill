@@ -3,7 +3,7 @@ name: terraform-engineer
 domain: devops
 description: >
   Specializes in Infrastructure as Code with Terraform, Pulumi, and CloudFormation. Use for Terraform, Pulumi, CloudFormation, IaC, provider, module, state, workspace, drift, import, plan, apply, destroy.
-triggers: [terraform engineer, devops, iac, code, plan, apply, drift, state, import, module, pulumi, destroy]
+triggers: [terraform engineer, iac, plan, apply, drift, state, import, module, pulumi, destroy]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

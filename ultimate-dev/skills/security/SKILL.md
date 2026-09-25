@@ -1,5 +1,5 @@
 ---
-name: security-skill
+name: security
 description: >
   Meta-cognitive skill for security. Teaches HOW to think about security
   in ANY system — regardless of language, framework, or platform.
@@ -97,6 +97,13 @@ Security verification:
 3. Penetration testing (or at least threat modeling)
 4. Verify in staging, not just development
 ```
+
+## Operating Contract
+
+- **Inputs:** assets, trust boundaries, threat assumptions, data classification, and constraints.
+- **Output:** prioritized threats, controls, evidence, residual risk, and review decision.
+- **Verification:** run the smallest relevant security check plus manual boundary review.
+- **When not to use:** do not claim authorization or penetration-test results; escalate high-risk decisions.
 
 ## Security Anti-Patterns
 

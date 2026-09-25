@@ -22,20 +22,42 @@ only because it touches multiple files.
 
 ---
 
-## Step 2: Domain Match
+## Step 2: Deliverable and Domain Match
 
-Match **intent + repository context + technology** to the Capability Index.
+Classify the requested **deliverable first**, then match **intent + repository
+context + technology** to the Capability Index. A department is not a substitute
+for understanding what the user wants to receive.
 
-Do not rely on keywords alone.
+Do not rely on keywords alone. Broad words such as `design`, `analysis`, `data`,
+`web`, `new`, or `systems` are hints only. Require a combination of intent,
+deliverable, domain, and relevant context before selecting a specialist.
 
-If no existing capability matches, use:
+If no existing capability matches, use the safe fallback sequence:
 
-```text
-agents/_emerging-tech-handler.md
-````
+1. classify the deliverable as `unknown` when it cannot be safely inferred;
+2. load `skills/universal-task/SKILL.md`;
+3. use the universal fallback only for a bounded, safe result;
+4. report missing capabilities, assumptions, confidence, and limitations;
+5. escalate material decisions to a human or qualified specialist.
+
+For common department routing, prefer the compact
+`config/capability-index.yaml`; the table below is a portable fallback for
+hosts that do not load YAML configuration.
 
 | Domain             | Keywords / Signals                                                                                                     |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| internal-communications | status update, meeting notes, decision memo, executive summary, stakeholder update, incident communication |
+| strategy-operating-model | strategy, operating model, business model, OKR, KPI tree, value chain, capability map |
+| data-bi            | dataset, analytics, dashboard, metric definition, data lineage, SQL analysis, visualization |
+| finance-fpa        | budget, forecast, variance, cash flow, runway, P&L, unit economics, management accounts |
+| accounting-controls | accounting, ledger, reconciliation, close, accrual, tax workflow, control evidence |
+| legal-privacy-contracts | contract, clause, DPA, privacy, retention, legal hold, data governance, records |
+| audit-risk-assurance | internal audit, control test, evidence request, finding, risk assessment, assurance |
+| people-operations  | hiring, recruiting, onboarding, offboarding, workforce, employee relations, HR policy |
+| procurement-vendors | procurement, vendor, supplier, RFP, RFQ, purchase order, due diligence, renewal |
+| office-knowledge-artifacts | report, PDF, DOCX, XLSX, PPTX, spreadsheet, slide deck, meeting notes, knowledge base |
+| automation-integrations | automation, workflow, webhook, schedule, API integration, MCP, idempotency, retry |
+| prompt-skill-quality | prompt test, routing regression, golden cases, false activation, context budget, agent benchmark |
 | backend            | API, server, endpoint, REST, gRPC, worker, queue, service, lambda, auth, Node.js, Python, Go, Java, GraphQL            |
 | frontend           | UI, component, page, form, CSS, render, browser, SPA, SSR, responsive, React, Vue, Angular, Tailwind, accessibility    |
 | architecture       | system design, tech stack, migration, scaling, CQRS, hexagonal, architecture, trade-off                                |
@@ -111,17 +133,23 @@ Read the agent registry/manifest before routing.
 ### Tiebreaker
 
 ```text
-1. EXACT MATCH
-   → agent directly matches the requested technology/domain
+1. DELIVERABLE + EXACT CAPABILITY
+   → common skill or agent directly matches the requested output and context
 
 2. TECHNOLOGY MATCH
-   → agent explicitly supports the technology in its triggers
+   → agent explicitly supports the technology in its compound triggers
 
 3. DOMAIN GENERIC
-   → generic-<domain>-specialist
+   → generic-<domain>-specialist when execution is justified
 
-4. UNIVERSAL
-   → universal-technology-specialist as last resort
+4. UNIVERSAL TASK
+   → universal-task skill for unknown/unclassified bounded work
+
+5. UNIVERSAL SPECIALIST
+   → universal-technology-specialist only when an actual execution role is needed
+
+6. HUMAN REVIEW
+   → report the capability gap when no safe route exists
 ```
 
 ### Selection Rules
@@ -219,12 +247,19 @@ For every task, emit a concise classification:
 
 ```yaml
 size: atomic | moderate | complex
-domains:
-  - domain-name
+clarity: clear | resolvable | blocked
+deliverable: answer | research | comparison | recommendation | plan |
+  requirements | specification | decision | code | bug-fix | review |
+  security-review | audit | financial-analysis | data-analysis | document |
+  spreadsheet | presentation | communication | workflow | creative | learning |
+  unknown
 risk: none | data | security | compliance
 clarity: clear | resolvable | blocked
 agents:
   - selected-agent-name
+capability_gap:
+  level: none | partial | blocking
+  missing: []
 ```
 
 For atomic tasks, `agents` may be empty.
@@ -270,6 +305,24 @@ Decompose by meaningful responsibility.
 
 Use Subagents, Handoffs, Router, or composition only when justified by the
 task's dependencies and execution structure.
+
+---
+
+## Four-Channel Handoff
+
+Before execution, make the handoff explicit:
+
+- **Intent:** task envelope, acceptance criteria, unknowns, and risk.
+- **Knowledge:** selected common skill, optional specialist, references, and
+  assumptions.
+- **Action:** requested capabilities, host-available capabilities, side-effect
+  classification, and approval state.
+- **Evidence:** checks, sources, artifacts, limitations, confidence, and next
+  actions.
+
+The portable contract is `contracts/task-envelope.yaml` and
+`contracts/four-channels.md`. A prompt-only host may leave host capability
+facts unknown and still complete a plan, explanation, or analysis.
 
 ---
 

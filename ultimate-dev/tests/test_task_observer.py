@@ -29,7 +29,7 @@ def test_task_observer_artifacts_exist_and_have_expected_frontmatter():
     assert AGENT.is_file()
 
     skill = frontmatter(SKILL)
-    assert skill["name"] == "task-observer-skill"
+    assert skill["name"] == "task-observer"
     assert "observation" in skill["description"].lower()
     assert "task observer" in [str(item).lower() for item in skill["triggers"]]
     assert skill["provides"] == "task_observation_ability"
@@ -71,9 +71,30 @@ def test_manifest_registers_each_artifact_exactly_once():
     assert manifest["stats"]["total_skills"] == len(manifest["skills"])
 
 
-def test_skill_directory_contains_only_the_methodology_file():
+def test_skill_directory_contains_core_and_progressive_references():
     files = sorted(path.name for path in SKILL.parent.iterdir() if path.is_file())
     assert files == ["SKILL.md"]
+    references = sorted(path.name for path in (SKILL.parent / "references").glob("*.md"))
+    assert references == ["confidentiality-and-review.md", "observation-protocol.md"]
+    core = SKILL.read_text(encoding="utf-8")
+    assert len(core.split()) < 500
+    for reference in references:
+        assert reference in core
+        assert (SKILL.parent / "references" / reference).is_file()
+
+
+def test_task_observer_references_are_safe_and_operational():
+    references = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in (SKILL.parent / "references").glob("*.md")
+    )
+    combined = SKILL.read_text(encoding="utf-8") + "\n" + references
+    for required in ("Append protocol", "Confidentiality", "review", "log.md"):
+        assert required.lower() in combined.lower()
+    assert not re.search(
+        r"\b(playwright|puppeteer|selenium|docker|podman|openai|anthropic|ollama|npm|pip|package manager|mcp server)\b",
+        combined.lower(),
+    )
 
 
 def test_documentation_and_routing_surfaces_include_task_observer():

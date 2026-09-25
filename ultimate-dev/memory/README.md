@@ -3,9 +3,10 @@
 Skill-internal memory shipped with the skill: templates and caches.
 
 > **Runtime project memory lives at the project root**, not here:
-> `<project-root>/.memory/ultimate-dev/` (created by the installer or on
-> first LEARN, gitignored). This directory only ships the
-> `project-memory.md` template that gets seeded there.
+> `<project-root>/.memory/ultimate-dev/` is created and managed by the
+> runtime when needed. The installer copies this skill payload only and does
+> not create or delete project memory. This directory ships the
+> `project-memory.md` template used by the runtime.
 
 ## Contents
 

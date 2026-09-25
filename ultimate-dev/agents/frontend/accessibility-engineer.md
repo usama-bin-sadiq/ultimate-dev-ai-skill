@@ -3,7 +3,7 @@ name: accessibility-engineer
 domain: frontend
 description: >
   Specializes in WCAG compliance, assistive technology support, accessible component design, and inclusive UX. Use for accessibility, WCAG, ARIA, screen reader, keyboard navigation, color contrast, alt text, focus management, semantic HTML.
-triggers: [accessibility engineer, frontend, alt, aria, html, text, wcag, color, focus, design, reader, screen]
+triggers: [accessibility engineer, alt, aria, html, text, wcag, color, focus, reader, screen]
 anti_triggers: [react, vue, jsx, tsx, next, nuxt, hooks, redux, pinia, css architect, tailwind, scss, core web vitals, lighthouse, financial model, forecast, budget, marketing, sales]
 tools:
   - read_file

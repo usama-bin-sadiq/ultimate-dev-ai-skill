@@ -240,7 +240,7 @@ def test_posix_installer_is_interactive_and_copy_only():
         result = subprocess.run(
             [str(installer)],
             cwd=REPO_ROOT,
-            input=f"2\n{project}\ny\n",
+            input=f"2\n2\n{project}\ny\n",
             capture_output=True,
             text=True,
             check=False,
@@ -249,12 +249,38 @@ def test_posix_installer_is_interactive_and_copy_only():
         assert result.returncode == 0, result.stdout + result.stderr
         target = project / ".agents" / "skills" / "ultimate-dev"
         assert (target / "SKILL.md").is_file()
+        assert (target / "contracts" / "task-envelope.yaml").is_file()
+        assert (target / "skills" / "universal-task" / "SKILL.md").is_file()
+        assert not any(path.name in {"__pycache__", ".pytest_cache", ".DS_Store"} for path in target.rglob("*"))
+        assert not list(target.rglob("*.pyc"))
+        assert "Payload size:" in result.stdout
         assert not (project / ".memory").exists()
         assert not (project / ".gitignore").exists()
         assert not (project / "AGENTS.md").exists()
         assert not (project / "CLAUDE.md").exists()
         assert not (project / ".cursor").exists()
         assert not (project / ".claude").exists()
+
+
+def test_posix_tool_specific_menu_selects_native_destination():
+    import tempfile
+
+    installer = PACKAGE_ROOT / "scripts" / "install.sh"
+    with tempfile.TemporaryDirectory(prefix="ultimate-dev-tool-menu-") as directory:
+        project = Path(directory) / "project"
+        project.mkdir()
+        result = subprocess.run(
+            [str(installer)],
+            cwd=REPO_ROOT,
+            input=f"1\n1\n2\n{project}\ny\n",
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=30,
+        )
+        assert result.returncode == 0, result.stdout + result.stderr
+        assert (project / ".claude" / "skills" / "ultimate-dev" / "SKILL.md").is_file()
+        assert not (project / ".agents").exists()
 
 
 def test_powershell_installer_contains_copy_only_guards():
@@ -268,6 +294,9 @@ def test_powershell_installer_contains_copy_only_guards():
     assert "runtime/core/browser/automation.py" in source
     assert "runtime/core/sandbox/runner.py" in source
     assert "runtime/core/jev/bridge.py" in source
+    assert "__pycache__" in source
+    assert ".pytest_cache" in source
+    assert "Payload size:" in source
 
 
 def test_powershell_installer_is_staged_and_idempotent_when_available():
@@ -374,7 +403,7 @@ def test_powershell_installer_is_interactive_and_copy_only_when_available():
         result = subprocess.run(
             [powershell, "-NoLogo", "-NoProfile", "-File", str(installer)],
             cwd=REPO_ROOT,
-            input=f"2\n{project}\ny\n",
+            input=f"2\n2\n{project}\ny\n",
             capture_output=True,
             text=True,
             check=False,
@@ -383,12 +412,41 @@ def test_powershell_installer_is_interactive_and_copy_only_when_available():
         assert result.returncode == 0, result.stdout + result.stderr
         target = project / ".agents" / "skills" / "ultimate-dev"
         assert (target / "SKILL.md").is_file()
+        assert (target / "contracts" / "task-envelope.yaml").is_file()
+        assert (target / "skills" / "universal-task" / "SKILL.md").is_file()
+        assert not any(path.name in {"__pycache__", ".pytest_cache", ".DS_Store"} for path in target.rglob("*"))
+        assert not list(target.rglob("*.pyc"))
+        assert "Payload size:" in result.stdout
         assert not (project / ".memory").exists()
         assert not (project / ".gitignore").exists()
         assert not (project / "AGENTS.md").exists()
         assert not (project / "CLAUDE.md").exists()
         assert not (project / ".cursor").exists()
         assert not (project / ".claude").exists()
+
+
+def test_powershell_tool_specific_menu_selects_native_destination_when_available():
+    import tempfile
+
+    powershell = shutil.which("pwsh-preview") or shutil.which("pwsh")
+    if not powershell:
+        pytest.skip("PowerShell is not available")
+    installer = PACKAGE_ROOT / "scripts" / "install.ps1"
+    with tempfile.TemporaryDirectory(prefix="ultimate-dev-pwsh-tool-menu-") as directory:
+        project = Path(directory) / "project"
+        project.mkdir()
+        result = subprocess.run(
+            [powershell, "-NoLogo", "-NoProfile", "-File", str(installer)],
+            cwd=REPO_ROOT,
+            input=f"1\n1\n2\n{project}\ny\n",
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=30,
+        )
+        assert result.returncode == 0, result.stdout + result.stderr
+        assert (project / ".claude" / "skills" / "ultimate-dev" / "SKILL.md").is_file()
+        assert not (project / ".agents").exists()
 
 
 def test_workflow_files_have_explicit_permissions_and_concurrency():

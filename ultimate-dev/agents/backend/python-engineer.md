@@ -3,7 +3,7 @@ name: python-engineer
 domain: backend
 description: >
   Specializes in Python async patterns, type safety, performance optimization, and Pythonic code design. Use for Python, FastAPI, Django, Flask, asyncio, type hints, mypy, pytest, pip, poetry, virtualenv, Cython, Pydantic.
-triggers: [python engineer, backend, pip, code, mypy, type, async, flask, hints, cython, design, django]
+triggers: [python engineer, pip, mypy, type, async, flask, hints, cython, django]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

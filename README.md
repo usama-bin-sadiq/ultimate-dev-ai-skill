@@ -2,8 +2,8 @@
 
 # ultimate-dev
 
-**The master software-engineering skill for AI coding assistants.**
-**One skill that adapts to any model size and covers every domain.**
+**The prompt-first agentic skill suite for software agencies and companies.**
+**One portable skill that adapts to any model, tool, and department.**
 
 [![Release](https://img.shields.io/github/v/release/usama-bin-sadiq/ultimate-dev-ai-skill?sort=semver)](https://github.com/usama-bin-sadiq/ultimate-dev-ai-skill/releases)
 [![Sync & Release](https://github.com/usama-bin-sadiq/ultimate-dev-ai-skill/workflows/Auto%20Release%20on%20Main/badge.svg)](https://github.com/usama-bin-sadiq/ultimate-dev-ai-skill/actions/workflows/release.yml)
@@ -25,12 +25,12 @@
 
 ## 🧩 What Is This?
 
-ultimate-dev is a **single skill** that replaces dozens of specialized skills. It works with ANY AI model — tiny to huge — and ANY technology stack (React/Vue, Kafka/RabbitMQ, PostgreSQL/MongoDB, AWS/Azure — you name it).
+ultimate-dev is a **portable, prompt-first skill suite** for software agencies and companies. It works with any AI model and host, covers software engineering deeply, and adds reusable business, research, audit, finance, operations, and knowledge-work methods without requiring a runtime, Python package, Node.js, or model-provider dependency.
 
 > [!NOTE]
 > **No hardcoded technologies. Pure patterns and best practices.** Unknown tech is handled by universal specialists that research it from the web and teach themselves.
 
-📖 **Full docs:** [Architecture](docs/architecture/ARCHITECTURE.md) · [Developer Guide](docs/developer/DEVELOPER_GUIDE.md) · [User Guide](docs/user/USER_GUIDE.md)
+📖 **Full docs:** [Architecture](docs/architecture/ARCHITECTURE.md) · [Department coverage](docs/DEPARTMENT-COVERAGE.md) · [Developer Guide](docs/developer/DEVELOPER_GUIDE.md) · [User Guide](docs/user/USER_GUIDE.md)
 
 ---
 
@@ -39,43 +39,53 @@ ultimate-dev is a **single skill** that replaces dozens of specialized skills. I
 ### 1. Install
 
 ```bash
-# macOS / Linux — interactive menu
+# macOS / Linux — interactive: tool-specific/generic, then Global/Project
 ./scripts/install.sh
 
-# Non-interactive
-./scripts/install.sh --global              # every project (~/.agents/skills/)
-./scripts/install.sh --project . --yes     # this project only
+# Tool-specific examples
+./scripts/install.sh --tool claude-code --global --yes
+./scripts/install.sh --tool codex --project . --yes
+./scripts/install.sh --tool opencode --global --yes
+
+# Generic examples
+./scripts/install.sh --generic --global --yes
+./scripts/install.sh --generic --project . --yes
 
 # Windows (PowerShell)
 .\scripts\install.ps1                      # interactive
-.\scripts\install.ps1 -Global -Yes         # every project
-.\scripts\install.ps1 -Project . -Yes      # this project only
+.\scripts\install.ps1 -ToolSpecific -Global -Yes
+.\scripts\install.ps1 -Generic -Project . -Yes
 ```
 
-Every install creates a memory folder at the project root — `<project>/.memory/ultimate-dev/` (or `~/.memory/ultimate-dev/` for global installs) — seeded with a template, and project-scoped installs add `.memory/ultimate-dev/` to `.gitignore`.
+The installer copies only the contents of the inner `ultimate-dev/` skill folder to the selected `.agents/skills/ultimate-dev/` destination. It does not create memory, `.gitignore`, template, `.cursor`, `.claude`, or symlink files outside that destination. Project memory is created and managed separately by the runtime when needed.
 
 > **Runtime note:** The host-native JEV path has no mandatory Python, Docker, Playwright, package-manager, or external-service dependency. A host supplies its own tools and policy; the reference JSON contract and engine are dependency-free. Legacy Python maintenance utilities remain optional and separate.
 
 📖 **Complete guide:** [User Guide](docs/user/USER_GUIDE.md) for detailed examples and troubleshooting.
 
-### Manual install (no script — works on any OS/tool)
+### Manual install (no script — works with any compatible host)
 
 ```bash
-# 1. Copy the skill folder to your tool's skill directory
-# Claude Code (macOS/Linux):
-cp -R . ~/.claude/skills/ultimate-dev/
-# Cursor / generic CLI (project scope):
-cp -R . .claude/skills/ultimate-dev/
-# Any other tool: place under the tool's native skills path, then rename .agents/ → .claude/ if needed
+# Copy the contents of the inner skill folder to the host's native skills path.
+# The installer/scripts use .agents/skills/ultimate-dev by default.
+mkdir -p /path/to/skills/ultimate-dev
+cp -R ultimate-dev/. /path/to/skills/ultimate-dev/
 
-# 2. Create memory folder (optional, for durable state)
+# Project memory is separate and is never created or deleted by the installer.
+# Create it only when the host/runtime needs durable task memory:
 mkdir -p .memory/ultimate-dev/tasks
 
-# 3. Verify: your AI tool should now discover SKILL.md, AGENTS.md and skill-manifest.yaml
+# Verify the copied payload
+test -f /path/to/skills/ultimate-dev/SKILL.md
+test -f /path/to/skills/ultimate-dev/VERSION
 ```
+
+No symlink is required or created by the installer.
 
 > [!TIP]
 > Not sure which tools you have? Run `./scripts/detect-tools.sh` to list installed agentic tools, and `./scripts/verify.sh` to check the package integrity.
+
+For the measured payload size, development dependencies, CI-equivalent checks, and uninstall commands, see [`ultimate-dev/INSTALLATION.md`](ultimate-dev/INSTALLATION.md).
 
 ### 2. Use
 
@@ -195,13 +205,16 @@ Install **once** (global or project scope) — tools auto-discover the skill fro
 | Claude Code | [`adapters/claude-code.md`](ultimate-dev/adapters/claude-code.md) |
 | Codex CLI | [`adapters/codex.md`](ultimate-dev/adapters/codex.md) |
 | Cursor | [`adapters/cursor.md`](ultimate-dev/adapters/cursor.md) |
-| OpenCode | [`adapters/generic-cli.md`](ultimate-dev/adapters/generic-cli.md) |
-| Windsurf, Cline, GitHub Copilot, Aider | [`adapters/generic-cli.md`](ultimate-dev/adapters/generic-cli.md) |
+| OpenCode | [`adapters/opencode.md`](ultimate-dev/adapters/opencode.md) |
+| Windsurf | [`adapters/windsurf.md`](ultimate-dev/adapters/windsurf.md) |
+| Cline | [`adapters/cline.md`](ultimate-dev/adapters/cline.md) |
+| GitHub Copilot | [`adapters/copilot.md`](ultimate-dev/adapters/copilot.md) |
+| Aider | [`adapters/aider.md`](ultimate-dev/adapters/aider.md) |
 | Any other agentic CLI | [`adapters/generic-cli.md`](ultimate-dev/adapters/generic-cli.md) |
 
 The full compatibility list lives in [`ultimate-dev/skill-manifest.yaml`](ultimate-dev/skill-manifest.yaml) (`compatible_tools`).
 
-> [!NOTE] **Claude Code users:** Claude reads skills from `.claude/skills/`. If you installed to `.agents/skills/ultimate-dev/`, either rename `.agents/` → `.claude/` or create a symlink (`ln -s .agents/skills/ultimate-dev/.claude/skills/ultimate-dev`) so Claude discovers the skill natively.
+> [!NOTE] **Host-specific paths:** The default installer destination is `.agents/skills/ultimate-dev/`. If a host expects a different native skills directory, copy the same inner skill contents there directly. The installer does not create symlinks.
 
 ---
 
@@ -262,9 +275,13 @@ ultimate-dev-ai-skill/
 | Document | Purpose |
 |----------|---------|
 | [README.md](README.md) | You are here — overview & quick start |
+| [ultimate-dev/INSTALLATION.md](ultimate-dev/INSTALLATION.md) | Measured install size, dependencies, verification, and uninstall |
 | [ultimate-dev/README.md](ultimate-dev/README.md) | Full skill reference — counts auto-synced on release |
 | [ultimate-dev/SKILL.md](ultimate-dev/SKILL.md) | Skill entry point (orchestrator) |
 | [docs/architecture/ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md) | System design & architecture deep-dive |
+| [docs/READINESS.md](docs/READINESS.md) | 10/10 readiness rubric and verification gates |
+| [docs/DEPARTMENT-COVERAGE.md](docs/DEPARTMENT-COVERAGE.md) | Department coverage, gaps, and prompt-first optimization plan |
+| [docs/PROMPT-SKILL-AUDIT.md](docs/PROMPT-SKILL-AUDIT.md) | Prompt-only quality audit, scorecard, and roadmap |
 | [docs/adr/0001-jev-host-native-decision-kernel.md](docs/adr/0001-jev-host-native-decision-kernel.md) | JEV host-native decision boundary |
 | [docs/developer/DEVELOPER_GUIDE.md](docs/developer/DEVELOPER_GUIDE.md) | Extending agents, skills, modules, testing |
 | [docs/user/USER_GUIDE.md](docs/user/USER_GUIDE.md) | Complete user guide with examples |

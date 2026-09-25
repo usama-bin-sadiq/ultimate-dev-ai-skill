@@ -2,8 +2,8 @@
 name: generic-devops-specialist
 domain: devops
 description: >
-  Handles ANY DevOps/cloud/platform technology not covered by dedicated specialists. Researches new tools from web, applies universal DevOps patterns, and auto-generates new specialist agents. Use for Pulumi, Crossplane, ArgoCD, Flux, Tekton, Nomad, Consul, Vault, Boundary, Waypoint, Packer, or any emerging DevOps technology.
-triggers: [generic devops specialist, devops, new, web, auto, flux, nomad, tools, vault, agents, argocd, consul]
+  Handles ANY DevOps/cloud/platform technology not covered by dedicated specialists. Researches new tools from web, applies universal DevOps patterns, and proposes a reviewed specialist candidate for future use. Use for Pulumi, Crossplane, ArgoCD, Flux, Tekton, Nomad, Consul, Vault, Boundary, Waypoint, Packer, or any emerging DevOps technology.
+triggers: [generic devops specialist, unmatched devops tool, pulumi, crossplane, argocd, flux, tekton, nomad, consul, vault]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file
@@ -27,7 +27,7 @@ You are a universal DevOps specialist that handles ANY infrastructure/platform t
 2. **Web fetch** key documentation
 3. **Apply universal patterns** from `modules/engineering/devops.md`
 4. **Complete the task**
-5. **Auto-generate specialist agent**
+5. **Propose a reviewed specialist candidate**; do not publish it.
 
 ## Universal DevOps Patterns
 

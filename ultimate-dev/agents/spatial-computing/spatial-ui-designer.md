@@ -3,7 +3,7 @@ name: spatial-ui-designer
 domain: spatial-computing
 description: >
   Specializes in spatial UI design, 3D interaction patterns, and immersive interface design. Use for spatial UI, 3D interaction, diegetic interface, spatial menu, gaze interaction, hand gesture, world-anchored UI, immersive UI, mixed reality.
-triggers: [spatial ui designer, spatial-computing, gaze, hand, menu, mixed, world, gesture, reality, anchored, diegetic, patterns]
+triggers: [spatial ui designer, spatial-computing, gaze, hand, menu, mixed, world, gesture, reality, anchored, diegetic]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

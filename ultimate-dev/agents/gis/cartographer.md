@@ -3,7 +3,7 @@ name: cartographer
 domain: gis
 description: >
   Specializes in map design, cartographic principles, visualization, and spatial data presentation. Use for cartography, map design, visualization, thematic map, choropleth, topographic, symbology, legend, scale, projection, color ramp.
-triggers: [cartographer, gis, map, data, ramp, color, scale, design, legend, spatial, thematic, symbology]
+triggers: [cartographer, gis, map, ramp, color, scale, legend, spatial, thematic, symbology]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

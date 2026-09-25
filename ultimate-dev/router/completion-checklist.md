@@ -1,6 +1,9 @@
 # Completion Checklist (compact)
 
 ## Full (moderate/complex)
+- [ ] Deliverable, acceptance criteria, and risk recorded
+- [ ] Unknowns and capability gap reported
+- [ ] Evidence distinguishes verified, assumed, and not_run
 - [ ] All contract requirements met
 - [ ] Edge cases handled or flagged
 - [ ] Tests exist and pass (if code changed)
@@ -12,7 +15,8 @@
 - [ ] High-risk actions: rollback considered
 
 ## Abbreviated (atomic)
-- [ ] Specific requirement met
+- [ ] Specific requirement and deliverable met
+- [ ] Unknowns and limitations stated when material
 - [ ] No unverified claims as fact
 - [ ] No destructive changes without gate
 

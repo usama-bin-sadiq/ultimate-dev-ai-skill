@@ -1,5 +1,5 @@
 ---
-name: performance-skill
+name: performance
 description: >
   Meta-cognitive skill for performance. Teaches HOW to think about performance
   in ANY system — regardless of language, framework, or platform.

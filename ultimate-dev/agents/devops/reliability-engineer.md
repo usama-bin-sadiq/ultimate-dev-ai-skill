@@ -3,7 +3,7 @@ name: reliability-engineer
 domain: devops
 description: >
   Specializes in system reliability, fault tolerance, chaos engineering, and disaster recovery. Use for reliability, fault tolerance, chaos engineering, disaster recovery, redundancy, failover, circuit breaker, bulkhead, retry policy, resilience.
-triggers: [reliability engineer, devops, chaos, fault, retry, policy, system, breaker, circuit, bulkhead, disaster, failover]
+triggers: [reliability engineer, chaos, fault, retry, policy, system, breaker, circuit, bulkhead, disaster, failover]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

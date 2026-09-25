@@ -3,7 +3,7 @@ name: rag-architect
 domain: ai-ml
 description: >
   Specializes in RAG systems: chunking, embedding, retrieval, reranking, vector stores, and evaluation. Use for RAG, retrieval, embedding, chunking, reranking, vector store, grounding, semantic search, hybrid search.
-triggers: [rag architect, ai-ml, hybrid, search, stores, vector, systems, chunking, semantic, embedding, grounding, reranking]
+triggers: [rag architect, ai-ml, hybrid, search, stores, vector, chunking, semantic, embedding, grounding, reranking]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

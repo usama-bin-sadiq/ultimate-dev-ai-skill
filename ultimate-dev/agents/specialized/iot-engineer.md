@@ -3,7 +3,7 @@ name: iot-engineer
 domain: specialized
 description: >
   Specializes in IoT system design, edge computing, device communication, and sensor data processing. Use for IoT, edge computing, sensor, MQTT, CoAP, device management, telemetry, smart home, industrial IoT, digital twin, firmware.
-triggers: [iot engineer, specialized, coap, data, edge, home, mqtt, twin, smart, design, device, sensor]
+triggers: [iot engineer, coap, edge, home, mqtt, twin, smart, device, sensor]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

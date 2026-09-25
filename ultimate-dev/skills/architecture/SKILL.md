@@ -1,5 +1,5 @@
 ---
-name: architecture-skill
+name: architecture
 description: >
   Meta-cognitive skill for architecture. Teaches HOW to design systems,
   make trade-offs, and document decisions — regardless of technology stack.
@@ -107,6 +107,13 @@ Ask:
 
 If YES to all → ship it and iterate.
 ```
+
+## Operating Contract
+
+- **Inputs:** requirements, constraints, quality attributes, current state, and evidence.
+- **Output:** options, decision, trade-offs, consequences, risks, and validation plan.
+- **Verification:** check the decision against acceptance criteria and operational limits.
+- **When not to use:** do not design a solution before the problem and constraints are clear.
 
 ## Architecture Anti-Patterns
 

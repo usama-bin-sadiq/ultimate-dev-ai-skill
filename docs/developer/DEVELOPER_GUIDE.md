@@ -11,6 +11,18 @@
 ./scripts/install.sh --global
 ```
 
+For prompt-only use, no Python or provider package is required. For repository
+development, install the pinned dependencies:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r ultimate-dev/requirements-dev.txt
+```
+
+See the [installation and size guide](../../ultimate-dev/INSTALLATION.md) for
+measured payload size, optional Node/PowerShell requirements, and CI commands.
+
 ### Invocation
 ```bash
 # Any task - skill auto-detects pattern
@@ -31,12 +43,15 @@ git checkout -b feature/your-feature-name
 Follow the [Architecture Guide](../architecture/ARCHITECTURE.md):
 - Use smallest sufficient pattern
 - Write verification evidence
-- Persist state to `.memory/ultimate-dev/tasks/`
+- Persist state to `.memory/ultimate-dev/tasks/` when durable runtime is enabled
 
 ### 3. Run Validation
 ```bash
 cd ultimate-dev
-python scripts/validate.py
+python scripts/validate-consistency.py
+python scripts/audit-prompt-suite.py --strict
+python scripts/benchmark-prompt-routing.py --strict
+python scripts/measure-install.py --strict
 python -m pytest tests/ -q
 ./scripts/verify.sh
 python scripts/agent_quality/quality_gate.py agents

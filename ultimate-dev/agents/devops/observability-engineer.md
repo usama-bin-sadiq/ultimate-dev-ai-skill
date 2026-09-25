@@ -3,7 +3,7 @@ name: observability-engineer
 domain: devops
 description: >
   Specializes in observability stack design, distributed tracing, metrics collection, and log aggregation. Use for observability, Prometheus, Grafana, OpenTelemetry, Jaeger, ELK, Loki, metrics, tracing, logging, dashboard, alerting.
-triggers: [observability engineer, devops, elk, log, loki, stack, design, jaeger, grafana, logging, metrics, tracing]
+triggers: [observability engineer, elk, log, loki, stack, jaeger, grafana, logging, metrics, tracing]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

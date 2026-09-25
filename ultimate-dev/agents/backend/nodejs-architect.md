@@ -3,7 +3,7 @@ name: nodejs-architect
 domain: backend
 description: >
   Specializes in Node.js runtime optimization, event loop management, worker threads, cluster mode, and Node.js-specific patterns. Use for Node.js, Node, event loop, worker threads, cluster, npm, yarn, pnpm, Express, Fastify, NestJS, Stream, Buffer, process.
-triggers: [nodejs architect, backend, npm, loop, mode, pnpm, yarn, event, buffer, nestjs, stream, worker]
+triggers: [nodejs architect, npm, loop, mode, pnpm, yarn, event, buffer, nestjs, stream, worker]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

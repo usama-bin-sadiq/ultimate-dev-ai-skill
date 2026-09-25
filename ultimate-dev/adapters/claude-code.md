@@ -1,5 +1,6 @@
 ---
 tool: claude-code
+support: native-profile
 doc_source: https://docs.anthropic.com/en/docs/claude-code
 last_verified: 2026-09-21
 ---

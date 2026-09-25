@@ -3,7 +3,7 @@ name: rust-engineer
 domain: backend
 description: >
   Specializes in Rust ownership patterns, async runtimes, performance optimization, and systems programming. Use for Rust, Cargo, ownership, borrowing, lifetime, trait, async, tokio, actix, axum, wasm, no_std.
-triggers: [rust engineer, backend, axum, wasm, actix, async, cargo, tokio, trait, no_std, systems, lifetime]
+triggers: [rust engineer, axum, wasm, actix, async, cargo, tokio, trait, no_std, lifetime]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

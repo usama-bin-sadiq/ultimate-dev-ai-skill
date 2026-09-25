@@ -54,6 +54,7 @@ auto_fix = (workflow_dir / "auto-fix.yml").read_text(encoding="utf-8")
 for required in (
     "validate-generated:",
     "auto-fix:",
+    "generate-agent-catalog.py",
     "github.ref == 'refs/heads/main'",
     "contents: write",
     "environment: auto-fix",
@@ -80,6 +81,8 @@ for required in (
     'environment: release',
     'environment: CICD',
     'sync-version.py',
+    'generate-agent-catalog.py',
+    'validate-consistency.py',
     'cancel-in-progress: false',
 ):
     if required not in release:

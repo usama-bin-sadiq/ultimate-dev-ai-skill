@@ -3,7 +3,7 @@ name: xr-developer
 domain: spatial-computing
 description: >
   Specializes in AR/VR/MR application development, spatial UI design, hand/eye tracking, and immersive experiences. Use for AR, VR, MR, spatial UI, hand tracking, eye tracking, headset, immersive, XR, passthrough, 3D interaction, Unity XR, OpenXR.
-triggers: [xr developer, spatial-computing, unity, design, openxr, headset, ar/vr/mr, hand/eye, tracking, immersive, application, development]
+triggers: [xr developer, spatial-computing, unity, openxr, headset, ar/vr/mr, hand/eye, tracking, immersive, application, development]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

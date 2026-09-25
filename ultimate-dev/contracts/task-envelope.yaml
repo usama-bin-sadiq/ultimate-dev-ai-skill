@@ -1,0 +1,116 @@
+version: "1.0"
+contract: ultimate-dev-task-envelope
+status: portable
+runtime_required: false
+
+size_values: [atomic, moderate, complex]
+fixture_size_aliases:
+  ambiguous: "Legacy fixture alias; represent it as clarity: blocked and choose no executable size until clarified."
+risk_values: [none, data, security, compliance]
+clarity_values: [clear, resolvable, blocked]
+confidence_values: [low, medium, high]
+review_values: [not_required, recommended, required]
+capability_gap_values: [none, partial, blocking]
+verification_values: [pass, fail, not_run, not_applicable]
+result_status_values: [completed, partial, failed, blocked, not_run]
+result_status_compatibility:
+  complete: completed
+  blocked: blocked
+  not_run: not_run
+
+# A deliverable describes what the user wants to receive. It is independent of
+# the department or technology involved.
+deliverable_types:
+  answer: {signals: [explain, answer, describe, clarify], output: concise explanation}
+  research: {signals: [research, investigate, evidence, literature, sources], output: sourced synthesis}
+  comparison: {signals: [compare, versus, alternatives, trade-off], output: decision comparison}
+  recommendation: {signals: [recommend, choose, best option, advise], output: recommendation with rationale}
+  plan: {signals: [plan, roadmap, sequence, milestones], output: executable plan}
+  requirements: {signals: [requirements, PRD, user story, acceptance criteria], output: requirements contract}
+  specification: {signals: [specification, spec, design brief, schema], output: structured specification}
+  decision: {signals: [architecture decision, ADR, choose a design], output: decision record}
+  code: {signals: [implement, build, code, add feature, refactor], output: change plus verification}
+  bug-fix: {signals: [bug, failure, crash, regression, fix], output: fix plus reproduction evidence}
+  review: {signals: [review, critique, inspect, assess], output: findings and evidence}
+  security-review: {signals: [threat model, vulnerability, security review], output: risk findings}
+  audit: {signals: [audit, control test, evidence request, finding], output: workpaper and finding}
+  financial-analysis: {signals: [budget, forecast, valuation, unit economics, variance], output: assumptions and analysis}
+  data-analysis: {signals: [dataset, metric, SQL, dashboard, experiment], output: reproducible analysis}
+  document: {signals: [report, document, memo, policy, guide], output: structured document}
+  spreadsheet: {signals: [spreadsheet, workbook, XLSX, model], output: data artifact and provenance}
+  presentation: {signals: [presentation, slides, deck, PPTX], output: narrative and artifact}
+  communication: {signals: [email, announcement, status update, meeting notes], output: audience-ready message}
+  workflow: {signals: [automate, workflow, integration, schedule], output: contract and safe execution plan}
+  creative: {signals: [creative, concept, story, visual direction], output: concept and rationale}
+  learning: {signals: [teach, explain a new topic, study], output: explanation and practice path}
+  unknown: {signals: [unclear, unfamiliar, no matching capability, novel domain], output: bounded result plus gap report}
+
+# Minimal portable envelope. Empty collections mean "not supplied", not
+# "permission to invent a value".
+task_envelope:
+  required:
+    - intent
+    - deliverable
+    - size
+    - domains
+    - risk
+    - clarity
+    - acceptance_criteria
+    - unknowns
+    - confidence
+    - evidence_required
+    - output_contract
+    - capability_gap
+  optional: [id, language, inputs, constraints, assumptions, confidence_reason,
+    requested_capabilities, available_capabilities, human_review, sources,
+    next_actions]
+  fields:
+    intent: "The user's bounded goal in one or more sentences."
+    language: "input/output locale plus terminology policy; language does not change routing semantics."
+    deliverable: "One deliverable_types key, or a clearly named compound deliverable."
+    size: "atomic|moderate|complex|ambiguous"
+    domains: "Material domains only; [] is valid for unknown work."
+    risk: "none|data|security|compliance; use the highest material risk."
+    clarity: "clear|resolvable|blocked"
+    acceptance_criteria: "Observable conditions for done."
+    unknowns: "Missing facts, inaccessible sources, and unresolved decisions."
+    confidence: "low|medium|high, with a short reason when not high."
+    evidence_required: "Checks, sources, approvals, or artifacts needed to prove the result."
+    output_contract: "Required result sections, format, audience, and provenance."
+    capability_gap: "none|partial|blocking plus missing capability IDs and workaround."
+
+capability_gap:
+  required_when: [missing_host_capability, unknown_domain, insufficient_evidence, blocked_action]
+  fields:
+    level: "none|partial|blocking"
+    missing: "Capability IDs or domain references that are unavailable."
+    reason: "Why the gap prevents or limits completion."
+    workaround: "A safe bounded alternative, if one exists."
+    escalation: "The human or specialist decision needed, if any."
+
+# Four channels are the portable information boundaries used by the core.
+channels:
+  intent:
+    purpose: "Understand the request without taking action."
+    fields: [language, intent, constraints, acceptance_criteria, unknowns]
+  knowledge:
+    purpose: "Select the smallest reusable method and relevant references."
+    fields: [skills, agents, modules, sources, assumptions]
+  action:
+    purpose: "Represent requested and available host capabilities."
+    fields: [requested_capabilities, available_capabilities, side_effect, approval, result]
+  evidence:
+    purpose: "Prove, explain, and delimit the delivered result."
+    fields: [result, checks, sources, artifacts, limitations, confidence, next_actions]
+
+# JEV is optional. A prompt-only host uses the rubric without a host decision
+# packet; a runtime host may apply the structured host profile.
+jev_profiles:
+  prompt_only:
+    required_facts: [intent, deliverable, risk, unknowns]
+    outputs: [risk_flags, route_recommendation, clarification_needed, capability_gap]
+    execution: forbidden
+  host_runtime:
+    required_facts: [intent, deliverable, risk, unknowns, capability_catalog, policy_snapshot, approvals]
+    outputs: [decision_packet, missing_capabilities, recommended_path, evidence_plan]
+    execution: host_authorized_only

@@ -6,6 +6,10 @@ or turn a static golden fixture into evidence about a real model.  A caller
 injects the classifier, agent, and verifier callables (or a caller-supplied
 backend description) and the runner records what those callables actually did.
 
+The evaluation contract also understands portable routing fields such as
+``expected_deliverable``, ``expected_clarity``, ``expected_forbidden_domains``,
+and ``expected_capability_gap`` when an injected classifier reports them.
+
 The public contract is intentionally small:
 
 ``classifier``
@@ -710,6 +714,11 @@ def _expected_fields(case: Mapping[str, Any]) -> dict[str, Any]:
         "expected_risk",
         "expected_pattern",
         "expected_primary_domain",
+        "expected_deliverable",
+        "expected_clarity",
+        "expected_language",
+        "expected_forbidden_domains",
+        "expected_capability_gap",
         "expected_tool",
         "expected_tools",
     ):
@@ -1302,6 +1311,11 @@ def _routing_check(case: Mapping[str, Any], classification: Any, classifier_ran:
         "pattern": ("pattern", "expected_pattern", "route_pattern"),
         "route": ("route", "path", "selected_route", "primary_domain", "domain"),
         "primary_domain": ("primary_domain", "domain", "route"),
+        "deliverable": ("deliverable", "expected_deliverable", "output_type"),
+        "clarity": ("clarity", "expected_clarity", "clarity_status"),
+        "language": ("language", "expected_language", "output_language"),
+        "forbidden_domains": ("activated_forbidden_domains", "forbidden_domains_activated"),
+        "capability_gap": ("capability_gap", "capability_gap_level"),
         "tool": ("tool", "selected_tool", "primary_tool"),
         "tools": ("tools", "selected_tools", "tool"),
     }
@@ -1321,6 +1335,10 @@ def _routing_check(case: Mapping[str, Any], classification: Any, classifier_ran:
             continue
         if canonical in {"domains", "tools"}:
             equal = _normalise_domains(expected_value) == _normalise_domains(actual_value)
+        elif canonical == "forbidden_domains":
+            forbidden = set(_normalise_domains(expected_value))
+            activated = set(_normalise_domains(actual_value))
+            equal = not forbidden.intersection(activated)
         else:
             equal = expected_value == actual_value
         matches[str(expected_key)] = bool(equal)

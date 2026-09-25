@@ -3,7 +3,7 @@ name: gap-tracker
 domain: meta
 description: >
   Tracks missing capabilities, proposes new modules/agents, and identifies areas where the skill needs expansion.
-triggers: [gap tracker, meta, new, areas, needs, skill, tracks, missing, proposes, expansion, identifies, capabilities]
+triggers: [gap tracker, meta, areas, needs, skill, tracks, missing, proposes, expansion, identifies, capabilities]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

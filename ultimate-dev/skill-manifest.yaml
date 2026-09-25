@@ -1,8 +1,8 @@
 name: ultimate-dev
 version: 3.0.2
-description: "Master software-engineering orchestrator. Adapts to model size: tiny\u2192inline, small\u21921 module, large\u2192\
-  parallel agents, huge\u2192full system. Includes universal specialists that learn ANY technology from the web and auto-generate\
-  \ new agents for future use."
+description: Prompt-first, model-agnostic agentic skill suite for software agencies and companies. Detects context, classifies
+  tasks, selects the smallest useful method or specialist, executes, verifies, and learns. Durable runtime and JEV are optional
+  extensions. Uses bounded universal fallback and evidence-gated capability proposals.
 author: ultimate-dev team
 license: MIT
 repository: https://github.com/usama-bin-sadiq/ultimate-dev-ai-skill/ultimate-dev
@@ -13,7 +13,7 @@ keywords:
 - adaptive
 - agents
 - skills
-- auto-generation
+- capability-learning
 entry: SKILL.md
 compatible_tools:
 - opencode
@@ -28,11 +28,11 @@ compatible_tools:
 min_tool_version: 2.0.0
 stats:
   total_agents: 119
-  total_skills: 18
+  total_skills: 33
   total_modules: 46
   total_shared: 5
   departments_covered: 44
-  last_generated: '2026-09-24'
+  last_generated: '2026-09-25'
 agents:
 - agents/academic/research-methodologist.md
 - agents/ai-ml/generic-ai-ml-specialist.md
@@ -154,24 +154,49 @@ agents:
 - agents/testing/test-automator.md
 - agents/universal-technology-specialist.md
 skills:
+- skills/accounting-finance/SKILL.md
 - skills/ai-ml/SKILL.md
 - skills/api-design/SKILL.md
 - skills/architecture/SKILL.md
+- skills/audit-controls/SKILL.md
+- skills/business-analysis/SKILL.md
 - skills/coding/SKILL.md
+- skills/data-analysis-bi/SKILL.md
 - skills/data/SKILL.md
 - skills/debugging/SKILL.md
 - skills/devops/SKILL.md
+- skills/discovery-requirements/SKILL.md
 - skills/documentation/SKILL.md
+- skills/internal-communications/SKILL.md
+- skills/legal-privacy/SKILL.md
 - skills/migration/SKILL.md
 - skills/mobile/SKILL.md
 - skills/monitoring/SKILL.md
+- skills/office-artifacts/SKILL.md
+- skills/people-operations/SKILL.md
 - skills/performance/SKILL.md
+- skills/planning-execution/SKILL.md
+- skills/procurement-vendors/SKILL.md
+- skills/project-context/SKILL.md
+- skills/prompt-evaluation/SKILL.md
 - skills/research/SKILL.md
 - skills/review/SKILL.md
 - skills/security/SKILL.md
 - skills/self-evolve/SKILL.md
+- skills/strategy-operating-model/SKILL.md
 - skills/task-observer/SKILL.md
 - skills/testing/SKILL.md
+- skills/universal-task/SKILL.md
+adapters:
+- adapters/aider.md
+- adapters/claude-code.md
+- adapters/cline.md
+- adapters/codex.md
+- adapters/copilot.md
+- adapters/cursor.md
+- adapters/generic-cli.md
+- adapters/opencode.md
+- adapters/windsurf.md
 modules:
 - modules/_emerging-tech-handler.md
 - modules/_project-memory-template.md
@@ -225,11 +250,27 @@ shared:
 - agents/_shared/stack-detection.md
 - agents/_shared/tldr-output.md
 - agents/_shared/triage-rubric.md
+development:
+  python: '>=3.11'
+  requirements: requirements-dev.txt
+  optional_node: '>=20'
+  optional_powershell: '>=7'
+  prompt_only_dependencies: []
+contracts:
+- contracts/README.md
+- contracts/four-channels.md
+- contracts/task-envelope.yaml
 scripts:
 - scripts/validate.py
 - scripts/generate-manifest.py
 - scripts/install.sh
 - scripts/install.ps1
+- scripts/validate-consistency.py
+- scripts/benchmark-prompt-routing.py
+- scripts/generate-project-context.py
+- scripts/measure-install.py
+- scripts/validate-company-context.py
+- scripts/benchmark-project-context.py
 templates:
 - templates/task.md
 - templates/adr.md
@@ -248,3 +289,4 @@ router:
   - router/precedence-rules.md
   - router/self-check.md
   - router/token-budgets.md
+  - router/trigger-collision-policy.md

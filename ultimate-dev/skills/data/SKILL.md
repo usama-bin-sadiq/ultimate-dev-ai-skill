@@ -1,5 +1,5 @@
 ---
-name: data-skill
+name: data
 description: >
   Meta-cognitive skill for data work. Teaches HOW to think about data
   — modeling, storage, transformation, and access — regardless of specific
@@ -88,6 +88,13 @@ Data integrity principles:
 - BACKUPS      → Verify you can restore
 - AUDIT        → Track who changed what and when
 ```
+
+## Operating Contract
+
+- **Inputs:** source, schema, quality expectations, access/privacy constraints, and consumers.
+- **Output:** validated dataset or method, lineage, transformations, assumptions, and limitations.
+- **Verification:** test edge cases and reproducibility; preserve provenance and report uncertainty.
+- **When not to use:** do not infer missing values, business meaning, or authorization from data alone.
 
 ## Data Anti-Patterns
 

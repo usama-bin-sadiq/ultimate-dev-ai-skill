@@ -115,3 +115,21 @@ consensus, provider installation, or a production multi-tenant deployment.
 The host must still invoke these lifecycle hooks at session boundaries. They
 are durable protocol primitives, not an operating-system service or a universal
 browser/process supervisor.
+
+## Host execution trust boundary
+
+The Runtime and JEV authorize an action; they do not implement the operating
+system isolation around the host adapter. A host integration is production-ready
+only when it explicitly provides:
+
+1. Capability descriptors with accurate availability, effects, reversibility,
+   and isolation metadata.
+2. A scoped policy and approval source for every side effect.
+3. An executor that enforces the declared filesystem, process, network, and
+   browser boundaries.
+4. Timeout, cancellation, failure, and external-state reconciliation results.
+5. Audit/metrics ownership for host-side actions.
+
+A host adapter must not silently broaden a Runtime-approved capability, install
+missing providers, or treat a local classifier as a sandbox. These obligations
+are part of the adapter contract, not optional documentation.

@@ -1,10 +1,10 @@
 ---
 name: ultimate-dev
-version: "3.0.0"
+version: "3.0.2"
 description: >-
-  Master software-engineering orchestrator. Single entry point that autonomously
-  detects stack, classifies tasks, selects architecture pattern (Skills/Subagents/Handoffs/Router),
-  routes to specialists, executes, verifies, and learns.
+  Prompt-first, model-agnostic agentic skill suite for software agencies and companies.
+  Detects context, classifies tasks, selects the smallest useful method or specialist,
+  executes, verifies, and learns. Durable runtime and JEV are optional extensions.
   Replaces 100+ specialized skills with one adaptive skill.
 user-invocable: true
 argument-hint: "[task description] | --help | --version | --detect | --workflow <name>"
@@ -19,43 +19,79 @@ tags:
   - software-engineering
 ---
 
-# ⚠️ MANDATORY SESSION START PROTOCOL (RUN FIRST, EVERY TIME)
+## Prompt-First Operation
 
-**Before ANY task, you MUST complete this initialization:**
+Ultimate-Dev is usable as a Markdown prompt skill without the Python runtime.
+Prompt-only installation has no Python, Node.js, or model-provider dependency.
+The portable core captures intent, discovers relevant project context, selects
+the smallest useful skill or specialist, executes through host capabilities,
+and verifies with evidence.
+
+Use the durable runtime/JEV path only when the host needs persistent task state,
+scoped approvals, long-running recovery, or auditable side effects. A host
+without those capabilities must continue in prompt-only mode and report the
+limitation rather than inventing runtime services.
+
+The following lifecycle protocol remains the contract for hosts that support
+it; task size still controls how much ceremony is necessary.
+
+# ⚠️ CORE SESSION START (PROMPT-FIRST; RUNTIME CHECKS ARE CONDITIONAL)
+
+**Before any task, complete the smallest applicable initialization:**
 
 ```bash
 # 1. READ VERSION
 cat VERSION
 
-# 2. READ SKILL.MD (orchestration contract)
+# 2. READ SKILL.MD (portable orchestration contract)
 cat ultimate-dev/SKILL.md
 
-# 3. CHECK FOR EXISTING TASK STATE
-ls -la .memory/ultimate-dev/tasks/ 2>/dev/null || echo "No existing tasks"
+# 3. DISCOVER relevant project context
+#    - Read the project instructions and files relevant to the task
+#    - Check .memory/ultimate-dev/project-memory.md when it exists
 
-# 4. IF TASK EXISTS → RESUME from state.json
-#    cat .memory/ultimate-dev/tasks/<task-id>/state.json
+# 4. DEFINE the task contract and verification evidence
 
-# 5. IF NEW TASK → CREATE task state with CAPTURE + CONTRACT
+# 5. IF DURABLE RUNTIME IS AVAILABLE:
+#    - Check .memory/ultimate-dev/tasks/
+#    - Resume or create state.json as appropriate
 
-# 6. DISCOVER → detect stack, conventions, capabilities
-#    - Read project root: README.md, ARCHITECTURE.md, .github/
-#    - Check .memory/ultimate-dev/project-memory.md
-#    - Run scripts/detect-tools.sh if available
-
-# 7. OUTPUT INITIALIZATION STATUS:
+# 6. OUTPUT:
 # step: 1-10 | size: atomic|moderate|complex | pattern: A|B|C|D|compose
 # agents: [...] | verification: {...}
 ```
 
 ### Session interruption, routing, and cleanup
 
-- Route every new user message through `Runtime.route_user_message()` before mutating the active task. Ambiguous, clarification, or unknown routes must not execute.
-- On interruption, call `interrupt_task()` or `pause_task()`, persist the checkpoint, and inspect `task_health()` before resuming. Never replay an `uncertain` operation without explicit verification.
-- On graceful session close, call `close()`/`shutdown()` so injected host resources are released. Task state and evidence are retained.
-- Use `python -m runtime.task_admin ... cleanup --dry-run` before any retention/archive/delete operation. Deletion requires an exact confirmation token.
+- With durable runtime enabled, route through the runtime and resume from
+  `state.json`; without it, use the capability index and restate the contract
+  and next action in the response.
+- On interruption, pause safely and verify uncertain operations before replay.
+- With runtime enabled, use its task health, close, and cleanup interfaces.
+- Never claim that runtime state, approval, or external evidence exists when
+  the host did not provide it.
 
-**IF YOU SKIP THIS → YOU ARE NOT FOLLOWING THE SKILL**
+## Universal Task and Four-Channel Contract
+
+Before selecting a specialist, capture `contracts/task-envelope.yaml`:
+
+- intent and requested deliverable;
+- size, material domains, risk, clarity, and acceptance criteria;
+- inputs, constraints, assumptions, unknowns, and confidence;
+- requested versus available capabilities;
+- evidence/output contract and capability gap.
+
+Classify the deliverable before the department. If no exact capability exists,
+load `skills/universal-task/SKILL.md`, complete only a safe bounded portion,
+and report missing capabilities and limitations. Never invent providers,
+sources, permissions, or tools.
+
+Pass work through four explicit channels: Intent (understand), Knowledge
+(select the smallest method), Action (request versus available host capability),
+and Evidence (checks, sources, artifacts, limitations, and next actions). The
+portable contract is `contracts/four-channels.md`.
+
+**If you skip an applicable step → you are not following the skill.**
 
 ---
 
@@ -116,11 +152,11 @@ ultimate-dev-status:
 | Missing status block on task response | **FAIL** — Add before proceeding |
 | Claiming "done" without verification evidence | **FAIL** — Must run actual checks |
 | Reporting `pass` for unrun checks | **FAIL** — Must report `not_run` |
-| Skipping state persistence | **FAIL** — Persist immediately |
-| Using chat history instead of `state.json` for resume | **FAIL** — Resume from durable state |
+| Skipping required durable-state persistence when runtime is available | **FAIL** — Persist immediately |
+| Using chat history instead of `state.json` when durable state exists | **FAIL** — Resume from durable state |
 | Spawning multiple agents per domain without justification | **FAIL** — One primary per domain |
 | Hardcoding model names/tiers | **FAIL** — Use capabilities only |
-| Skipping mandatory lifecycle step | **FAIL** — Complete the step |
+| Skipping an applicable lifecycle step | **FAIL** — Complete the step |
 
 ### SELF-CORRECTION PROTOCOL
 
@@ -129,9 +165,10 @@ If you detect ANY violation in your own output:
 2. **ACKNOWLEDGE** the violation explicitly
 3. **CORRECT** the output with proper format
 4. **RE-EXECUTE** the step correctly
-5. **PERSIST** the correction
+5. **PERSIST or report** the correction
 
-**Do not proceed until corrected.**
+If durable runtime is unavailable, preserve the correction in the task
+response and state why no external state was written.
 
 ---
 
@@ -190,38 +227,51 @@ Your Task → orchestrator
     │
     ├─► 4. PATTERN   — Select the smallest appropriate execution pattern
     │
-    ├─► 5. ROUTE     — Select relevant specialists
+    ├─► 5. ROUTE     — Select the smallest useful skill or specialist
     │
-    ├─► 6. JEV        — Validate structured assessment; aggregate heads; guard and recommend
+    ├─► 6. EXECUTE   — Use available host capabilities
     │
-    ├─► 7. EXECUTE   — Execute through approved host capabilities
+    ├─► 7. VERIFY    — Run appropriate real verification
     │
-    ├─► 8. VERIFY    — Run appropriate real verification
+    ├─► 8. REVIEW    — Review correctness, risk, and regressions
     │
-    ├─► 9. REVIEW    — Review correctness, security, performance, and regressions
-    │
-    └─► 10. LEARN    — Persist durable project knowledge when appropriate
+    └─► 9. EXTEND    — Use JEV, approvals, state, and recovery only when useful
+                       and available; otherwise keep the result prompt-only
 ```
 
 Atomic tasks may use a reduced path when additional orchestration would add
 unnecessary overhead.
 
-## JEV Decision Boundary
+## Optional JEV Decision Boundary
 
-Before an execution transition, the host supplies a structured JEV request with
-model assessment, capability facts, policy, and approvals. JEV deterministically
-aggregates NOUL, CHOICE, and SCORE heads and returns a decision packet:
+Use JEV when the host needs a structured decision packet for risky, durable, or
+multi-agent work. A prompt-only host may skip it and rely on ordinary host
+permissions plus the selected skill's safety boundaries.
+
+When available, the host supplies a structured JEV request with model
+assessment, capability facts, policy, and approvals. JEV deterministically
+aggregates NOUL, CHOICE, and SCORE heads and returns:
 
 - guardrail action: `approve`, `human_review`, or `deny`;
 - recommended execution path and context profile;
-- canonical capability IDs that are requested, available, and policy-allowed;
+- requested, available, and policy-allowed capability IDs;
 - missing capabilities and machine-readable reasons.
 
-JEV is not a model, subagent, runtime store, sandbox, or browser. It cannot
-call tools, install dependencies, or grant authority. The Runtime persists the
-packet and performs final scope/confirmation checks. `human_review` and `stop`
-are blocking states. See `runtime/jev/README.md` and
-`docs/adr/0001-jev-host-native-decision-kernel.md`.
+JEV is not a model, subagent, runtime store, sandbox, browser, or provider. It
+cannot call tools, install dependencies, or grant authority. See
+`runtime/jev/README.md` and `docs/adr/0001-jev-host-native-decision-kernel.md`.
+
+### Prompt-only JEV profile
+
+When durable runtime and host facts are unavailable, use NOUL, CHOICE, and SCORE
+as a reasoning rubric only:
+
+- NOUL captures safety, urgency, sensitivity, evidence, and review signals.
+- CHOICE captures deliverable, domain, pattern, and context needs.
+- SCORE captures risk, complexity, confidence, and context pressure.
+
+Report route, clarification, capability gap, and evidence plan. Do not claim a
+JEV packet, authorization, execution, or persisted state that did not occur.
 
 ## Pattern Decision Tree
 
@@ -268,31 +318,42 @@ The orchestrator must prefer the smallest safe execution structure.
 
 ## Specialist Selection
 
+Read `config/capability-index.yaml` first when routing is needed. Its policy is
+common-first: prefer a reusable skill, use one primary specialist only when
+needed, treat broad triggers as hints, and require intent plus repository
+context for ambiguous routes. A `partial` or `missing` index status is an
+explicit coverage warning, not permission to guess.
+
 When specialist routing is required:
 
 ```text
-1. Read skill-manifest.yaml
-2. Identify applicable domains
-3. Select the most specific matching specialist
-4. Apply triggers and anti_triggers
-5. Select at most one primary specialist per domain by default
-6. Pass only relevant task context
-7. Execute and collect actual results
-8. Synthesize and verify
+1. Read the capability index and classify the deliverable
+2. Identify applicable domains and uncertainty
+3. Select the smallest common skill or exact specialist
+4. Apply compound triggers and anti-triggers
+5. Use universal-task for unknown/unclassified work
+6. Select at most one primary specialist per domain by default
+7. Pass only relevant task context
+8. Execute and collect actual results
+9. Synthesize and verify
 ```
 
 Selection priority:
 
 ```text
-EXACT MATCH
+DELIVERABLE + EXACT CAPABILITY
     ↓
-TECHNOLOGY MATCH
+COMMON SKILL
     ↓
-DOMAIN SPECIALIST
+EXACT SPECIALIST
     ↓
-GENERIC SPECIALIST
+DOMAIN FALLBACK
     ↓
-UNIVERSAL TECHNOLOGY SPECIALIST
+UNIVERSAL-TASK SKILL (bounded fallback)
+    ↓
+OPTIONAL UNIVERSAL SPECIALIST (only for actual execution)
+    ↓
+HUMAN REVIEW / CAPABILITY GAP
 ```
 
 ### Important Agent Execution Rule
@@ -320,9 +381,10 @@ current execution context.
 Never claim that an independent agent was spawned, delegated to, or returned a
 result unless that actually happened.
 
-## Memory & Learning
+## Optional Memory & Learning
 
-Ultimate Dev uses two distinct memory scopes.
+When the host or user provides a durable memory surface, Ultimate-Dev uses two
+distinct memory scopes. The portable prompt itself does not require either.
 
 ### 1. Project Memory
 
@@ -346,8 +408,9 @@ Project memory is:
 * read when relevant
 * updated only with durable project knowledge
 
-The installer creates `<project-root>/.memory/ultimate-dev/` and adds
-`.memory/ultimate-dev/` to the project root's `.gitignore`.
+The runtime or user-managed project workflow may create and manage project
+memory when needed. The installer copies only the skill payload and does not
+create memory or modify `.gitignore`.
 
 Project memory may contain:
 
@@ -372,25 +435,27 @@ irrelevant conversation details
 
 ### 2. Self-Evolution
 
-Global self-evolution is separate from project memory.
+Global self-evolution is separate from project memory and is evidence-gated.
+A durable runtime may stage a candidate under
+`<project-root>/.memory/ultimate-dev/evolution/` and issue a memory receipt.
+A prompt-only host returns a candidate handoff. Neither mode writes canonical
+package files automatically.
 
-Potential global artifacts include:
+Potential reviewed artifacts include:
 
 ```text
-skills/_learned/
-agents/
-skill-manifest.yaml
+candidate proposal + evidence
+reviewed manifest/catalog diff
+explicit package-maintainer change
 ```
 
-Self-evolution is triggered only when the relevant self-evolution workflow
-determines that a genuinely reusable capability is missing.
+Self-evolution is triggered only when repeated evidence shows that a genuinely
+reusable capability is missing. It must not generate new agents or skills merely
+because an existing specialist could have been used.
 
-It should not generate new agents or skills merely because an existing
-specialist could have been used.
+### 3. Optional LEARN Step
 
-### 3. Step 9 — LEARN
-
-The operating loop may persist durable findings:
+When durable memory is available, the operating loop may persist durable findings:
 
 ```text
 project learnings
@@ -400,10 +465,10 @@ new conventions
     → <project-root>/.memory/ultimate-dev/conventions.md
 
 new reusable patterns
-    → skills/_learned/ when genuinely novel
+    → memory receipt or candidate handoff when genuinely novel
 
 new reusable agents
-    → agents/ when genuinely justified
+    → reviewed proposal; never automatic package publication
 ```
 
 Learning must never replace verification.
@@ -439,8 +504,9 @@ The skill contains specialized agents across domains including:
 | **AI/ML**         | ml-engineer, prompt-engineer, rag-architect                                                                                                                   |
 | **Other domains** | Mobile, cloud, blockchain, data engineering, documentation, research, game development, GIS, finance, marketing, sales, support, and specialized technologies |
 
-The registry in `skill-manifest.yaml` is the source of truth for available
-agents.
+The registry in `skill-manifest.yaml` is the release source of truth for
+available agents. `config/agent-catalog.yaml` is its generated routing catalog,
+and `config/capability-index.yaml` is the compact department index.
 
 ## Sub-Skills
 
@@ -449,6 +515,8 @@ Available meta-cognitive and domain skills include:
 ```text
 self-evolve
 task-observer
+universal-task
+project-context
 research
 coding
 testing
@@ -465,6 +533,19 @@ api-design
 migration
 mobile
 ai-ml
+discovery-requirements
+planning-execution
+internal-communications
+business-analysis
+strategy-operating-model
+data-analysis-bi
+accounting-finance
+legal-privacy
+people-operations
+procurement-vendors
+office-artifacts
+audit-controls
+prompt-evaluation
 ```
 
 The complete skill registry is under:
@@ -506,9 +587,15 @@ For moderate and complex tasks, report concise execution state:
 ```yaml
 step: 1-10
 size: atomic | moderate | complex
+deliverable: <type-or-unknown>
 domains: [frontend, backend, ...]
 risk: none | data | security | compliance
+clarity: clear | resolvable | blocked
 pattern: A | B | C | D | compose
+confidence: low | medium | high
+capability_gap:
+  level: none | partial | blocking
+  missing: []
 execution_mode: inline | subagent
 agents:
   - domain: <domain>
@@ -524,6 +611,7 @@ For atomic tasks, the output may be reduced to:
 
 ```yaml
 size: atomic
+deliverable: <type-or-unknown>
 pattern: A
 execution_mode: inline
 verification: <actual result>
@@ -553,28 +641,25 @@ Do not expose hidden chain-of-thought or private reasoning.
 ## Installation
 
 ```bash
-# Global - available across projects
-./scripts/install.sh --global
+# Interactive: choose tool-specific/generic, then Global/Project
+./scripts/install.sh
 
-# Project-specific
-./scripts/install.sh --project /path/to/project
+# Explicit automation examples
+./scripts/install.sh --tool claude-code --global --yes
+./scripts/install.sh --generic --project /path/to/project --yes
 ```
 
-The installer creates `<project-root>/.memory/ultimate-dev/` and creates or
-updates the **project root** `.gitignore` to exclude:
-
-```text
-.memory/ultimate-dev/
-```
-
-for project-local context.
+The installer copies only the inner skill folder to the selected skill
+destination. It does not create `.memory`, modify `.gitignore`, copy templates,
+or create symlinks. Project memory is created and managed separately by the
+runtime.
 
 ## File Structure
 
 ```text
 .agents/skills/ultimate-dev/
 
-├── AGENT.md              ← Primary runtime entry point
+├── AGENT.md              ← Portable prompt entry point
 ├── SKILL.md              ← Full skill documentation
 ├── skill-manifest.yaml   ← Agent/skill/module registry
 ├── VERSION               ← Version number

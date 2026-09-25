@@ -3,7 +3,7 @@ name: kubernetes-engineer
 domain: devops
 description: >
   Specializes in Kubernetes cluster management, pod orchestration, resource optimization, and cloud-native deployment. Use for Kubernetes, K8s, pod, deployment, service, ingress, Helm, Kustomize, kubectl, cluster, node pool, resource limits, HPA, VPA.
-triggers: [kubernetes engineer, devops, hpa, k8s, pod, vpa, helm, node, pool, cloud, limits, native]
+triggers: [kubernetes engineer, hpa, k8s, pod, vpa, helm, node, pool, cloud, limits, native]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

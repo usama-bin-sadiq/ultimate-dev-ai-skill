@@ -3,7 +3,7 @@ name: go-engineer
 domain: backend
 description: >
   Specializes in Go concurrency patterns, performance optimization, and idiomatic Go design. Use for Go, Golang, goroutine, channel, interface, struct, go mod, go test, go vet, pprof, context, sync.
-triggers: [go engineer, backend, mod, vet, sync, test, pprof, design, golang, struct, channel, context]
+triggers: [go engineer, mod, vet, sync, test, pprof, golang, struct, channel, context]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

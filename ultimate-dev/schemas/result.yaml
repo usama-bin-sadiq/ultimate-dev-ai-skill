@@ -18,12 +18,14 @@ result:
 
     status:
       type: string
-      enum: ["completed", "partial", "failed"]
+      enum: ["completed", "partial", "failed", "blocked", "not_run"]
       description: "Overall status of the task execution"
       semantics:
         completed: "All acceptance criteria met, no blockers remaining"
         partial: "Some work done but gaps or blockers remain"
         failed: "Could not complete the task; includes what was attempted"
+        blocked: "A required decision, capability, or approval prevented safe progress"
+        not_run: "The task or a required verification was not executed"
 
     summary:
       type: string

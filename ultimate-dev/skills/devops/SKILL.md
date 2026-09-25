@@ -1,5 +1,5 @@
 ---
-name: devops-skill
+name: devops
 description: >
   Meta-cognitive skill for DevOps. Teaches HOW to think about delivery,
   infrastructure, and operations — regardless of specific tools or platforms.
@@ -100,6 +100,13 @@ When things go wrong:
 4. FIX      → Root cause analysis, patch
 5. LEARN    → Post-mortem, prevent recurrence
 ```
+
+## Operating Contract
+
+- **Inputs:** change scope, environment, dependencies, risk, approvals, and rollback path.
+- **Output:** delivery steps, observability, verification, rollback, and operational handoff.
+- **Verification:** validate the artifact and the smallest safe environment before production effects.
+- **When not to use:** do not deploy or destroy infrastructure without explicit authorization.
 
 ## DevOps Anti-Patterns
 

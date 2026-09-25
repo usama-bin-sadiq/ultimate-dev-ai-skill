@@ -3,7 +3,7 @@ name: system-architect
 domain: architecture
 description: >
   Specializes in system design, architecture decision records, scalability patterns, and technology trade-offs. Use for system design, architecture, ADR, scalability, patterns, trade-offs, CAP theorem, distributed systems.
-triggers: [system architect, architecture, adr, cap, offs, trade, design, records, systems, theorem, decision, patterns]
+triggers: [system architect, adr, cap, offs, trade, records, theorem, decision]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

@@ -1,5 +1,5 @@
 ---
-name: coding-skill
+name: coding
 description: >
   Meta-cognitive skill for coding. Teaches HOW to implement solutions
   in ANY language, framework, or paradigm — by understanding patterns,
@@ -104,6 +104,13 @@ Kotlin            → null safety, coroutines, extension functions
 Swift             → optionals, protocols, value types
 C++               → manual memory, templates, RAII
 ```
+
+## Operating Contract
+
+- **Inputs:** requested behavior, repository context, constraints, and acceptance criteria.
+- **Output:** smallest coherent change, affected paths, assumptions, and residual risk.
+- **Verification:** run the relevant tests/build/lint or report `not_run`; inspect the diff.
+- **When not to use:** for diagnosis without a code change, use `debugging`; for a broad design decision, use `architecture`.
 
 ## Anti-Patterns
 

@@ -139,14 +139,14 @@ def generate_manifest():
     manifest = {
         "name": "ultimate-dev",
         "version": version,
-        "description": "Master software-engineering orchestrator. Adapts to model size: tiny→inline, small→1 module, large→parallel agents, huge→full system. Includes universal specialists that learn ANY technology from the web and auto-generate new agents for future use.",
+        "description": "Prompt-first, model-agnostic agentic skill suite for software agencies and companies. Detects context, classifies tasks, selects the smallest useful method or specialist, executes, verifies, and learns. Durable runtime and JEV are optional extensions. Uses bounded universal fallback and evidence-gated capability proposals.",
         "author": existing.get("author", "ultimate-dev team"),
         "license": existing.get("license", "MIT"),
         "repository": existing.get("repository", "https://github.com/usama-bin-sadiq/ultimate-dev-ai-skill/ultimate-dev"),
         "keywords": existing.get("keywords", [
             "multi-agent", "orchestrator", "software-engineering",
             "code-generation", "code-review", "architecture",
-            "self-evolving", "langchain-patterns"
+            "self-evolving", "capability-learning"
         ]),
         "entry": "SKILL.md",
         "compatible_tools": existing.get("compatible_tools", [
@@ -166,13 +166,36 @@ def generate_manifest():
         },
         "agents": [a["path"] for a in agents],
         "skills": skills,
+        "adapters": sorted(
+            os.path.relpath(entry.path, BASE).replace(os.sep, "/")
+            for entry in os.scandir(os.path.join(BASE, "adapters"))
+            if entry.is_file() and entry.name.endswith(".md")
+        ),
         "modules": modules,
         "shared": shared,
+        "development": {
+            "python": ">=3.11",
+            "requirements": "requirements-dev.txt",
+            "optional_node": ">=20",
+            "optional_powershell": ">=7",
+            "prompt_only_dependencies": [],
+        },
+        "contracts": [
+            "contracts/README.md",
+            "contracts/four-channels.md",
+            "contracts/task-envelope.yaml",
+        ],
         "scripts": [
             "scripts/validate.py",
             "scripts/generate-manifest.py",
             "scripts/install.sh",
             "scripts/install.ps1",
+            "scripts/validate-consistency.py",
+            "scripts/benchmark-prompt-routing.py",
+            "scripts/generate-project-context.py",
+            "scripts/measure-install.py",
+            "scripts/validate-company-context.py",
+            "scripts/benchmark-project-context.py",
         ],
         "templates": [
             "templates/task.md",
@@ -193,6 +216,7 @@ def generate_manifest():
                 "router/precedence-rules.md",
                 "router/self-check.md",
                 "router/token-budgets.md",
+                "router/trigger-collision-policy.md",
             ],
         },
     }

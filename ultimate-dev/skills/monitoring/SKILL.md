@@ -1,5 +1,5 @@
 ---
-name: monitoring-skill
+name: monitoring
 description: >
   Meta-cognitive skill for monitoring. Teaches HOW to observe any system
   — what to measure, what to alert on, and how to respond — regardless

@@ -92,8 +92,11 @@ ELSE:
 
 ## Fallback Chain
 ```
-TINY → INLINE → if fails, tell user to upgrade
-SMALL → 1 MODULE → if insufficient, list gaps
-LARGE → FULL SYSTEM → if fails, escalate
-HUGE → ALL FEATURES → should never fail
+TINY → INLINE → if insufficient, report the bounded gap
+SMALL → 1 SKILL/MODULE → universal-task for unknown work → list gaps
+LARGE → SELECTED METHODS + OPTIONAL SPECIALISTS → escalate blocked decisions
+HUGE → SAME PROMPT-FIRST METHODS WITH DEEPER VERIFICATION
 ```
+
+A larger context does not authorize automatic tool execution, specialist
+creation, or provider installation.

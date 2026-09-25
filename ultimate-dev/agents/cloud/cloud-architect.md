@@ -3,7 +3,7 @@ name: cloud-architect
 domain: cloud
 description: >
   Specializes in cloud architecture, multi-cloud strategies, serverless design, container orchestration, cost optimization, and disaster recovery. Use for cloud, serverless, container orchestration, infrastructure as code, cost optimization, disaster recovery.
-triggers: [cloud architect, cloud, code, cost, multi, design, disaster, recovery, container, serverless, strategies, architecture]
+triggers: [cloud architect, cloud, cost, multi, disaster, recovery, container, serverless, strategies]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

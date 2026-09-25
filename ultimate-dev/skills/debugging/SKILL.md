@@ -1,5 +1,5 @@
 ---
-name: debugging-skill
+name: debugging
 description: >
   Meta-cognitive skill for debugging. Teaches HOW to investigate and fix
   problems in ANY system — regardless of language, framework, or technology.
@@ -106,6 +106,13 @@ BINARY SEARCH: Split the problem space in half repeatedly
 CHANGE LOG:   What changed since it last worked?
 MINIMAL REPRO: Smallest possible case that triggers the bug
 ```
+
+## Operating Contract
+
+- **Inputs:** symptom, reproduction, environment, logs, recent changes, and impact.
+- **Output:** root cause, minimal fix, regression test, prevention, and residual uncertainty.
+- **Verification:** reproduce before and after where possible; report checks as `pass`, `fail`, or `not_run`.
+- **When not to use:** do not guess-fix or suppress symptoms without understanding the failure path.
 
 ## Debugging Anti-Patterns
 

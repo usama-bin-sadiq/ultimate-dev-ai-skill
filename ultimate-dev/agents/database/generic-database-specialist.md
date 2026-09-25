@@ -2,8 +2,8 @@
 name: generic-database-specialist
 domain: database
 description: >
-  Handles ANY database technology not covered by dedicated specialists. Researches new databases from web, applies universal database patterns, and auto-generates new specialist agents. Use for MongoDB, Redis, Cassandra, DynamoDB, Elasticsearch, ClickHouse, TimescaleDB, CockroachDB, SQLite, DuckDB, SurrealDB, or any emerging database.
-triggers: [generic database specialist, database, new, web, auto, redis, agents, duckdb, sqlite, applies, covered, handles]
+  Handles ANY database technology not covered by dedicated specialists. Researches new databases from web, applies universal database patterns, and proposes a reviewed specialist candidate for future use. Use for MongoDB, Redis, Cassandra, DynamoDB, Elasticsearch, ClickHouse, TimescaleDB, CockroachDB, SQLite, DuckDB, SurrealDB, or any emerging database.
+triggers: [generic database specialist, unmatched database technology, redis, mongodb, cassandra, duckdb, sqlite, cockroachdb, clickhouse]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file
@@ -27,7 +27,7 @@ You are a universal database specialist that handles ANY database technology.
 2. **Web fetch** key documentation
 3. **Apply universal patterns** from `modules/engineering/database.md`
 4. **Complete the task**
-5. **Auto-generate specialist agent**
+5. **Propose a reviewed specialist candidate**; do not publish it.
 
 ## Universal Database Patterns
 

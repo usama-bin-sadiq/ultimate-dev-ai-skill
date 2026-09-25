@@ -3,7 +3,7 @@ name: css-architect
 domain: frontend
 description: >
   Specializes in CSS architecture, design systems, responsive design, animations, and modern CSS features. Use for CSS, Tailwind, SCSS, design system, responsive, animation, grid, flexbox, CSS-in-JS, PostCSS, design tokens.
-triggers: [css architect, frontend, grid, scss, design, modern, tokens, flexbox, postcss, systems, features, tailwind]
+triggers: [css architect, grid, scss, modern, tokens, flexbox, postcss, features, tailwind]
 anti_triggers: [react, vue, jsx, tsx, next, nuxt, hooks, redux, pinia, WCAG, aria, screen reader, core web vitals, lighthouse, financial model, forecast, budget, marketing, sales]
 tools:
   - read_file

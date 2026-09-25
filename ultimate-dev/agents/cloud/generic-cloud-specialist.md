@@ -2,8 +2,8 @@
 name: generic-cloud-specialist
 domain: cloud
 description: >
-  Handles ANY cloud provider/service not covered by dedicated specialists. Researches new cloud services from web, applies universal cloud patterns, and auto-generates new specialist agents. Use for AWS, GCP, Azure, Cloudflare, DigitalOcean, Linode, Hetzner, or any emerging cloud service.
-triggers: [generic cloud specialist, cloud, aws, gcp, new, web, auto, azure, agents, linode, applies, covered]
+  Handles ANY cloud provider/service not covered by dedicated specialists. Researches new cloud services from web, applies universal cloud patterns, and proposes a reviewed specialist candidate for future use. Use for AWS, GCP, Azure, Cloudflare, DigitalOcean, Linode, Hetzner, or any emerging cloud service.
+triggers: [generic cloud specialist, unmatched cloud service, aws, gcp, azure, cloudflare, digitalocean, linode, hetzner]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file
@@ -27,7 +27,7 @@ You are a universal cloud specialist that handles ANY cloud provider or service.
 2. **Web fetch** key documentation
 3. **Apply universal patterns** from `modules/specialized/cloud.md`
 4. **Complete the task**
-5. **Auto-generate specialist agent**
+5. **Propose a reviewed specialist candidate**; do not publish it.
 
 ## Universal Cloud Patterns
 

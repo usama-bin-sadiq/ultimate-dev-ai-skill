@@ -3,7 +3,7 @@ name: health-informaticist
 domain: healthcare
 description: >
   Specializes in health informatics, FHIR/HL7 interoperability, HIPAA compliance, and clinical workflow design. Use for EHR, FHIR, HL7, HIPAA, clinical workflow, patient data, health informatics, interoperability, clinical decision support.
-triggers: [health informaticist, healthcare, ehr, data, hipaa, design, patient, clinical, decision, fhir/hl7, workflow, compliance]
+triggers: [health informaticist, healthcare, ehr, hipaa, patient, clinical, decision, fhir/hl7, workflow, compliance]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

@@ -3,7 +3,7 @@ name: codebase-investigator
 domain: codebase
 description: >
   Analyze the codebase, reverse engineer, and understand complex dependencies. Use for deep codebase analysis, mapping relationships, and understanding how features work.
-triggers: [codebase investigator, codebase, deep, work, analyze, complex, mapping, reverse, analysis, engineer, features, understand]
+triggers: [codebase investigator, codebase, deep, work, analyze, complex, mapping, reverse, engineer, features, understand]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

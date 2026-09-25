@@ -3,7 +3,7 @@ name: monorepo-architect
 domain: monorepo
 description: >
   Specializes in monorepo architecture, tool selection (Nx, Turborepo, Bazel), workspace organization, shared packages, and build optimization. Use for monorepo, Nx, Turborepo, Bazel, workspace, shared packages, build optimization, code sharing.
-triggers: [monorepo architect, monorepo, (nx, code, tool, build, bazel), shared, sharing, packages, selection, turborepo]
+triggers: [monorepo architect, monorepo, (nx, tool, build, bazel), shared, sharing, packages, selection, turborepo]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

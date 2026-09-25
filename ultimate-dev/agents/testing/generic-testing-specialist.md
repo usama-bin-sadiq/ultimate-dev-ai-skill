@@ -2,8 +2,8 @@
 name: generic-testing-specialist
 domain: testing
 description: >
-  Handles ANY testing framework/tool not covered by dedicated specialists. Researches new testing approaches from web, applies universal testing patterns, and auto-generates new specialist agents. Use for Vitest, Playwright, Cypress, Puppeteer, k6, Artillery, Pact, Testcontainers, or any emerging testing technology.
-triggers: [generic testing specialist, testing, new, web, auto, pact, agents, vitest, applies, covered, cypress, handles]
+  Handles ANY testing framework/tool not covered by dedicated specialists. Researches new testing approaches from web, applies universal testing patterns, and proposes a reviewed specialist candidate for future use. Use for Vitest, Playwright, Cypress, Puppeteer, k6, Artillery, Pact, Testcontainers, or any emerging testing technology.
+triggers: [generic testing specialist, unmatched testing tool, vitest, playwright, cypress, puppeteer, k6, artillery, pact, testcontainers]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file
@@ -27,7 +27,7 @@ You are a universal testing specialist that handles ANY testing framework or met
 2. **Web fetch** key documentation
 3. **Apply universal patterns** from `modules/specialized/testing-frameworks.md`
 4. **Complete the task**
-5. **Auto-generate specialist agent**
+5. **Propose a reviewed specialist candidate**; do not publish it.
 
 ## Universal Testing Patterns
 

@@ -11,10 +11,23 @@ param(
     [switch]$CleanMemory,
     [switch]$CleanGitignore,
     [switch]$All,
+    [switch]$ToolSpecific,
+    [switch]$Generic,
+    [string]$Tool = "",
     [switch]$Help
 )
 
 $ErrorActionPreference = 'Stop'
+$script:toolMode = ''
+$script:toolName = 'generic'
+if ($Generic -and $ToolSpecific) { throw 'Choose either -Generic or -ToolSpecific.' }
+if ($Generic) { $script:toolMode = 'generic'; $script:toolName = 'generic' }
+if ($ToolSpecific) { $script:toolMode = 'tool-specific' }
+if (-not [string]::IsNullOrWhiteSpace($Tool)) {
+    if ($Generic) { throw 'The -Generic switch cannot be combined with -Tool.' }
+    $script:toolMode = 'tool-specific'
+    $script:toolName = $Tool.Trim().ToLowerInvariant()
+}
 $ScriptDir = $PSScriptRoot
 $SkillDir = (Resolve-Path -LiteralPath (Split-Path -Parent $ScriptDir)).Path
 $RepoRoot = (Resolve-Path -LiteralPath (Split-Path -Parent $SkillDir)).Path
@@ -73,16 +86,83 @@ function Remove-StagedPath([string]$Path, [string]$Parent) {
     Remove-Item -LiteralPath $full -Recurse -Force
 }
 
+function Resolve-TargetRelative([string]$ToolName) {
+    switch ($ToolName) {
+        'generic' { return '.agents/skills/ultimate-dev' }
+        'opencode' { return '.agents/skills/ultimate-dev' }
+        'windsurf' { return '.agents/skills/ultimate-dev' }
+        'cline' { return '.agents/skills/ultimate-dev' }
+        'copilot' { return '.agents/skills/ultimate-dev' }
+        'aider' { return '.agents/skills/ultimate-dev' }
+        'claude-code' { return '.claude/skills/ultimate-dev' }
+        'codex' { return '.codex/skills/ultimate-dev' }
+        default { throw "Unsupported tool profile: $ToolName" }
+    }
+}
+
+function Select-ToolTarget {
+    if (-not [string]::IsNullOrWhiteSpace($script:toolMode)) { return }
+    if ($Yes) {
+        $script:toolMode = 'generic'
+        $script:toolName = 'generic'
+        return
+    }
+
+    Write-Host "`n  Choose an installation target type" -ForegroundColor Cyan
+    Write-Host "  1) Tool-specific native destination"
+    Write-Host "  2) Generic .agents/skills destination`n"
+    $mode = (Read-Host '  Enter number (or q to cancel)').Trim().ToLowerInvariant()
+    if ($mode -eq 'q' -or $mode -eq '') {
+        Write-Info 'Cancelled.'
+        exit 0
+    }
+    if ($mode -eq '2') {
+        $script:toolMode = 'generic'
+        $script:toolName = 'generic'
+        return
+    }
+    if ($mode -ne '1') { throw 'Invalid installation target type. Choose 1, 2, or q.' }
+
+    Write-Host "  1) Claude Code — .claude/skills/ultimate-dev/"
+    Write-Host "  2) Codex CLI — .codex/skills/ultimate-dev/"
+    Write-Host "  3) OpenCode — .agents/skills/ultimate-dev/"
+    Write-Host "  4) Windsurf — generic .agents fallback"
+    Write-Host "  5) Cline — generic .agents fallback"
+    Write-Host "  6) GitHub Copilot — generic .agents fallback"
+    Write-Host "  7) Aider — generic .agents fallback"
+    Write-Host "  8) Other agentic CLI — generic .agents fallback`n"
+    $choice = (Read-Host '  Enter number (or q to cancel)').Trim().ToLowerInvariant()
+    if ($choice -eq 'q' -or $choice -eq '') {
+        Write-Info 'Cancelled.'
+        exit 0
+    }
+    $script:toolMode = 'tool-specific'
+    $script:toolName = switch ($choice) {
+        '1' { 'claude-code' }
+        '2' { 'codex' }
+        '3' { 'opencode' }
+        '4' { 'windsurf' }
+        '5' { 'cline' }
+        '6' { 'copilot' }
+        '7' { 'aider' }
+        '8' { 'generic' }
+        default { throw 'Invalid tool profile. Choose 1-8, or q.' }
+    }
+}
+
 function Select-Scope {
     if ($Global) { return 'global' }
     if (-not [string]::IsNullOrWhiteSpace($Project)) { return 'project' }
     if ($Yes) { return 'global' }
 
+    $relative = Resolve-TargetRelative $script:toolName
+    $globalDisplay = "~/$relative"
+    $projectDisplay = "<project>/$relative"
     Write-Host "`n  Ultimate-Dev installer" -ForegroundColor Cyan
     Write-Host "  Copy the inner skill folder; no symlinks or extra project files.`n"
     while ($true) {
-        Write-Host "  1) Global  — ~/.agents/skills/ultimate-dev/"
-        Write-Host "  2) Project — <project>/.agents/skills/ultimate-dev/"
+        Write-Host "  1) Global  — $globalDisplay"
+        Write-Host "  2) Project — $projectDisplay"
         Write-Host "  q) Cancel`n"
         $choice = (Read-Host '  Enter number (or q to cancel)').Trim().ToLowerInvariant()
         if ($choice -eq '1') { return 'global' }
@@ -100,8 +180,8 @@ function Select-Scope {
 }
 
 if ($Help) {
-    Write-Host 'Usage: install.ps1 [--Global|--Project DIR] [--Yes] [--Uninstall]'
-    Write-Host 'With no scope, the installer interactively asks Global or Project.'
+    Write-Host 'Usage: install.ps1 [-Global|-Project DIR] [-ToolSpecific|-Generic] [-Tool NAME] [-Yes] [-Uninstall]'
+    Write-Host 'With no target option, choose Tool-specific or Generic first, then Global or Project.'
     Write-Host 'Only the inner skill folder is copied; no symlink or extra project file is created.'
     exit 0
 }
@@ -117,21 +197,29 @@ if ($Global -and -not [string]::IsNullOrWhiteSpace($Project)) {
 }
 $homeDir = if ($env:USERPROFILE) { $env:USERPROFILE } else { $env:HOME }
 if ($Global -and [string]::IsNullOrWhiteSpace($homeDir)) { throw 'HOME/USERPROFILE is not set.' }
+if ($script:toolName -notin @('generic', 'opencode', 'claude-code', 'codex', 'windsurf', 'cline', 'copilot', 'aider')) {
+    throw "Unsupported tool profile: $($script:toolName)"
+}
+if ($script:toolMode -eq 'tool-specific' -and $script:toolName -eq 'generic' -and $Yes) {
+    throw '-ToolSpecific with -Yes requires an explicit -Tool profile.'
+}
+Select-ToolTarget
+$targetRelative = Resolve-TargetRelative $script:toolName
 
 $scope = Select-Scope
 if ($scope -eq 'global') {
     $projectDir = (Resolve-Path -LiteralPath $homeDir).Path
-    $target = Join-Path $projectDir '.agents/skills/ultimate-dev'
+    $target = Join-Path $projectDir $targetRelative
 } else {
     $projectDir = Resolve-ProjectDirectory $Project
-    $target = Join-Path $projectDir '.agents/skills/ultimate-dev'
+    $target = Join-Path $projectDir $targetRelative
 }
 $targetParent = Split-Path -Parent $target
-foreach ($pathComponent in @(
-    (Join-Path $projectDir '.agents'),
-    (Join-Path $projectDir '.agents/skills')
-)) {
-    Assert-NotReparsePoint $pathComponent
+$relativeParent = Split-Path -Parent $targetRelative
+$currentParent = $projectDir
+foreach ($pathComponent in ($relativeParent -split '[\\/]')) {
+    $currentParent = Join-Path $currentParent $pathComponent
+    Assert-NotReparsePoint $currentParent
 }
 New-Item -ItemType Directory -Force -Path $targetParent | Out-Null
 $targetParent = (Resolve-Path -LiteralPath $targetParent).Path
@@ -187,6 +275,19 @@ try {
     New-Item -ItemType Directory -Path $stage -ErrorAction Stop | Out-Null
     Get-ChildItem -LiteralPath $SkillDir -Force | ForEach-Object {
         Copy-Item -LiteralPath $_.FullName -Destination $stage -Recurse -Force
+    }
+
+    # Development caches are not release payload. Remove them after the copy so
+    # installation remains copy-only without carrying local test artifacts.
+    $excludedDirectories = @('__pycache__', '.pytest_cache', '.mypy_cache', '.ruff_cache', '.cache', 'node_modules', '.venv', 'venv')
+    Get-ChildItem -LiteralPath $stage -Directory -Recurse -Force |
+        Where-Object { $excludedDirectories -contains $_.Name } |
+        Sort-Object { $_.FullName.Length } -Descending |
+        Remove-Item -Recurse -Force
+    $excludedFiles = @('.DS_Store', '*.pyc', '*.pyo', '*.log', '.coverage')
+    foreach ($pattern in $excludedFiles) {
+        Get-ChildItem -LiteralPath $stage -File -Recurse -Force -Filter $pattern -ErrorAction SilentlyContinue |
+            Remove-Item -Force
     }
 
     $reparse = Get-ChildItem -LiteralPath $stage -Recurse -Force |
@@ -249,8 +350,11 @@ try {
     }
 
     $fileCount = @(Get-ChildItem -LiteralPath $target -Recurse -File).Count
+    $payloadBytes = [int64]((Get-ChildItem -LiteralPath $target -Recurse -File | Measure-Object -Property Length -Sum).Sum)
+    $payloadKib = [math]::Round($payloadBytes / 1KB, 0)
     Write-Status "Copied the inner skill folder to $target"
     Write-Status "Version $version · $agentCount agents · $skillCount skills · $fileCount files"
+    Write-Status "Payload size: $payloadKib KiB (development caches excluded)"
     Write-Info 'No symlink, memory, template, or host configuration file was created.'
 } catch {
     if ($backup -and (Test-Path -LiteralPath $backup) -and -not (Test-Path -LiteralPath $target)) {

@@ -3,7 +3,7 @@ name: spatial-analyst
 domain: gis
 description: >
   Specializes in spatial analysis, geospatial queries, map design, and coordinate systems. Use for spatial analysis, geospatial, map, coordinate, GeoJSON, shapefile, PostGIS, spatial query, proximity analysis, overlay, geocoding.
-triggers: [spatial analyst, gis, map, query, design, geojson, overlay, postgis, queries, systems, analysis, geocoding]
+triggers: [spatial analyst, gis, map, query, geojson, overlay, postgis, queries, geocoding]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

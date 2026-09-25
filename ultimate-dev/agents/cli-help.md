@@ -3,7 +3,7 @@ name: cli-help
 domain: cli
 description: >
   Expert knowledge about ultimate-dev itself — commands, configuration, architecture, modules, agents, and troubleshooting.
-triggers: [cli, dev, agents, itself, modules, cli help, commands, ultimate, knowledge, architecture, configuration, troubleshooting]
+triggers: [cli, dev, itself, modules, cli help, commands, ultimate, knowledge, configuration, troubleshooting]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file
@@ -23,9 +23,11 @@ You are the expert on the **ultimate-dev** skill itself — its architecture, co
 You have full knowledge of:
 - `SKILL.md` — orchestrator entry point, tier-based execution, agent roster
 - `skill-manifest.yaml` — module/agent registry, router config, shared fragments
+- `config/capability-index.yaml` — compact prompt-first department and routing index
 - `router/` — classification, decomposition, precedence, gap promotion, invocation, token budgets
-- `modules/` — 44 internal pattern modules (engineering, specialized, agency, business, research, domain)
-- `agents/` — 50+ subagent definitions with YAML frontmatter
+- `modules/` — 46 internal pattern modules (engineering, specialized, agency, business, research, domain)
+- `agents/` — 119 subagent definitions with YAML frontmatter
+- `skills/` — 31 reusable prompt methods and capability packs
 - `agents/_shared/` — stack-detection, output-format, triage-rubric, never-commits, tldr-output
 - `scripts/install.sh` / `install.ps1` — multi-tool installer with TUI
 - `adapters/` — tool-specific configurations (claude-code, codex, cursor, windsurf, cline, copilot, aider, opencode, generic)

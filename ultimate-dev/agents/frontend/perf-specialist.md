@@ -3,7 +3,7 @@ name: perf-specialist
 domain: frontend
 description: >
   Specializes in Core Web Vitals optimization, bundle analysis, rendering performance, and frontend monitoring. Use for Core Web Vitals, LCP, FID, CLS, bundle size, code splitting, lazy loading, performance optimization, Lighthouse.
-triggers: [perf specialist, frontend, cls, fid, lcp, web, code, core, lazy, size, bundle, vitals]
+triggers: [perf specialist, cls, fid, lcp, core, lazy, size, bundle, vitals]
 anti_triggers: [react, vue, jsx, tsx, next, nuxt, hooks, redux, pinia, css architect, tailwind, scss, WCAG, aria, screen reader, financial model, forecast, budget, marketing, sales]
 tools:
   - read_file

@@ -15,6 +15,10 @@ Ultimate-Dev is a **single adaptive skill** that replaces 100+ specialized skill
 ./scripts/install.sh --global
 ```
 
+Prompt-only installation has no Python, Node.js, or provider dependency. For
+measured size, development dependencies, and verification commands, see the
+[installation guide](../../ultimate-dev/INSTALLATION.md).
+
 ### Usage
 Just describe your task naturally:
 ```
@@ -30,7 +34,7 @@ The skill automatically:
 2. **Selects the right pattern** (Skills/Subagents/Handoffs/Router)
 3. **Routes to the right specialists**
 4. **Executes with verification**
-5. **Persists state** for context-loss recovery
+5. **Persists state** for context-loss recovery when durable runtime is available
 
 ## Common Tasks
 
@@ -203,10 +207,13 @@ The skill auto-selects based on capabilities:
 | Tool | Adapter |
 |------|---------|
 | Claude Code | `.claude/skills/ultimate-dev/SKILL.md` |
-| Codex CLI | `AGENTS.md` |
+| Codex CLI | `.codex/skills/ultimate-dev/SKILL.md` or `AGENTS.md` reference |
 | Cursor | `.cursor/rules/ultimate-dev.mdc` |
 | OpenCode | `.agents/skills/ultimate-dev/` |
-| Windsurf, Copilot, Aider | Generic CLI |
+| Windsurf | `.agents/skills/ultimate-dev/` generic fallback |
+| Cline | `.agents/skills/ultimate-dev/` generic fallback |
+| GitHub Copilot | `.agents/skills/ultimate-dev/` generic fallback |
+| Aider | `.agents/skills/ultimate-dev/` generic fallback |
 
 ## Getting Help
 

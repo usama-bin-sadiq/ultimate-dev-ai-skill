@@ -3,7 +3,7 @@ name: compliance-engineer
 domain: security
 description: >
   Specializes in regulatory compliance implementation, audit preparation, policy enforcement, and data governance. Use for compliance, GDPR, SOC 2, ISO 27001, HIPAA, PCI DSS, CCPA, data governance, privacy, audit, policy, consent, data retention.
-triggers: [compliance engineer, security, dss, iso, pci, soc, ccpa, data, gdpr, 27001, audit, hipaa]
+triggers: [compliance engineer, dss, iso, pci, soc, ccpa, gdpr, "27001", audit, hipaa]
 anti_triggers: [code review, API design, database query, CI/CD pipeline, business logic]
 tools:
   - read_file

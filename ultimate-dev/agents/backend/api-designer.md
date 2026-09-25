@@ -3,7 +3,7 @@ name: api-designer
 domain: backend
 description: >
   Specializes in REST and GraphQL API design, versioning strategies, pagination patterns, error handling standards, and OpenAPI specification authoring. Use for API design, REST API, GraphQL schema, OpenAPI, Swagger, endpoint design, API versioning, API error handling, pagination.
-triggers: [api designer, backend, rest, error, schema, graphql, openapi, swagger, endpoint, handling, patterns, authoring]
+triggers: [api designer, rest, error, schema, graphql, openapi, swagger, endpoint, handling, authoring]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

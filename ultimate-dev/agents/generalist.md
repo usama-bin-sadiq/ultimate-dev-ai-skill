@@ -3,9 +3,9 @@ name: generalist
 domain: general
 description: >
   All-purpose isolated agent for heavy subtasks. Use for multi-file modifications, high-volume execution, action-oriented research, or any task requiring many steps and full capabilities in an isolated context.
-triggers: [generalist, general, file, full, high, many, agent, heavy, multi, steps, action, volume]
+triggers: [generalist, file, full, high, many, agent, heavy, multi, steps, action, volume]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
-tools: "*"
+tools: [read_file, write_file, edit_file, glob, list_directory, run_command]
 model: inherit
 temperature: 0.3
 max_turns: 100

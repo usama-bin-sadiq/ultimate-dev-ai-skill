@@ -3,7 +3,7 @@ name: graphql-engineer
 domain: backend
 description: >
   Specializes in GraphQL schema design, resolver architecture, DataLoader patterns, federation, and query optimization. Use for GraphQL, schema, resolver, DataLoader, federation, subscription, Apollo, Yoga, codegen, fragment, directive.
-triggers: [graphql engineer, backend, yoga, query, apollo, design, schema, codegen, fragment, patterns, resolver, directive]
+triggers: [graphql engineer, yoga, query, apollo, schema, codegen, fragment, resolver, directive]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

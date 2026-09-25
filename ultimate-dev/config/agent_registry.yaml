@@ -1,5 +1,50 @@
-# Agent Registry — Defines available agent roles and their capabilities
-# Used by the router to select the best agent for a given task
+# Legacy runtime role registry — defines capabilities and execution limits for
+# abstract workflow roles and a subset of legacy aliases.
+#
+# The canonical concrete-agent inventory is generated from agent frontmatter
+# into config/agent-catalog.yaml and released in skill-manifest.yaml. Do not
+# add new concrete specialists here; add their frontmatter under agents/ and
+# regenerate the catalog.
+version: "3.0.2"
+registry_kind: abstract-runtime-roles
+concrete_agent_source: ../skill-manifest.yaml
+workflow_roles:
+  planner:
+    kind: abstract
+    resolver: model
+    description: Clarify scope, dependencies, and acceptance criteria.
+  architect:
+    kind: abstract
+    resolver: model
+    description: Select the smallest suitable design and record trade-offs.
+  backend:
+    kind: abstract
+    resolver: model
+    description: Select a backend implementation specialist.
+  frontend:
+    kind: abstract
+    resolver: model
+    description: Select a frontend implementation specialist.
+  tester:
+    kind: abstract
+    resolver: model
+    description: Select a testing or quality specialist.
+  reviewer:
+    kind: abstract
+    resolver: model
+    description: Select an independent reviewer.
+  security:
+    kind: abstract
+    resolver: model
+    description: Select a security or compliance specialist.
+  debugger:
+    kind: abstract
+    resolver: model
+    description: Select a debugging or incident specialist.
+  writer:
+    kind: abstract
+    resolver: model
+    description: Select a documentation or communication specialist.
 
 agents:
   planner:

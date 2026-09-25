@@ -1,5 +1,20 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- Universal task envelope, deliverable-first capability index, unknown/unclassified fallback, and four-channel contracts.
+- Provider-free routing benchmark with 154 golden cases, forbidden-route checks, and explicit non-model provenance.
+- Read-only project-context recipe generator and optional company-context templates.
+- Progressive reference splits for `self-evolve` and `task-observer`.
+
+### Changed
+- Prompt-only JEV profile is explicit; durable state/JEV requirements are conditional on host support.
+- Fallback and evolution paths now produce reviewed candidates instead of automatically writing package files.
+- Generated manifest, agent catalog, README, and consistency gates include the new contracts and skill.
+- Installers now exclude local development caches, report staged payload size, and document prompt-only versus development dependencies in `INSTALLATION.md`.
+- Added pinned `requirements-dev.txt` and a reproducible `measure-install.py` check.
+
 ## [3.0.0] - 2026-09-24
 
 ### Major release

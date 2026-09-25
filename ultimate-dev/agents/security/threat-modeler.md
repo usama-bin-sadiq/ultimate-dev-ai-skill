@@ -3,7 +3,7 @@ name: threat-modeler
 domain: security
 description: >
   Specializes in threat modeling, attack surface analysis, and security architecture review. Use for threat model, attack surface, security architecture, STRIDE, threat analysis, risk assessment, security review.
-triggers: [risk, attack, review, stride, surface, analysis, modeling, security, assessment, architecture, threat modeler]
+triggers: [risk, attack, review, stride, surface, modeling, assessment, threat modeler]
 anti_triggers: [code review, API design, database query, CI/CD pipeline, business logic]
 tools:
   - read_file

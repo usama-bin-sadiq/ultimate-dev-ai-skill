@@ -8,6 +8,15 @@ It accepts a structured request, evaluates the NOUL/CHOICE/SCORE heads, and
 returns a decision packet. The Ultimate-Dev Runtime persists the packet and
 remains responsible for state, confirmation, execution, evidence, and recovery.
 
+## Optional prompt-only profile
+
+A host without durable state or capability facts does not need to invoke JEV.
+It may use NOUL, CHOICE, and SCORE as a reasoning rubric and return a route,
+clarification need, capability-gap report, and evidence plan. That profile must
+not be described as a decision packet, authorization, execution, or persisted
+state. The portable prompt contracts live in `contracts/task-envelope.yaml` and
+`contracts/four-channels.md`.
+
 ## Contract
 
 | Artifact | Purpose |

@@ -1,5 +1,5 @@
 ---
-name: ai-ml-skill
+name: ai-ml
 description: >
   Meta-cognitive skill for AI/ML. Teaches HOW to think about intelligent
   systems — data, models, evaluation, and deployment — regardless of

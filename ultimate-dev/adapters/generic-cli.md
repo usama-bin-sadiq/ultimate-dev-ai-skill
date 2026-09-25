@@ -1,5 +1,6 @@
 ---
 tool: generic-cli
+support: generic-fallback
 doc_source: https://opencode.ai
 last_verified: 2026-09-21
 ---

@@ -3,7 +3,7 @@ name: incident-responder
 domain: security
 description: >
   Specializes in security incident response, forensic analysis, containment, and recovery. Use for incident response, security incident, breach, forensics, containment, recovery, SIEM, SOC, malware, ransomware, phishing.
-triggers: [incident responder, security, soc, siem, breach, malware, analysis, forensic, phishing, recovery, response, forensics]
+triggers: [incident responder, soc, siem, breach, malware, forensic, phishing, recovery, response, forensics]
 anti_triggers: [code review, API design, database query, CI/CD pipeline, business logic]
 tools:
   - read_file

@@ -45,17 +45,18 @@ jobs:
           python -m pip install --disable-pip-version-check --no-input \
             "PyYAML==6.0.2"
 
-      - name: Generate manifest for validation
+      - name: Generate manifest and catalog for validation
         run: |
           cd ultimate-dev
           python scripts/generate-manifest.py
+          python scripts/generate-agent-catalog.py
 
-      - name: Validate manifest
+      - name: Validate generated metadata
         run: |
           cd ultimate-dev
-          if ! git diff --quiet -- skill-manifest.yaml; then
-            echo 'skill-manifest.yaml is out of sync' >&2
-            git diff -- skill-manifest.yaml
+          if ! git diff --quiet -- skill-manifest.yaml config/agent-catalog.yaml; then
+            echo 'generated metadata is out of sync' >&2
+            git diff -- skill-manifest.yaml config/agent-catalog.yaml
             exit 1
           fi
 
@@ -101,16 +102,17 @@ jobs:
           python -m pip install --disable-pip-version-check --no-input \
             "PyYAML==6.0.2"
 
-      - name: Generate manifest
+      - name: Generate manifest and agent catalog
         id: manifest
         run: |
           cd ultimate-dev
           python scripts/generate-manifest.py
-          if git diff --quiet -- skill-manifest.yaml; then
+          python scripts/generate-agent-catalog.py
+          if git diff --quiet -- skill-manifest.yaml config/agent-catalog.yaml; then
             echo 'manifest_changed=false' >> "$GITHUB_OUTPUT"
           else
             echo 'manifest_changed=true' >> "$GITHUB_OUTPUT"
-            git diff -- skill-manifest.yaml
+            git diff -- skill-manifest.yaml config/agent-catalog.yaml
           fi
 
       - name: Sync docs
@@ -142,6 +144,6 @@ jobs:
           if [ "$README_CHANGED" = 'true' ]; then
             message="$message (README)"
           fi
-          git add -- skill-manifest.yaml README.md
+          git add -- skill-manifest.yaml config/agent-catalog.yaml README.md
           git commit -m "$message"
           git push origin HEAD:main

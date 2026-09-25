@@ -3,7 +3,7 @@ name: test-architect
 domain: testing
 description: >
   Specializes in test strategy design, test architecture, coverage analysis, and quality gates. Use for test strategy, test architecture, coverage, test pyramid, quality gate, test suite, test framework, E2E test, integration test, unit test.
-triggers: [test architect, testing, e2e, unit, gates, suite, design, pyramid, quality, analysis, coverage, strategy]
+triggers: [test architect, testing, e2e, unit, gates, suite, pyramid, quality, coverage, strategy]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

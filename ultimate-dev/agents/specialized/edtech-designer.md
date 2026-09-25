@@ -3,7 +3,7 @@ name: edtech-designer
 domain: specialized
 description: >
   Specializes in educational technology, learning management systems, adaptive learning, and instructional design. Use for EdTech, LMS, learning management, adaptive learning, instructional design, SCORM, xAPI, assessment, quiz, learning path, gamification.
-triggers: [edtech designer, specialized, lms, path, quiz, xapi, scorm, systems, adaptive, learning, assessment, management]
+triggers: [edtech designer, lms, path, quiz, xapi, scorm, adaptive, learning, assessment, management]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

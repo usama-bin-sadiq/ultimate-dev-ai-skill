@@ -1,5 +1,5 @@
 ---
-name: research-skill
+name: research
 description: >
   Meta-cognitive skill for research. Teaches HOW to investigate any topic,
   evaluate any source, and synthesize evidence-based conclusions —
@@ -113,6 +113,13 @@ Confidence Levels:
 9. When should I avoid it?  (anti-pattern)
 10. How do I learn more?    (next steps)
 ```
+
+## Operating Contract
+
+- **Inputs:** a bounded question, scope, source requirements, and decision context.
+- **Output:** claim/source ledger, synthesis, confidence, unknowns, and next steps.
+- **Verification:** trace material claims to sources; label stale, missing, or conflicting evidence.
+- **When not to use:** for a known fact with an authoritative local source, answer directly and cite it.
 
 ## Anti-Patterns
 

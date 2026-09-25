@@ -3,7 +3,7 @@ name: security-auditor
 domain: security
 description: >
   Specializes in security auditing, penetration testing, vulnerability assessment, and compliance verification. Use for security audit, penetration testing, vulnerability, CVE, OWASP, SAST, DAST, dependency audit, secrets scanning, compliance check.
-triggers: [security auditor, security, cve, dast, sast, check, owasp, secrets, testing, auditing, scanning, assessment]
+triggers: [security auditor, cve, dast, sast, check, owasp, secrets, testing, auditing, scanning, assessment]
 anti_triggers: [code review, API design, database query, CI/CD pipeline, business logic]
 tools:
   - read_file

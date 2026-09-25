@@ -1,5 +1,5 @@
 ---
-name: testing-skill
+name: testing
 description: >
   Meta-cognitive skill for testing. Teaches HOW to verify any system works
   correctly — regardless of language, framework, or test tool.
@@ -116,6 +116,13 @@ Does it handle sensitive data?
 Does it process data?
   → Data quality test
 ```
+
+## Operating Contract
+
+- **Inputs:** behavior under test, risk class, environment, and acceptance criteria.
+- **Output:** test scope, cases, result status, evidence, and regression risks.
+- **Verification:** run the smallest meaningful suite first; report `pass`, `fail`, or `not_run` honestly.
+- **When not to use:** do not write tests for an unconfirmed behavior; clarify or reproduce first.
 
 ## Anti-Patterns
 

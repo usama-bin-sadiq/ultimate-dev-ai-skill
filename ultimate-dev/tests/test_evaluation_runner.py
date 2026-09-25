@@ -204,6 +204,41 @@ class EvaluationRunnerTests(unittest.TestCase):
             )
         self.assertIn("not_run", json.dumps(result["provenance"]["limitations"]))
 
+    def test_routing_contract_checks_forbidden_domains_and_capability_gap(self):
+        def classifier(case):
+            return {
+                "size": "moderate",
+                "domains": ["unknown-unclassified"],
+                "risk": "data",
+                "deliverable": "unknown",
+                "clarity": "resolvable",
+                "activated_forbidden_domains": [],
+                "capability_gap": "partial",
+            }
+
+        result = run_evaluation(
+            [
+                {
+                    "id": "unknown-gap",
+                    "task": "Assess an unfamiliar domain",
+                    "expected_size": "moderate",
+                    "expected_domains": ["unknown-unclassified"],
+                    "expected_risk": "data",
+                    "expected_deliverable": "unknown",
+                    "expected_clarity": "resolvable",
+                    "expected_forbidden_domains": ["frontend"],
+                    "expected_capability_gap": "partial",
+                }
+            ],
+            classifier,
+            lambda case, classification=None: {"answer": "bounded"},
+            lambda result, case=None: True,
+        )
+        trial = result["cases"][0]["trials"][0]
+        self.assertEqual(trial["routing"]["status"], STATUS_PASS)
+        self.assertTrue(trial["success"])
+
+
     def test_missing_verifier_is_uncertain(self):
         result = run_evaluation(
             [{"id": "unverified", "task": "run only an injected agent"}],
@@ -215,9 +250,18 @@ class EvaluationRunnerTests(unittest.TestCase):
 
     def test_golden_and_json_case_loading(self):
         golden = load_golden_cases()
-        self.assertEqual(len(golden), 60)
+        self.assertGreaterEqual(len(golden), 150)
         self.assertEqual(golden[0]["id"], "atomic-001")
         self.assertTrue(golden.fixture_only)
+        self.assertGreaterEqual(
+            sum(
+                1
+                for case in golden
+                if str(case.get("category", "")).lower() in {"near-miss", "nearmiss", "negative"}
+                or "nearmiss" in str(case.get("id", "")).lower()
+            ),
+            60,
+        )
 
         scripted = load_cases(
             json.dumps(

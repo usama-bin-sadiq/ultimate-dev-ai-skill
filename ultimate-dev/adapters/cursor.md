@@ -1,5 +1,6 @@
 ---
 tool: cursor
+support: rules-adapter
 doc_source: https://docs.cursor.com
 last_verified: 2026-09-21
 ---

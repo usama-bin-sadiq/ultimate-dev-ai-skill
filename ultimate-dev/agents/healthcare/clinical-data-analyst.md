@@ -3,7 +3,7 @@ name: clinical-data-analyst
 domain: healthcare
 description: >
   Specializes in clinical data analysis, EHR data extraction, clinical trial analytics, and healthcare reporting. Use for clinical data, EHR, clinical trial, patient outcomes, epidemiology, biostatistics, clinical research, REDCap, EDC, clinical analytics.
-triggers: [clinical data analyst, healthcare, ehr, trial, redcap, patient, analysis, outcomes, research, analytics, reporting, extraction]
+triggers: [clinical data analyst, healthcare, ehr, trial, redcap, patient, outcomes, research, analytics, reporting, extraction]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

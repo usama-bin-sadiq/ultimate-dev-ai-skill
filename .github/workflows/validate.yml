@@ -50,7 +50,28 @@ jobs:
       - name: Install validation dependencies
         run: |
           python -m pip install --disable-pip-version-check --no-input \
-            "PyYAML==6.0.2" "pytest==8.3.5" "requests==2.32.3"
+            -r ultimate-dev/requirements-dev.txt
+
+      - name: Validate manifest and metadata consistency
+        run: |
+          cd ultimate-dev
+          python scripts/generate-agent-catalog.py --check
+          python scripts/validate-consistency.py
+
+      - name: Audit portable prompt quality
+        run: |
+          cd ultimate-dev
+          python scripts/audit-prompt-suite.py --strict
+
+      - name: Run provider-free prompt benchmark
+        run: |
+          cd ultimate-dev
+          python scripts/benchmark-prompt-routing.py --strict
+
+      - name: Verify staged install size and cache hygiene
+        run: |
+          cd ultimate-dev
+          python scripts/measure-install.py --strict
 
       - name: Run structure validation
         run: |
@@ -104,17 +125,18 @@ jobs:
           python -m pip install --disable-pip-version-check --no-input \
             "PyYAML==6.0.2"
 
-      - name: Generate manifest
+      - name: Generate manifest and agent catalog
         run: |
           cd ultimate-dev
           python scripts/generate-manifest.py
+          python scripts/generate-agent-catalog.py
 
       - name: Check for changes
         run: |
           cd ultimate-dev
-          if ! git diff --quiet -- skill-manifest.yaml; then
-            echo "skill-manifest.yaml is out of sync; run generate-manifest.py locally" >&2
-            git diff -- skill-manifest.yaml
+          if ! git diff --quiet -- skill-manifest.yaml config/agent-catalog.yaml; then
+            echo "generated metadata is out of sync; run the generators locally" >&2
+            git diff -- skill-manifest.yaml config/agent-catalog.yaml
             exit 1
           fi
 

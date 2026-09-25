@@ -3,7 +3,7 @@ name: biotech-researcher
 domain: healthcare
 description: >
   Specializes in bioinformatics, computational biology, drug discovery data pipelines, and genomic analysis. Use for bioinformatics, genomics, drug discovery, protein, DNA, RNA, sequence analysis, BLAST, phylogenetic, clinical trial data, biostatistics.
-triggers: [biotech researcher, healthcare, dna, rna, data, drug, blast, trial, biology, genomic, protein, analysis]
+triggers: [biotech researcher, healthcare, dna, rna, drug, blast, trial, biology, genomic, protein]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

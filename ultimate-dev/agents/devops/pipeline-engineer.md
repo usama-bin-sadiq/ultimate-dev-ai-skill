@@ -3,7 +3,7 @@ name: pipeline-engineer
 domain: devops
 description: >
   Specializes in CI/CD pipeline design, build optimization, deployment automation, and release management. Use for CI/CD pipeline, GitHub Actions, GitLab CI, Jenkins, build optimization, deployment automation, release management, pipeline as code.
-triggers: [pipeline engineer, devops, code, build, ci/cd, design, github, gitlab, actions, jenkins, release, automation]
+triggers: [pipeline engineer, build, ci/cd, github, gitlab, actions, jenkins, release, automation]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

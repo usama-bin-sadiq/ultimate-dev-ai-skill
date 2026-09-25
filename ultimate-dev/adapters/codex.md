@@ -1,5 +1,6 @@
 ---
 tool: codex
+support: native-profile
 doc_source: https://github.com/openai/codex
 last_verified: 2026-09-21
 ---
@@ -13,7 +14,7 @@ Maps the canonical ultimate-dev package onto Codex CLI's conventions.
 | Scope | Path |
 |-------|------|
 | User (global) | `~/.codex/skills/ultimate-dev/` |
-| Project | `AGENTS.md` references `~/.codex/skills/ultimate-dev/` |
+| Project | `<project>/.codex/skills/ultimate-dev/` (copy-only profile) or `AGENTS.md` reference |
 
 ## Sub-Agent Spawning
 

@@ -3,7 +3,7 @@ name: quantum-computing
 domain: specialized
 description: >
   Specializes in quantum computing algorithms, quantum circuits, and quantum-classical hybrid systems. Use for quantum computing, qubit, quantum circuit, quantum algorithm, quantum supremacy, quantum error correction, Qiskit, Cirq, quantum annealing.
-triggers: [quantum computing, specialized, cirq, error, qubit, hybrid, qiskit, systems, circuits, annealing, classical, supremacy]
+triggers: [quantum computing, cirq, error, qubit, hybrid, qiskit, circuits, annealing, classical, supremacy]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

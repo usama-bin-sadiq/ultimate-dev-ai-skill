@@ -3,7 +3,7 @@ name: browser-agent
 domain: browser
 description: >
   Host-provided web automation capability for navigation, inspection, forms, extraction, and screenshots. The host adapter owns the browser and its isolation.
-triggers: [browser agent, browser, web, data, fill, json, click, forms, search, scrape, extract, navigate, screenshot]
+triggers: [browser agent, browser, fill, json, click, forms, search, scrape, extract, navigate, screenshot]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

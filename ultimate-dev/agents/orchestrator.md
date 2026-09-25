@@ -230,21 +230,24 @@ present.
 
 ---
 
-# Step 6: JEV DECISION
+# Step 6: JEV DECISION (OPTIONAL)
 
-Before an execution transition, request a host-produced JEV decision packet.
-The model supplies structured assessment and capability intent; the host supplies
-capability facts, policy, isolation, and scoped approvals. JEV validates the
-request, aggregates NOUL/CHOICE/SCORE, applies guardrails, and returns a
-recommendation. It has no model, tool, subprocess, installer, browser, or
-network side effects.
+Use the host/runtime profile only when the host exposes durable state, policy,
+capability facts, and scoped approvals. In that profile, request a
+host-produced JEV decision packet, validate NOUL/CHOICE/SCORE, apply guardrails,
+and persist the packet before an authorized execution transition.
 
-Persist the packet before execution. A `human_review` or `stop` result is
-blocking, and missing capabilities are reported rather than installed or
-silently substituted. Route and context fields are recommendations; the
-Runtime and host adapter remain authoritative.
+Use the prompt-only profile when those facts are unavailable. Apply NOUL,
+CHOICE, and SCORE as a reasoning rubric, return a route/evidence plan, and report
+missing capabilities. Do not claim a JEV packet, persistence, authorization, or
+execution in prompt-only mode.
 
-See `runtime/jev/README.md` and
+JEV has no model, tool, subprocess, installer, browser, or network side effects.
+A `human_review` or `stop` result is blocking, and missing capabilities are
+reported rather than installed or silently substituted. The Runtime and host
+adapter remain authoritative when present.
+
+See `contracts/four-channels.md`, `runtime/jev/README.md`, and
 `docs/adr/0001-jev-host-native-decision-kernel.md`.
 
 ---

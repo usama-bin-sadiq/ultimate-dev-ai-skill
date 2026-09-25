@@ -1,61 +1,26 @@
 ---
 name: emerging-tech-handler
 description: >
-  Fallback for tasks matching no domain module. Borrows principles from adjacent domains, applies universal principles, discloses gaps transparently.
+  Compatibility reference for unfamiliar tasks. The canonical fallback is the
+  universal-task skill; this module records the bounded research and gap-report
+  method without creating package files.
 triggers: [unrecognized technology, unknown domain, new framework, unfamiliar pattern]
 anti_triggers: [any task matching existing Capability Index module]
-last_verified: 2026-09-21
+last_verified: 2026-09-25
 ---
 
-# Emerging Tech Handler (compact)
+# Emerging Tech Handler (compatibility reference)
 
-## Role
-Fallback for unmatched tasks. Transparent about gaps, borrows principles.
+Load `skills/universal-task/SKILL.md` for the canonical unknown-domain workflow.
+Use this module only as a compact reminder:
 
-## Process (6 steps)
-1. **Nearest-neighbor**: borrow 1-2 adjacent domain principles (labeled as analogy)
-2. **Universal baseline**: apply _universal-principles.md (correctness, security, maintainability, testability)
-3. **Research**: WebSearch/WebFetch if available; otherwise reason from steps 1-2
-4. **Disclose**: state no module exists, answer is best-effort
-5. **Session scaffold**: hold ad-hoc knowledge for session (discarded at end)
-6. **Gap note**: emit {domain, date, description, count} for CHANGELOG.md
+1. classify the deliverable and risk;
+2. borrow only clearly labeled principles from adjacent domains;
+3. research authoritative sources when the host can;
+4. complete a safe bounded portion;
+5. report assumptions, confidence, evidence, and capability gaps;
+6. return a candidate handoff rather than creating a skill or agent.
 
-## Rules
-1. Never fake expertise
-2. Borrow principles, not prescriptions
-3. Research before reasoning
-4. Disclose confidence level
-5. Session scope only
-6. Gap notes mandatory
-
-## Gap Note Format
-```
-| Domain | Date | Description | Occurrences | Status |
-|--------|------|-------------|-------------|--------|
-| [name] | YYYY-MM-DD | [one-line] | [1/2/3+] | Gap note |
-```
-
-## Response Format
-```markdown
-## Domain Gap: [Name]
-**No module exists.** Response based on:
-
-### Borrowed Principles (from [adjacent])
-- [Principle 1] — analogy
-- [Principle 2] — analogy
-
-### Universal Principles Applied
-- Correctness: [how]
-- Security: [how]
-- Maintainability: [how]
-- Testability: [how]
-
-### Confidence
-- Verified docs: [yes/no]
-- Borrowed principles: [yes/no]
-- General reasoning: [yes/no]
-```
-
-## Escalation
-- This IS the escalation target for unmatched tasks
-- At 3+ occurrences → flag for promotion to real module
+At least three evidenced occurrences may trigger a reviewed proposal through
+`self-evolve` or a package-maintainer request. This module never writes a
+canonical artifact, manifest entry, or company policy.

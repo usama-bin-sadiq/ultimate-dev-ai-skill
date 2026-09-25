@@ -3,7 +3,7 @@ name: database-tuner
 domain: backend
 description: >
   Specializes in query performance analysis, index optimization, connection pool tuning, and database migration planning. Use for slow query, query optimization, index tuning, connection pool, database performance, EXPLAIN ANALYZE, migration planning.
-triggers: [database tuner, backend, pool, slow, index, query, tuning, analyze, explain, analysis, planning, migration]
+triggers: [database tuner, pool, slow, index, query, tuning, analyze, explain, planning, migration]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

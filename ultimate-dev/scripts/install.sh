@@ -19,6 +19,8 @@ YES=0
 UNINSTALL=0
 CLEAN_MEMORY=0
 CLEAN_GITIGNORE=0
+TOOL_MODE=""
+TOOL="generic"
 STAGE=""
 BACKUP=""
 LOCK=""
@@ -31,24 +33,36 @@ usage() {
 Usage: $0 [OPTIONS]
 
 Options:
-  --global              Install to ~/.agents/skills/ultimate-dev
-  --project DIR         Install to DIR/.agents/skills/ultimate-dev
-  --yes, -y             Skip prompts (use global scope by default)
+  --global              Install to the selected global tool destination
+  --project DIR         Install to the selected project tool destination
+  --tool-specific       Select a native tool destination before scope
+  --generic             Use the generic .agents/skills destination
+  --tool NAME           claude-code | codex | opencode | windsurf | cline | copilot | aider | generic
+  --yes, -y             Skip prompts (generic global by default)
   --uninstall            Remove the selected skill destination
   --clean-gitignore      Compatibility flag; no project files are managed
   --clean-memory         Refuse: memory is not managed by this installer
   --all                  Refuse: combines the unsafe memory cleanup request
   --help, -h             Show this help
 
-With no scope option, the installer interactively asks Global or Project and
-then asks for confirmation.  Only the contents of the inner ultimate-dev/
-folder are copied to .agents/skills/ultimate-dev/.
+With no target option, the installer first asks Tool-specific or Generic, then
+shows the Global/Project menu and asks for confirmation.  Only the contents of
+the inner ultimate-dev/ folder are copied to the selected native destination.
+
+Tool-specific native destinations:
+  claude-code  ~/.claude/skills/ultimate-dev/ or <project>/.claude/skills/ultimate-dev/
+  codex        ~/.codex/skills/ultimate-dev/ or <project>/.codex/skills/ultimate-dev/
+  opencode     ~/.agents/skills/ultimate-dev/ or <project>/.agents/skills/ultimate-dev/
+  windsurf     generic .agents/skills fallback
+  cline        generic .agents/skills fallback
+  copilot      generic .agents/skills fallback
+  aider        generic .agents/skills fallback
 
 Examples:
   $0
-  $0 --global
-  $0 --project ~/my-app
-  $0 --global --yes
+  $0 --tool-specific --global
+  $0 --generic --project ~/my-app
+  $0 --tool claude-code --global --yes
 EOF
 }
 
@@ -111,6 +125,69 @@ resolve_directory() {
   (cd "$input" && pwd -P)
 }
 
+select_tool_target() {
+  if [[ -n "$TOOL_MODE" ]]; then
+    return
+  fi
+  if [[ "$YES" -eq 1 ]]; then
+    TOOL_MODE="generic"
+    TOOL="generic"
+    return
+  fi
+  print_banner
+  while true; do
+    if menu_select "Choose an installation target type" \
+      "Tool-specific native destination" \
+      "Generic .agents/skills destination"; then
+      break
+    else
+      status_code=$?
+      [[ "$status_code" -eq 2 ]] && exit 0
+    fi
+  done
+  if [[ "$MENU_RESULT" -eq 1 ]]; then
+    TOOL_MODE="tool-specific"
+    while true; do
+      if menu_select "Choose the tool profile" \
+        "Claude Code — .claude/skills/ultimate-dev/" \
+        "Codex CLI — .codex/skills/ultimate-dev/" \
+        "OpenCode — .agents/skills/ultimate-dev/" \
+        "Windsurf — generic .agents fallback" \
+        "Cline — generic .agents fallback" \
+        "GitHub Copilot — generic .agents fallback" \
+        "Aider — generic .agents fallback" \
+        "Other agentic CLI — generic .agents fallback"; then
+        break
+      else
+        status_code=$?
+        [[ "$status_code" -eq 2 ]] && exit 0
+      fi
+    done
+    case "$MENU_RESULT" in
+      1) TOOL="claude-code" ;;
+      2) TOOL="codex" ;;
+      3) TOOL="opencode" ;;
+      4) TOOL="windsurf" ;;
+      5) TOOL="cline" ;;
+      6) TOOL="copilot" ;;
+      7) TOOL="aider" ;;
+      8) TOOL="generic" ;;
+    esac
+  else
+    TOOL_MODE="generic"
+    TOOL="generic"
+  fi
+}
+
+resolve_target_path() {
+  case "$TOOL" in
+    generic|opencode|windsurf|cline|copilot|aider) printf '.agents/skills/ultimate-dev' ;;
+    claude-code) printf '.claude/skills/ultimate-dev' ;;
+    codex) printf '.codex/skills/ultimate-dev' ;;
+    *) die "unsupported tool profile: $TOOL" ;;
+  esac
+}
+
 # ─── Cleanup ────────────────────────────────────────────────────────────────
 
 cleanup() {
@@ -150,6 +227,24 @@ while [[ $# -gt 0 ]]; do
       PROJECT="$2"
       shift 2
       ;;
+    --tool-specific)
+      [[ -z "$TOOL_MODE" ]] || die "choose either --tool-specific or --generic"
+      TOOL_MODE="tool-specific"
+      shift
+      ;;
+    --generic)
+      [[ -z "$TOOL_MODE" ]] || die "choose either --tool-specific or --generic"
+      TOOL_MODE="generic"
+      TOOL="generic"
+      shift
+      ;;
+    --tool)
+      [[ $# -ge 2 && -n "${2:-}" ]] || die "--tool requires a name"
+      [[ "$TOOL_MODE" != "generic" ]] || die "--generic cannot be combined with --tool"
+      TOOL_MODE="tool-specific"
+      TOOL="$2"
+      shift 2
+      ;;
     --yes|-y) YES=1; shift ;;
     --uninstall) UNINSTALL=1; shift ;;
     --clean-memory) CLEAN_MEMORY=1; shift ;;
@@ -170,6 +265,14 @@ fi
 if [[ "$GLOBAL" -eq 1 && -n "$PROJECT" ]]; then
   die "choose either --global or --project"
 fi
+case "$TOOL" in
+  generic|opencode|claude-code|codex|windsurf|cline|copilot|aider) ;;
+  *) die "unsupported tool profile: $TOOL" ;;
+esac
+if [[ "$TOOL_MODE" == "tool-specific" && "$TOOL" == "generic" && "$YES" -eq 1 ]]; then
+  die "--tool-specific with --yes requires an explicit --tool profile"
+fi
+select_tool_target
 
 # ─── Scope and target ───────────────────────────────────────────────────────
 
@@ -206,20 +309,27 @@ else
   esac
 fi
 
+TARGET_RELATIVE="$(resolve_target_path)"
 if [[ "$SCOPE" == "global" ]]; then
   [[ -n "${HOME:-}" ]] || die "HOME is not set"
   PROJECT_DIR="$(cd "$HOME" && pwd -P)"
-  TARGET="$PROJECT_DIR/.agents/skills/ultimate-dev"
+  TARGET="$PROJECT_DIR/$TARGET_RELATIVE"
 else
   PROJECT_DIR="$(resolve_directory "${PROJECT:-.}")"
-  TARGET="$PROJECT_DIR/.agents/skills/ultimate-dev"
+  TARGET="$PROJECT_DIR/$TARGET_RELATIVE"
 fi
 TARGET_PARENT="$(dirname "$TARGET")"
 
 # Never follow or replace a symlink at the selected destination.
-for component in "$PROJECT_DIR/.agents" "$PROJECT_DIR/.agents/skills"; do
-  [[ ! -L "$component" ]] || die "refusing to use symlinked install path: $component"
+relative_parent="${TARGET_RELATIVE%/*}"
+current_parent="$PROJECT_DIR"
+old_ifs="$IFS"
+IFS='/'
+for component in $relative_parent; do
+  current_parent="$current_parent/$component"
+  [[ ! -L "$current_parent" ]] || die "refusing to use symlinked install path: $current_parent"
 done
+IFS="$old_ifs"
 [[ ! -L "$TARGET" ]] || die "refusing to replace symlinked skill target: $TARGET"
 [[ ! -L "$TARGET_PARENT" ]] || die "refusing to use symlinked install parent: $TARGET_PARENT"
 mkdir -p "$TARGET_PARENT"
@@ -281,6 +391,19 @@ LOCK="$TARGET_PARENT/.ultimate-dev.install.lock"
 mkdir "$LOCK" 2>/dev/null || die "another installer is already running for $TARGET"
 STAGE="$(mktemp -d "$TARGET_PARENT/.ultimate-dev.stage.XXXXXX")"
 cp -R "$SKILL_DIR/." "$STAGE/"
+
+# Development caches are not release payload. Removing them after the copy
+# keeps the installer copy-only while preventing local test artifacts from
+# inflating every user's installation.
+find "$STAGE" -type d \( \
+  -name '__pycache__' -o -name '.pytest_cache' -o -name '.mypy_cache' -o \
+  -name '.ruff_cache' -o -name '.cache' -o -name 'node_modules' -o \
+  -name '.venv' -o -name 'venv' \
+\) -prune -exec rm -rf {} +
+find "$STAGE" -type f \( \
+  -name '*.pyc' -o -name '*.pyo' -o -name '.DS_Store' -o -name '*.log' -o \
+  -name '.coverage' \
+\) -delete
 
 if find "$STAGE" -type l -print -quit | grep -q .; then
   die "source skill payload contains a symlink; copy-only install refuses it"
@@ -344,6 +467,8 @@ if [[ -n "$BACKUP" && -d "$BACKUP" ]]; then
 fi
 
 FILE_COUNT="$(find "$TARGET" -type f 2>/dev/null | wc -l | tr -d ' ')"
+PAYLOAD_KIB="$(du -sk "$TARGET" 2>/dev/null | awk '{print $1}')"
 status "Copied the inner skill folder to $TARGET"
 status "Version $VERSION · $AGENT_COUNT agents · $SKILL_COUNT skills · $FILE_COUNT files"
+status "Payload size: ${PAYLOAD_KIB} KiB (development caches excluded)"
 info "No symlink, memory, template, or host configuration file was created."

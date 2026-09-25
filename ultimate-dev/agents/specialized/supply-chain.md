@@ -3,7 +3,7 @@ name: supply-chain
 domain: specialized
 description: >
   Specializes in supply chain optimization, logistics, inventory management, and demand forecasting. Use for supply chain, logistics, inventory, demand forecasting, procurement, warehouse, shipping, fulfillment, supplier management, optimization.
-triggers: [supply chain, specialized, demand, shipping, supplier, inventory, logistics, warehouse, management, forecasting, fulfillment, procurement]
+triggers: [supply chain, demand, shipping, supplier, inventory, logistics, warehouse, management, forecasting, fulfillment, procurement]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

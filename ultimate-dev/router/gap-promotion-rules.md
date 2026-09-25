@@ -10,8 +10,9 @@
 4. **Notify**: coordinate with skill-maintainer
 5. **Draft**: follow §25 skeleton exactly
 6. **Validate**: full checklist
-7. **Register**: SKILL.md, skill-manifest.yaml, CHANGELOG.md
-8. **Bump**: minor version for new capability
+7. **Propose**: a reviewed candidate diff; do not write package files yet
+8. **Register**: only after maintainer approval, regression checks, and manifest/catalog validation
+9. **Bump**: version only as part of an explicit release decision
 
 ## Validation Checklist
 - [ ] Frontmatter complete (name, description, triggers, anti_triggers, last_verified)

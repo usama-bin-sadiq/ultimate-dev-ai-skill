@@ -3,7 +3,7 @@ name: csharp-engineer
 domain: backend
 description: >
   Specializes in C#/.NET 8+ applications, ASP.NET Core APIs, and Blazor web apps. Use for C#, .NET, ASP.NET, Blazor, Entity Framework, LINQ, dependency injection, minimal API, SignalR, gRPC, Azure Functions.
-triggers: [csharp engineer, backend, asp, c#/, net, web, apis, apps, core, grpc, linq, azure]
+triggers: [csharp engineer, asp, c#/, net, apis, apps, core, grpc, linq, azure]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

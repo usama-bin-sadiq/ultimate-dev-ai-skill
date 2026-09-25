@@ -3,7 +3,7 @@ name: blockchain-engineer
 domain: specialized
 description: >
   Specializes in smart contract development, DeFi protocols, token economics, and blockchain security. Use for blockchain, smart contract, Solidity, DeFi, token, governance, audit, reentrancy, gas optimization, EVM, Web3.
-triggers: [blockchain engineer, specialized, evm, gas, defi, web3, audit, smart, token, contract, security, solidity]
+triggers: [blockchain engineer, evm, gas, defi, web3, audit, smart, token, contract, solidity]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

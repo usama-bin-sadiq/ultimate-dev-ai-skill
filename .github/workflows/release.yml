@@ -388,15 +388,21 @@ jobs:
           cd ultimate-dev
           python scripts/sync-version.py
 
-      - name: Generate manifest
+      - name: Generate manifest and agent catalog
         run: |
           cd ultimate-dev
           python scripts/generate-manifest.py
+          python scripts/generate-agent-catalog.py
 
       - name: Sync docs
         run: |
           cd ultimate-dev
           python scripts/sync-docs.py
+
+      - name: Validate manifest and metadata consistency
+        run: |
+          cd ultimate-dev
+          python scripts/validate-consistency.py
 
       - name: Prepare changelog
         env:

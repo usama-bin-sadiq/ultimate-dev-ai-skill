@@ -3,7 +3,7 @@ name: java-engineer
 domain: backend
 description: >
   Specializes in Java/Spring Boot applications, JVM optimization, and enterprise patterns. Use for Java, Spring Boot, Spring, JVM, Maven, Gradle, JPA, Hibernate, JUnit, Mockito, Tomcat, Netty, GraalVM.
-triggers: [java engineer, backend, jpa, jvm, boot, junit, maven, netty, gradle, tomcat, graalvm, mockito]
+triggers: [java engineer, jpa, jvm, boot, junit, maven, netty, gradle, tomcat, graalvm, mockito]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

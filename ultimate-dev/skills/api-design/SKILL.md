@@ -1,5 +1,5 @@
 ---
-name: api-design-skill
+name: api-design
 description: >
   Meta-cognitive skill for API design. Teaches HOW to design interfaces
   between systems — regardless of protocol, format, or technology.

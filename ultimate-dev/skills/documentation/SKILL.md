@@ -1,5 +1,5 @@
 ---
-name: documentation-skill
+name: documentation
 description: >
   Meta-cognitive skill for documentation. Teaches HOW to communicate
   technical information clearly — regardless of audience or format.
@@ -106,6 +106,13 @@ Documentation that dies:
   → Is out of date
   → Was written once and forgotten
 ```
+
+## Operating Contract
+
+- **Inputs:** audience, source material, task context, format, and review owner.
+- **Output:** accurate, concise documentation with examples, provenance, and next actions.
+- **Verification:** check links/examples and distinguish verified behavior from proposals.
+- **When not to use:** do not invent policy, API behavior, or company facts.
 
 ## Documentation Anti-Patterns
 

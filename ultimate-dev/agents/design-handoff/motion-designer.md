@@ -3,7 +3,7 @@ name: motion-designer
 domain: design-handoff
 description: >
   Specializes in motion design, animation systems, interaction animations, and micro-interactions. Use for motion design, animation, micro-interaction, transition, easing, keyframe, Lottie, After Effects, Rive, CSS animation, Spring animation.
-triggers: [motion designer, design-handoff, css, rive, after, micro, easing, lottie, spring, effects, systems, keyframe]
+triggers: [motion designer, design-handoff, css, rive, after, micro, easing, lottie, spring, effects, keyframe]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

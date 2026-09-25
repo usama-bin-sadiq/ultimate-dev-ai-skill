@@ -3,7 +3,7 @@ name: sre-engineer
 domain: devops
 description: >
   Specializes in site reliability engineering, SLIs/SLOs, error budgets, incident management, and toil reduction. Use for SRE, reliability, SLI, SLO, error budget, incident, postmortem, toil, capacity planning, chaos engineering, runbook.
-triggers: [sre engineer, devops, site, toil, chaos, error, budgets, runbook, capacity, incident, planning, reduction]
+triggers: [sre engineer, site, toil, chaos, error, budgets, runbook, capacity, incident, planning, reduction]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

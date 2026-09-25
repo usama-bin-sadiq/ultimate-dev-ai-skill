@@ -1,14 +1,8 @@
-# Ultimate-Dev 3.0.0
+# Ultimate-Dev 3.0.2
 
-> Durable, model-agnostic engineering control plane: think, coordinate, execute, verify, recover.
+> Prompt-first, model-agnostic agentic skill suite for software agencies and companies.
 
-**v3.0 adds a real runtime layer to the existing LangChain-derived orchestration patterns.**
-The model is not the durable memory. Task state, checkpoints, handoffs, evidence and recovery
-live outside the conversation under `.memory/ultimate-dev/`.
-
-# ultimate-dev v3.0.2
-
-**Master software-engineering orchestrator** — a single, adaptive skill that replaces dozens of specialized skills. Works with ANY model (tiny to huge) and ANY technology stack.
+The portable core is Markdown. Prompt-only use has no Python, Node.js, or model-provider dependency. Durable state, JEV, approvals, retention, and recovery are optional runtime extensions for hosts that need them.
 
 [![Release](https://img.shields.io/github/v/release/usama-bin-sadiq/ultimate-dev-ai-skill?sort=semver)](https://github.com/usama-bin-sadiq/ultimate-dev-ai-skill/releases)
 [![Sync & Release](https://github.com/usama-bin-sadiq/ultimate-dev-ai-skill/actions/workflows/release.yml/badge.svg)](https://github.com/usama-bin-sadiq/ultimate-dev-ai-skill/actions/workflows/release.yml)
@@ -29,7 +23,7 @@ live outside the conversation under `.memory/ultimate-dev/`.
 
 ## 🧩 What Is This?
 
-ultimate-dev is a **single skill** that replaces dozens of specialized skills. It works with ANY AI model — tiny to huge — and ANY technology stack (React/Vue, Kafka/RabbitMQ, PostgreSQL/MongoDB, AWS/Azure — you name it).
+ultimate-dev is a **portable, prompt-first skill suite** for software agencies and companies. It works with any AI model and host, covers software engineering deeply, and adds reusable business, research, audit, finance, operations, and knowledge-work methods without requiring a runtime.
 
 > [!NOTE]
 > **No hardcoded technologies. Pure patterns and best practices.** Unknown tech is handled by universal specialists that research it from the web and teach themselves.
@@ -41,23 +35,31 @@ ultimate-dev is a **single skill** that replaces dozens of specialized skills. I
 ### 1. Install
 
 ```bash
-# macOS / Linux — interactive menu
+# macOS / Linux — interactive: tool-specific/generic, then Global/Project
 ./scripts/install.sh
 
-# Non-interactive
-./scripts/install.sh --global              # every project (~/.agents/skills/)
-./scripts/install.sh --project . --yes     # this project only
+# Tool-specific examples
+./scripts/install.sh --tool claude-code --global --yes
+./scripts/install.sh --tool codex --project . --yes
+./scripts/install.sh --tool opencode --global --yes
+
+# Generic examples
+./scripts/install.sh --generic --global --yes
+./scripts/install.sh --generic --project . --yes
 
 # Windows (PowerShell)
 .\scripts\install.ps1                      # interactive
-.\scripts\install.ps1 -Global -Yes         # every project
-.\scripts\install.ps1 -Project . -Yes      # this project only
+.\scripts\install.ps1 -ToolSpecific -Global -Yes
+.\scripts\install.ps1 -Generic -Project . -Yes
 ```
 
-Every install seeds a memory folder at the project root — `<project>/.memory/ultimate-dev/` (or `~/.memory/ultimate-dev/` for global installs) — with a template, and project-scoped installs add `.memory/ultimate-dev/` to `.gitignore`.
+The installer copies only the contents of this `ultimate-dev/` skill folder to the selected `.agents/skills/ultimate-dev/` destination. It does not create memory, `.gitignore`, template, `.cursor`, `.claude`, or symlink files outside that destination. Project memory is created and managed separately by the runtime when needed.
 
 > [!TIP]
 > Not sure which tools you have? Run `./scripts/detect-tools.sh` to list installed agentic tools, and `./scripts/verify.sh` to check the package integrity.
+
+For exact staged payload size, development dependencies, CI-equivalent checks,
+and uninstall instructions, read [`INSTALLATION.md`](INSTALLATION.md).
 
 ### 2. Use
 
@@ -200,14 +202,14 @@ agents/ — 119 agents, 36 categories, 7 root-level
 ```
 <!-- ud:end agent-tree -->
 
-### 18 Meta-Cognitive Sub-Skills
+### 33 Meta-Cognitive Sub-Skills
 
 Each teaches HOW to think about a domain — technology-agnostic:
 
 <!-- ud:begin skills-table -->
 | Skill | Purpose |
 |-------|---------|
-| `self-evolve` | Auto-generates new skills from experience |
+| `self-evolve` | Gates reusable learning behind repeated evidence and review |
 | `task-observer` | Capture reusable methodology from task work |
 | `research` | Learn anything |
 | `coding` | Build anything |
@@ -225,17 +227,33 @@ Each teaches HOW to think about a domain — technology-agnostic:
 | `migration` | Transition anything |
 | `mobile` | Build for any device |
 | `ai-ml` | Build intelligent systems |
+| `universal-task` | Classify and safely handle unfamiliar or unclassified tasks |
+| `accounting-finance` | Structure accounting, controllership, management reporting, budgeting, forecasting,… |
+| `audit-controls` | Plan and perform evidence-based control, risk, and assurance reviews for software,… |
+| `business-analysis` | Analyze a business problem, operating process, strategy, market, KPI, or decision… |
+| `data-analysis-bi` | Perform reproducible data analysis and BI work with clear metric definitions, data… |
+| `discovery-requirements` | Clarify product, engineering, research, and business requests into a grounded… |
+| `internal-communications` | Create concise internal updates, meeting notes, decision memos, status reports,… |
+| `legal-privacy` | Support legal, privacy, contract, policy, records, and data-governance work by… |
+| `office-artifacts` | Create, revise, and quality-check common business artifacts including reports,… |
+| `people-operations` | Support privacy-conscious people operations workflows including workforce planning,… |
+| `planning-execution` | Design and execute a multi-step plan with dependencies, checkpoints, verification… |
+| `procurement-vendors` | Structure procurement and vendor-management workflows including intake, requirements,… |
+| `project-context` | Build or apply a compact, evidence-based project context recipe before implementation:… |
+| `prompt-evaluation` | Evaluate prompt and agent-skill behavior with representative tasks, routing… |
+| `strategy-operating-model` | Design and evaluate company strategy, operating models, value chains, capabilities,… |
 <!-- ud:end skills-table -->
 
 ### Self-Evolution
 
-When the system encounters a task with no matching sub-skill:
+When repeated evidence shows that a reusable capability is missing:
 
-1. Researches how to do it
-2. Executes the task
-3. Extracts patterns
-4. Auto-generates a new sub-skill
-5. Persists in `skills/_learned/` for future use
+1. Researches the bounded gap when the host can
+2. Executes and verifies a safe task
+3. Extracts candidate patterns and provenance
+4. Keeps the candidate outside the canonical package
+5. Requires independent review, regression cases, and a maintainer decision
+6. Uses a memory receipt or candidate handoff; no automatic package write
 
 ---
 
@@ -284,8 +302,8 @@ User: "Use Bun for the backend"
 → Spawn generic-backend-specialist
 → Web research: Bun documentation
 → Apply universal backend patterns
-→ Complete the task
-→ Auto-generate bun-specialist for future use
+→ Complete the bounded task and report evidence
+→ Propose a reviewed Bun specialist candidate; do not publish automatically
 ```
 
 ---
@@ -299,8 +317,11 @@ Install **once** (global or project scope) — tools auto-discover the skill fro
 | Claude Code | [`adapters/claude-code.md`](adapters/claude-code.md) |
 | Codex CLI | [`adapters/codex.md`](adapters/codex.md) |
 | Cursor | [`adapters/cursor.md`](adapters/cursor.md) |
-| OpenCode | [`adapters/generic-cli.md`](adapters/generic-cli.md) |
-| Windsurf, Cline, GitHub Copilot, Aider | [`adapters/generic-cli.md`](adapters/generic-cli.md) |
+| OpenCode | [`adapters/opencode.md`](adapters/opencode.md) |
+| Windsurf | [`adapters/windsurf.md`](adapters/windsurf.md) |
+| Cline | [`adapters/cline.md`](adapters/cline.md) |
+| GitHub Copilot | [`adapters/copilot.md`](adapters/copilot.md) |
+| Aider | [`adapters/aider.md`](adapters/aider.md) |
 | Any other agentic CLI | [`adapters/generic-cli.md`](adapters/generic-cli.md) |
 
 The full compatibility list lives in [`skill-manifest.yaml`](skill-manifest.yaml) (`compatible_tools`).
@@ -308,6 +329,16 @@ The full compatibility list lives in [`skill-manifest.yaml`](skill-manifest.yaml
 ---
 
 ## 🛠 Validation & Development
+
+Install optional development dependencies from the repository root:
+
+```bash
+python3 -m pip install -r ultimate-dev/requirements-dev.txt
+```
+
+Full setup, measured payload size, host requirements, and uninstall guidance
+are in [`INSTALLATION.md`](INSTALLATION.md). Prompt-only users do not need this
+step.
 
 ```bash
 # Host-native JEV conformance (no package manager required)
@@ -338,23 +369,30 @@ chmod +x .git/hooks/pre-commit
 
 ```
 ultimate-dev/
-├── SKILL.md                    ← Orchestrator (366 lines)
+├── SKILL.md                    ← Orchestrator (450 lines)
+├── INSTALLATION.md             ← Size, dependencies, verification, uninstall
+├── requirements-dev.txt        ← Optional development dependencies
 ├── skill-manifest.yaml         ← Auto-generated registry
 ├── README.md                   ← User documentation (this file)
 ├── VERSION                     ← Version number (source of truth)
 ├── AGENT.md / CLAUDE.md        ← Agent entry-point docs for other harnesses
 ├── adapters/                   ← Harness adapters (claude-code, codex, cursor, generic-cli)
 ├── agents/                     ← 119 specialized agents
-├── skills/                     ← 18 meta-cognitive sub-skills
+├── skills/                     ← 33 meta-cognitive sub-skills
 ├── modules/                    ← 46 internal pattern modules
 ├── config/                     ← Configuration files
+│   ├── capability-index.yaml  ← Compact prompt-first routing index
+│   └── agent-catalog.yaml     ← Generated concrete-agent catalog
+├── contracts/                  ← Portable task and four-channel contracts
+│   ├── task-envelope.yaml     ← Deliverable/risk/gap vocabulary
+│   └── four-channels.md       ← Intent → Knowledge → Action → Evidence
 ├── prompts/                    ← Shared prompt components
 ├── workflows/                  ← Execution pipelines (with agent refs)
 ├── schemas/                    ← Data contracts
 ├── rules/                      ← Operational constraints
 ├── router/                     ← Classification & routing logic
 ├── templates/                  ← Reusable templates
-├── scripts/                    ← validate.py, generate-manifest.py, sync-docs.py, pre-commit
+├── scripts/                    ← Validation, prompt audit, benchmark, context generation, and release helpers
 ├── tools/                      ← Tool integrations
 ├── runtime/jev/                ← Host-neutral JEV reference engine
 ├── runtime/schemas/            ← Runtime and JEV contracts
@@ -375,7 +413,11 @@ ultimate-dev/
 |----------|---------|
 | [README.md](../README.md) | GitHub landing — overview & quick start |
 | [ultimate-dev/README.md](README.md) | Full skill reference — counts auto-synced on release |
+| [Installation and development guide](INSTALLATION.md) | Payload size, dependencies, verification, and uninstall commands |
 | [ultimate-dev/SKILL.md](SKILL.md) | Skill entry point (orchestrator) |
+| [Department coverage](../docs/DEPARTMENT-COVERAGE.md) | Cross-functional coverage and optimization plan |
+| [Prompt-skill audit](../docs/PROMPT-SKILL-AUDIT.md) | Prompt-only quality audit and scorecard |
+| [10/10 readiness](../docs/READINESS.md) | Readiness rubric and evidence gates |
 | [ARCHITECTURE.md](../ARCHITECTURE.md) | System design for maintainers |
 | [ADR-0001](../docs/adr/0001-jev-host-native-decision-kernel.md) | Host-native JEV decision boundary |
 | [CONTRIBUTING.md](../CONTRIBUTING.md) | How to contribute |

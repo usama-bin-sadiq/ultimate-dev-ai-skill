@@ -3,7 +3,7 @@ name: qa-engineer
 domain: testing
 description: >
   Specializes in quality engineering, test automation frameworks, quality metrics, and process improvement. Use for quality engineering, test automation, quality metrics, process improvement, quality gates, defect analysis, quality dashboard, test strategy.
-triggers: [qa engineer, testing, gates, defect, metrics, process, quality, analysis, strategy, dashboard, automation, frameworks]
+triggers: [qa engineer, testing, gates, defect, metrics, process, quality, strategy, dashboard, automation, frameworks]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

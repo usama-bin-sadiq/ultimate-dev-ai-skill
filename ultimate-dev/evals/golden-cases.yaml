@@ -1,6 +1,8 @@
 # Golden Test Cases for Classification Accuracy
 # Run: verify classification against these cases to ensure routing is correct
 # Each case has: task, expected_size, expected_domains, expected_risk
+# New cases also declare expected_deliverable and category; legacy routing-only
+# cases are retained for compatibility and are reported as migration coverage.
 
 cases:
   # === ATOMIC TASKS (should load zero modules) ===
@@ -8,6 +10,7 @@ cases:
     task: "Fix the null check in UserService.findById"
     expected_size: atomic
     expected_domains: []
+    expected_deliverable: bug-fix
     expected_risk: none
     notes: "Single function fix, no domain module needed"
 
@@ -15,6 +18,7 @@ cases:
     task: "What does the JWT exp claim mean?"
     expected_size: atomic
     expected_domains: []
+    expected_deliverable: answer
     expected_risk: none
     notes: "Factual question, no module load"
 
@@ -22,6 +26,7 @@ cases:
     task: "Rename the variable `usr` to `user` in auth.ts"
     expected_size: atomic
     expected_domains: []
+    expected_deliverable: code
     expected_risk: none
     notes: "Simple rename, no domain match"
 
@@ -30,6 +35,7 @@ cases:
     task: "Design a REST API for user management with registration, login, and profile endpoints"
     expected_size: moderate
     expected_domains: [backend]
+    expected_deliverable: specification
     expected_risk: security
     notes: "API design + auth = security risk flag"
 
@@ -37,6 +43,7 @@ cases:
     task: "Optimize this PostgreSQL query that's taking 3 seconds on the users table"
     expected_size: moderate
     expected_domains: [database]
+    expected_deliverable: code
     expected_risk: none
     notes: "Single domain, clear scope"
 
@@ -44,6 +51,7 @@ cases:
     task: "Create a responsive dashboard layout with sidebar navigation"
     expected_size: moderate
     expected_domains: [frontend]
+    expected_deliverable: code
     expected_risk: none
     notes: "UI work, no risk"
 
@@ -51,6 +59,7 @@ cases:
     task: "Set up GitHub Actions CI pipeline with lint, test, and build steps"
     expected_size: moderate
     expected_domains: [devops]
+    expected_deliverable: workflow
     expected_risk: none
     notes: "CI/CD setup"
 
@@ -58,6 +67,7 @@ cases:
     task: "Write a threat model for the payment processing flow"
     expected_size: moderate
     expected_domains: [security]
+    expected_deliverable: security-review
     expected_risk: security
     notes: "Security module always added for auth/payment"
 
@@ -65,6 +75,7 @@ cases:
     task: "Create a sprint plan for the next 2 weeks with capacity allocation"
     expected_size: moderate
     expected_domains: [project-management]
+    expected_deliverable: plan
     expected_risk: none
     notes: "PM work"
 
@@ -72,6 +83,7 @@ cases:
     task: "Write a PRD for the new notification system"
     expected_size: moderate
     expected_domains: [product]
+    expected_deliverable: requirements
     expected_risk: none
     notes: "Product requirements"
 
@@ -79,6 +91,7 @@ cases:
     task: "Design a Figma component spec for the new Button component with all variants"
     expected_size: moderate
     expected_domains: [design-handoff]
+    expected_deliverable: specification
     expected_risk: none
     notes: "Design handoff"
 
@@ -86,6 +99,7 @@ cases:
     task: "Write a status update for the client about this week's progress"
     expected_size: moderate
     expected_domains: [client-comms]
+    expected_deliverable: communication
     expected_risk: none
     notes: "Client communication"
 
@@ -93,6 +107,7 @@ cases:
     task: "Create a content calendar for Q4 blog posts"
     expected_size: moderate
     expected_domains: [marketing]
+    expected_deliverable: plan
     expected_risk: none
     notes: "Marketing content"
 
@@ -100,6 +115,7 @@ cases:
     task: "Build a sales outreach sequence for SaaS prospects"
     expected_size: moderate
     expected_domains: [sales]
+    expected_deliverable: communication
     expected_risk: none
     notes: "Sales outreach"
 
@@ -107,6 +123,7 @@ cases:
     task: "Create a revenue model for the SaaS product with MRR projections"
     expected_size: moderate
     expected_domains: [finance]
+    expected_deliverable: financial-analysis
     expected_risk: none
     notes: "Financial modeling"
 
@@ -114,6 +131,7 @@ cases:
     task: "Design a FHIR API for patient record exchange"
     expected_size: moderate
     expected_domains: [healthcare]
+    expected_deliverable: specification
     expected_risk: compliance
     notes: "Healthcare = HIPAA compliance"
 
@@ -121,6 +139,7 @@ cases:
     task: "Design a loot box system with proper drop rate disclosure"
     expected_size: moderate
     expected_domains: [game-dev]
+    expected_deliverable: specification
     expected_risk: none
     notes: "Game monetization"
 
@@ -128,6 +147,7 @@ cases:
     task: "Write a PostGIS query to find all restaurants within 5km of a point"
     expected_size: moderate
     expected_domains: [gis]
+    expected_deliverable: code
     expected_risk: none
     notes: "Spatial query"
 
@@ -135,6 +155,7 @@ cases:
     task: "Set up hand tracking interactions for a VR meditation app"
     expected_size: moderate
     expected_domains: [spatial-computing]
+    expected_deliverable: code
     expected_risk: none
     notes: "XR development"
 
@@ -142,6 +163,7 @@ cases:
     task: "Audit this Solidity smart contract for reentrancy vulnerabilities"
     expected_size: moderate
     expected_domains: [specialized]
+    expected_deliverable: security-review
     expected_risk: security
     notes: "Blockchain security"
 
@@ -149,6 +171,7 @@ cases:
     task: "Write a literature review on microservices adoption patterns"
     expected_size: moderate
     expected_domains: [academic]
+    expected_deliverable: research
     expected_risk: none
     notes: "Academic writing"
 
@@ -156,6 +179,7 @@ cases:
     task: "Design a ticket triage system with SLAs for a SaaS support team"
     expected_size: moderate
     expected_domains: [support]
+    expected_deliverable: workflow
     expected_risk: none
     notes: "Support operations"
 
@@ -163,6 +187,7 @@ cases:
     task: "Set up a Google Ads campaign structure for a B2B SaaS product"
     expected_size: moderate
     expected_domains: [paid-media]
+    expected_deliverable: plan
     expected_risk: none
     notes: "Paid advertising"
 
@@ -171,6 +196,7 @@ cases:
     task: "Build a user authentication system with JWT, OAuth, and role-based access control"
     expected_size: complex
     expected_domains: [backend, security]
+    expected_deliverable: code
     expected_risk: security
     notes: "Multi-domain: API + auth security"
 
@@ -178,6 +204,7 @@ cases:
     task: "Migrate the monolith to microservices with zero downtime"
     expected_size: complex
     expected_domains: [architecture, devops, database]
+    expected_deliverable: plan
     expected_risk: security
     notes: "Architecture + deployment + data"
 
@@ -185,6 +212,7 @@ cases:
     task: "Launch a new product feature with marketing campaign, sales enablement, and support documentation"
     expected_size: complex
     expected_domains: [product, marketing, sales, support, documentation]
+    expected_deliverable: plan
     expected_risk: none
     notes: "Full cross-functional launch"
 
@@ -192,6 +220,7 @@ cases:
     task: "Build a real-time dashboard with WebSocket updates, chart rendering, and responsive layout"
     expected_size: complex
     expected_domains: [frontend, backend]
+    expected_deliverable: code
     expected_risk: none
     notes: "Frontend + backend integration"
 
@@ -199,6 +228,7 @@ cases:
     task: "Design and implement a HIPAA-compliant patient portal with EHR integration"
     expected_size: complex
     expected_domains: [healthcare, backend, security, frontend]
+    expected_deliverable: code
     expected_risk: compliance
     notes: "Healthcare + full stack + compliance"
 
@@ -206,6 +236,7 @@ cases:
     task: "Create a go-to-market plan for a new SaaS feature including pricing, marketing, sales enablement, and support docs"
     expected_size: complex
     expected_domains: [product, finance, marketing, sales, support, documentation]
+    expected_deliverable: plan
     expected_risk: none
     notes: "Full GTM cross-functional"
 
@@ -213,6 +244,7 @@ cases:
     task: "Build a multiplayer game with matchmaking, anti-cheat, and in-app purchases"
     expected_size: complex
     expected_domains: [game-dev, backend, security]
+    expected_deliverable: code
     expected_risk: security
     notes: "Game + server + security"
 
@@ -220,6 +252,7 @@ cases:
     task: "Implement a geospatial analytics platform with real-time map rendering and spatial queries"
     expected_size: complex
     expected_domains: [gis, frontend, backend, database]
+    expected_deliverable: code
     expected_risk: none
     notes: "GIS + full stack"
 
@@ -229,6 +262,8 @@ cases:
     task: "Fix the CSS alignment on the login page"
     expected_size: atomic
     expected_domains: []
+    expected_forbidden_domains: [frontend, design-handoff]
+    expected_deliverable: code
     expected_risk: none
     notes: "CSS fix is atomic, should NOT trigger design-handoff or frontend module"
 
@@ -236,6 +271,8 @@ cases:
     task: "Update the README installation instructions"
     expected_size: atomic
     expected_domains: []
+    expected_forbidden_domains: [documentation]
+    expected_deliverable: document
     expected_risk: none
     notes: "Documentation fix is atomic, should NOT trigger documentation module"
 
@@ -243,6 +280,8 @@ cases:
     task: "Run npm install to update dependencies"
     expected_size: atomic
     expected_domains: []
+    expected_forbidden_domains: [devops]
+    expected_deliverable: code
     expected_risk: none
     notes: "Package update is atomic, should NOT trigger devops module"
 
@@ -250,6 +289,8 @@ cases:
     task: "Write a marketing blog post about our new feature"
     expected_size: moderate
     expected_domains: [marketing]
+    expected_forbidden_domains: [documentation]
+    expected_deliverable: document
     expected_risk: none
     notes: "Content creation = marketing, NOT documentation module"
 
@@ -257,6 +298,8 @@ cases:
     task: "Set up a PostgreSQL database with proper indexing for the users table"
     expected_size: moderate
     expected_domains: [database]
+    expected_forbidden_domains: [backend]
+    expected_deliverable: code
     expected_risk: none
     notes: "Database setup = database module, NOT backend"
 
@@ -265,6 +308,7 @@ cases:
     task: "Add user registration with email and password"
     expected_size: moderate
     expected_domains: [backend, security]
+    expected_deliverable: code
     expected_risk: security
     notes: "Auth logic triggers security module regardless of size"
 
@@ -272,6 +316,7 @@ cases:
     task: "Implement payment processing with Stripe"
     expected_size: moderate
     expected_domains: [backend, security]
+    expected_deliverable: code
     expected_risk: security
     notes: "Payment = security risk"
 
@@ -279,6 +324,7 @@ cases:
     task: "Add PII fields to the user model"
     expected_size: moderate
     expected_domains: [database, security]
+    expected_deliverable: code
     expected_risk: security
     notes: "PII handling triggers security"
 
@@ -286,6 +332,7 @@ cases:
     task: "Deploy to production with database migration"
     expected_size: moderate
     expected_domains: [devops, security]
+    expected_deliverable: workflow
     expected_risk: security
     notes: "Production deploy + migration = security"
 
@@ -294,6 +341,8 @@ cases:
     task: "Build an API"
     expected_size: ambiguous
     expected_domains: [backend]
+    expected_clarity: blocked
+    expected_deliverable: unknown
     expected_risk: none
     notes: "Missing: what kind of API? What domain? Should ask clarifying question"
 
@@ -301,6 +350,8 @@ cases:
     task: "Fix the performance issue"
     expected_size: ambiguous
     expected_domains: []
+    expected_clarity: blocked
+    expected_deliverable: unknown
     expected_risk: none
     notes: "Missing: what performance issue? Where? Should ask clarifying question"
 
@@ -309,6 +360,7 @@ cases:
     task: "Write a WebAssembly module for image processing"
     expected_size: moderate
     expected_domains: [specialized]
+    expected_deliverable: code
     expected_risk: none
     notes: "WebAssembly is covered by specialized module"
 
@@ -316,6 +368,7 @@ cases:
     task: "Build a Telegram bot with natural language processing"
     expected_size: moderate
     expected_domains: []
+    expected_deliverable: code
     expected_risk: none
     notes: "No module matches — should route to emerging-tech-handler"
 
@@ -323,6 +376,7 @@ cases:
     task: "Implement a Rust-based CLI tool with async I/O"
     expected_size: moderate
     expected_domains: []
+    expected_deliverable: code
     expected_risk: none
     notes: "No module matches — should route to emerging-tech-handler"
 
@@ -331,6 +385,7 @@ cases:
     task: "Register the new AI/ML module in the capability index"
     expected_size: moderate
     expected_domains: [skill-maintainer]
+    expected_deliverable: plan
     expected_risk: none
     notes: "Module registration triggers skill-maintainer"
 
@@ -338,6 +393,7 @@ cases:
     task: "Track the occurrence count for the blockchain domain gap"
     expected_size: atomic
     expected_domains: [gap-tracker]
+    expected_deliverable: review
     expected_risk: none
     notes: "Gap tracking triggers gap-tracker"
 
@@ -345,6 +401,7 @@ cases:
     task: "Validate this new module follows the §25 skeleton"
     expected_size: atomic
     expected_domains: [skill-maintainer]
+    expected_deliverable: review
     expected_risk: none
     notes: "Module validation triggers skill-maintainer"
 
@@ -352,6 +409,7 @@ cases:
     task: "Check if the quantum computing domain has reached promotion threshold"
     expected_size: atomic
     expected_domains: [gap-tracker]
+    expected_deliverable: review
     expected_risk: none
     notes: "Promotion threshold check triggers gap-tracker"
 
@@ -359,6 +417,7 @@ cases:
     task: "Update the version to 1.2.0 for the new marketing module"
     expected_size: atomic
     expected_domains: [skill-maintainer]
+    expected_deliverable: document
     expected_risk: none
     notes: "Version bump triggers skill-maintainer"
 
@@ -366,6 +425,7 @@ cases:
     task: "Promote the blockchain domain from gap note to real module"
     expected_size: moderate
     expected_domains: [skill-maintainer, gap-tracker]
+    expected_deliverable: workflow
     expected_risk: none
     notes: "Promotion requires both personas for coordination"
 
@@ -373,6 +433,7 @@ cases:
     task: "Log a reusable skill correction from this completed task"
     expected_size: atomic
     expected_domains: [task-observer]
+    expected_deliverable: review
     expected_risk: none
     notes: "Observation capture is a bounded meta task"
 
@@ -380,6 +441,8 @@ cases:
     task: "Add Grafana dashboards and alerts for API latency"
     expected_size: moderate
     expected_domains: [monitoring, devops]
+    expected_forbidden_domains: [task-observer]
+    expected_deliverable: workflow
     expected_risk: none
     notes: "Observability and alerting are not Task Observer capture"
 
@@ -387,6 +450,8 @@ cases:
     task: "Create the new skill now from observation 2"
     expected_size: moderate
     expected_domains: [skill-maintainer, self-evolve]
+    expected_forbidden_domains: [task-observer]
+    expected_deliverable: plan
     expected_risk: none
     notes: "Explicit skill creation is maintenance, not observation capture"
 
@@ -395,6 +460,7 @@ cases:
     task: "Register a module with invalid YAML in skill-manifest.yaml"
     expected_size: atomic
     expected_domains: [skill-maintainer]
+    expected_deliverable: review
     expected_risk: none
     notes: "skill-maintainer must detect and reject invalid YAML"
 
@@ -402,6 +468,7 @@ cases:
     task: "Try to register the same module twice"
     expected_size: atomic
     expected_domains: [skill-maintainer]
+    expected_deliverable: review
     expected_risk: none
     notes: "skill-maintainer must detect duplicate registration"
 
@@ -409,6 +476,7 @@ cases:
     task: "Add triggers that overlap with existing backend module"
     expected_size: atomic
     expected_domains: [skill-maintainer]
+    expected_deliverable: review
     expected_risk: none
     notes: "skill-maintainer must detect trigger conflicts"
 
@@ -416,6 +484,7 @@ cases:
     task: "Rollback a promoted module due to routing issues"
     expected_size: moderate
     expected_domains: [skill-maintainer]
+    expected_deliverable: plan
     expected_risk: none
     notes: "skill-maintainer must handle rollback procedure"
 
@@ -423,6 +492,7 @@ cases:
     task: "Count gap occurrences when CHANGELOG.md has inconsistent date formats"
     expected_size: atomic
     expected_domains: [gap-tracker]
+    expected_deliverable: review
     expected_risk: none
     notes: "gap-tracker must handle format inconsistencies"
 
@@ -430,5 +500,774 @@ cases:
     task: "Promote a domain with 3 occurrences but trigger conflicts"
     expected_size: moderate
     expected_domains: [skill-maintainer, gap-tracker]
+    expected_deliverable: plan
     expected_risk: none
     notes: "Promotion blocked by trigger conflicts, requires resolution"
+
+  # === CROSS-FUNCTIONAL PROMPT SKILLS ===
+  - id: cross-functional-001
+    task: "Clarify the requirements, acceptance criteria, and open decisions for a new customer portal"
+    expected_size: moderate
+    expected_domains: [product]
+    expected_deliverable: requirements
+    expected_risk: data
+    notes: "Discovery and requirements contract should be selected before implementation"
+
+  - id: cross-functional-002
+    task: "Create a dependency plan with checkpoints for a multi-team migration"
+    expected_size: complex
+    expected_domains: [project-management]
+    expected_deliverable: plan
+    expected_risk: data
+    notes: "Planning and execution skill with one primary coordinator"
+
+  - id: cross-functional-003
+    task: "Write an executive status update with decisions, risks, owners, and next actions"
+    expected_size: moderate
+    expected_domains: [client-comms, documentation]
+    expected_deliverable: communication
+    expected_risk: data
+    notes: "Internal communications output contract"
+
+  - id: cross-functional-004
+    task: "Analyze a budget-versus-actual variance and show the assumptions behind the forecast"
+    expected_size: moderate
+    expected_domains: [finance]
+    expected_deliverable: financial-analysis
+    expected_risk: compliance
+    notes: "Accounting/finance and data skills; no invented numbers"
+
+  - id: cross-functional-005
+    task: "Reconcile the general ledger and document control exceptions for the month-end close"
+    expected_size: complex
+    expected_domains: [finance, database]
+    expected_deliverable: audit
+    expected_risk: compliance
+    notes: "Accounting and audit evidence require human review"
+
+  - id: cross-functional-006
+    task: "Test a vendor security control and write an evidence-backed audit finding"
+    expected_size: complex
+    expected_domains: [security, finance]
+    expected_deliverable: audit
+    expected_risk: compliance
+    notes: "Audit/control method and security review"
+
+  - id: cross-functional-007
+    task: "Create a board-ready PDF and editable spreadsheet from verified quarterly data"
+    expected_size: moderate
+    expected_domains: [documentation]
+    expected_deliverable: document
+    expected_risk: data
+    notes: "Office artifact method with provenance and validation"
+
+  - id: cross-functional-008
+    task: "Extract obligations and retention dates from a vendor contract and privacy addendum"
+    expected_size: complex
+    expected_domains: [security, finance]
+    expected_deliverable: review
+    expected_risk: compliance
+    notes: "Legal/privacy workpaper; qualified reviewer required"
+
+  - id: cross-functional-009
+    task: "Design a privacy-conscious onboarding workflow for a new employee"
+    expected_size: moderate
+    expected_domains: [project-management]
+    expected_deliverable: workflow
+    expected_risk: compliance
+    notes: "People operations skill must not make employment decisions"
+
+  - id: cross-functional-010
+    task: "Compare vendor RFP responses and prepare a due-diligence recommendation"
+    expected_size: complex
+    expected_domains: [sales, project-management]
+    expected_deliverable: recommendation
+    expected_risk: compliance
+    notes: "Procurement skill with explicit approval and contract handoff"
+
+  - id: cross-functional-011
+    task: "Design a company operating model with value chain, capabilities, KPIs, and governance"
+    expected_size: complex
+    expected_domains: [product, project-management]
+    expected_deliverable: recommendation
+    expected_risk: data
+    notes: "Strategy/operating-model method"
+
+  - id: cross-functional-012
+    task: "Define a dashboard metric, validate its data lineage, and explain uncertainty"
+    expected_size: moderate
+    expected_domains: [database, data-engineering]
+    expected_deliverable: data-analysis
+    expected_risk: data
+    notes: "Data/BI reproducibility and metric governance"
+
+  - id: cross-functional-014
+    task: "Create a verified project context recipe with build, test, run, and architecture details"
+    expected_size: moderate
+    expected_domains: [architecture]
+    expected_deliverable: document
+    expected_risk: none
+    notes: "Project context should reduce repeated repository exploration"
+
+  - id: cross-functional-013
+    task: "Run an internal audit control test, collect the requested evidence, and draft the finding"
+    expected_size: complex
+    expected_domains: [audit-risk-assurance, security]
+    expected_deliverable: audit
+    expected_risk: compliance
+    notes: "Audit/control workpaper with evidence and human review"
+
+  # === UNIVERSAL TASK / UNKNOWN-DOMAIN CASES ===
+  - id: universal-unknown-001
+    category: unknown
+    task: "Design a workflow for coordinating a fictional municipal water utility during drought"
+    expected_size: complex
+    expected_domains: [unknown-unclassified]
+    expected_capability_gap: partial
+    expected_deliverable: workflow
+    expected_risk: data
+    notes: "Use the universal envelope; do not pretend a water-utility specialist exists"
+  - id: universal-unknown-002
+    category: unknown
+    task: "Explain the social implications of a new agricultural cooperative"
+    expected_size: moderate
+    expected_domains: [unknown-unclassified]
+    expected_capability_gap: partial
+    expected_deliverable: answer
+    expected_risk: none
+    notes: "Bounded explanation with assumptions and sources"
+  - id: universal-unknown-003
+    category: unknown
+    task: "Create a decision framework for an unfamiliar local manufacturing process"
+    expected_size: moderate
+    expected_domains: [unknown-unclassified]
+    expected_capability_gap: partial
+    expected_deliverable: recommendation
+    expected_risk: data
+    notes: "Unknown domain requires a framework and capability-gap report"
+  - id: universal-unknown-004
+    category: unknown
+    task: "Research a novel regulatory technology without assuming a specialist exists"
+    expected_size: moderate
+    expected_domains: [unknown-unclassified]
+    expected_capability_gap: partial
+    expected_deliverable: research
+    expected_risk: none
+    notes: "Research-first fallback; record source quality"
+  - id: universal-unknown-005
+    category: unknown
+    task: "Turn a handwritten field note into a structured action list"
+    expected_size: atomic
+    expected_domains: [unknown-unclassified]
+    expected_capability_gap: partial
+    expected_deliverable: plan
+    expected_risk: none
+    notes: "Unknown source format, known plan deliverable"
+  - id: universal-unknown-006
+    category: unknown
+    task: "Build a prototype for a custom sensor protocol"
+    expected_size: complex
+    expected_domains: [unknown-unclassified]
+    expected_capability_gap: partial
+    expected_deliverable: code
+    expected_risk: data
+    notes: "Decompose and disclose hardware/protocol capability gaps"
+  - id: universal-unknown-007
+    category: unknown
+    task: "Compare three unfamiliar database products for an offline application"
+    expected_size: moderate
+    expected_domains: [unknown-unclassified]
+    expected_capability_gap: partial
+    expected_deliverable: comparison
+    expected_risk: none
+    notes: "Do not force a database specialist before learning the constraints"
+  - id: universal-unknown-008
+    category: unknown
+    task: "Create an onboarding plan for a fictional nonprofit"
+    expected_size: moderate
+    expected_domains: [unknown-unclassified]
+    expected_capability_gap: partial
+    expected_deliverable: plan
+    expected_risk: data
+    notes: "People-like context without assuming a company policy"
+  - id: universal-unknown-009
+    category: unknown
+    task: "Analyze a chart from an unfamiliar business unit"
+    expected_size: moderate
+    expected_domains: [unknown-unclassified]
+    expected_capability_gap: partial
+    expected_deliverable: data-analysis
+    expected_risk: data
+    notes: "Data method remains available even when the business domain is unknown"
+  - id: universal-unknown-010
+    category: unknown
+    task: "Draft an operating procedure for a completely new internal process"
+    expected_size: moderate
+    expected_domains: [unknown-unclassified]
+    expected_capability_gap: partial
+    expected_deliverable: document
+    expected_risk: data
+    notes: "Document deliverable with explicit assumptions and review"
+  - id: universal-unknown-011
+    category: unknown
+    task: "Plan a field study for an unfamiliar environmental issue"
+    expected_size: moderate
+    expected_domains: [unknown-unclassified]
+    expected_capability_gap: partial
+    expected_deliverable: plan
+    expected_risk: data
+    notes: "Unknown domain, known planning method"
+  - id: universal-unknown-012
+    category: unknown
+    task: "Make this better: improve the process"
+    expected_size: ambiguous
+    expected_clarity: blocked
+    expected_domains: [unknown-unclassified]
+    expected_capability_gap: partial
+    expected_deliverable: unknown
+    expected_risk: data
+    notes: "Ask one focused question instead of guessing the deliverable"
+
+  # === NEGATIVE / NEAR-MISS ROUTING CASES ===
+  - id: negative-013
+    category: near-miss
+    task: "Rename a local variable called cache"
+    expected_size: atomic
+    expected_domains: []
+    expected_deliverable: code
+    expected_forbidden_domains: [backend, architecture]
+    expected_risk: none
+  - id: negative-014
+    category: near-miss
+    task: "Change one CSS color in an existing stylesheet"
+    expected_size: atomic
+    expected_domains: []
+    expected_deliverable: code
+    expected_forbidden_domains: [frontend, design-handoff]
+    expected_risk: none
+  - id: negative-015
+    category: near-miss
+    task: "Add a docstring to one function"
+    expected_size: atomic
+    expected_domains: []
+    expected_deliverable: code
+    expected_forbidden_domains: [documentation]
+    expected_risk: none
+  - id: negative-016
+    category: near-miss
+    task: "Install one package in the current project"
+    expected_size: atomic
+    expected_domains: []
+    expected_deliverable: code
+    expected_forbidden_domains: [devops, architecture]
+    expected_risk: none
+  - id: negative-017
+    category: near-miss
+    task: "Update the copyright year in the footer"
+    expected_size: atomic
+    expected_domains: []
+    expected_deliverable: document
+    expected_forbidden_domains: [marketing-sales-support]
+    expected_risk: none
+  - id: negative-018
+    category: near-miss
+    task: "Fix a typo in one error message"
+    expected_size: atomic
+    expected_domains: []
+    expected_deliverable: bug-fix
+    expected_forbidden_domains: [documentation]
+    expected_risk: none
+  - id: negative-019
+    category: near-miss
+    task: "Explain what a pointer is"
+    expected_size: atomic
+    expected_domains: []
+    expected_deliverable: answer
+    expected_forbidden_domains: [backend]
+    expected_risk: none
+  - id: negative-020
+    category: near-miss
+    task: "List the files in the current directory"
+    expected_size: atomic
+    expected_domains: []
+    expected_deliverable: answer
+    expected_forbidden_domains: [devops]
+    expected_risk: none
+  - id: negative-021
+    category: near-miss
+    task: "Change one string in a test fixture"
+    expected_size: atomic
+    expected_domains: [testing-qa]
+    expected_deliverable: code
+    expected_forbidden_domains: [architecture, devops]
+    expected_risk: none
+  - id: negative-022
+    category: near-miss
+    task: "Review one SQL query for obvious syntax errors"
+    expected_size: moderate
+    expected_domains: [database]
+    expected_deliverable: review
+    expected_forbidden_domains: [architecture]
+    expected_risk: none
+  - id: negative-023
+    category: near-miss
+    task: "Write one product requirements paragraph"
+    expected_size: moderate
+    expected_domains: [product-discovery]
+    expected_deliverable: requirements
+    expected_forbidden_domains: [software-engineering]
+    expected_risk: none
+  - id: negative-024
+    category: near-miss
+    task: "Write a one-paragraph meeting note"
+    expected_size: moderate
+    expected_domains: [internal-communications]
+    expected_deliverable: communication
+    expected_forbidden_domains: [documentation]
+    expected_risk: none
+  - id: negative-025
+    category: near-miss
+    task: "Draft a list of budget assumptions"
+    expected_size: moderate
+    expected_domains: [finance-fpa]
+    expected_deliverable: financial-analysis
+    expected_forbidden_domains: [data-bi]
+    expected_risk: data
+  - id: negative-026
+    category: near-miss
+    task: "Prepare a privacy issue list for a contract"
+    expected_size: moderate
+    expected_domains: [legal-privacy-contracts]
+    expected_deliverable: security-review
+    expected_forbidden_domains: [software-engineering]
+    expected_risk: compliance
+  - id: negative-027
+    category: near-miss
+    task: "Create a vendor comparison table"
+    expected_size: moderate
+    expected_domains: [procurement-vendors]
+    expected_deliverable: comparison
+    expected_forbidden_domains: [sales]
+    expected_risk: data
+  - id: negative-028
+    category: near-miss
+    task: "Create a project milestone list"
+    expected_size: moderate
+    expected_domains: [program-project-operations]
+    expected_deliverable: plan
+    expected_forbidden_domains: [product-discovery]
+    expected_risk: data
+  - id: negative-029
+    category: near-miss
+    task: "Summarize one research paper"
+    expected_size: moderate
+    expected_domains: [research-analysis]
+    expected_deliverable: research
+    expected_forbidden_domains: [documentation]
+    expected_risk: none
+  - id: negative-030
+    category: near-miss
+    task: "Write one SQL query"
+    expected_size: moderate
+    expected_domains: [database]
+    expected_deliverable: code
+    expected_forbidden_domains: [backend]
+    expected_risk: data
+  - id: negative-031
+    category: near-miss
+    task: "Describe one proposed API without implementing it"
+    expected_size: moderate
+    expected_domains: [software-engineering]
+    expected_deliverable: specification
+    expected_forbidden_domains: [backend]
+    expected_risk: none
+  - id: negative-032
+    category: near-miss
+    task: "Draft one architecture decision record"
+    expected_size: moderate
+    expected_domains: [software-engineering]
+    expected_deliverable: decision
+    expected_forbidden_domains: [architecture]
+    expected_risk: none
+  - id: negative-033
+    category: near-miss
+    task: "Create one spreadsheet formula"
+    expected_size: atomic
+    expected_domains: [office-knowledge-artifacts]
+    expected_deliverable: spreadsheet
+    expected_forbidden_domains: [data-bi]
+    expected_risk: none
+  - id: negative-034
+    category: near-miss
+    task: "Outline one presentation"
+    expected_size: moderate
+    expected_domains: [office-knowledge-artifacts]
+    expected_deliverable: presentation
+    expected_forbidden_domains: [marketing-sales-support]
+    expected_risk: none
+  - id: negative-035
+    category: near-miss
+    task: "Map one data pipeline"
+    expected_size: complex
+    expected_domains: [data-bi]
+    expected_deliverable: workflow
+    expected_forbidden_domains: [devops]
+    expected_risk: data
+  - id: negative-036
+    category: near-miss
+    task: "Create one metric definition"
+    expected_size: moderate
+    expected_domains: [data-bi]
+    expected_deliverable: data-analysis
+    expected_forbidden_domains: [finance-fpa]
+    expected_risk: data
+  - id: negative-037
+    category: near-miss
+    task: "Write one internal status update"
+    expected_size: moderate
+    expected_domains: [internal-communications]
+    expected_deliverable: communication
+    expected_forbidden_domains: [marketing-sales-support]
+    expected_risk: data
+  - id: negative-038
+    category: near-miss
+    task: "Make a hiring checklist"
+    expected_size: moderate
+    expected_domains: [people-operations]
+    expected_deliverable: plan
+    expected_forbidden_domains: [program-project-operations]
+    expected_risk: compliance
+  - id: negative-039
+    category: near-miss
+    task: "Create a procurement intake form"
+    expected_size: moderate
+    expected_domains: [procurement-vendors]
+    expected_deliverable: document
+    expected_forbidden_domains: [office-knowledge-artifacts]
+    expected_risk: compliance
+  - id: negative-040
+    category: near-miss
+    task: "Perform one control walkthrough"
+    expected_size: moderate
+    expected_domains: [audit-risk-assurance]
+    expected_deliverable: audit
+    expected_forbidden_domains: [software-engineering]
+    expected_risk: compliance
+  - id: negative-041
+    category: near-miss
+    task: "Assess one threat scenario"
+    expected_size: moderate
+    expected_domains: [software-engineering]
+    expected_deliverable: security-review
+    expected_forbidden_domains: [audit-risk-assurance]
+    expected_risk: security
+  - id: negative-042
+    category: near-miss
+    task: "Compare two product strategies"
+    expected_size: complex
+    expected_domains: [strategy-operating-model]
+    expected_deliverable: comparison
+    expected_forbidden_domains: [product-discovery]
+    expected_risk: data
+  - id: negative-043
+    category: near-miss
+    task: "Analyze one budget variance"
+    expected_size: moderate
+    expected_domains: [finance-fpa]
+    expected_deliverable: financial-analysis
+    expected_forbidden_domains: [accounting-controls]
+    expected_risk: compliance
+  - id: negative-044
+    category: near-miss
+    task: "Write one data-retention policy"
+    expected_size: complex
+    expected_domains: [legal-privacy-contracts]
+    expected_deliverable: document
+    expected_forbidden_domains: [software-engineering]
+    expected_risk: compliance
+  - id: negative-045
+    category: near-miss
+    task: "Create one customer-support knowledge article"
+    expected_size: moderate
+    expected_domains: [marketing-sales-support]
+    expected_deliverable: document
+    expected_forbidden_domains: [documentation]
+    expected_risk: data
+  - id: negative-046
+    category: near-miss
+    task: "Plan one zero-downtime migration"
+    expected_size: complex
+    expected_domains: [software-engineering]
+    expected_deliverable: plan
+    expected_forbidden_domains: [database]
+    expected_risk: security
+  - id: negative-047
+    category: near-miss
+    task: "Review one architecture diagram"
+    expected_size: moderate
+    expected_domains: [software-engineering]
+    expected_deliverable: review
+    expected_forbidden_domains: [frontend]
+    expected_risk: none
+  - id: negative-048
+    category: near-miss
+    task: "Translate one technical requirement"
+    expected_size: moderate
+    expected_domains: [unknown-unclassified]
+    expected_capability_gap: partial
+    expected_deliverable: communication
+    expected_forbidden_domains: [documentation]
+    expected_risk: none
+  - id: negative-049
+    category: near-miss
+    task: "Explain one regular expression"
+    expected_size: atomic
+    expected_domains: []
+    expected_deliverable: answer
+    expected_forbidden_domains: [software-engineering]
+    expected_risk: none
+  - id: negative-050
+    category: near-miss
+    task: "Correct one CSV header"
+    expected_size: atomic
+    expected_domains: [office-knowledge-artifacts]
+    expected_deliverable: spreadsheet
+    expected_forbidden_domains: [data-bi]
+    expected_risk: data
+  - id: negative-051
+    category: near-miss
+    task: "Update one release-note line"
+    expected_size: atomic
+    expected_domains: [marketing-sales-support]
+    expected_deliverable: document
+    expected_forbidden_domains: [internal-communications]
+    expected_risk: none
+  - id: negative-052
+    category: near-miss
+    task: "Check one dependency license"
+    expected_size: moderate
+    expected_domains: [legal-privacy-contracts]
+    expected_deliverable: review
+    expected_forbidden_domains: [devops]
+    expected_risk: compliance
+  - id: negative-053
+    category: near-miss
+    task: "Create one test plan"
+    expected_size: moderate
+    expected_domains: [software-engineering]
+    expected_deliverable: plan
+    expected_forbidden_domains: [program-project-operations]
+    expected_risk: none
+  - id: negative-054
+    category: near-miss
+    task: "Write one incident timeline"
+    expected_size: moderate
+    expected_domains: [internal-communications]
+    expected_deliverable: communication
+    expected_forbidden_domains: [monitoring]
+    expected_risk: data
+  - id: negative-055
+    category: near-miss
+    task: "Prepare one vendor due-diligence checklist"
+    expected_size: moderate
+    expected_domains: [procurement-vendors]
+    expected_deliverable: plan
+    expected_forbidden_domains: [legal-privacy-contracts]
+    expected_risk: compliance
+  - id: negative-056
+    category: near-miss
+    task: "Calculate one safe forecast range"
+    expected_size: complex
+    expected_domains: [finance-fpa]
+    expected_deliverable: financial-analysis
+    expected_forbidden_domains: [data-bi]
+    expected_risk: compliance
+  - id: negative-057
+    category: near-miss
+    task: "Describe one data-retention deletion job"
+    expected_size: moderate
+    expected_domains: [automation-integrations]
+    expected_deliverable: workflow
+    expected_forbidden_domains: [legal-privacy-contracts]
+    expected_risk: compliance
+  - id: negative-058
+    category: near-miss
+    task: "Write one learning objective"
+    expected_size: atomic
+    expected_domains: [people-operations]
+    expected_deliverable: learning
+    expected_forbidden_domains: [documentation]
+    expected_risk: none
+  - id: negative-059
+    category: near-miss
+    task: "Create one creative campaign concept"
+    expected_size: moderate
+    expected_domains: [marketing-sales-support]
+    expected_deliverable: creative
+    expected_forbidden_domains: [strategy-operating-model]
+    expected_risk: data
+  - id: negative-060
+    category: near-miss
+    task: "Explain the difference between a list and a tuple"
+    expected_size: atomic
+    expected_domains: []
+    expected_deliverable: answer
+    expected_forbidden_domains: [software-engineering]
+    expected_risk: none
+  - id: negative-061
+    category: near-miss
+    task: "Correct one typo in a slide title"
+    expected_size: atomic
+    expected_domains: []
+    expected_deliverable: document
+    expected_forbidden_domains: [office-knowledge-artifacts]
+    expected_risk: none
+  - id: negative-062
+    category: near-miss
+    task: "Check whether one local test passes"
+    expected_size: atomic
+    expected_domains: [testing-qa]
+    expected_deliverable: code
+    expected_forbidden_domains: [devops]
+    expected_risk: none
+  - id: negative-063
+    category: near-miss
+    task: "Add an alt attribute to one image"
+    expected_size: atomic
+    expected_domains: [software-engineering]
+    expected_deliverable: code
+    expected_forbidden_domains: [design-handoff]
+    expected_risk: none
+  - id: negative-064
+    category: near-miss
+    task: "Summarize one meeting recording"
+    expected_size: moderate
+    expected_domains: [internal-communications]
+    expected_deliverable: communication
+    expected_forbidden_domains: [research-analysis]
+    expected_risk: data
+  - id: negative-065
+    category: near-miss
+    task: "Read a CSV and report one missing value"
+    expected_size: moderate
+    expected_domains: [data-bi]
+    expected_deliverable: data-analysis
+    expected_forbidden_domains: [database]
+    expected_risk: data
+  - id: negative-066
+    category: near-miss
+    task: "Update one owner name in a project plan"
+    expected_size: atomic
+    expected_domains: [program-project-operations]
+    expected_deliverable: plan
+    expected_forbidden_domains: [people-operations]
+    expected_risk: data
+  - id: negative-067
+    category: near-miss
+    task: "Fix one broken link in documentation"
+    expected_size: atomic
+    expected_domains: [software-engineering]
+    expected_deliverable: bug-fix
+    expected_forbidden_domains: [documentation]
+    expected_risk: none
+
+  # === POSITIVE DELIVERABLE COVERAGE ===
+  - id: deliverable-068
+    category: positive
+    task: "Compare PostgreSQL and SQLite for a small offline application"
+    expected_size: moderate
+    expected_domains: [database]
+    expected_deliverable: comparison
+    expected_risk: none
+  - id: deliverable-069
+    category: positive
+    task: "Create a phased rollout plan for a customer portal"
+    expected_size: complex
+    expected_domains: [program-project-operations]
+    expected_deliverable: plan
+    expected_risk: data
+  - id: deliverable-070
+    category: positive
+    task: "Write a privacy impact assessment for a new data-sharing feature"
+    expected_size: complex
+    expected_domains: [legal-privacy-contracts]
+    expected_deliverable: review
+    expected_risk: compliance
+  - id: deliverable-071
+    category: positive
+    task: "Build an accessible React form with keyboard and screen-reader support"
+    expected_size: complex
+    expected_domains: [software-engineering]
+    expected_deliverable: code
+    expected_risk: none
+  - id: deliverable-072
+    category: positive
+    task: "Design a warehouse metric model with definitions and lineage"
+    expected_size: complex
+    expected_domains: [data-bi]
+    expected_deliverable: specification
+    expected_risk: data
+  - id: deliverable-073
+    category: positive
+    task: "Prepare a board budget narrative with scenario assumptions"
+    expected_size: complex
+    expected_domains: [finance-fpa]
+    expected_deliverable: financial-analysis
+    expected_risk: compliance
+  - id: deliverable-074
+    category: positive
+    task: "Create an audit finding from supplied control evidence"
+    expected_size: complex
+    expected_domains: [audit-risk-assurance]
+    expected_deliverable: audit
+    expected_risk: compliance
+  - id: deliverable-075
+    category: positive
+    task: "Write a vendor due-diligence report with unresolved questions"
+    expected_size: complex
+    expected_domains: [procurement-vendors]
+    expected_deliverable: document
+    expected_risk: compliance
+
+  # === MULTILINGUAL OUTPUT CASES ===
+  - id: multilingual-076
+    category: multilingual
+    task: "Analiza el presupuesto y explica los supuestos en español"
+    expected_size: moderate
+    expected_domains: [finance-fpa]
+    expected_deliverable: financial-analysis
+    expected_risk: compliance
+    output_language: es
+  - id: multilingual-077
+    category: multilingual
+    task: "Rédige le statut de projet et les prochaines actions en français"
+    expected_size: moderate
+    expected_domains: [internal-communications]
+    expected_deliverable: communication
+    expected_risk: data
+    output_language: fr
+  - id: multilingual-078
+    category: multilingual
+    task: "قارن بين منتجين غير مألوفين واذكر المصادر والثقة"
+    expected_size: moderate
+    expected_domains: [unknown-unclassified]
+    expected_capability_gap: partial
+    expected_deliverable: comparison
+    expected_risk: none
+    output_language: ar
+  - id: multilingual-079
+    category: multilingual
+    task: "インシデントのタイムラインと次の対応策を日本語で作成してください"
+    expected_size: moderate
+    expected_domains: [internal-communications]
+    expected_deliverable: communication
+    expected_risk: data
+    output_language: ja
+  - id: multilingual-080
+    category: multilingual
+    task: "Explain this SQL query in Portuguese while preserving identifiers"
+    expected_size: atomic
+    expected_domains: [database]
+    expected_deliverable: answer
+    expected_risk: none
+    output_language: pt

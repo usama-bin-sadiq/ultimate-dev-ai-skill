@@ -9,7 +9,7 @@ Two kinds of managed content:
 
   1. Inline facts — plain lines owned by this script, matched by regex
      and rewritten in place (no markers needed), e.g.:
-         # ultimate-dev v3.0.0
+         # Ultimate-Dev 3.0.0
 
   2. Generated blocks — delimited by HTML comments (invisible when the
      README is rendered):
@@ -43,7 +43,7 @@ ROOT = Path(__file__).resolve().parent.parent
 # Skills missing from this dict fall back to their frontmatter
 # description, so adding a skill never breaks the sync.
 PURPOSE: dict[str, str] = {
-    "self-evolve": "Auto-generates new skills from experience",
+    "self-evolve": "Gates reusable learning behind repeated evidence and review",
     "task-observer": "Capture reusable methodology from task work",
     "research": "Learn anything",
     "coding": "Build anything",
@@ -61,6 +61,7 @@ PURPOSE: dict[str, str] = {
     "migration": "Transition anything",
     "mobile": "Build for any device",
     "ai-ml": "Build intelligent systems",
+    "universal-task": "Classify and safely handle unfamiliar or unclassified tasks",
 }
 
 
@@ -108,8 +109,8 @@ def inline_rules(s: dict) -> list[tuple[str, str, "object"]]:
     return [
         (
             "version-title",
-            r"^# ultimate-dev v[\d.]+$",
-            lambda m: f"# ultimate-dev v{s['version']}",
+            r"^# (?:ultimate-dev v|Ultimate-Dev )[\d.]+$",
+            lambda m: f"# Ultimate-Dev {s['version']}",
         ),
         (
             "agents-heading",

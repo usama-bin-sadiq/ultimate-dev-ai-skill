@@ -3,7 +3,7 @@ name: event-architect
 domain: messaging
 description: >
   Specializes in event-driven architecture, message broker selection, saga patterns, async processing, schema evolution. Use for event-driven, message queue, pub/sub, async processing, saga, event sourcing, message broker.
-triggers: [event architect, messaging, saga, async, queue, broker, driven, schema, message, pub/sub, patterns, sourcing]
+triggers: [event architect, messaging, saga, async, queue, broker, driven, schema, message, pub/sub, sourcing]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

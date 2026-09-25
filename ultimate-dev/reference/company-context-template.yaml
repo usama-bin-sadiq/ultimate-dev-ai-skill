@@ -1,0 +1,30 @@
+version: "1.0"
+kind: optional-company-context
+status: template
+company: <name>
+effective_date: <YYYY-MM-DD>
+owner: <role-or-team>
+scope:
+  domains: []
+  jurisdictions: []
+  systems: []
+  repositories: []
+terminology:
+  terms: []
+  prohibited_inferences: []
+policies:
+  finance: <link-or-none>
+  legal: <link-or-none>
+  privacy: <link-or-none>
+  security: <link-or-none>
+  people: <link-or-none>
+  procurement: <link-or-none>
+  audit: <link-or-none>
+approvals:
+  matrix: <link-or-none>
+  human_review_required: []
+templates:
+  reports: []
+  artifacts: []
+unknowns: []
+last_verified: <YYYY-MM-DD>

@@ -59,16 +59,14 @@ implementation, or an explicit request to create/update a skill.
 
 1. Load `skills/task-observer/SKILL.md`.
 2. Read the relevant completed-task evidence and current observation log.
-3. Produce zero or more sanitized candidate records using the skill contract.
-4. Re-read the live log immediately before any append and derive the next
-   number from its highest existing observation header.
-5. Append only through the available file capability; do not rewrite the log
-   from a stale snapshot.
-6. Re-read the log and verify number uniqueness, required fields, and the
-   permitted status.
-7. If writing is unavailable, return the candidate records with
+3. Load `references/observation-protocol.md` before constructing or appending a
+   record; load `references/confidentiality-and-review.md` when classifying
+   confidentiality or review state.
+4. Follow the referenced live-read, numbering, append, and verification
+   procedure. Do not duplicate it from memory.
+5. If writing is unavailable, return the candidate records with
    `persisted: false` and explain the blocker.
-8. Report review eligibility separately. Do not claim a review ran unless this
+6. Report review eligibility separately. Do not claim a review ran unless this
    agent actually performed it.
 
 The agent may use the project-local `skill-observations/` directory. It must

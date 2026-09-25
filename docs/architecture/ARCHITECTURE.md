@@ -2,7 +2,7 @@
 
 ## Overview
 
-Ultimate-Dev is a **model-agnostic, durable engineering control plane** that serves as a single adaptive skill replacing 100+ specialized skills. It works with any AI model (tiny to huge) and any technology stack.
+Ultimate-Dev is a **prompt-first, model-agnostic agentic skill suite** with an optional durable engineering control plane. The Markdown core works with any AI model (tiny to huge), any technology stack, and any host that can provide text and selected capabilities. Runtime, JEV, approvals, and recovery are extensions, not prerequisites.
 
 ## Four-Layer Architecture
 
@@ -47,11 +47,41 @@ Ultimate-Dev is a **model-agnostic, durable engineering control plane** that ser
 └─────────────────────────────────────────────────────────────┘
 ```
 
+## Four Universal Channels
+
+The four layers describe system structure. Four channels describe the
+information boundary for each task:
+
+```text
+USER / TASK
+    │
+    ▼
+INTENT ── understand goal, deliverable, risk, unknowns, acceptance
+    │
+    ▼
+KNOWLEDGE ── select smallest common skill, optional specialist, references
+    │
+    ▼
+ACTION ── compare requested, available, allowed, and side-effecting capabilities
+    │
+    ▼
+EVIDENCE ── checks, sources, artifacts, limitations, confidence, next actions
+```
+
+Intent, Knowledge, Action, and Evidence are not the legacy transport payloads
+`task`, `result`, `question`, and `error`. The normative semantic contracts are
+`ultimate-dev/contracts/task-envelope.yaml` and
+`ultimate-dev/contracts/four-channels.md`.
+
+Unknown or unclassified work uses the `universal-task` skill first. An
+unsupported capability is reported as a gap; a fallback specialist is optional
+and never a substitute for authorization.
+
 ## JEV Decision Boundary
 
-JEV is a side-effect-free policy kernel inside the Ultimate-Dev runtime. It is
-placed after model/orchestration assessment and before host capability
-execution:
+JEV is an optional, side-effect-free policy kernel inside the Ultimate-Dev
+runtime. In the host/runtime profile it is placed after model/orchestration
+assessment and before host capability execution:
 
 ```text
 MODEL / ORCHESTRATION
@@ -73,6 +103,14 @@ The model proposes. The host supplies capability availability, isolation,
 policy, and scoped approvals. JEV only combines those facts deterministically;
 it does not call a model, discover tools, install dependencies, or persist
 state. The runtime remains the final policy and evidence authority.
+
+### Prompt-only profile
+
+When runtime facts are unavailable, JEV is a reasoning rubric rather than a
+service. NOUL captures safety and urgency, CHOICE captures deliverable and
+route, and SCORE captures risk, complexity, confidence, and context pressure.
+The response reports route, clarification, capability gap, and evidence plan;
+it does not claim a packet, persistence, authorization, or execution.
 
 The three heads are:
 
@@ -108,10 +146,10 @@ implement the same language-neutral contract natively. See
 
 **Default to Pattern A** unless evidence requires more.
 
-### 3. Durable State Over Chat History
-- All state persisted to `.memory/ultimate-dev/tasks/<task-id>/`
-- Conversation history = cache (unreliable)
-- Fresh session resumes from `state.json`, not chat history
+### 3. Durable State Over Chat History (When Available)
+- With durable runtime, state is persisted to `.memory/ultimate-dev/tasks/<task-id>/`
+- Conversation history remains a cache, not authoritative state
+- With prompt-only mode, restate the task contract, decisions, unknowns, and next action
 
 ### 4. Verification-First
 - "Agent says done" = **FAILURE**
@@ -125,12 +163,15 @@ implement the same language-neutral contract natively. See
 
 ## Data Flow
 
-### Task Lifecycle (9 Steps)
+### Task Lifecycle (Prompt-first proportional path)
 ```
-CAPTURE → RESUME/CREATE → DISCOVER → CONTRACT → CLASSIFY → PATTERN → PLAN → JEV → CHECKPOINT → EXECUTE → OBSERVE → VERIFY → PERSIST → COMPLETE
+CAPTURE → RESUME/CREATE (if durable state exists) → DISCOVER → CONTRACT →
+CLASSIFY DELIVERABLE/DOMAIN → PATTERN → PLAN → JEV (host/runtime only) →
+EXECUTE THROUGH AVAILABLE CAPABILITIES → VERIFY → PERSIST (if available) → COMPLETE
 ```
 
-On failure: `DIAGNOSE → RECOVER/ROLLBACK → REPLAN → CHECKPOINT → EXECUTE`
+On failure: `DIAGNOSE → RECOVER/ROLLBACK (if available) → REPLAN → EXECUTE`.
+A prompt-only host reports the limitation instead of inventing persistence.
 
 ### State Persistence
 ```
@@ -170,15 +211,19 @@ On failure: `DIAGNOSE → RECOVER/ROLLBACK → REPLAN → CHECKPOINT → EXECUTE
 
 ### Selection Priority
 ```
-EXACT MATCH (technology-specific)
+DELIVERABLE + EXACT CAPABILITY
     ↓
-TECHNOLOGY MATCH (domain for stack)
+COMMON SKILL
     ↓
-DOMAIN SPECIALIST (general domain)
+EXACT SPECIALIST
     ↓
-GENERIC SPECIALIST (broad domain)
+DOMAIN FALLBACK
     ↓
-UNIVERSAL SPECIALIST (learns any tech from web)
+UNIVERSAL-TASK SKILL (bounded unknown fallback)
+    ↓
+OPTIONAL UNIVERSAL SPECIALIST (only for actual execution)
+    ↓
+HUMAN REVIEW / CAPABILITY GAP
 ```
 
 ### Agent Structure
@@ -242,11 +287,11 @@ Each agent has:
 - Missing preflight/status block
 - "Done" without verification evidence
 - Reporting `pass` for unrun checks
-- Skipping state persistence
-- Using chat history for resume
-- Multiple agents per domain
+- Skipping state persistence when durable state is available
+- Using chat history instead of `state.json` when durable state exists
+- Multiple agents per domain without justification
 - Hardcoded model names
-- Skipping mandatory lifecycle step
+- Skipping an applicable lifecycle step
 
 ### Destructive Actions (Require Confirmation)
 - Deleting important data
@@ -262,9 +307,14 @@ Each agent has:
 | Host | Adapter | Entry Point |
 |------|---------|-------------|
 | Claude Code | `.claude/skills/ultimate-dev/SKILL.md` | Native |
-| Codex | `AGENTS.md` | Native |
-| Cursor | `.cursor/rules/ultimate-dev.mdc` | Rules |
-| OpenCode | `.agents/skills/ultimate-dev/` | Generic |
+| Codex | `.codex/skills/ultimate-dev/SKILL.md` or `AGENTS.md` reference | Native/reference |
+| Cursor | `.cursor/rules/ultimate-dev.mdc` | Rules adapter |
+| OpenCode | `.agents/skills/ultimate-dev/` | Native profile |
+| Windsurf | `.agents/skills/ultimate-dev/` | Generic fallback |
+| Cline | `.agents/skills/ultimate-dev/` | Generic fallback |
+| GitHub Copilot | `.agents/skills/ultimate-dev/` | Generic fallback |
+| Aider | `.agents/skills/ultimate-dev/` | Generic fallback |
+| Other agentic CLIs | `.agents/skills/ultimate-dev/` | Generic fallback |
 
 ### CI/CD Integration
 - Auto-release on PR merge with `release:*` label

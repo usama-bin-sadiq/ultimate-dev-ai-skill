@@ -3,7 +3,7 @@ name: legal-tech
 domain: specialized
 description: >
   Specializes in legal technology, contract analysis, compliance automation, and legal data management. Use for legal tech, contract analysis, legal NLP, e-discovery, compliance automation, legal data, contract management, due diligence, legal analytics.
-triggers: [legal tech, specialized, due, nlp, data, analysis, contract, analytics, diligence, discovery, automation, compliance]
+triggers: [legal tech, due, nlp, contract, analytics, diligence, discovery, automation, compliance]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

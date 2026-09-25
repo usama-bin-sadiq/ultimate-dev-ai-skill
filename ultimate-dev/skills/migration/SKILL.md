@@ -1,5 +1,5 @@
 ---
-name: migration-skill
+name: migration
 description: >
   Meta-cognitive skill for migrations. Teaches HOW to transition between
   any two states — code, data, infrastructure, or processes — safely.

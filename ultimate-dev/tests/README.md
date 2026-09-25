@@ -18,9 +18,14 @@ The ultimate-dev skill is tested at multiple levels:
    policy checks, capability availability, structured executor failures, and
    evidence-gated completion.
 8. **Platform Components** — Validates the typed workflow/catalog authority,
-   optional MCP seam, provenance-aware memory and memory retention, governed
-   evolution lifecycle and bounded event retention, provider-neutral evaluation,
-   lifecycle/session hooks, task routing, archive restore, and task retention.
+   concrete agent catalog generation, abstract workflow-role separation, the
+   portable prompt audit, optional MCP seam, provenance-aware memory and memory
+   retention, governed evolution lifecycle and bounded event retention,
+   provider-neutral evaluation, lifecycle/session hooks, task routing, archive
+   restore, task retention, and manifest/agent/skill/adapter metadata consistency.
+9. **Prompt and packaging quality** — Validates universal-task fallback contracts,
+   provider-free routing fixtures, project-context generation, and installation
+   payload/cache hygiene.
 
 ## How to Run Tests
 
@@ -37,7 +42,14 @@ node --test ultimate-dev/tests/jev/engine.test.mjs
 ### Legacy Python suite
 
 The pre-existing skill validation suite remains optional maintenance tooling.
-Run it only when its already-declared Python dependencies are available:
+Install the pinned development dependencies from the repository root:
+
+```bash
+python -m pip install -r ../requirements-dev.txt
+```
+
+The prompt-only skill itself needs none of these packages. Run the suite only
+when its development dependencies are available:
 
 ```bash
 # From the ultimate-dev directory
@@ -113,6 +125,7 @@ tests/
 ├── test_prompts.py        # Prompt completeness tests
 ├── test_workflows.py      # Workflow integrity tests
 ├── test_rules.py          # Rule coverage tests
+├── test_consistency.py    # Catalog, version, adapter, and workflow-role checks
 └── test_tools.py          # Tool registry tests
 ```
 

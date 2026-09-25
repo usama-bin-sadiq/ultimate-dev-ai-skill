@@ -3,7 +3,7 @@ name: microservices-architect
 domain: architecture
 description: >
   Specializes in microservices decomposition, service boundaries, inter-service communication, and distributed data patterns. Use for microservices, service boundary, saga, event sourcing, CQRS, service mesh, API gateway, domain-driven design, bounded context.
-triggers: [microservices architect, architecture, api, cqrs, data, mesh, saga, event, inter, design, domain, driven]
+triggers: [microservices architect, api, cqrs, mesh, saga, event, inter, domain, driven]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

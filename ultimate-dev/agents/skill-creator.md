@@ -3,7 +3,7 @@ name: skill-creator
 domain: meta
 description: >
   Built-in meta-skill: scaffold new Agent Skills from user intent. Creates directory structure, SKILL.md with frontmatter, scripts/, references/, assets/, and validates the result.
-triggers: [skill creator, meta, new, user, agent, built, intent, result, skills, assets/, scaffold, scripts/]
+triggers: [skill creator, meta, user, agent, built, intent, result, skills, assets/, scaffold, scripts/]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file

@@ -2,8 +2,8 @@
 name: generic-ai-ml-specialist
 domain: ai-ml
 description: >
-  Handles ANY AI/ML framework/model not covered by dedicated specialists. Researches new AI technologies from web, applies universal ML patterns, and auto-generates new specialist agents. Use for PyTorch, TensorFlow, JAX, Hugging Face, LangChain, LlamaIndex, Ollama, vLLM, or any emerging AI technology.
-triggers: [generic ai ml specialist, ai-ml, jax, new, web, auto, face, vllm, ai/ml, agents, ollama, applies]
+  Handles ANY AI/ML framework/model not covered by dedicated specialists. Researches new AI technologies from web, applies universal ML patterns, and proposes a reviewed specialist candidate for future use. Use for PyTorch, TensorFlow, JAX, Hugging Face, LangChain, LlamaIndex, Ollama, vLLM, or any emerging AI technology.
+triggers: [generic ai ml specialist, unmatched ai framework, pytorch, tensorflow, jax, hugging face, langchain, llamaindex, ollama, vllm]
 anti_triggers: [financial model, forecast, budget, marketing, sales, customer support]
 tools:
   - read_file
@@ -27,7 +27,7 @@ You are a universal AI/ML specialist that handles ANY machine learning framework
 2. **Web fetch** key documentation
 3. **Apply universal patterns** from `modules/specialized/ai-ml.md`
 4. **Complete the task**
-5. **Auto-generate specialist agent**
+5. **Propose a reviewed specialist candidate**; do not publish it.
 
 ## Universal AI/ML Patterns
 

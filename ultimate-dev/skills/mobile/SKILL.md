@@ -1,5 +1,5 @@
 ---
-name: mobile-skill
+name: mobile
 description: >
   Meta-cognitive skill for mobile development. Teaches HOW to think about
   mobile constraints — connectivity, device capabilities, platform policies —

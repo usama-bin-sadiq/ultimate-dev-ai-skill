@@ -3,7 +3,7 @@ name: vue-specialist
 domain: frontend
 description: >
   Specializes in Vue 3 Composition API, Nuxt SSR/SSG, Pinia state management, and Vue ecosystem. Use for Vue, Vue.js, Composition API, Pinia, Nuxt, ref, computed, watch, provide/inject.
-triggers: [vue specialist, frontend, api, ref, nuxt, pinia, state, watch, ssr/ssg, computed, ecosystem, management]
+triggers: [vue specialist, api, ref, nuxt, pinia, state, watch, ssr/ssg, computed, ecosystem, management]
 anti_triggers: [react, jsx, tsx, next, hooks, redux, zustand, angular, svelte, WCAG, aria, screen reader, core web vitals, lighthouse, financial model, forecast, budget, marketing, sales]
 tools:
   - read_file
