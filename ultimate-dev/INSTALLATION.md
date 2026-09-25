@@ -47,8 +47,8 @@ not by measuring the Git checkout:
 
 | Measure | Result |
 |---|---:|
-| Installed payload (`du -sk`) | **3,460 KiB** (~3.38 MiB) |
-| Logical file bytes | **2,632,164 bytes** (~2.51 MiB) |
+| Installed payload (`du -sk`) | **3,468 KiB** (~3.39 MiB) |
+| Logical file bytes | **2,636,393 bytes** (~2.51 MiB) |
 | Installed files | **418** |
 | Symlinks | **0** |
 | Development cache directories | **0** |
@@ -66,9 +66,9 @@ Approximate full-payload directory breakdown:
 |---|---:|
 | `runtime/` | ~1.1 MiB |
 | `agents/` | ~524 KiB |
-| `tests/` | ~364 KiB |
+| `tests/` | ~368 KiB |
 | `modules/` | ~304 KiB |
-| `scripts/` | ~212 KiB |
+| `scripts/` | ~216 KiB |
 | `config/` | ~164 KiB |
 | `skills/` | ~160 KiB |
 
@@ -93,15 +93,16 @@ This checks context extraction, provenance, unknowns, path rules, and the
 `not_run` status of candidate commands. It does not build or execute the target
 project.
 
-The same benchmark was run against filtered/sparse checkouts of
-`microsoft/vscode` and `JetBrains/intellij-community`; no npm, Gradle, Maven, or
-other project dependencies were installed, and both temporary clones were
-removed afterward.
+The same benchmark was run against complete working trees of
+`microsoft/vscode`, `JetBrains/intellij-community`, and `kubernetes/kubernetes`
+using shallow history and blob-filtered Git object storage. No npm, Gradle,
+Maven, Go, or other project dependencies were installed, and every temporary
+clone was removed afterward.
 
 The installer prints the measured payload size after every successful install:
 
 ```text
-Payload size: 3460 KiB (development caches excluded)
+Payload size: 3468 KiB (development caches excluded)
 ```
 
 ### Measure another installation yourself

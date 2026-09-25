@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 from datetime import date
@@ -23,6 +24,16 @@ MANIFEST_FILES = (
     "settings.gradle.kts", "gradle.properties", "gradlew", "Gemfile", "composer.json", "Makefile",
 )
 PATH_CANDIDATES = ("src", "app", "lib", "packages", "services", "tests", "test", "docs", "infra")
+NESTED_MODULE_ROOTS = (
+    "platform", "community", "plugins", "modules", "packages", "services",
+    "apps", "cmd", "pkg", "core", "api", "tools", "staging", "libs",
+)
+NESTED_SCAN_DEPTH = 2
+NESTED_MANIFEST_LIMIT = 64
+IGNORED_SCAN_DIRECTORIES = {
+    ".git", ".gradle", ".idea", "__pycache__", "node_modules", "vendor",
+    "build", "out", "target", "dist", "coverage", "cache",
+}
 
 
 def _read_json(path: Path) -> dict[str, Any]:
@@ -31,6 +42,37 @@ def _read_json(path: Path) -> dict[str, Any]:
     except (OSError, json.JSONDecodeError):
         return {}
     return value if isinstance(value, dict) else {}
+
+
+def _nested_manifests(project: Path) -> list[str]:
+    """Find module-local manifests with a bounded monorepo scan.
+
+    This intentionally scans only common module roots and two directory levels
+    below each root. It is a discovery aid, not a recursive project inventory.
+    """
+    found: list[str] = []
+    for root_name in NESTED_MODULE_ROOTS:
+        root = project / root_name
+        if not root.is_dir():
+            continue
+        for current, directories, files in os.walk(root):
+            current_path = Path(current)
+            relative = current_path.relative_to(root)
+            directories[:] = [
+                name for name in directories
+                if name not in IGNORED_SCAN_DIRECTORIES and not name.startswith(".")
+            ]
+            if len(relative.parts) >= NESTED_SCAN_DEPTH:
+                directories[:] = []
+            for name in MANIFEST_FILES:
+                if name not in files:
+                    continue
+                relative_manifest = (current_path / name).relative_to(project).as_posix()
+                if relative_manifest not in found:
+                    found.append(relative_manifest)
+                    if len(found) >= NESTED_MANIFEST_LIMIT:
+                        return sorted(found)
+    return sorted(found)
 
 
 def _simple_make_targets(path: Path) -> list[str]:
@@ -125,7 +167,7 @@ def _yaml_lines(value: Any, indent: int = 0) -> list[str]:
     return [f"{prefix}{_yaml_scalar(value)}"]
 
 
-def _path_rules(project: Path) -> list[str]:
+def _path_rules(project: Path, nested_manifests: list[str]) -> list[str]:
     rules: list[str] = []
     package = _read_json(project / "package.json") if (project / "package.json").is_file() else {}
     workspaces = package.get("workspaces")
@@ -133,6 +175,10 @@ def _path_rules(project: Path) -> list[str]:
         for workspace in workspaces:
             if isinstance(workspace, str):
                 rules.append(f"{workspace}: workspace/package boundary; inspect before editing")
+    for manifest in nested_manifests:
+        module = Path(manifest).parent.as_posix()
+        if module != "." and not any(rule.startswith(f"{module}/") for rule in rules):
+            rules.append(f"{module}/**: module/build boundary declared by {manifest}")
     if (project / "tsconfig.json").is_file():
         rules.append("src/**: TypeScript/JavaScript source governed by tsconfig.json")
     if (project / "pyproject.toml").is_file():
@@ -160,7 +206,10 @@ def _path_rules(project: Path) -> list[str]:
 
 def build_recipe(project: Path) -> dict[str, Any]:
     project = project.expanduser().resolve()
-    manifests = [name for name in MANIFEST_FILES if (project / name).is_file()]
+    root_manifests = [name for name in MANIFEST_FILES if (project / name).is_file()]
+    nested_manifests = _nested_manifests(project)
+    manifests = root_manifests + nested_manifests
+    manifest_names = {Path(name).name for name in manifests}
     stack: list[str] = []
     if (project / "package.json").is_file():
         package = _read_json(project / "package.json")
@@ -171,18 +220,23 @@ def build_recipe(project: Path) -> dict[str, Any]:
                     stack.append(name)
         if "typescript" in str(dependencies).lower() or (project / "tsconfig.json").is_file():
             stack.append("typescript")
-    if (project / "pyproject.toml").is_file() or (project / "requirements.txt").is_file():
+    if "package.json" in manifest_names and not (project / "package.json").is_file():
+        stack.append("javascript")
+    if {"pyproject.toml", "requirements.txt"} & manifest_names:
         stack.append("python")
-    if (project / "Cargo.toml").is_file():
+    if "Cargo.toml" in manifest_names:
         stack.append("rust")
-    if (project / "go.mod").is_file():
+    if "go.mod" in manifest_names:
         stack.append("go")
-    gradle_manifests = ("build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts")
-    if any((project / name).is_file() for name in gradle_manifests):
+    gradle_manifests = {"build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts"}
+    if gradle_manifests & manifest_names:
         stack.extend(["java", "kotlin"])
     important_paths = [name for name in PATH_CANDIDATES if (project / name).exists()]
     readme = project / "README.md"
     purpose = "Not extracted; verify from README and project instructions." if not readme.is_file() else "See README.md; summarize purpose after review."
+    unknowns = ["Purpose, entrypoints, conventions, and approved commands require project review."]
+    if len(nested_manifests) >= NESTED_MANIFEST_LIMIT:
+        unknowns.append("Nested manifest discovery reached its bounded result limit; inspect additional modules manually.")
     return {
         "version": "1.0",
         "project": project.name,
@@ -190,9 +244,16 @@ def build_recipe(project: Path) -> dict[str, Any]:
         "purpose": purpose,
         "stack": sorted(set(stack)),
         "manifests": manifests,
+        "manifest_discovery": {
+            "root": root_manifests,
+            "nested": nested_manifests,
+            "nested_roots": list(NESTED_MODULE_ROOTS),
+            "max_depth_below_root": NESTED_SCAN_DEPTH,
+            "max_nested_results": NESTED_MANIFEST_LIMIT,
+        },
         "entrypoints": [],
         "important_paths": important_paths,
-        "path_rules": _path_rules(project),
+        "path_rules": _path_rules(project, nested_manifests),
         "commands": _candidate_commands(project),
         "conventions": [],
         "constraints": [],
@@ -202,7 +263,7 @@ def build_recipe(project: Path) -> dict[str, Any]:
             "sources_inspected": manifests + (["README.md"] if readme.is_file() else []),
             "command_status": "not_run",
         },
-        "unknowns": ["Purpose, entrypoints, conventions, and approved commands require project review."],
+        "unknowns": unknowns,
         "last_verified": date.today().isoformat(),
     }
 

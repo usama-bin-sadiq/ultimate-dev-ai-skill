@@ -64,6 +64,32 @@ def test_generator_recognizes_gradle_metadata_without_running_it():
         assert any(item["command"] == "./gradlew test" and item["status"] == "not_run" for item in recipe["commands"])
 
 
+def test_generator_finds_bounded_module_manifests_without_recursive_crawl():
+    with tempfile.TemporaryDirectory() as directory:
+        project = Path(directory)
+        (project / "platform").mkdir()
+        (project / "platform" / "build.gradle.kts").write_text("plugins { kotlin(\"jvm\") }", encoding="utf-8")
+        (project / "community" / "idea").mkdir(parents=True)
+        (project / "community" / "idea" / "build.gradle.kts").write_text("plugins { kotlin(\"jvm\") }", encoding="utf-8")
+        (project / "node_modules" / "ignored").mkdir(parents=True)
+        (project / "node_modules" / "ignored" / "package.json").write_text("{}", encoding="utf-8")
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--project", str(project)],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert result.returncode == 0, result.stdout + result.stderr
+        recipe = yaml.safe_load(result.stdout)
+        assert "platform/build.gradle.kts" in recipe["manifests"]
+        assert "community/idea/build.gradle.kts" in recipe["manifests"]
+        assert not any("node_modules" in item for item in recipe["manifests"])
+        assert "java" in recipe["stack"] and "kotlin" in recipe["stack"]
+        assert any(rule.startswith("platform/") for rule in recipe["path_rules"])
+        assert recipe["manifest_discovery"]["max_nested_results"] == 64
+
+
 def test_generator_is_read_only_without_output_flag():
     with tempfile.TemporaryDirectory() as directory:
         project = Path(directory)

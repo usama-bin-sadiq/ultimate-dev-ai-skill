@@ -54,11 +54,12 @@ The following are enforced by repository checks:
 - 154 provider-free routing fixtures with unknown and forbidden-route cases.
 - Development dependency manifest and reproducible setup guide.
 - Optional company-context template validation and path-rule generation.
-- Dependency-free context benchmarks against two filtered/sparse open-source
-  repository checkouts, with cleanup evidence.
+- Dependency-free context benchmarks against three complete working trees of
+  mature open-source repositories, with shallow history, bounded object storage,
+  and cleanup evidence.
 
 The current evidence-bounded prompt-only estimate is **8.6/10**. The staged
-install measured 3,460 KiB across 418 files; see
+install measured 3,468 KiB across 418 files; see
 `ultimate-dev/INSTALLATION.md` for the dependency matrix and measurement
 method. This is not an independent model/host benchmark and does not satisfy
 the 10/10 gate.

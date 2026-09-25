@@ -42,7 +42,7 @@ itself `fixture_audit_pass`, not a model benchmark.
 | Routing precision | 8.1 | 154 cases, forbidden-route fixtures, 62 negative/near-miss cases, and zero broad-trigger collisions; real model precision remains unmeasured |
 | Context efficiency | 8.5 | Long skills are split into references; installer excludes development caches; capability index is loaded first |
 | Output/evidence contracts | 8.5 | Portable envelope, four channels, capability-gap reports, and standardized high-use contracts are present |
-| Portability | 8.8 | Copy-only installation, measured 3,392 KiB payload, host-neutral contracts, optional JEV, adapters, and provider-free benchmark |
+| Portability | 8.8 | Copy-only installation, measured 3,468 KiB payload, host-neutral contracts, optional JEV, adapters, and provider-free benchmark |
 | Maintainability | 8.7 | Generated inventory, contract validation, candidate-only evolution, reference tests, normalized trigger metadata, and CI/pre-commit gates |
 | Evaluation | 8.1 | All 154 cases declare deliverables; provider-free fixture benchmark passes; no model/host outcome benchmark or calibrated judge |
 | Prompt-only safety | 8.3 | Explicit uncertainty, human review, capability gaps, no automatic package writes, and honest `not_run` semantics |
@@ -98,7 +98,7 @@ The repository has:
 The latest implementation pass adds the following measurable packaging and
 prompt-quality evidence:
 
-- staged install: **3,460 KiB**, **418 files**, zero symlinks, zero local cache
+- staged install: **3,468 KiB**, **418 files**, zero symlinks, zero local cache
   directories, and zero protected local bridges;
 - prompt-only dependencies: **none** beyond the host;
 - development dependencies: Python 3.11+, PyYAML 6.0.2, pytest 8.3.5, and
@@ -107,12 +107,16 @@ prompt-quality evidence:
   62 negative/near-miss cases and 12 unknown-domain cases;
 - broad trigger collisions: **0** after compound-metadata normalization;
 - optional company-context template validation is provider-free and secret-aware;
-- dependency-free context benchmarks completed against sparse checkouts of
-  `microsoft/vscode` and `JetBrains/intellij-community`; no project dependencies
-  were installed and both temporary clones were deleted;
-- verification: 792 Python tests, 25 JEV tests, 60 structure checks, strict
-  prompt audit, strict provider-free benchmark, consistency, host-native, and
-  workflow-security checks.
+- dependency-free context benchmarks completed against complete working trees of
+  `microsoft/vscode`, `JetBrains/intellij-community`, and `kubernetes/kubernetes`;
+  clones used shallow history and blob-filtered object storage, no project
+  dependencies were installed, and every temporary clone was deleted;
+- bounded nested-manifest discovery was added after the full IntelliJ benchmark
+  showed that module-local build files are not always at the repository root;
+  the scanner is covered by fixture tests and never executes project commands;
+- verification: 802 Python tests, 25 JEV tests, strict prompt audit, strict
+  provider-free benchmark, project-context benchmark, consistency, host-native,
+  and workflow-security checks.
 
 The full setup and dependency matrix is in
 `ultimate-dev/INSTALLATION.md`. The measured size is a real staged install, not
