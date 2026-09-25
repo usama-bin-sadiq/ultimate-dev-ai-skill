@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.1.0] — 2026-09-25
+
+### Changed
+- Manual release (manual)
+
+
+# Changelog
+
 ## [3.0.4] — 2026-09-25
 
 ### Fixed
