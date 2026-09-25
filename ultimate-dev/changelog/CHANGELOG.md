@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.0.3] — 2026-09-25
+
+### Fixed
+- fix: repair the automated release pipeline, failing since v3.0.2 Every release run since v3.0.2 failed at the same step. The workflow bumps VERSION, runs sync-version.py, regenerates the manifest and  (commit fedb8d1909a2)
+
+
+# Changelog
+
 ## [3.0.2] — 2026-09-24
 
 ### Fixed

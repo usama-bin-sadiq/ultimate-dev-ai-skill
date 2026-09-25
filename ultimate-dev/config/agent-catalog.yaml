@@ -1,4 +1,4 @@
-version: 3.0.2
+version: 3.0.3
 source: skill-manifest.yaml
 agent_count: 119
 agents:
