@@ -1,5 +1,5 @@
 name: ultimate-dev
-version: 3.1.0
+version: 3.1.1
 description: Prompt-first, model-agnostic agentic skill suite for software agencies and companies. Detects context, classifies
   tasks, selects the smallest useful method or specialist, executes, verifies, and learns. Durable runtime and JEV are optional
   extensions. Uses bounded universal fallback and evidence-gated capability proposals.

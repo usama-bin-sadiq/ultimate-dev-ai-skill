@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.1.1] — 2026-09-25
+
+### Fixed
+- fix: skip recorded-benchmark check when project-local evidence is absent test_external_benchmark_evidence reads from the project-local .memory tree, which is intentionally untracked and is not part of (commit 63a703036198)
+
+
+# Changelog
+
 ## [3.1.0] — 2026-09-25
 
 ### Changed

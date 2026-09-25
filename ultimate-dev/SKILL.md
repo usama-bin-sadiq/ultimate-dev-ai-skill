@@ -6,12 +6,12 @@ description: >
   useful skill or specialist, executes through available host capabilities,
   and verifies with evidence. Durable state, JEV, approvals, and recovery are
   optional runtime extensions.
-version: "3.1.0"
+version: "3.1.1"
 user-invocable: true
 argument-hint: Optional task description
 ---
 
-# Ultimate-Dev 3.1.0 — Prompt-First Core (MANDATORY)
+# Ultimate-Dev 3.1.1 — Prompt-First Core (MANDATORY)
 
 ## ⚠️ CRITICAL: READ THIS FIRST ON EVERY SESSION START
 
