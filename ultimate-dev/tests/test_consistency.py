@@ -127,8 +127,12 @@ def test_behavioral_calibration_is_single_source():
 def test_capability_index_has_bounded_entrypoints():
     import yaml
 
+    # Read the canonical version rather than hardcoding a literal. A hardcoded
+    # version makes every release bump break the suite, which is the same
+    # brittleness that kept the release pipeline broken for a week.
+    version = (ROOT.parent / "VERSION").read_text(encoding="utf-8").strip()
     index = yaml.safe_load((ROOT / "config" / "capability-index.yaml").read_text(encoding="utf-8"))
-    assert index["version"] == "3.0.2"
+    assert index["version"] == version
     assert len(index["domains"]) >= 12
     assert index["routing_policy"]["common_first"] is True
     assert index["routing_policy"]["skills_before_agents"] is True

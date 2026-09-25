@@ -9,6 +9,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts" / "measure-install.py"
+# Read the canonical version instead of hardcoding a literal, so a release bump
+# does not break the suite.
+CANONICAL_VERSION = (ROOT.parent / "VERSION").read_text(encoding="utf-8").strip()
 
 
 def test_measure_install_reports_cache_free_payload():
@@ -21,7 +24,7 @@ def test_measure_install_reports_cache_free_payload():
     )
     assert result.returncode == 0, result.stdout + result.stderr
     report = json.loads(result.stdout)
-    assert report["version"] == "3.0.2"
+    assert report["version"] == CANONICAL_VERSION
     assert report["allocated_kib"] > 0
     assert report["logical_bytes"] > 0
     assert report["file_count"] > 100

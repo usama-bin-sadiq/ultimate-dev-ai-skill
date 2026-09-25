@@ -428,7 +428,19 @@ jobs:
           NEW_VERSION: ${{ steps.version.outputs.new_version }}
         run: |
           set -euo pipefail
-          git add -- VERSION ultimate-dev/config ultimate-dev/skill-manifest.yaml ultimate-dev/README.md ultimate-dev/changelog/CHANGELOG.md
+          # Every file sync-version.py rewrites must be staged here. Staging only
+          # VERSION and config/ left SKILL.md, AGENT.md, AGENTS.md, and CLAUDE.md
+          # behind, so the pushed main branch failed validate-consistency.py.
+          git add -- \
+            VERSION \
+            ultimate-dev/SKILL.md \
+            ultimate-dev/AGENT.md \
+            ultimate-dev/AGENTS.md \
+            ultimate-dev/CLAUDE.md \
+            ultimate-dev/config \
+            ultimate-dev/skill-manifest.yaml \
+            ultimate-dev/README.md \
+            ultimate-dev/changelog/CHANGELOG.md
           git diff --cached --quiet && {
             echo 'Release produced no file changes' >&2
             exit 1

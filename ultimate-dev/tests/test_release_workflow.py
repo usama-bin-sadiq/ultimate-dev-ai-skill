@@ -12,6 +12,29 @@ def test_readme_has_no_accidental_placeholder_tail():
     assert not re.search(r"(?m)^# (?:sync fix|test)$", text)
 
 
+def test_release_workflow_commits_every_versioned_file():
+    """A release must stage the files sync-version.py rewrites.
+
+    Staging only VERSION and config/ left the frontmatter files behind, so the
+    pushed main branch failed validate-consistency.py immediately after a
+    successful release.
+    """
+    text = WORKFLOW.read_text(encoding="utf-8")
+    commit_step = text.split("- name: Commit release files", 1)[1]
+    staged = commit_step.split("git commit", 1)[0]
+    for relative in (
+        "VERSION",
+        "ultimate-dev/SKILL.md",
+        "ultimate-dev/AGENT.md",
+        "ultimate-dev/AGENTS.md",
+        "ultimate-dev/CLAUDE.md",
+        "ultimate-dev/config",
+        "ultimate-dev/skill-manifest.yaml",
+        "ultimate-dev/README.md",
+    ):
+        assert relative in staged, f"release does not stage {relative}"
+
+
 def test_release_workflow_handles_main_pushes_without_recursive_releases():
     text = WORKFLOW.read_text(encoding="utf-8")
     assert re.search(r"(?m)^  push:\n    branches: \[main\]$", text)

@@ -59,6 +59,7 @@ def test_repository_version_checks_are_all_covered(tmp_path):
     package = tmp_path / "repo"
     package.mkdir()
     shutil.copytree(ROOT, package / "ultimate-dev")
+    previous = (ROOT.parent / "VERSION").read_text(encoding="utf-8").strip()
     (package / "VERSION").write_text("9.9.9\n", encoding="utf-8")
 
     result = subprocess.run(
@@ -74,10 +75,10 @@ def test_repository_version_checks_are_all_covered(tmp_path):
     skill = (package / "ultimate-dev" / "SKILL.md").read_text(encoding="utf-8")
     assert 'version: "9.9.9"' in skill
 
-    # No managed file may still report the old version.
+    # No managed file may still report the version from before the bump.
     for path in (*sync.CONFIG_FILES, *sync.FRONTMATTER_FILES):
         text = (package / "ultimate-dev" / path.relative_to(sync.ROOT)).read_text(encoding="utf-8")
-        assert "3.0.2" not in text, f"{path.name} still carries the pre-bump version"
+        assert previous not in text, f"{path.name} still carries the pre-bump version {previous}"
 
 
 def test_skill_md_version_is_synchronized(tmp_path):
@@ -85,24 +86,24 @@ def test_skill_md_version_is_synchronized(tmp_path):
     sync = _load(SYNC, "sync_version")
     target = tmp_path / "SKILL.md"
     target.write_text(
-        '---\nname: ultimate-dev\nversion: "3.0.2"\n---\n\n'
-        "# Ultimate-Dev 3.0.2 — Prompt-First Core (MANDATORY)\n",
+        '---\nname: ultimate-dev\nversion: "1.2.3"\n---\n\n'
+        "# Ultimate-Dev 1.2.3 — Prompt-First Core (MANDATORY)\n",
         encoding="utf-8",
     )
     assert sync.sync_text_file(target, "3.1.0") is True
     updated = target.read_text(encoding="utf-8")
     assert 'version: "3.1.0"' in updated
     assert "# Ultimate-Dev 3.1.0 — Prompt-First Core (MANDATORY)" in updated
-    assert "3.0.2" not in updated
+    assert "1.2.3" not in updated
     # Idempotent: a second sync is a no-op.
     assert sync.sync_text_file(target, "3.1.0") is False
 
 
 def test_readme_heading_sync_preserves_a_bare_heading():
     sync = _load(SYNC, "sync_version")
-    assert sync.sync_readme("# Ultimate-Dev 3.0.2\n", "3.1.0") == "# Ultimate-Dev 3.1.0\n"
+    assert sync.sync_readme("# Ultimate-Dev 1.2.3\n", "3.1.0") == "# Ultimate-Dev 3.1.0\n"
     assert (
-        sync.sync_readme("# Ultimate-Dev 3.0.2 — Subtitle\n", "3.1.0")
+        sync.sync_readme("# Ultimate-Dev 1.2.3 — Subtitle\n", "3.1.0")
         == "# Ultimate-Dev 3.1.0 — Subtitle\n"
     )
     try:

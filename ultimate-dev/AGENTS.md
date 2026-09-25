@@ -1,6 +1,6 @@
 ---
 name: ultimate-dev
-version: "3.0.2"
+version: "3.0.3"
 description: >-
   Prompt-first, model-agnostic agentic skill suite for software agencies and companies.
   Detects context, classifies tasks, selects the smallest useful method or specialist,
