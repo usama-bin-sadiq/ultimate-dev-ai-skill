@@ -122,9 +122,9 @@ prompt-quality evidence:
   iteration 11/32 raw (17/32 with the final comparison policy, five ambiguous
   domain cases unscored); this is not an independent model benchmark and remains
   a quality gap;
-- the provider-free audit reports **29** legacy expected-domain labels: 24 have
-  reviewable comparison-only aliases and 5 remain ambiguous; ambiguous domain
-  accuracy is not treated as model-quality evidence.
+- the provider-free audit reports **23** legacy expected-domain labels covered
+  by 24 defined comparison-only aliases; all 21 ambiguous-label cases were
+  migrated case-by-case, so no domain case remains unscored.
 
 The full setup and dependency matrix is in
 `ultimate-dev/INSTALLATION.md`. The measured size is a real staged install, not
@@ -187,10 +187,11 @@ independent model benchmark. The full behavioral contract still needs:
 - human or calibrated judge results
 - a separately identified model/provider and host
 
-The provider-free audit also found 29 legacy expected-domain labels outside the
-current capability-index vocabulary. Twenty-four have reviewable comparison-only
-aliases and five remain ambiguous. Until the ambiguous labels are reviewed,
-domain accuracy is not a fair model-quality metric.
+The provider-free audit also found 23 legacy expected-domain labels outside the
+current capability-index vocabulary. They are covered by 24 defined
+comparison-only aliases, and the five ambiguous label families were migrated
+case-by-case. Domain accuracy is now measurable for the fixture set, but it is
+still not independent model evidence.
 
 This remains the largest gap to a defensible 9–10 prompt-only rating.
 

@@ -50,7 +50,8 @@ rather than silently treated as current routing vocabulary. The reviewable,
 comparison-only policy in `domain-aliases.json` separates safe umbrella aliases
 from ambiguous labels; ambiguous cases are not domain-scored until reviewed.
 Migrate or explicitly approve those labels before using domain accuracy as a
-model-quality metric.
+model-quality metric. The current suite has no ambiguous domain cases remaining;
+the quarantine mechanism remains for future fixtures.
 
 For a recorded host-session replay, export the hidden sample and predictions as
 JSON, then run:

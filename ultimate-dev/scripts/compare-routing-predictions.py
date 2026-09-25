@@ -77,8 +77,15 @@ def compare(gold_path: Path, predictions_path: Path, aliases_path: Path = DEFAUL
                 domain_comparison_unscored_cases += 1
             elif _domains(expected_domains, aliases) != _domains(actual.get("domains") or [], aliases):
                 reasons.append("domains")
-        forbidden = expected.get("expected_forbidden_domains") or []
-        if forbidden and set(map(str, forbidden)).intersection(map(str, actual.get("activated_forbidden_domains") or [])):
+        forbidden = {
+            aliases.get(str(item), str(item))
+            for item in (expected.get("expected_forbidden_domains") or [])
+        }
+        activated = {
+            aliases.get(str(item), str(item))
+            for item in (actual.get("activated_forbidden_domains") or [])
+        }
+        if forbidden.intersection(activated):
             reasons.append("forbidden_domains")
         if reasons:
             status = "fail"

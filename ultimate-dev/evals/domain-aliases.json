@@ -1,7 +1,7 @@
 {
-  "version": "1.0",
+  "version": "1.1",
   "canonical_source": "config/capability-index.yaml",
-  "purpose": "Comparison-only normalization for legacy golden fixture labels; never a routing replacement.",
+  "purpose": "Comparison-only normalization for remaining legacy golden fixture labels; never a routing replacement.",
   "safe_aliases": {
     "academic": "research-analysis",
     "architecture": "software-engineering",
@@ -28,16 +28,33 @@
     "task-observer": "prompt-skill-quality",
     "testing-qa": "software-engineering"
   },
-  "ambiguous_labels": [
-    "client-comms",
-    "database",
-    "design-handoff",
-    "documentation",
-    "finance"
-  ],
+  "ambiguous_labels": [],
+  "case_migrations": {
+    "moderate-002": ["software-engineering"],
+    "moderate-008": ["product-discovery"],
+    "moderate-009": ["internal-communications"],
+    "moderate-012": ["finance-fpa"],
+    "complex-002": ["software-engineering", "program-project-operations"],
+    "complex-003": ["product-discovery", "marketing-sales-support"],
+    "complex-006": ["strategy-operating-model", "marketing-sales-support", "finance-fpa"],
+    "complex-008": ["software-engineering", "specialized-industries"],
+    "nearmiss-005": ["software-engineering"],
+    "risk-003": ["software-engineering", "legal-privacy-contracts"],
+    "cross-functional-003": ["internal-communications"],
+    "cross-functional-004": ["finance-fpa"],
+    "cross-functional-005": ["accounting-controls"],
+    "cross-functional-006": ["audit-risk-assurance", "procurement-vendors"],
+    "cross-functional-007": ["office-knowledge-artifacts", "data-bi"],
+    "cross-functional-008": ["legal-privacy-contracts", "procurement-vendors"],
+    "cross-functional-012": ["data-bi"],
+    "negative-022": ["software-engineering"],
+    "negative-030": ["software-engineering"],
+    "deliverable-068": ["research-analysis"],
+    "multilingual-080": ["software-engineering"]
+  },
   "review_required": [
-    "Map ambiguous labels per case after reviewing deliverable, risk, and context.",
-    "Do not use aliases to claim that distinct specialist routes are equivalent.",
-    "Update this file only with an explicit review decision."
+    "Safe aliases are comparison-only and do not replace capability-index IDs in live routing.",
+    "Case migrations are explicit decisions tied to task context and deliverable.",
+    "Add new aliases only with a review decision and regression evidence."
   ]
 }

@@ -42,7 +42,7 @@ cases:
   - id: moderate-002
     task: "Optimize this PostgreSQL query that's taking 3 seconds on the users table"
     expected_size: moderate
-    expected_domains: [database]
+    expected_domains: [software-engineering]
     expected_deliverable: code
     expected_risk: none
     notes: "Single domain, clear scope"
@@ -90,7 +90,7 @@ cases:
   - id: moderate-008
     task: "Design a Figma component spec for the new Button component with all variants"
     expected_size: moderate
-    expected_domains: [design-handoff]
+    expected_domains: [product-discovery]
     expected_deliverable: specification
     expected_risk: none
     notes: "Design handoff"
@@ -98,7 +98,7 @@ cases:
   - id: moderate-009
     task: "Write a status update for the client about this week's progress"
     expected_size: moderate
-    expected_domains: [client-comms]
+    expected_domains: [internal-communications]
     expected_deliverable: communication
     expected_risk: none
     notes: "Client communication"
@@ -122,7 +122,7 @@ cases:
   - id: moderate-012
     task: "Create a revenue model for the SaaS product with MRR projections"
     expected_size: moderate
-    expected_domains: [finance]
+    expected_domains: [finance-fpa]
     expected_deliverable: financial-analysis
     expected_risk: none
     notes: "Financial modeling"
@@ -203,7 +203,7 @@ cases:
   - id: complex-002
     task: "Migrate the monolith to microservices with zero downtime"
     expected_size: complex
-    expected_domains: [architecture, devops, database]
+    expected_domains: [software-engineering, program-project-operations]
     expected_deliverable: plan
     expected_risk: security
     notes: "Architecture + deployment + data"
@@ -211,7 +211,7 @@ cases:
   - id: complex-003
     task: "Launch a new product feature with marketing campaign, sales enablement, and support documentation"
     expected_size: complex
-    expected_domains: [product, marketing, sales, support, documentation]
+    expected_domains: [product-discovery, marketing-sales-support]
     expected_deliverable: plan
     expected_risk: none
     notes: "Full cross-functional launch"
@@ -235,7 +235,7 @@ cases:
   - id: complex-006
     task: "Create a go-to-market plan for a new SaaS feature including pricing, marketing, sales enablement, and support docs"
     expected_size: complex
-    expected_domains: [product, finance, marketing, sales, support, documentation]
+    expected_domains: [strategy-operating-model, marketing-sales-support, finance-fpa]
     expected_deliverable: plan
     expected_risk: none
     notes: "Full GTM cross-functional"
@@ -251,7 +251,7 @@ cases:
   - id: complex-008
     task: "Implement a geospatial analytics platform with real-time map rendering and spatial queries"
     expected_size: complex
-    expected_domains: [gis, frontend, backend, database]
+    expected_domains: [software-engineering, specialized-industries]
     expected_deliverable: code
     expected_risk: none
     notes: "GIS + full stack"
@@ -297,7 +297,7 @@ cases:
   - id: nearmiss-005
     task: "Set up a PostgreSQL database with proper indexing for the users table"
     expected_size: moderate
-    expected_domains: [database]
+    expected_domains: [software-engineering]
     expected_forbidden_domains: [backend]
     expected_deliverable: code
     expected_risk: none
@@ -323,7 +323,7 @@ cases:
   - id: risk-003
     task: "Add PII fields to the user model"
     expected_size: moderate
-    expected_domains: [database, security]
+    expected_domains: [software-engineering, legal-privacy-contracts]
     expected_deliverable: code
     expected_risk: security
     notes: "PII handling triggers security"
@@ -524,7 +524,7 @@ cases:
   - id: cross-functional-003
     task: "Write an executive status update with decisions, risks, owners, and next actions"
     expected_size: moderate
-    expected_domains: [client-comms, documentation]
+    expected_domains: [internal-communications]
     expected_deliverable: communication
     expected_risk: data
     notes: "Internal communications output contract"
@@ -532,7 +532,7 @@ cases:
   - id: cross-functional-004
     task: "Analyze a budget-versus-actual variance and show the assumptions behind the forecast"
     expected_size: moderate
-    expected_domains: [finance]
+    expected_domains: [finance-fpa]
     expected_deliverable: financial-analysis
     expected_risk: compliance
     notes: "Accounting/finance and data skills; no invented numbers"
@@ -540,7 +540,7 @@ cases:
   - id: cross-functional-005
     task: "Reconcile the general ledger and document control exceptions for the month-end close"
     expected_size: complex
-    expected_domains: [finance, database]
+    expected_domains: [accounting-controls]
     expected_deliverable: audit
     expected_risk: compliance
     notes: "Accounting and audit evidence require human review"
@@ -548,7 +548,7 @@ cases:
   - id: cross-functional-006
     task: "Test a vendor security control and write an evidence-backed audit finding"
     expected_size: complex
-    expected_domains: [security, finance]
+    expected_domains: [audit-risk-assurance, procurement-vendors]
     expected_deliverable: audit
     expected_risk: compliance
     notes: "Audit/control method and security review"
@@ -556,7 +556,7 @@ cases:
   - id: cross-functional-007
     task: "Create a board-ready PDF and editable spreadsheet from verified quarterly data"
     expected_size: moderate
-    expected_domains: [documentation]
+    expected_domains: [office-knowledge-artifacts, data-bi]
     expected_deliverable: document
     expected_risk: data
     notes: "Office artifact method with provenance and validation"
@@ -564,7 +564,7 @@ cases:
   - id: cross-functional-008
     task: "Extract obligations and retention dates from a vendor contract and privacy addendum"
     expected_size: complex
-    expected_domains: [security, finance]
+    expected_domains: [legal-privacy-contracts, procurement-vendors]
     expected_deliverable: review
     expected_risk: compliance
     notes: "Legal/privacy workpaper; qualified reviewer required"
@@ -596,7 +596,7 @@ cases:
   - id: cross-functional-012
     task: "Define a dashboard metric, validate its data lineage, and explain uncertainty"
     expected_size: moderate
-    expected_domains: [database, data-engineering]
+    expected_domains: [data-bi]
     expected_deliverable: data-analysis
     expected_risk: data
     notes: "Data/BI reproducibility and metric governance"
@@ -805,7 +805,7 @@ cases:
     category: near-miss
     task: "Review one SQL query for obvious syntax errors"
     expected_size: moderate
-    expected_domains: [database]
+    expected_domains: [software-engineering]
     expected_deliverable: review
     expected_forbidden_domains: [architecture]
     expected_risk: none
@@ -869,7 +869,7 @@ cases:
     category: near-miss
     task: "Write one SQL query"
     expected_size: moderate
-    expected_domains: [database]
+    expected_domains: [software-engineering]
     expected_deliverable: code
     expected_forbidden_domains: [backend]
     expected_risk: data
@@ -1176,7 +1176,7 @@ cases:
     category: positive
     task: "Compare PostgreSQL and SQLite for a small offline application"
     expected_size: moderate
-    expected_domains: [database]
+    expected_domains: [research-analysis]
     expected_deliverable: comparison
     expected_risk: none
   - id: deliverable-069
@@ -1267,7 +1267,7 @@ cases:
     category: multilingual
     task: "Explain this SQL query in Portuguese while preserving identifiers"
     expected_size: atomic
-    expected_domains: [database]
+    expected_domains: [software-engineering]
     expected_deliverable: answer
     expected_risk: none
     output_language: pt

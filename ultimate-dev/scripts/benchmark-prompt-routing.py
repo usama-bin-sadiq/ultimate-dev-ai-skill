@@ -151,8 +151,15 @@ def _compare(
         if not isinstance(activated, list):
             reasons.append("forbidden_domains_not_reported")
         else:
-            forbidden = {str(item) for item in expected["forbidden_domains"]}
-            if forbidden.intersection(str(item) for item in activated):
+            forbidden = {
+                safe_aliases.get(str(item), str(item))
+                for item in expected["forbidden_domains"]
+            }
+            normalized_activated = {
+                safe_aliases.get(str(item), str(item))
+                for item in activated
+            }
+            if forbidden.intersection(normalized_activated):
                 reasons.append("forbidden_domain_activated")
     return not reasons, reasons
 

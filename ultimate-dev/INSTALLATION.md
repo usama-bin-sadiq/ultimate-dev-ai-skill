@@ -48,7 +48,7 @@ not by measuring the Git checkout:
 | Measure | Result |
 |---|---:|
 | Installed payload (`du -sk`) | **3,492 KiB** (~3.41 MiB) |
-| Logical file bytes | **2,657,845 bytes** (~2.53 MiB) |
+| Logical file bytes | **2,660,497 bytes** (~2.54 MiB) |
 | Installed files | **421** |
 | Symlinks | **0** |
 | Development cache directories | **0** |

@@ -18,6 +18,11 @@ def test_comparison_normalizes_safe_aliases_and_quarantines_ambiguous_domains():
         root = Path(directory)
         gold = root / "gold.json"
         predictions = root / "predictions.json"
+        aliases = root / "aliases.json"
+        aliases.write_text(json.dumps({
+            "safe_aliases": {"backend": "software-engineering"},
+            "ambiguous_labels": ["finance"],
+        }), encoding="utf-8")
         gold.write_text(json.dumps([
             {
                 "id": "safe",
@@ -56,7 +61,7 @@ def test_comparison_normalizes_safe_aliases_and_quarantines_ambiguous_domains():
         result = subprocess.run(
             [
                 sys.executable, str(SCRIPT), "--gold", str(gold),
-                "--predictions", str(predictions), "--aliases", str(ALIASES),
+                "--predictions", str(predictions), "--aliases", str(aliases),
                 "--json", "--strict",
             ],
             cwd=ROOT,
