@@ -60,7 +60,7 @@ The following are enforced by repository checks:
   and cleanup evidence.
 
 The current evidence-bounded prompt-only estimate is **8.6/10**. The staged
-install measured 3,492 KiB across 421 files; see
+install measured 3,496 KiB across 422 files; see
 `ultimate-dev/INSTALLATION.md` for the dependency matrix and measurement
 method. This is not an independent model/host benchmark and does not satisfy
 the 10/10 gate.

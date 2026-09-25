@@ -98,7 +98,7 @@ The repository has:
 The latest implementation pass adds the following measurable packaging and
 prompt-quality evidence:
 
-- staged install: **3,492 KiB**, **421 files**, zero symlinks, zero local cache
+- staged install: **3,496 KiB**, **422 files**, zero symlinks, zero local cache
   directories, and zero protected local bridges;
 - prompt-only dependencies: **none** beyond the host;
 - development dependencies: Python 3.11+, PyYAML 6.0.2, pytest 8.3.5, and

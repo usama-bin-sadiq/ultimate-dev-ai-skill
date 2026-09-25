@@ -369,7 +369,7 @@ chmod +x .git/hooks/pre-commit
 
 ```
 ultimate-dev/
-├── SKILL.md                    ← Orchestrator (478 lines)
+├── SKILL.md                    ← Orchestrator (458 lines)
 ├── INSTALLATION.md             ← Size, dependencies, verification, uninstall
 ├── requirements-dev.txt        ← Optional development dependencies
 ├── skill-manifest.yaml         ← Auto-generated registry

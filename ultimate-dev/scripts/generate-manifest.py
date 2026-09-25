@@ -208,6 +208,7 @@ def generate_manifest():
             "description": "Classification and routing logic",
             "files": [
                 "router/classification-rules.md",
+                "router/behavioral-calibration.md",
                 "router/completion-checklist.md",
                 "router/decomposition.md",
                 "router/gap-promotion-rules.md",

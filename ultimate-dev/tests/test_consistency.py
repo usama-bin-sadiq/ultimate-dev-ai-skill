@@ -111,6 +111,17 @@ def test_high_use_skills_have_standard_operating_contracts():
             assert field in text, f"{name} lacks {field} contract"
 
 
+def test_behavioral_calibration_is_single_source():
+    calibration = (ROOT / "router" / "behavioral-calibration.md").read_text(encoding="utf-8")
+    assert "Decision order" in calibration
+    assert "Deliverable calibration" in calibration
+    assert "Risk calibration" in calibration
+    for entrypoint in (ROOT / "SKILL.md", ROOT / "AGENTS.md"):
+        text = entrypoint.read_text(encoding="utf-8")
+        assert "routing/behavioral-calibration.md" in text
+        assert "Do not emit legacy labels" not in text
+
+
 def test_capability_index_has_bounded_entrypoints():
     import yaml
 
