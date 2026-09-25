@@ -39,6 +39,19 @@ CASE_REQUIRED = {"id", "task", "expected_size", "expected_domains", "expected_ri
 CATEGORY_RE = re.compile(r"(near[-_ ]?miss|negative|unknown|multilingual|capability[-_ ]?gap)", re.I)
 
 
+def _canonical_domain_ids() -> set[str]:
+    """Read canonical domain IDs without adding a YAML dependency."""
+    index_path = ROOT / "config" / "capability-index.yaml"
+    try:
+        text = index_path.read_text(encoding="utf-8")
+    except OSError:
+        return set()
+    match = re.search(r"^domains:\s*$([\s\S]*?)(?=^[A-Za-z_][\w-]*:\s*$|\Z)", text, re.MULTILINE)
+    if not match:
+        return set()
+    return set(re.findall(r"^  - id:\s*([A-Za-z0-9_-]+)\s*$", match.group(1), re.MULTILINE))
+
+
 def _case_category(case: dict[str, Any]) -> str:
     explicit = str(case.get("category") or "").strip().lower()
     if explicit:
@@ -128,6 +141,8 @@ def benchmark(cases: list[dict[str, Any]], classifier: Callable[[dict[str, Any]]
     multilingual_count = 0
     legacy_ambiguous_count = 0
     ambiguous_without_clarity = 0
+    canonical_domain_ids = _canonical_domain_ids()
+    noncanonical_fixture_domains: set[str] = set()
     executed = 0
     passed = 0
     failed = 0
@@ -156,6 +171,11 @@ def benchmark(cases: list[dict[str, Any]], classifier: Callable[[dict[str, Any]]
             errors.append(f"{identifier}: expected_domains must be a list")
         else:
             domains.update(str(item) for item in case["expected_domains"])
+            if canonical_domain_ids:
+                noncanonical_fixture_domains.update(
+                    str(item) for item in case["expected_domains"]
+                    if str(item) not in canonical_domain_ids
+                )
         risks.add(risk)
         category = _case_category(case)
         categories[category] += 1
@@ -218,6 +238,13 @@ def benchmark(cases: list[dict[str, Any]], classifier: Callable[[dict[str, Any]]
         )
     if not any(domain in domains for domain in ("unknown-unclassified", "universal-task")):
         warnings.append("no explicit unknown/unclassified domain case found")
+    if noncanonical_fixture_domains:
+        preview = ", ".join(sorted(noncanonical_fixture_domains)[:8])
+        suffix = "..." if len(noncanonical_fixture_domains) > 8 else ""
+        warnings.append(
+            "golden fixture domain taxonomy drift: expected_domains contains labels "
+            f"outside capability-index IDs ({preview}{suffix}); migrate or explicitly alias them"
+        )
 
     return {
         "provenance": {
@@ -241,6 +268,7 @@ def benchmark(cases: list[dict[str, Any]], classifier: Callable[[dict[str, Any]]
             "legacy_ambiguous_size_cases": legacy_ambiguous_count,
             "ambiguous_without_clarity": ambiguous_without_clarity,
             "domains_covered": len(domains),
+            "noncanonical_fixture_domains": len(noncanonical_fixture_domains),
             "deliverables_covered": len(deliverables),
             "missing_expected_deliverable": missing_deliverable,
             "executed_cases": executed,
@@ -275,7 +303,7 @@ def render_markdown(result: dict[str, Any]) -> str:
     for key in (
         "total_cases", "unique_ids", "negative_or_near_miss_cases",
         "negative_or_near_miss_ratio", "unknown_cases", "domains_covered",
-        "deliverables_covered", "missing_expected_deliverable", "executed_cases",
+        "noncanonical_fixture_domains", "deliverables_covered", "missing_expected_deliverable", "executed_cases",
         "classifier_passed", "classifier_failed", "classifier_uncertain", "scored",
     ):
         lines.append(f"| {key} | {metrics[key]} |")

@@ -44,6 +44,11 @@ classifier used with the optional local replay mode must report
 
 ## Evidence boundary
 
+The fixture audit also checks whether `expected_domains` uses IDs from the
+current `config/capability-index.yaml`. Legacy labels are reported as a warning
+rather than silently treated as current routing vocabulary. Migrate or explicitly
+alias those labels before using domain accuracy as a model-quality metric.
+
 A model/host benchmark must inject its classifier, agent, verifier, backend
 description, model capabilities, and provenance. Do not turn fixture-audit
 metrics into a claim about model accuracy, latency, cost, or tool safety.

@@ -42,9 +42,9 @@ itself `fixture_audit_pass`, not a model benchmark.
 | Routing precision | 8.1 | 154 cases, forbidden-route fixtures, 62 negative/near-miss cases, and zero broad-trigger collisions; real model precision remains unmeasured |
 | Context efficiency | 8.5 | Long skills are split into references; installer excludes development caches; capability index is loaded first |
 | Output/evidence contracts | 8.5 | Portable envelope, four channels, capability-gap reports, and standardized high-use contracts are present |
-| Portability | 8.8 | Copy-only installation, measured 3,468 KiB payload, host-neutral contracts, optional JEV, adapters, and provider-free benchmark |
+| Portability | 8.8 | Copy-only installation, measured 3,472 KiB payload, host-neutral contracts, optional JEV, adapters, and provider-free benchmark |
 | Maintainability | 8.7 | Generated inventory, contract validation, candidate-only evolution, reference tests, normalized trigger metadata, and CI/pre-commit gates |
-| Evaluation | 8.1 | All 154 cases declare deliverables; provider-free fixture benchmark passes; no model/host outcome benchmark or calibrated judge |
+| Evaluation | 8.1 | All 154 cases declare deliverables; provider-free fixture benchmark passes; fresh same-model smoke replay is 13/32 in two runs; no independent model/host outcome benchmark or calibrated judge |
 | Prompt-only safety | 8.3 | Explicit uncertainty, human review, capability gaps, no automatic package writes, and honest `not_run` semantics |
 | **Overall** | **8.6** | Strong prompt and packaging foundation; behavioral model/host evidence and organization-specific evaluation remain the main gaps |
 
@@ -98,7 +98,7 @@ The repository has:
 The latest implementation pass adds the following measurable packaging and
 prompt-quality evidence:
 
-- staged install: **3,468 KiB**, **418 files**, zero symlinks, zero local cache
+- staged install: **3,472 KiB**, **418 files**, zero symlinks, zero local cache
   directories, and zero protected local bridges;
 - prompt-only dependencies: **none** beyond the host;
 - development dependencies: Python 3.11+, PyYAML 6.0.2, pytest 8.3.5, and
@@ -116,7 +116,14 @@ prompt-quality evidence:
   the scanner is covered by fixture tests and never executes project commands;
 - verification: 802 Python tests, 25 JEV tests, strict prompt audit, strict
   provider-free benchmark, project-context benchmark, consistency, host-native,
-  and workflow-security checks.
+  and workflow-security checks;
+- fresh-context behavioral smoke replay: two same-model host sessions, 13/32
+  strict case passes in each run; this is not an independent model benchmark and
+  is recorded as a quality gap;
+- the provider-free audit now reports **29** legacy expected-domain labels that
+  are outside the current capability-index IDs; domain accuracy is not treated
+  as model-quality evidence until those fixtures are migrated or explicitly
+  aliased.
 
 The full setup and dependency matrix is in
 `ultimate-dev/INSTALLATION.md`. The measured size is a real staged install, not
@@ -161,10 +168,13 @@ require intent, deliverable, context, and risk. The prompt audit now reports
 **0** broad trigger collisions. Behavioral false-activation measurement remains
 separate and is still pending.
 
-#### 2. No behavioral prompt benchmark
+#### 2. Behavioral prompt benchmark — fresh-host smoke only
 
-Static checks prove structure, not answer quality. The repository still needs
-prompt-only cases with:
+Static checks prove structure, not answer quality. Two fresh same-model host
+sessions were replayed over a 32-case stratified sample; each passed 13/32
+strict routing cases, and exact cross-session agreement was 6/32. This is useful
+diagnostic evidence, but it is not an independent model benchmark. The full
+behavioral contract still needs:
 
 - expected selected skill
 - acceptable alternative skills
@@ -173,8 +183,13 @@ prompt-only cases with:
 - false-activation checks
 - context/token measurement
 - human or calibrated judge results
+- a separately identified model/provider and host
 
-This is the largest gap to a defensible 9–10 prompt-only rating.
+The provider-free audit also found 29 legacy expected-domain labels outside the
+current capability-index vocabulary. Until those labels are migrated or
+explicitly aliased, domain accuracy is not a fair model-quality metric.
+
+This remains the largest gap to a defensible 9–10 prompt-only rating.
 
 #### 3. Legacy skill inconsistency — high-use slice normalized
 
@@ -190,11 +205,15 @@ numbering, confidentiality, review, and promotion details into linked
 path is candidate-only: durable runtime may issue a memory receipt; prompt-only
 hosts return a handoff; neither writes canonical package files automatically.
 
-#### 5. Company-specific references — templates exist, evaluation pending
+#### 5. Company-specific references — templates exist, evaluation blocked
 
 Optional company-context templates and authoring rules are present under
-`ultimate-dev/reference/`. The suite still does not have verified
-jurisdiction-specific or organization-owned packs for:
+`ultimate-dev/reference/`. Template-mode validation passes, but no active
+organization-owned pack, policy set, jurisdiction set, approval matrix, or
+approved reviewer set is present in this repository. A real organization-
+specific evaluation is therefore blocked pending authoritative inputs. The suite
+still does not have verified jurisdiction-specific or organization-owned packs
+for:
 
 - accounting periods and chart of accounts
 - privacy/legal retention schedules

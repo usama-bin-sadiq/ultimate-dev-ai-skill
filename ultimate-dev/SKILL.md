@@ -131,6 +131,28 @@ unknown, load `skills/universal-task/SKILL.md`, complete only the safe bounded
 portion, and report the gap. Never invent a provider, capability, source, or
 authorization.
 
+### Behavioral classification guardrails
+
+For consistent host replay, use the current `config/capability-index.yaml` domain
+IDs exactly. Do not emit legacy labels such as `backend`, `frontend`, `finance`,
+or `project-management` when the index has a canonical umbrella ID. Use one
+primary domain unless the task has multiple material deliverables. Treat a
+keyword as a signal, not proof of a domain.
+
+Classify `risk` from the requested action and data impact, not from the topic
+alone: an explanation with no change is usually `none`; a code/data change is
+usually `data`; authentication, secrets, production security, or security-control
+work is `security`; legal, finance, HR, privacy, audit, or policy decisions are
+`compliance` when they require approved organizational judgment. Do not escalate
+risk merely because a subject can be sensitive.
+
+Choose the deliverable from the requested output: a defect fix is `bug-fix`, an
+implementation is `code`, an authored artifact is `document`, a message or status
+update is `communication`, and an unfamiliar request is `unknown`. For unknown
+cases use `unknown-unclassified`, route through `universal-task`, and disclose the
+capability gap. Multilingual output does not change the underlying routing
+classification; preserve the requested language as a separate output constraint.
+
 ## Four Universal Channels
 
 Use the same four-channel handoff for every task:

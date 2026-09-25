@@ -51,7 +51,8 @@ The following are enforced by repository checks:
 - POSIX/PowerShell installer tests, including tool-specific targets and memory preservation.
 - Structure, host-native, workflow-security, sync, compilation, and diff checks.
 - Staged install cache exclusion and payload-size reporting.
-- 154 provider-free routing fixtures with unknown and forbidden-route cases.
+- 154 provider-free routing fixtures with unknown and forbidden-route cases;
+- capability-index vocabulary drift is reported rather than hidden in fixture metrics.
 - Development dependency manifest and reproducible setup guide.
 - Optional company-context template validation and path-rule generation.
 - Dependency-free context benchmarks against three complete working trees of
@@ -59,7 +60,7 @@ The following are enforced by repository checks:
   and cleanup evidence.
 
 The current evidence-bounded prompt-only estimate is **8.6/10**. The staged
-install measured 3,468 KiB across 418 files; see
+install measured 3,472 KiB across 418 files; see
 `ultimate-dev/INSTALLATION.md` for the dependency matrix and measurement
 method. This is not an independent model/host benchmark and does not satisfy
 the 10/10 gate.
@@ -68,6 +69,8 @@ the 10/10 gate.
 
 These cannot be truthfully marked complete from this repository alone:
 
+- Independent model/host behavioral benchmark with baseline, provenance, and calibrated judge.
+- Organization-specific policy, jurisdiction, approval, and reviewer inputs.
 - Real provider quality and latency benchmarks.
 - Real browser/container/cluster integration tests.
 - Kernel-grade isolation and multi-tenant security.

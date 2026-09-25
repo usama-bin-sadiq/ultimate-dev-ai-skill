@@ -36,6 +36,8 @@ def test_provider_free_benchmark_is_structural_and_honest():
     assert report["metrics"]["forbidden_route_cases"] >= 50
     assert report["metrics"]["scored"] is False
     assert report["metrics"]["executed_cases"] == 0
+    assert report["metrics"]["noncanonical_fixture_domains"] > 0
+    assert any("taxonomy drift" in warning for warning in report["warnings"])
 
 
 def test_benchmark_strict_mode_accepts_the_fixture_audit_without_claiming_a_model_score():
