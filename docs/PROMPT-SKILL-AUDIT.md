@@ -130,6 +130,15 @@ The full setup and dependency matrix is in
 `ultimate-dev/INSTALLATION.md`. The measured size is a real staged install, not
 the source checkout size.
 
+## Repository-controlled scoped rating
+
+When external model/provider choice, organization-specific policy evaluation,
+and external infrastructure are excluded by scope, the current repository-
+controlled rating is **8.8/10** (medium confidence). This is not a production or
+product-wide rating. The main in-scope weakness is same-model behavioral
+consistency; structural packaging, safety contracts, tests, and reproducibility
+remain strong.
+
 ## Findings and severity
 
 ### P0 — fixed in this audit pass

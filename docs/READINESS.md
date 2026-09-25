@@ -59,8 +59,10 @@ The following are enforced by repository checks:
   mature open-source repositories, with shallow history, bounded object storage,
   and cleanup evidence.
 
-The current evidence-bounded prompt-only estimate is **8.6/10**. The staged
-install measured 3,496 KiB across 422 files; see
+The current evidence-bounded prompt-only estimate is **8.6/10**. The
+repository-controlled scoped rating, excluding user/host-selected external
+model/provider and organization-specific evaluation, is **8.8/10** (medium
+confidence). The staged install measured 3,496 KiB across 422 files; see
 `ultimate-dev/INSTALLATION.md` for the dependency matrix and measurement
 method. This is not an independent model/host benchmark and does not satisfy
 the 10/10 gate.
