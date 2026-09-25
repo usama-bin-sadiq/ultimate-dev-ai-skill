@@ -2,6 +2,7 @@
 """Contract tests for the provider-free prompt routing benchmark."""
 from __future__ import annotations
 
+import importlib.util
 import json
 import subprocess
 import sys
@@ -37,7 +38,11 @@ def test_provider_free_benchmark_is_structural_and_honest():
     assert report["metrics"]["scored"] is False
     assert report["metrics"]["executed_cases"] == 0
     assert report["metrics"]["noncanonical_fixture_domains"] > 0
-    assert any("taxonomy drift" in warning for warning in report["warnings"])
+    assert report["metrics"]["safe_alias_fixture_domains"] > 0
+    assert report["metrics"]["ambiguous_fixture_domains"] > 0
+    assert report["metrics"]["domain_comparison_unscored_cases"] > 0
+    assert any("aliases available" in warning for warning in report["warnings"])
+    assert any("ambiguous labels" in warning for warning in report["warnings"])
 
 
 def test_benchmark_strict_mode_accepts_the_fixture_audit_without_claiming_a_model_score():
@@ -57,3 +62,27 @@ def test_required_contract_and_unknown_route_are_visible():
     assert report["metrics"]["deliverables_covered"] >= 20
     assert report["metrics"]["categories"].get("unknown", 0) >= 10
     assert not report["errors"]
+
+
+def test_structured_capability_gap_is_comparable():
+    spec = importlib.util.spec_from_file_location("prompt_benchmark", SCRIPT)
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    passed, reasons = module._compare(
+        {"capability_gap": "partial"},
+        {"capability_gap": {"level": "partial", "missing": ["x"]}},
+    )
+    assert passed, reasons
+
+
+def test_empty_expected_domains_are_not_scored_as_a_zero_domain_requirement():
+    spec = importlib.util.spec_from_file_location("prompt_benchmark_empty_domains", SCRIPT)
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    passed, reasons = module._compare(
+        {"domains": []},
+        {"domains": ["software-engineering"]},
+    )
+    assert passed, reasons

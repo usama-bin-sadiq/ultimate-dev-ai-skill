@@ -39,6 +39,19 @@ CASE_REQUIRED = {"id", "task", "expected_size", "expected_domains", "expected_ri
 CATEGORY_RE = re.compile(r"(near[-_ ]?miss|negative|unknown|multilingual|capability[-_ ]?gap)", re.I)
 
 
+def _domain_alias_policy() -> tuple[dict[str, str], set[str]]:
+    try:
+        data = json.loads((ROOT / "evals" / "domain-aliases.json").read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}, set()
+    safe = data.get("safe_aliases") if isinstance(data, dict) else {}
+    ambiguous = data.get("ambiguous_labels") if isinstance(data, dict) else []
+    return (
+        {str(key): str(value) for key, value in (safe or {}).items()},
+        {str(value) for value in (ambiguous or [])},
+    )
+
+
 def _canonical_domain_ids() -> set[str]:
     """Read canonical domain IDs without adding a YAML dependency."""
     index_path = ROOT / "config" / "capability-index.yaml"
@@ -103,18 +116,36 @@ def _load_local_classifier(spec: str) -> Callable[[dict[str, Any]], Any]:
     return function
 
 
-def _compare(expected: dict[str, Any], actual: Any) -> tuple[bool, list[str]]:
+def _comparison_value(value: Any) -> Any:
+    if isinstance(value, dict) and "level" in value:
+        return value.get("level")
+    return value
+
+
+def _compare(
+    expected: dict[str, Any],
+    actual: Any,
+    safe_aliases: dict[str, str] | None = None,
+    ambiguous_labels: set[str] | None = None,
+) -> tuple[bool, list[str]]:
     if not isinstance(actual, dict):
         return False, ["classifier_output_not_mapping"]
     reasons: list[str] = []
-    for key in ("size", "risk", "deliverable", "route"):
-        if key in expected and str(actual.get(key, "")).lower() != str(expected[key]).lower():
+    for key in ("size", "risk", "deliverable", "route", "clarity", "capability_gap"):
+        if key in expected and str(_comparison_value(actual.get(key, ""))).lower() != str(expected[key]).lower():
             reasons.append(f"{key}_mismatch")
     if "domains" in expected:
-        expected_domains = {str(item) for item in (expected["domains"] or [])}
-        actual_domains = {str(item) for item in (actual.get("domains") or [])}
-        if expected_domains != actual_domains:
-            reasons.append("domains_mismatch")
+        expected_values = {str(item) for item in (expected["domains"] or [])}
+        ambiguous_labels = ambiguous_labels or set()
+        safe_aliases = safe_aliases or {}
+        if expected_values and not expected_values.intersection(ambiguous_labels):
+            expected_domains = {safe_aliases.get(item, item) for item in expected_values}
+            actual_domains = {
+                safe_aliases.get(str(item), str(item))
+                for item in (actual.get("domains") or [])
+            }
+            if expected_domains != actual_domains:
+                reasons.append("domains_mismatch")
     if "forbidden_domains" in expected:
         activated = actual.get("activated_forbidden_domains")
         if not isinstance(activated, list):
@@ -142,7 +173,11 @@ def benchmark(cases: list[dict[str, Any]], classifier: Callable[[dict[str, Any]]
     legacy_ambiguous_count = 0
     ambiguous_without_clarity = 0
     canonical_domain_ids = _canonical_domain_ids()
+    safe_aliases, ambiguous_labels = _domain_alias_policy()
     noncanonical_fixture_domains: set[str] = set()
+    safe_alias_fixture_domains: set[str] = set()
+    ambiguous_fixture_domains: set[str] = set()
+    domain_comparison_unscored_cases = 0
     executed = 0
     passed = 0
     failed = 0
@@ -176,6 +211,16 @@ def benchmark(cases: list[dict[str, Any]], classifier: Callable[[dict[str, Any]]
                     str(item) for item in case["expected_domains"]
                     if str(item) not in canonical_domain_ids
                 )
+                safe_alias_fixture_domains.update(
+                    str(item) for item in case["expected_domains"]
+                    if str(item) in safe_aliases
+                )
+                ambiguous_fixture_domains.update(
+                    str(item) for item in case["expected_domains"]
+                    if str(item) in ambiguous_labels
+                )
+                if any(str(item) in ambiguous_labels for item in case["expected_domains"]):
+                    domain_comparison_unscored_cases += 1
         risks.add(risk)
         category = _case_category(case)
         categories[category] += 1
@@ -212,7 +257,9 @@ def benchmark(cases: list[dict[str, Any]], classifier: Callable[[dict[str, Any]]
             executed += 1
             try:
                 actual = classifier(case)
-                ok, reasons = _compare(_expected_fields(case), actual)
+                ok, reasons = _compare(
+                    _expected_fields(case), actual, safe_aliases, ambiguous_labels
+                )
                 if ok:
                     passed += 1
                 else:
@@ -238,12 +285,24 @@ def benchmark(cases: list[dict[str, Any]], classifier: Callable[[dict[str, Any]]
         )
     if not any(domain in domains for domain in ("unknown-unclassified", "universal-task")):
         warnings.append("no explicit unknown/unclassified domain case found")
-    if noncanonical_fixture_domains:
-        preview = ", ".join(sorted(noncanonical_fixture_domains)[:8])
-        suffix = "..." if len(noncanonical_fixture_domains) > 8 else ""
+    if safe_alias_fixture_domains:
         warnings.append(
-            "golden fixture domain taxonomy drift: expected_domains contains labels "
-            f"outside capability-index IDs ({preview}{suffix}); migrate or explicitly alias them"
+            f"golden fixture domain aliases available for comparison: "
+            f"{len(safe_alias_fixture_domains)} legacy label(s); aliases are not routing replacements"
+        )
+    if ambiguous_fixture_domains:
+        preview = ", ".join(sorted(ambiguous_fixture_domains))
+        warnings.append(
+            "golden fixture domain comparison unscored for ambiguous labels "
+            f"({preview}); review each case before migration"
+        )
+    remaining = sorted(noncanonical_fixture_domains - safe_alias_fixture_domains - ambiguous_fixture_domains)
+    if remaining:
+        preview = ", ".join(remaining[:8])
+        suffix = "..." if len(remaining) > 8 else ""
+        warnings.append(
+            "golden fixture domain taxonomy drift: expected_domains contains unmapped labels "
+            f"outside capability-index IDs ({preview}{suffix})"
         )
 
     return {
@@ -269,6 +328,9 @@ def benchmark(cases: list[dict[str, Any]], classifier: Callable[[dict[str, Any]]
             "ambiguous_without_clarity": ambiguous_without_clarity,
             "domains_covered": len(domains),
             "noncanonical_fixture_domains": len(noncanonical_fixture_domains),
+            "safe_alias_fixture_domains": len(safe_alias_fixture_domains),
+            "ambiguous_fixture_domains": len(ambiguous_fixture_domains),
+            "domain_comparison_unscored_cases": domain_comparison_unscored_cases,
             "deliverables_covered": len(deliverables),
             "missing_expected_deliverable": missing_deliverable,
             "executed_cases": executed,
@@ -303,7 +365,8 @@ def render_markdown(result: dict[str, Any]) -> str:
     for key in (
         "total_cases", "unique_ids", "negative_or_near_miss_cases",
         "negative_or_near_miss_ratio", "unknown_cases", "domains_covered",
-        "noncanonical_fixture_domains", "deliverables_covered", "missing_expected_deliverable", "executed_cases",
+        "noncanonical_fixture_domains", "safe_alias_fixture_domains", "ambiguous_fixture_domains",
+        "domain_comparison_unscored_cases", "deliverables_covered", "missing_expected_deliverable", "executed_cases",
         "classifier_passed", "classifier_failed", "classifier_uncertain", "scored",
     ):
         lines.append(f"| {key} | {metrics[key]} |")

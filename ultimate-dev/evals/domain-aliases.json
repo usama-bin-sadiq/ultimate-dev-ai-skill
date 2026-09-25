@@ -1,0 +1,43 @@
+{
+  "version": "1.0",
+  "canonical_source": "config/capability-index.yaml",
+  "purpose": "Comparison-only normalization for legacy golden fixture labels; never a routing replacement.",
+  "safe_aliases": {
+    "academic": "research-analysis",
+    "architecture": "software-engineering",
+    "backend": "software-engineering",
+    "data-engineering": "data-bi",
+    "devops": "software-engineering",
+    "frontend": "software-engineering",
+    "game-dev": "specialized-industries",
+    "gap-tracker": "prompt-skill-quality",
+    "gis": "specialized-industries",
+    "healthcare": "specialized-industries",
+    "marketing": "marketing-sales-support",
+    "monitoring": "software-engineering",
+    "paid-media": "marketing-sales-support",
+    "product": "product-discovery",
+    "project-management": "program-project-operations",
+    "sales": "marketing-sales-support",
+    "self-evolve": "prompt-skill-quality",
+    "security": "software-engineering",
+    "skill-maintainer": "prompt-skill-quality",
+    "spatial-computing": "specialized-industries",
+    "specialized": "specialized-industries",
+    "support": "marketing-sales-support",
+    "task-observer": "prompt-skill-quality",
+    "testing-qa": "software-engineering"
+  },
+  "ambiguous_labels": [
+    "client-comms",
+    "database",
+    "design-handoff",
+    "documentation",
+    "finance"
+  ],
+  "review_required": [
+    "Map ambiguous labels per case after reviewing deliverable, risk, and context.",
+    "Do not use aliases to claim that distinct specialist routes are equivalent.",
+    "Update this file only with an explicit review decision."
+  ]
+}

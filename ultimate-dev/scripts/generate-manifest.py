@@ -192,6 +192,7 @@ def generate_manifest():
             "scripts/install.ps1",
             "scripts/validate-consistency.py",
             "scripts/benchmark-prompt-routing.py",
+            "scripts/compare-routing-predictions.py",
             "scripts/generate-project-context.py",
             "scripts/measure-install.py",
             "scripts/validate-company-context.py",

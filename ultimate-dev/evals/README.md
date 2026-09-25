@@ -46,8 +46,25 @@ classifier used with the optional local replay mode must report
 
 The fixture audit also checks whether `expected_domains` uses IDs from the
 current `config/capability-index.yaml`. Legacy labels are reported as a warning
-rather than silently treated as current routing vocabulary. Migrate or explicitly
-alias those labels before using domain accuracy as a model-quality metric.
+rather than silently treated as current routing vocabulary. The reviewable,
+comparison-only policy in `domain-aliases.json` separates safe umbrella aliases
+from ambiguous labels; ambiguous cases are not domain-scored until reviewed.
+Migrate or explicitly approve those labels before using domain accuracy as a
+model-quality metric.
+
+For a recorded host-session replay, export the hidden sample and predictions as
+JSON, then run:
+
+```bash
+python3 scripts/compare-routing-predictions.py \
+  --gold evidence/behavioral-gold.json \
+  --predictions evidence/behavioral-predictions.json \
+  --strict --json
+```
+
+The comparison is dependency-free, accepts structured capability-gap objects,
+normalizes only reviewed safe aliases, and leaves ambiguous domain cases
+unscored. It is not an independent model benchmark.
 
 A model/host benchmark must inject its classifier, agent, verifier, backend
 description, model capabilities, and provenance. Do not turn fixture-audit

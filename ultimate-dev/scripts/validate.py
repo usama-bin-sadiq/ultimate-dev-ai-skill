@@ -125,6 +125,7 @@ for d in ["config", "prompts", "workflows", "schemas", "rules", "templates",
 print("\n=== Prompt-first Extensions ===")
 for script in (
     "scripts/benchmark-prompt-routing.py",
+    "scripts/compare-routing-predictions.py",
     "scripts/generate-project-context.py",
     "scripts/measure-install.py",
     "scripts/benchmark-project-context.py",

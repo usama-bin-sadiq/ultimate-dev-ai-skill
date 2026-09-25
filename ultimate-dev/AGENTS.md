@@ -95,18 +95,24 @@ primary domain unless the task has multiple material deliverables. Treat a
 keyword as a signal, not proof of a domain.
 
 Classify `risk` from the requested action and data impact, not from the topic
-alone: an explanation with no change is usually `none`; a code/data change is
-usually `data`; authentication, secrets, production security, or security-control
-work is `security`; legal, finance, HR, privacy, audit, or policy decisions are
-`compliance` when they require approved organizational judgment. Do not escalate
-risk merely because a subject can be sensitive.
+alone. Ordinary explanation, documentation, communication, or code work with no
+sensitive data, production effect, security boundary, or regulated decision is
+usually `none`. Use `data` for material personal/sensitive-data handling or a
+meaningful data/operational impact; use `security` for authentication, secrets,
+production security, or security-control work; use `compliance` for legal,
+finance, HR, privacy, audit, or policy decisions that require approved
+organizational judgment. Do not escalate risk merely because a subject can be
+sensitive, and do not treat every code change as `data` risk.
 
 Choose the deliverable from the requested output: a defect fix is `bug-fix`, an
 implementation is `code`, an authored artifact is `document`, a message or status
 update is `communication`, and an unfamiliar request is `unknown`. For unknown
 cases use `unknown-unclassified`, route through `universal-task`, and disclose the
-capability gap. Multilingual output does not change the underlying routing
-classification; preserve the requested language as a separate output constraint.
+capability gap. Set `capability_gap: none` when an applicable skill or specialist
+is available; use `partial` only when a bounded part is missing, and `blocking`
+when safe completion is impossible. Multilingual output does not change the
+underlying routing classification; preserve the requested language as a separate
+output constraint.
 
 Pass work through four explicit channels: Intent (understand), Knowledge
 (select the smallest method), Action (request versus available host capability),

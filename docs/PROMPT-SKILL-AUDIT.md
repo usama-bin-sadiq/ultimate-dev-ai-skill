@@ -44,7 +44,7 @@ itself `fixture_audit_pass`, not a model benchmark.
 | Output/evidence contracts | 8.5 | Portable envelope, four channels, capability-gap reports, and standardized high-use contracts are present |
 | Portability | 8.8 | Copy-only installation, measured 3,472 KiB payload, host-neutral contracts, optional JEV, adapters, and provider-free benchmark |
 | Maintainability | 8.7 | Generated inventory, contract validation, candidate-only evolution, reference tests, normalized trigger metadata, and CI/pre-commit gates |
-| Evaluation | 8.1 | All 154 cases declare deliverables; provider-free fixture benchmark passes; fresh same-model smoke replay is 13/32 in two runs; no independent model/host outcome benchmark or calibrated judge |
+| Evaluation | 8.1 | All 154 cases declare deliverables; provider-free fixture benchmark passes; three same-model smoke iterations range from 4/32 to 17/32 with the final comparison policy; no independent model/host outcome benchmark or calibrated judge |
 | Prompt-only safety | 8.3 | Explicit uncertainty, human review, capability gaps, no automatic package writes, and honest `not_run` semantics |
 | **Overall** | **8.6** | Strong prompt and packaging foundation; behavioral model/host evidence and organization-specific evaluation remain the main gaps |
 
@@ -98,7 +98,7 @@ The repository has:
 The latest implementation pass adds the following measurable packaging and
 prompt-quality evidence:
 
-- staged install: **3,472 KiB**, **418 files**, zero symlinks, zero local cache
+- staged install: **3,492 KiB**, **421 files**, zero symlinks, zero local cache
   directories, and zero protected local bridges;
 - prompt-only dependencies: **none** beyond the host;
 - development dependencies: Python 3.11+, PyYAML 6.0.2, pytest 8.3.5, and
@@ -117,13 +117,14 @@ prompt-quality evidence:
 - verification: 802 Python tests, 25 JEV tests, strict prompt audit, strict
   provider-free benchmark, project-context benchmark, consistency, host-native,
   and workflow-security checks;
-- fresh-context behavioral smoke replay: two same-model host sessions, 13/32
-  strict case passes in each run; this is not an independent model benchmark and
-  is recorded as a quality gap;
-- the provider-free audit now reports **29** legacy expected-domain labels that
-  are outside the current capability-index IDs; domain accuracy is not treated
-  as model-quality evidence until those fixtures are migrated or explicitly
-  aliased.
+- fresh-context behavioral smoke replay: three same-model host sessions; baseline
+  runs scored 13/32, the first guardrail iteration 4/32, and the refined
+  iteration 11/32 raw (17/32 with the final comparison policy, five ambiguous
+  domain cases unscored); this is not an independent model benchmark and remains
+  a quality gap;
+- the provider-free audit reports **29** legacy expected-domain labels: 24 have
+  reviewable comparison-only aliases and 5 remain ambiguous; ambiguous domain
+  accuracy is not treated as model-quality evidence.
 
 The full setup and dependency matrix is in
 `ultimate-dev/INSTALLATION.md`. The measured size is a real staged install, not
@@ -170,11 +171,12 @@ separate and is still pending.
 
 #### 2. Behavioral prompt benchmark — fresh-host smoke only
 
-Static checks prove structure, not answer quality. Two fresh same-model host
-sessions were replayed over a 32-case stratified sample; each passed 13/32
-strict routing cases, and exact cross-session agreement was 6/32. This is useful
-diagnostic evidence, but it is not an independent model benchmark. The full
-behavioral contract still needs:
+Static checks prove structure, not answer quality. Three fresh same-model host
+sessions were replayed over a 32-case stratified sample. The baseline runs each
+passed 13/32; the first guardrail iteration fell to 4/32 after an over-broad
+risk rule; the refined iteration reached 11/32 raw and 17/32 with the final
+comparison policy. This is useful diagnostic evidence, but it is not an
+independent model benchmark. The full behavioral contract still needs:
 
 - expected selected skill
 - acceptable alternative skills
@@ -186,8 +188,9 @@ behavioral contract still needs:
 - a separately identified model/provider and host
 
 The provider-free audit also found 29 legacy expected-domain labels outside the
-current capability-index vocabulary. Until those labels are migrated or
-explicitly aliased, domain accuracy is not a fair model-quality metric.
+current capability-index vocabulary. Twenty-four have reviewable comparison-only
+aliases and five remain ambiguous. Until the ambiguous labels are reviewed,
+domain accuracy is not a fair model-quality metric.
 
 This remains the largest gap to a defensible 9–10 prompt-only rating.
 

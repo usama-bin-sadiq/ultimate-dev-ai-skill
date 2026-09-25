@@ -47,9 +47,9 @@ not by measuring the Git checkout:
 
 | Measure | Result |
 |---|---:|
-| Installed payload (`du -sk`) | **3,472 KiB** (~3.39 MiB) |
-| Logical file bytes | **2,640,862 bytes** (~2.52 MiB) |
-| Installed files | **418** |
+| Installed payload (`du -sk`) | **3,492 KiB** (~3.41 MiB) |
+| Logical file bytes | **2,657,845 bytes** (~2.53 MiB) |
+| Installed files | **421** |
 | Symlinks | **0** |
 | Development cache directories | **0** |
 | Protected local bridges | **0** |
@@ -66,9 +66,10 @@ Approximate full-payload directory breakdown:
 |---|---:|
 | `runtime/` | ~1.1 MiB |
 | `agents/` | ~524 KiB |
-| `tests/` | ~368 KiB |
+| `tests/` | ~372 KiB |
 | `modules/` | ~304 KiB |
-| `scripts/` | ~216 KiB |
+| `scripts/` | ~228 KiB |
+| `evals/` | ~52 KiB |
 | `config/` | ~164 KiB |
 | `skills/` | ~160 KiB |
 
@@ -102,7 +103,7 @@ clone was removed afterward.
 The installer prints the measured payload size after every successful install:
 
 ```text
-Payload size: 3472 KiB (development caches excluded)
+Payload size: 3492 KiB (development caches excluded)
 ```
 
 ### Measure another installation yourself
