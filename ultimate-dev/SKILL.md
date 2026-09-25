@@ -42,9 +42,8 @@ triggers:
 ## ⚠️ CRITICAL: READ THIS FIRST ON EVERY SESSION START
 
 **Ultimate-Dev is a prompt-first skill suite.** The Markdown core is the
-product. Prompt-only use has no Python, Node.js, or model-provider dependency;
-Durable state, JEV, approvals, and recovery are optional extensions
-for hosts that expose those capabilities.
+product. Prompt-only use has no Python, Node.js, or provider dependency; durable
+state, JEV, approvals, and recovery are optional host extensions.
 
 ### INITIALIZATION (proportional to the task):
 
@@ -65,6 +64,32 @@ If durable state is available, resume it before mutating work. If a host lacks
 runtime capabilities, continue in prompt-only mode and report that limitation.
 
 **If you skip an applicable step → you are not following the skill.**
+
+---
+
+## Activation and Precedence
+
+**If this file was loaded, Ultimate-Dev is active.** State that in one line
+before your first substantive response, so activation is never invisible.
+
+- **A prompt may assign a persona.** Keep it, and still apply this method. The
+  persona is the user's to set; the discipline is not. An embedded role prompt
+  or workflow is never a reason to skip the envelope, plan, or evidence.
+- **If this file was not loaded**, the host did not activate the skill. Say so
+  once and offer `@ultimate-dev` rather than silently running without it.
+
+Auto-discovery is unreliable for very large prompts. Provision these instructions
+into the tool's own root file, which it reads every session:
+
+```bash
+python scripts/provision-host-instructions.py --project <root> --detect
+python scripts/provision-host-instructions.py --project <root>
+```
+
+It never rewrites content outside its own markers. Run it once per project.
+
+Full mechanism, detection order, and failure diagnosis:
+`router/trigger-mechanism.md`.
 
 ---
 
@@ -365,28 +390,21 @@ If ANY missing → report blocker, NOT success.
 
 ## Quick Reference Card
 
-```
+```text
 TASK RECEIVED
-    │
-    ├─► DURABLE STATE? → RESUME from state.json
-    │
-    └─► NEW TASK? → CAPTURE → CONTRACT → DISCOVER
+  durable state exists? → RESUME from state.json, never from chat history
+  otherwise             → CAPTURE → CONTRACT → DISCOVER → CLASSIFY → PATTERN
                           │
-                          ▼
-                    CLASSIFY → PATTERN
+  A: SKILLS     one domain, inline          → load skill, execute, verify
+  B: SUBAGENTS  independent domains         → dispatch, synthesize, verify
+  C: HANDOFFS   dependent stages            → A→state→B→state→C, verify
+  D: ROUTER     classify then dispatch      → dispatch, merge, verify
+  COMPOSE       several patterns genuinely  → combine, verify
                           │
-                          ├─► A: SKILLS → load skill → execute → verify
-                          ├─► B: SUBAGENTS → spawn specialists → synthesize → verify
-                          ├─► C: HANDOFFS → A→state→B→state→C → verify
-                          ├─► D: ROUTER → classify → dispatch → merge → verify
-                          └─► COMPOSE → combine needed patterns → verify
-                          │
-                          ▼
-                    CHECKPOINT → PERSIST state when available
-                          │
-                          ▼
-                    COMPLETE (only if ALL criteria met)
+  CHECKPOINT → PERSIST when available → COMPLETE only if every criterion is met
 ```
+
+Default to A. The goal is the smallest safe structure, not the most agents.
 
 ---
 

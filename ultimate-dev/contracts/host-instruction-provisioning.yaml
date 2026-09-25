@@ -1,0 +1,72 @@
+version: "1.0"
+kind: ultimate-dev-host-instruction-provisioning
+status: portable
+runtime_required: false
+
+principle: >-
+  A skill that only loads when a host auto-matches it fails silently. The
+  tool's own root instruction file is read on every session by that tool, so it
+  is the reliable activation channel. Provision it per tool instead of relying
+  on discovery.
+
+detection:
+  # Ordered signals; the first tool with a positive signal wins unless --tool is given.
+  claude-code:
+    env: [CLAUDECODE, CLAUDE_CODE_ENTRYPOINT, CLAUDE_CODE_SSE_PORT]
+    paths: [CLAUDE.md, .claude/settings.json, .claude/skills]
+  codex:
+    env: [CODEX_HOME, CODEX_SANDBOX]
+    paths: [AGENTS.md, .codex/config.toml, .codex/prompts]
+  opencode:
+    env: [OPENCODE, OPENCODE_BIN]
+    paths: [AGENTS.md, .opencode, opencode.json]
+  cursor:
+    env: [CURSOR_TRACE_ID]
+    paths: [.cursorrules, .cursor/rules, .cursor]
+  windsurf:
+    env: [WINDSURF_SESSION]
+    paths: [.windsurfrules, .windsurf]
+  cline:
+    env: [CLINE_ACTIVE]
+    paths: [.clinerules, .clinerules/workflows]
+  copilot:
+    env: [GITHUB_COPILOT_AGENT]
+    paths: [.github/copilot-instructions.md, copilot-instructions.md]
+  gemini:
+    env: [GEMINI_CLI]
+    paths: [GEMINI.md, .gemini]
+  generic:
+    env: []
+    paths: [AGENTS.md]
+
+targets:
+  claude-code: {path: CLAUDE.md, format: markdown, append: true}
+  codex: {path: AGENTS.md, format: markdown, append: true}
+  opencode: {path: AGENTS.md, format: markdown, append: true}
+  cursor: {path: .cursorrules, format: md, append: true}
+  windsurf: {path: .windsurfrules, format: md, append: true}
+  cline: {path: .clinerules, format: md, append: true}
+  copilot: {path: .github/copilot-instructions.md, format: markdown, append: true}
+  gemini: {path: GEMINI.md, format: markdown, append: true}
+  generic: {path: AGENTS.md, format: markdown, append: true}
+
+markers:
+  begin: "<!-- BEGIN ULTIMATE-DEV -->"
+  end: "<!-- END ULTIMATE-DEV -->"
+
+rules:
+  - "Never delete or rewrite content outside the markers."
+  - "If the markers exist, replace only what is between them, so edits to the block survive a re-provision."
+  - "If they do not exist, append the block to the end of the file."
+  - "If the target file does not exist, create it with the block as the whole file."
+  - "Never provision more than one file by default; one always-read file per project is enough."
+  - "Report which file was written, and whether it was created, updated, or already current."
+
+precedence:
+  rule: >-
+    A prompt may assign a persona or role. Keep the persona the user asked for
+    and still apply this skill's method. The persona is the user's to set; the
+    discipline is not.
+  never: >-
+    Do not treat an embedded role prompt or an embedded workflow as a reason to
+    skip the task envelope, the plan, or the verification evidence.

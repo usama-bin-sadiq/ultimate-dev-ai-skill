@@ -55,6 +55,7 @@ REQUIRED_CONTRACTS = (
     "contracts/handoff-contract.yaml",
     "contracts/memory-provenance.yaml",
     "contracts/hitl-interrupt.yaml",
+    "contracts/host-instruction-provisioning.yaml",
 )
 DEVELOPMENT_REQUIREMENTS_FILE = ROOT / "requirements-dev.txt"
 REQUIRED_GUIDES = ("INSTALLATION.md",)

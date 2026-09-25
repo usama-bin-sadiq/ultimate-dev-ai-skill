@@ -118,6 +118,11 @@ def test_behavioral_calibration_is_single_source():
     assert "Risk calibration" in calibration
     progressive = (ROOT / "router" / "progressive-disclosure.md").read_text(encoding="utf-8")
     assert "Three levels" in progressive
+    trigger = (ROOT / "router" / "trigger-mechanism.md").read_text(encoding="utf-8")
+    assert "BEGIN ULTIMATE-DEV" in trigger
+    assert "provision-host-instructions.py" in trigger
+    for entrypoint in (ROOT / "SKILL.md", ROOT / "AGENTS.md"):
+        assert "router/trigger-mechanism.md" in entrypoint.read_text(encoding="utf-8")
     for entrypoint in (ROOT / "SKILL.md", ROOT / "AGENTS.md"):
         text = entrypoint.read_text(encoding="utf-8")
         assert "router/behavioral-calibration.md" in text
@@ -173,18 +178,18 @@ def test_portable_contracts_and_provider_free_benchmark_are_registered():
     import yaml
 
     manifest = yaml.safe_load((ROOT / "skill-manifest.yaml").read_text(encoding="utf-8"))
-    assert manifest["contracts"] == [
-        "contracts/README.md",
-        "contracts/capability-manifest.yaml",
-        "contracts/four-channels.md",
-        "contracts/handoff-contract.yaml",
-        "contracts/hitl-interrupt.yaml",
-        "contracts/memory-provenance.yaml",
-        "contracts/middleware-hooks.yaml",
-        "contracts/subagent-contract.yaml",
-        "contracts/task-envelope.yaml",
-        "contracts/task-state-machine.yaml",
-    ]
+    # Compare against the files actually on disk rather than a hardcoded list.
+    # A literal here broke on every contract addition, including a sort-order
+    # slip that a self-maintaining assertion catches for free.
+    actual = sorted(
+        f"contracts/{path.relative_to(ROOT / 'contracts')}"
+        for path in (ROOT / "contracts").rglob("*")
+        if path.is_file() and not path.name.startswith(".")
+    )
+    assert manifest["contracts"] == actual
+    assert "contracts/host-instruction-provisioning.yaml" in actual
+    assert "contracts/task-state-machine.yaml" in actual
+    assert "scripts/provision-host-instructions.py" in manifest["scripts"]
     assert "scripts/benchmark-prompt-routing.py" in manifest["scripts"]
     assert "scripts/generate-project-context.py" in manifest["scripts"]
     assert "scripts/measure-install.py" in manifest["scripts"]

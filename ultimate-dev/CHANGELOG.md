@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+## [3.2.0] - 2026-09-26
+
+### Added
+- `provision-host-instructions.py` and `contracts/host-instruction-provisioning.yaml`: writes the skill's operating method into the tool's own root instruction file, which that tool reads on every session. Detects the tool from live environment variables first and marker files second, supports claude-code, codex, opencode, cursor, windsurf, cline, copilot, gemini, and a generic `AGENTS.md`, and never rewrites content outside its own markers.
+- `router/trigger-mechanism.md`: the four activation channels in reliability order, why auto-discovery fails silently on very large prompts, the persona-versus-method precedence rule, and a five-step diagnosis for a trigger failure.
+
+### Fixed
+- **The skill had no activation contract.** Nothing told the model what to do when a request assigns its own role, such as "You are an autonomous senior game-development agent", and nothing detected that the skill had never been loaded. A large prompt could therefore be worked with none of the skill's discipline and no visible sign that anything was missing. SKILL.md and AGENTS.md now state that an active skill announces itself, that a persona is kept while the method still applies, and that a non-loaded skill says so and offers the explicit invocation.
+- Provisioning writes a marked block, so a file the user already maintains is preserved. Re-running replaces only what is between the markers, which is covered by a test.
+- Tool detection ranked marker files above live environment signals, so a project carrying both `CLAUDE.md` and `AGENTS.md` always resolved to the wrong tool. Environment signals now outrank file presence.
+- `tests/test_consistency.py` compared the manifest contract list against a hardcoded literal, which broke on every contract addition including a sort-order slip. It now compares against the files on disk, so it is self-maintaining.
+
+### Changed
+- SKILL.md's entrypoint budget rose from 2400 to 2500 words to accommodate the Activation and Precedence section, with the reason recorded in `measure-entrypoint.py`. The gate stays active. The Quick Reference Card was rewritten as compact prose because the ASCII diagram consumed visual space without reducing the word count.
+
 ## [3.1.2] - 2026-09-26
 
 ### Fixed

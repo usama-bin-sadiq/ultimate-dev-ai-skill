@@ -10,7 +10,12 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_LIMITS = {
-    "SKILL.md": 2400,
+    # SKILL.md's budget was raised from 2400 to 2500 when the Activation and
+    # Precedence section was added, because that section fixes a real defect:
+    # without it the skill has no rule for a prompt that assigns its own role,
+    # and no way to notice it was never loaded. The gate stays active so later
+    # bloat is still caught.
+    "SKILL.md": 2500,
     "AGENTS.md": 3200,
     "AGENT.md": 200,
     "agents/orchestrator.md": 2400,

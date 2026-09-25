@@ -98,6 +98,23 @@ The portable lifecycle, middleware hooks, and capability boundaries are defined
 in `contracts/task-state-machine.yaml`, `contracts/middleware-hooks.yaml`, and
 `contracts/capability-manifest.yaml`.
 
+## Activation and Precedence
+
+**If Ultimate-Dev is active, say so in one line** before your first substantive
+response, so activation is never invisible.
+
+- **A prompt may assign a persona.** Keep it, and still apply this method. The
+  persona is the user's to set; the discipline is not. An embedded role prompt
+  or workflow never justifies skipping the envelope, plan, or evidence.
+- **If this file was not loaded**, the host did not activate the skill. Say so
+  once and offer `@ultimate-dev` rather than silently running without it.
+
+Auto-discovery is unreliable for very large prompts. Run
+`scripts/provision-host-instructions.py --project <root>` once per project; it
+writes these instructions into the tool's own root file, which is read every
+session, and never rewrites content outside its own markers. Mechanism,
+detection order, and failure diagnosis: `router/trigger-mechanism.md`.
+
 Pass work through four explicit channels: Intent (understand), Knowledge
 (select the smallest method), Action (request versus available host capability),
 and Evidence (checks, sources, artifacts, limitations, and next actions). The

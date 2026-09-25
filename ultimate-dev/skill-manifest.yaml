@@ -32,7 +32,7 @@ stats:
   total_modules: 46
   total_shared: 5
   departments_covered: 44
-  last_generated: '2026-09-25'
+  last_generated: '2026-09-26'
 agents:
 - agents/academic/research-methodologist.md
 - agents/ai-ml/generic-ai-ml-specialist.md
@@ -262,6 +262,7 @@ contracts:
 - contracts/four-channels.md
 - contracts/handoff-contract.yaml
 - contracts/hitl-interrupt.yaml
+- contracts/host-instruction-provisioning.yaml
 - contracts/memory-provenance.yaml
 - contracts/middleware-hooks.yaml
 - contracts/subagent-contract.yaml
@@ -275,6 +276,7 @@ scripts:
 - scripts/validate-consistency.py
 - scripts/benchmark-prompt-routing.py
 - scripts/compare-routing-predictions.py
+- scripts/provision-host-instructions.py
 - scripts/validate-routing-decision.py
 - scripts/measure-entrypoint.py
 - scripts/replay-gate.py
@@ -294,6 +296,7 @@ router:
   - router/classification-rules.md
   - router/behavioral-calibration.md
   - router/progressive-disclosure.md
+  - router/trigger-mechanism.md
   - router/completion-checklist.md
   - router/decomposition.md
   - router/gap-promotion-rules.md
