@@ -1,14 +1,40 @@
 ---
 name: ultimate-dev
 description: >
-  Prompt-first, model-agnostic agentic skill suite for software agencies and
-  companies. Captures intent, discovers project context, selects the smallest
-  useful skill or specialist, executes through available host capabilities,
-  and verifies with evidence. Durable state, JEV, approvals, and recovery are
-  optional runtime extensions.
+  Engineering control plane that classifies a task, routes it to the smallest
+  sufficient skill or specialist, executes, and verifies with evidence. Use for
+  any request that asks to build, fix, refactor, review, audit, debug, migrate,
+  design, plan, research, document, optimize, test, or deploy, and for any
+  multi-step or cross-domain work. Also use when the user names the skill
+  directly, types @ultimate-dev or /ultimate-dev, or asks which approach,
+  pattern, agent, or workflow to use. Covers software engineering, security,
+  DevOps, data, architecture, testing, documentation, and business domains.
+  Durable state, JEV, approvals, and recovery are optional runtime extensions.
 version: "3.1.1"
 user-invocable: true
-argument-hint: Optional task description
+argument-hint: "[task description] | --help | --version | --detect | --workflow <name>"
+triggers:
+  - ultimate-dev
+  - "@ultimate-dev"
+  - "/ultimate-dev"
+  - build
+  - fix
+  - refactor
+  - review
+  - audit
+  - debug
+  - migrate
+  - design
+  - architecture
+  - plan
+  - research
+  - document
+  - optimize
+  - test
+  - deploy
+  - which approach
+  - which agent
+  - which pattern
 ---
 
 # Ultimate-Dev 3.1.1 — Prompt-First Core (MANDATORY)

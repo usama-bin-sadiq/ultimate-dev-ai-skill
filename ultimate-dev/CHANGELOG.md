@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## [3.1.2] - 2026-09-26
+
+### Fixed
+- **Skill activation was unreliable.** The frontmatter `description` described what the skill is but carried no trigger conditions, while the sub-skills all ended with an explicit "Use for ..." clause. Hosts match on the description, so the top-level control plane under-triggered relative to its own sub-skills. It now leads with "Use for any request that asks to build, fix, refactor, review, audit, debug, migrate, design, plan, research, document, optimize, test, or deploy", names the @ultimate-dev and /ultimate-dev invocation forms, and declares an explicit `triggers` list. `argument-hint` also now matches the value used by AGENT.md and AGENTS.md.
+- An installed copy predating v3.1.0 opened with "You do NOT need to be 'loaded' - you ARE the active orchestrator from the first token", which granted blanket pre-authorization and caused exactly the reported behaviour: starting the task immediately and skipping initialization. That sentence was already removed in 3.1.0; reinstalling propagates the fix.
+
+### Changed
+- Reinstall guidance is now part of the release checklist, because a stale global install silently keeps old behaviour regardless of what is in the repository.
+
 ## [3.1.0] - 2026-09-26
 
 ### Added
