@@ -203,6 +203,7 @@ def generate_manifest():
             "scripts/validate-routing-decision.py",
             "scripts/measure-entrypoint.py",
             "scripts/replay-gate.py",
+            "scripts/validate-task-state.py",
             "scripts/generate-project-context.py",
             "scripts/measure-install.py",
             "scripts/validate-company-context.py",

@@ -32,7 +32,7 @@ stats:
   total_modules: 46
   total_shared: 5
   departments_covered: 44
-  last_generated: '2026-09-25'
+  last_generated: '2026-09-26'
 agents:
 - agents/academic/research-methodologist.md
 - agents/ai-ml/generic-ai-ml-specialist.md
@@ -278,6 +278,7 @@ scripts:
 - scripts/validate-routing-decision.py
 - scripts/measure-entrypoint.py
 - scripts/replay-gate.py
+- scripts/validate-task-state.py
 - scripts/generate-project-context.py
 - scripts/measure-install.py
 - scripts/validate-company-context.py

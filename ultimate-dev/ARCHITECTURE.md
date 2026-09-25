@@ -41,6 +41,7 @@ Local enforcement, all provider-free:
 | `scripts/measure-entrypoint.py` | Budgets always-loaded entrypoints so context cost cannot silently grow |
 | `scripts/replay-gate.py` | Fails a recorded replay on regression, pass-rate drop, forbidden activation, or missing predictions |
 | `scripts/compare-routing-predictions.py` | Field-level comparison; `--fields` restricts scoring to a declared reliable subset |
+| `scripts/validate-task-state.py` | Confirms durable task state is a single parseable JSON document with the fields a resume needs |
 
 ## How Tier 0 / 1 / 2 Work
 
@@ -138,7 +139,9 @@ Deterministic, in this exact order:
    `python3 scripts/replay-gate.py --gold gold.json --predictions new.json --baseline old.json`
 5. Run `node --test ultimate-dev/tests/jev/engine.test.mjs` for the host-native JEV contract
 6. Run `python3 scripts/measure-entrypoint.py --strict` if an always-loaded file changed
-7. Run `./scripts/verify.sh` for the full local gate
+7. Run `python3 scripts/validate-task-state.py <project>/.memory/ultimate-dev/tasks --strict`
+   to confirm durable state is still resumable
+8. Run `./scripts/verify.sh` for the full local gate
 
 A prompt change without a replay result is not an improvement. If the replay does
 not move, record the run and leave the rating unchanged.
