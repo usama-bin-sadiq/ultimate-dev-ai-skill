@@ -227,6 +227,7 @@ class TaskGraph:
         checkpoint: Callable[[TaskNode, str], None] | None = None,
         context: Mapping[str, Any] | None = None,
         on_event: Callable[[str, TaskNode, str], None] | None = None,
+        cancel: threading.Event | None = None,
     ) -> dict[str, Any]:
         """Execute the graph and return an auditable result.
 
@@ -235,6 +236,12 @@ class TaskGraph:
         decisions that were actually taken. A node is only ``completed`` when
         its executable ran and its verifier passed; an ``INCONCLUSIVE`` verdict
         never completes a node.
+
+        ``cancel`` is the caller's handle for stopping the run. Setting it stops
+        *new* nodes from being scheduled; a node already executing runs to
+        completion, because interrupting it would leave its side effects
+        unobserved. Passing ``None`` uses an internal event nobody else can
+        reach, which is why cancellation previously was impossible.
         """
         self.validate()
         base_context = dict(context or {})
@@ -243,7 +250,7 @@ class TaskGraph:
         trail: list[dict[str, Any]] = []
         approvals: dict[str, str] = {}
         remaining = set(self._nodes)
-        cancel = threading.Event()
+        stop = cancel if cancel is not None else threading.Event()
         clock = threading.local()
         # Futures still in flight across scheduling iterations. A node already
         # RUNNING must never be submitted again: it has no unmet dependencies
@@ -276,7 +283,7 @@ class TaskGraph:
             backoff = float(node.retry.get("backoff_seconds", 0))
             last: BaseException | None = None
             for attempt in range(1, attempts + 1):
-                if cancel.is_set():
+                if stop.is_set():
                     return NodeStatus.CANCELLED.value, None, notes
                 try:
                     value = execute(node, payload)
@@ -317,7 +324,7 @@ class TaskGraph:
         pool = ThreadPoolExecutor(max_workers=self.parallelism, thread_name_prefix="taskgraph")
         try:
             while remaining:
-                if cancel.is_set():
+                if stop.is_set():
                     for node_id in sorted(remaining):
                         if status[node_id] == NodeStatus.PENDING.value:
                             status[node_id] = NodeStatus.CANCELLED.value
@@ -382,7 +389,7 @@ class TaskGraph:
         finally:
             pool.shutdown(wait=True)
 
-        return summarise(self.name, status, results, trail, approvals, cancel.is_set())
+        return summarise(self.name, status, results, trail, approvals, stop.is_set())
 
 
 # --------------------------------------------------------------------- helpers

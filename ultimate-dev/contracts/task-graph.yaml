@@ -63,4 +63,4 @@ scheduling:
   completion_rule: "A node is complete when its executable ran and its verifiers passed."
   failure_rule: "A node is failed when its executable raised, timed out, or a verifier returned FAIL."
   inconclusive_rule: "A verifier returning INCONCLUSIVE does not complete a node. It is reported and the node stays unverified."
-  cancellation_rule: "Cancellation stops scheduling new nodes. Running nodes finish or hit their timeout."
+  cancellation_rule: "Setting the caller's cancel handle stops scheduling new nodes. A node already executing runs to completion, because interrupting it would leave its side effects unobserved. A cancelled run never reports completed."

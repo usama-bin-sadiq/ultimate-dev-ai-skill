@@ -345,57 +345,94 @@ class TestControlEdges:
 
 # ------------------------------------------------------------------ cancellation
 class TestCancellation:
-    """KNOWN GAP: cancellation is specified but not externally reachable.
+    """Cancellation was specified but unreachable; ``run`` now takes a handle.
 
-    ``contracts/task-graph.yaml:66`` promises "Cancellation stops scheduling new
-    nodes. Running nodes finish or hit their timeout." The engine does create
-    and honour a ``threading.Event`` internally, but it constructs it *inside*
-    ``run()`` and no caller can obtain a handle to it. There is no public way to
-    cancel a running graph.
-
-    These tests pin the current behaviour and the absence of the capability, so
-    the gap cannot be quietly forgotten. When a cancel handle is added, the
-    ``test_no_external_cancel_handle_exists`` test must be replaced, not deleted
-    silently.
+    The engine used to build its own ``threading.Event`` inside ``run()`` and
+    expose no way to reach it, so ``contracts/task-graph.yaml`` promised a
+    cancellation rule that no caller could exercise. These tests replaced the
+    three gap-documentation tests that recorded the absence.
     """
 
-    def test_no_external_cancel_handle_exists(self):
-        """Documents the gap. Replace this test when cancellation is wired."""
+    def test_run_accepts_a_cancel_handle(self):
         import inspect
 
-        signature = inspect.signature(TaskGraph.run)
-        assert "cancel" not in signature.parameters, (
-            "TaskGraph.run now accepts a cancel handle; update "
-            "docs/architecture/VERSION-4-EXECUTION-GAPS.md and replace this "
-            "gap-documentation test with real cancellation tests"
+        assert "cancel" in inspect.signature(TaskGraph.run).parameters, (
+            "TaskGraph.run must expose a cancel handle; without it the "
+            "documented cancellation rule is unreachable"
         )
 
-    def test_engine_creates_its_own_cancel_event(self):
-        import inspect
-
-        source = inspect.getsource(TaskGraph.run)
-        assert "threading.Event()" in source, (
-            "the engine is expected to create its own cancel event until an "
-            "external handle is provided"
-        )
-
-    def test_a_context_event_does_not_cancel_the_graph(self):
-        """Pins the gap: passing a cancel Event in context has no effect."""
-        graph = TaskGraph("cancel-ignored")
-        graph.add_node(node("a"))
-        graph.add_node(node("b"))
-        graph.chain("a", "b")
+    def test_cancelling_before_the_run_stops_everything(self):
+        graph = TaskGraph("pre-cancelled")
+        for name in ("a", "b", "c"):
+            graph.add_node(node(name))
+        calls, execute = recorder()
 
         cancel = threading.Event()
         cancel.set()
-        result = graph.run(
-            lambda t, c: t.id, verify=always_pass, context={"cancel": cancel}
-        )
-        assert result["status"] == "completed", (
-            "a cancel Event in context is currently ignored; if this now "
-            "cancels, the gap has been closed and the docs must be updated"
-        )
-        assert result["completed"] == ["a", "b"]
+        result = graph.run(execute, verify=always_pass, cancel=cancel)
+
+        assert calls == [], "no node may execute after cancellation"
+        assert result["status"] == "cancelled"
+        assert result["completed"] == []
+
+    def test_cancelling_midway_stops_scheduling_new_nodes(self):
+        graph = TaskGraph("mid-cancel")
+        for index in range(5):
+            graph.add_node(node(f"n{index}"))
+        for index in range(4):
+            graph.chain(f"n{index}", f"n{index + 1}")
+
+        cancel = threading.Event()
+        calls: list[str] = []
+
+        def execute(task, context):
+            calls.append(task.id)
+            if task.id == "n1":
+                cancel.set()
+            return task.id
+
+        result = graph.run(execute, verify=always_pass, cancel=cancel)
+
+        assert result["status"] == "cancelled"
+        assert "n4" not in calls, "scheduling must stop once cancelled"
+        assert "n0" in calls and "n1" in calls, "work already done is kept"
+
+    def test_a_cancelled_run_never_reports_completed(self):
+        graph = TaskGraph("never-completed")
+        for name in ("a", "b"):
+            graph.add_node(node(name))
+        graph.chain("a", "b")
+        cancel = threading.Event()
+        cancel.set()
+        result = graph.run(lambda t, c: t.id, verify=always_pass, cancel=cancel)
+        assert result["status"] == "cancelled"
+        assert result["completed"] == []
+
+    def test_cancelling_from_another_thread_is_honoured(self):
+        """The handle exists precisely so another thread can set it."""
+        graph = TaskGraph("external-cancel")
+        for index in range(4):
+            graph.add_node(node(f"n{index}"))
+        for index in range(3):
+            graph.chain(f"n{index}", f"n{index + 1}")
+
+        cancel = threading.Event()
+
+        def execute(task, context):
+            if task.id == "n0":
+                threading.Timer(0.05, cancel.set).start()
+            return task.id
+
+        result = graph.run(execute, verify=always_pass, cancel=cancel)
+        assert result["status"] in {"cancelled", "completed", "partial"}
+        if result["status"] == "cancelled":
+            assert result["completed"] != [f"n{i}" for i in range(4)]
+
+    def test_omitting_the_handle_keeps_working(self):
+        graph = TaskGraph("no-handle")
+        graph.add_node(node("a"))
+        result = graph.run(lambda t, c: "v", verify=always_pass)
+        assert result["status"] == "completed"
 
     def test_on_event_can_observe_progress(self):
         graph = TaskGraph("events")
