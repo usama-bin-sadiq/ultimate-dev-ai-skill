@@ -140,20 +140,34 @@ class TestChecksDetectRealDefects:
             shutil.move(backup, path)
 
     def test_model_literal_is_detected(self):
+        """Inject a model name into real runtime code and require a FAIL.
+
+        The target must be a file the scanner actually walks. Pointing this at
+        a module that no longer exists tested nothing.
+        """
         doctor = load_doctor()
-        path = os.path.join(BASE, "runtime", "core", "model_adapter", "__init__.py")
+        path = os.path.join(BASE, "runtime", "core", "policy.py")
         backup = path + ".bak"
         shutil.copy2(path, backup)
+        cache = os.path.join(BASE, "runtime", "core", "__pycache__")
         try:
-            with open(path, encoding="utf-8") as handle:
-                text = handle.read()
-            with open(path, "w", encoding="utf-8") as handle:
-                handle.write(text + "\nLEAKED_DEFAULT = 'gpt-4o-mini'\n")
-            findings = [f for f in doctor.collect(include_slow=False) if f.check == "model-independence"]
+            with open(path, "a", encoding="utf-8") as handle:
+                handle.write("\nLEAKED_DEFAULT = 'gpt-4o-mini'\n")
+            findings = [
+                f
+                for f in doctor.collect(include_slow=False)
+                if f.check == "model-independence"
+            ]
             assert findings[0].status is doctor.Status.FAIL
             assert findings[0].items, "the offending line must be identified"
         finally:
             shutil.move(backup, path)
+            # A stale bytecode entry keyed to the temporary name can make the
+            # next run fail on a file that is no longer there.
+            if os.path.isdir(cache):
+                for name in os.listdir(cache):
+                    if name.startswith("policy."):
+                        os.remove(os.path.join(cache, name))
 
     def test_missing_artifact_is_detected(self):
         doctor = load_doctor()

@@ -117,13 +117,32 @@ class TestFreshCloneIsComplete:
         assert result.returncode == 0, result.stdout + result.stderr
 
 
+# Set on the nested pytest so the clone-suite test cannot recurse. Without it
+# this test clones the repo, runs the whole suite inside the clone, and the
+# suite inside the clone runs this test again, which clones again. REPO is
+# derived from __file__, so every level points at the level below it and the
+# only bound is the inner timeout. The suite therefore never terminates, and
+# anything that shells out to it (scripts/doctor.py) hangs with it.
+IN_CLONE_ENV = "ULTIMATE_DEV_SUITE_IN_CLONE"
+
+
 class TestCleanCloneRunsTheSuite:
+    @pytest.mark.skipif(
+        os.environ.get(IN_CLONE_ENV) == "1",
+        reason=f"{IN_CLONE_ENV} is set: already verifying a clone, do not recurse",
+    )
     def test_pytest_passes_in_a_fresh_clone(self, clone):
-        """The decisive check: the work is real only if it survives a clone."""
+        """The decisive check: the work is real only if it survives a clone.
+
+        Runs the suite once inside a fresh clone. The child marks itself with
+        IN_CLONE_ENV so this test is skipped at the next level down: the clone
+        is verified, and the verification terminates.
+        """
+        env = {**os.environ, IN_CLONE_ENV: "1"}
         result = subprocess.run(
             [sys.executable, "-m", "pytest", "tests/", "-q", "-p", "no:cacheprovider"],
             cwd=os.path.join(clone, "ultimate-dev"),
-            capture_output=True, text=True, timeout=1800, check=False,
+            capture_output=True, text=True, timeout=1800, check=False, env=env,
         )
         assert result.returncode == 0, (
             "the suite fails in a fresh clone:\n"

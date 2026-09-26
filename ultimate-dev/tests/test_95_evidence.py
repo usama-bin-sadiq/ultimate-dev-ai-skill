@@ -14,7 +14,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from runtime.core.engine import Runtime
 from runtime.core.lite_mode import LiteMode, BootstrapCache
-from runtime.core.model_adapter import ModelAdapter, HostFallbackProvider
+from runtime.core.host_model import HostFallbackProvider
 from runtime.core.state import TaskStore
 
 
@@ -228,25 +228,6 @@ def test_host_fallback_provider():
     return None
 
 
-def test_model_adapter_fallback():
-    """Model adapter fails closed unless a real provider/callback is configured."""
-    adapter = ModelAdapter(config={})
-    assert adapter.current_provider is None
-    with pytest.raises(RuntimeError):
-        adapter.complete("test")
-
-    explicit = ModelAdapter(config={
-        "allow_host_fallback": True,
-        "host_callback": lambda prompt, options: "host:test",
-    })
-    result = explicit.complete_with_provenance("test")
-    assert result["text"] == "host:test"
-    assert result["provider"] == "host_fallback"
-
-    print("✅ Model adapter fallback verified")
-    return None
-
-
 if __name__ == "__main__":
     print("=" * 60)
     print("ULTIMATE-DEV 9.5+ EVIDENCE TESTS")
@@ -256,10 +237,9 @@ if __name__ == "__main__":
     test_lite_mode_detection()
     test_bootstrap_cache()
     test_host_fallback_provider()
-    test_model_adapter_fallback()
     
     print("\n" + "=" * 60)
-    print("✅ ALL 9.5+ EVIDENCE TESTS PASSED")
+    print("✅ EVIDENCE TESTS PASSED")
     print("Evidence artifacts generated for:")
     print("  1. Composed pattern execution (Subagent + Handoff + Router)")
     print("  2. Lite mode auto-detection")
