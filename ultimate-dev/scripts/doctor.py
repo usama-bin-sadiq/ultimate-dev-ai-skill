@@ -57,11 +57,15 @@ class Finding:
 
 
 # --------------------------------------------------------------------- helpers
-def _run(argv: list[str], cwd: str = ROOT) -> tuple[int, str]:
+def _run(argv: list[str], cwd: str = ROOT, timeout: int = 600) -> tuple[int, str]:
     try:
         result = subprocess.run(
-            argv, cwd=cwd, capture_output=True, text=True, timeout=600, check=False
+            argv, cwd=cwd, capture_output=True, text=True, timeout=timeout, check=False
         )
+    except subprocess.TimeoutExpired:
+        # A timeout is not a pass and not a plain failure: the check never
+        # finished, so it must be reported as such rather than as a verdict.
+        return 1, f"TimeoutExpired: the check did not finish within {timeout}s"
     except (OSError, subprocess.SubprocessError) as exc:
         return 1, f"{type(exc).__name__}: {exc}"
     return result.returncode, (result.stdout + result.stderr).strip()
@@ -314,7 +318,9 @@ def check_model_independence() -> list[Finding]:
 
 
 def check_entrypoint_budget() -> list[Finding]:
-    code, output = _run([sys.executable, os.path.join("scripts", "measure-entrypoint.py"), "--json"])
+    code, output = _run(
+        [sys.executable, os.path.join("scripts", "measure-entrypoint.py"), "--json"]
+    )
     if code != 0:
         return [
             Finding(
@@ -358,7 +364,7 @@ def check_test_suite() -> list[Finding]:
         os.path.join(ROOT, "tests")
     ):
         return [Finding("test-suite", Status.NOT_RUN, "no tests directory", evidence="tests/")]
-    code, output = _run([sys.executable, "-m", "pytest", "tests/", "-q"])
+    code, output = _run([sys.executable, "-m", "pytest", "tests/", "-q"], timeout=2400)
     tail = [line for line in output.splitlines() if line.strip()][-1] if output else ""
     return [
         Finding(
