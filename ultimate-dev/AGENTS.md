@@ -1,6 +1,6 @@
 ---
 name: ultimate-dev
-version: "3.2.0"
+version: "4.0.0"
 description: >-
   Prompt-first, model-agnostic agentic skill suite for software agencies and companies.
   Detects context, classifies tasks, selects the smallest useful method or specialist,
@@ -34,9 +34,23 @@ limitation rather than inventing runtime services.
 
 # ⚠️ CORE SESSION START (PROMPT-FIRST; RUNTIME CHECKS ARE CONDITIONAL)
 
-## 0. RUNTIME DETECTION — do this first, every session
+## 0. CAPABILITY AND RUNTIME DETECTION — do this first, every session
 
-**Detect the plane; do not assume it.**
+**Detect what you have. Do not assume it.** The blocks below are shell
+commands; a host without a shell, or whose tool is not named `bash`, cannot run
+them and will otherwise discover that by failing.
+
+```bash
+python3 scripts/capability-probe.py 2>/dev/null || echo "shell: unverified"
+```
+
+| `absent` | Do this |
+|---|---|
+| `shell` | Treat the fenced blocks as instructions for a human. Report unrunnable checks as `not_run`, never `pass`. |
+| `python` | Prompt-only operation throughout. Do not attempt the runtime. |
+| `durable_runtime` | `PROMPT_ONLY`. You may do the work; you may not certify its effects. |
+
+Then detect the plane:
 
 ```bash
 python3 ultimate-dev/scripts/runtime-probe.py 2>/dev/null || \
@@ -145,6 +159,7 @@ portable contract is `contracts/four-channels.md`.
 
 ```yaml
 ultimate-dev-preflight:
+  absent_capabilities: [shell|python|durable_runtime] or []
   runtime_detected: RUNTIME_AVAILABLE|PROMPT_ONLY
   version_read: true/false
   skill_md_read: true/false
@@ -160,8 +175,10 @@ ultimate-dev-preflight:
     verification: {...}
 ```
 
-`runtime_detected` is **required**. Omitting it is a skipped lifecycle step,
-because the evidence grade for the whole task depends on it.
+`absent_capabilities` and `runtime_detected` are **required**. Both are
+omitted-check risks: the evidence grade for the whole task depends on the
+second, and an unrunnable check must be reported rather than assumed on the
+first.
 
 **If this block is MISSING from your first response → YOU FAILED INITIALIZATION**
 
@@ -485,19 +502,18 @@ temporary debugging output
 irrelevant conversation details
 ```
 
-### 2. Self-Evolution
+## Self-Evolution
 
-Global self-evolution is separate from project memory and is evidence-gated.
-A durable runtime may stage a candidate under
-`<project-root>/.memory/ultimate-dev/evolution/` and issue a memory receipt.
-A prompt-only host returns a candidate handoff. Neither mode writes canonical
-package files automatically.
+Separate from project memory, and evidence-gated. A durable runtime may stage a
+candidate under `<project-root>/.memory/ultimate-dev/evolution/` and issue a
+memory receipt; a prompt-only host returns a candidate handoff. Neither writes
+canonical package files automatically.
 
-Trigger it only when repeated evidence shows a genuinely reusable capability
-is missing. It must not invent agents or skills because an existing specialist
+Trigger it only when repeated evidence shows a genuinely reusable capability is
+missing. It must not invent agents or skills because an existing specialist
 could have been used.
 
-### 3. Optional LEARN Step
+### Optional LEARN Step
 
 ```text
 project learnings   → .memory/ultimate-dev/project-memory.md
@@ -510,17 +526,15 @@ Learning must never replace verification.
 
 ## What You Get
 
-| Task Type                 | Typical Pattern    | Example                                         |
-| ------------------------- | ------------------ | ----------------------------------------------- |
-| Simple task               | A: Skills / Inline | "Explain this function"                         |
-| Single-domain feature     | A: Skills / Inline | "Add a React component"                         |
-| Multi-domain              | B: Subagents       | "Build a full-stack dashboard"                  |
-| Sequential work           | C: Handoffs        | "Plan → implement → migrate → verify"           |
-| Classification + dispatch | D: Router          | "Investigate the best database approach"        |
-| Complex                   | Compose            | "Security audit + architecture changes + fixes" |
+| Task type | Pattern |
+|---|---|
+| Simple or single-domain | A: Skills / Inline |
+| Multiple independent domains | B: Subagents |
+| Sequential dependent stages | C: Handoffs |
+| Classify then dispatch | D: Router |
+| Several patterns genuinely needed | Compose |
 
-The actual pattern is always selected from the task context rather than from
-the table alone.
+The pattern is always selected from task context, never from this table alone.
 
 ## Agent Registry
 
@@ -535,51 +549,16 @@ finance, and research.
 
 ## Sub-Skills
 
-Available meta-cognitive and domain skills include:
+The 33 skills under `skills/` cover the meta-cognitive methods (`coding`,
+`testing`, `review`, `architecture`, `security`, `devops`, `debugging`,
+`research`, `performance`, `monitoring`, `migration`, `planning-execution`) and
+the business domains (`accounting-finance`, `legal-privacy`,
+`people-operations`, `procurement-vendors`, `data-analysis-bi`,
+`business-analysis`, `strategy-operating-model`, `internal-communications`,
+`office-artifacts`, `audit-controls`), plus `universal-task`, `self-evolve`,
+`task-observer` and `project-context`.
 
-```text
-self-evolve
-task-observer
-universal-task
-project-context
-research
-coding
-testing
-review
-architecture
-security
-devops
-debugging
-documentation
-performance
-monitoring
-data
-api-design
-migration
-mobile
-ai-ml
-discovery-requirements
-planning-execution
-internal-communications
-business-analysis
-strategy-operating-model
-data-analysis-bi
-accounting-finance
-legal-privacy
-people-operations
-procurement-vendors
-office-artifacts
-audit-controls
-prompt-evaluation
-```
-
-The complete skill registry is under:
-
-```text
-skills/
-```
-
-Load only the relevant skill.
+Load only the relevant skill; the registry is the release source of truth.
 
 ## Workflows
 
@@ -597,13 +576,11 @@ specialist selection.
 
 ## Flags
 
-| Flag                | Description                                             |
-| ------------------- | ------------------------------------------------------- |
-| `--help`            | Show help                                               |
-| `--version`         | Show version                                            |
-| `--detect`          | Run stack detection without modifying the project       |
-| `--workflow <name>` | Use a specific workflow                                 |
-| `--dry-run`         | Show the intended execution plan without making changes |
+| Flag | Description |
+|---|---|
+| `--help` · `--version` | Show help or version |
+| `--detect` | Run stack detection without modifying the project |
+| `--workflow <name>` · `--dry-run` | Use a workflow, or preview the plan without changes |
 
 ## Output Format
 
@@ -682,44 +659,24 @@ runtime.
 ## File Structure
 
 ```text
-.agents/skills/ultimate-dev/
-
-├── AGENT.md              ← Portable prompt entry point
-├── SKILL.md              ← Full skill documentation
-├── skill-manifest.yaml   ← Agent/skill/module registry
-├── VERSION               ← Version number
-├── agents/               ← Specialist agents
-├── skills/               ← Reusable skills
-├── modules/              ← Reusable patterns and domain knowledge
-├── workflows/            ← Execution workflows
-├── router/               ← Classification and routing rules
-├── scripts/              ← Installation and validation
-└── ...
+ultimate-dev/
+├── AGENT.md · SKILL.md · AGENTS.md   prompt entry points
+├── skill-manifest.yaml · VERSION     registry and version
+├── skills/ · agents/ · modules/      methods, roles, knowledge
+├── workflows/ · router/ · contracts/ templates, rules, portable contracts
+└── scripts/ · runtime/               validation, and the optional runtime
 ```
 
-## Direct Invocation Examples
+## Invocation Examples
 
 ```bash
-# Feature development
 @ultimate-dev "Add user authentication with JWT to the Node.js API"
-
-# Refactoring
 @ultimate-dev "Refactor the payment service to use hexagonal architecture"
-
-# Infrastructure
 @ultimate-dev "Set up GitHub Actions CI/CD for the monorepo"
-
-# Research
 @ultimate-dev "Compare Redis vs PostgreSQL for session storage"
-
-# Debugging
 @ultimate-dev "Fix the memory leak in the WebSocket connection handler"
-
-# Security
 @ultimate-dev "Audit the codebase for OWASP Top 10 vulnerabilities"
 ```
-
----
 
 **The agent IS the orchestrator.**
 

@@ -57,3 +57,8 @@ executor's actual return, and overwrites any caller-supplied `observation`.
 - Never write `attested_by: runtime` yourself — only the runtime may attest
 - Never infer a side effect happened because the code looks correct
 - On `PROMPT_ONLY`, name the check a human can run instead
+- Never assume a capability exists. Run `scripts/capability-probe.py` first:
+  the prompt core issues shell commands unconditionally, and a host without a
+  shell must degrade to `not_run`, not to an error
+- Never call a tool that is not in the host's tool list. If a command needs a
+  capability you do not have, say which one is missing
