@@ -107,8 +107,51 @@ never erased — but callers must inspect `failed`/`completed` to know. Pinned i
 
 ---
 
-## 3. Sequenced plan
+### DEFECT 10 — tool availability assumed, not checked *(high, part-fixed)*
 
+Observed three times in one session:
+
+```text
+No tool named "bash" is currently available.
+Please use a tool from the available tool list.
+```
+
+and, inside the code-mode runtime:
+
+```text
+Unknown tool 'shell'.  Use search to find available tools.
+```
+
+**Why it happens.** The available tools differ by surface. At the top level
+this session exposes `read`, `write`, `edit`, `shell`, `glob`, `grep`,
+`subagent`, `skill`, `webfetch`, `websearch`, `question`, `execute`. There is
+no `bash`. Inside the code-mode runtime the catalogue is different again and
+exposes neither `shell` nor `bash`; nested filesystem and process access are
+unavailable there by design, and everything must go through the outer tools.
+
+So the two failures have one cause: a tool was named without first reading the
+catalogue for the surface being used. The error is correct and the remedy is in
+the message.
+
+**Fixed in the prompt core.** `scripts/capability-probe.py` reports `shell`,
+`python` and `durable_runtime`; `AGENTS.md` §0 probes before instructing; and
+`router/grounding-rules.md` now states *"Never call a tool that is not in the
+host's tool list. If a command needs a capability you do not have, say which
+one is missing."*
+
+**Still open — this is the honest part.** The probe checks binaries on `PATH`.
+It cannot check *which tools the host model exposes*, because that list lives in
+the host's own configuration, not in the filesystem. A host can have `bash` on
+`PATH` and still expose no tool that reaches it. The general rule therefore has
+to be enforced by the host, not by this repository. What this repository can do
+is refuse to assume, and report the gap — which is what the anti-rule says.
+
+Status: prompt-core side fixed and tested; host-side enforcement is out of scope
+and is a declared gap, not a solved problem.
+
+---
+
+## 3. Sequenced plan
 Each phase is independently verifiable. Nothing is claimed that was not run.
 
 ### Phase 1 — Test the keystone *(COMPLETE)*
@@ -171,6 +214,42 @@ Six files over 2,000 lines each. `evaluation.py` (2,551) and `task_router.py`
 behaviour change with the existing suite.
 
 Gate: no behaviour change; each new module under ~800 lines with tests.
+
+**Attempted and reverted — `evaluation.py`.** Lines 125–435 are a dependency-free
+YAML-subset parser, apparently an obvious extraction. It is **not self-contained**:
+
+- the parser raises `EvaluationError`, which is defined in `evaluation.py`, so
+  moving it either creates a circular import or changes the exception type;
+- it uses `Mapping` from `collections.abc`, which is not imported in the block.
+
+The first attempt produced a module that imported cleanly and then failed at
+call time with `NameError`, which is the worst failure shape: green import,
+broken behaviour. Two intermediate states were also wrong — the redaction
+constants `_SENSITIVE_KEYS`, `_BEARER_RE`, `_SECRET_ASSIGNMENT_RE` and
+`_SECRET_VALUE_RE` sit inside the same line range and belong to the redaction
+path, not the parser; and the block needs `json` for double-quoted scalars.
+
+Reverted with `git checkout`. `evaluation.py` is 2,551 lines again and the
+suite is green.
+
+**Conclusion, and the correct next step.** This extraction is a behaviour
+change disguised as a refactor. Doing it properly means one of:
+
+1. give the parser its own exception type and translate it at the call site in
+   `evaluation.py`, then test both; or
+2. delete the hand-rolled parser and require PyYAML, dropping the
+   no-dependency fallback, then measure what breaks in a bare environment.
+
+Option 1 is the conservative choice. Option 2 is the honest one: the fallback
+parser exists to keep the runtime dependency-free, and that property may not be
+worth 311 lines of hand-rolled YAML that nothing tests directly. **This needs a
+decision, not a refactor.**
+
+`task_router.py` has a 1,022-line `TaskRouter` class. The separable pieces are
+`RouteMetadata` (245), `RouteMetadataStore` (163) and `TaskContext` (103),
+together about 511 lines of value types and persistence with no dependency on
+the router's logic. That extraction is lower risk and should be attempted
+before `evaluation.py`.
 
 ### Phase 8 — Release readiness
 
