@@ -1,0 +1,66 @@
+version: "1.0"
+kind: ultimate-dev-task-graph
+status: portable
+runtime_required: false
+
+principle: >-
+  There is exactly ONE orchestrator. A workflow is a reusable graph template, an
+  agent is a specialised executor, and a skill is methodology. None of them is a
+  second orchestration engine. Every execution mode lowers to a graph.
+
+node_fields:
+  id: "Unique within the graph. Non-empty string."
+  objective: "What this node must achieve. Required, non-empty."
+  type: "leaf | decision | parallel | loop | approval | terminal"
+  dependencies: "Node ids that must complete before this node is ready."
+  skill: "Skill id providing methodology."
+  subskills: "Focused reusable procedures composed into this node."
+  agent: "Agent id providing specialised reasoning."
+  capabilities: "Capability ids requested, not hard-coded tools."
+  inputs: "Data made available from upstream nodes."
+  outputs: "What this node produces for downstream consumers."
+  risk: "none | data | security | compliance"
+  approval: "not_required | recommended | required | human_review"
+  verification: "Verifier ids that must run against this node's evidence."
+  evidence: "Evidence refs this node is expected to produce."
+  retry: "{max_attempts, backoff_seconds, idempotent}"
+  rollback: "Compensating action id, or null."
+  timeout: "Seconds before the node is considered stalled."
+  checkpoint: "Whether node completion is checkpointed."
+
+edge_types:
+  dependency: "Target waits for source to complete successfully."
+  data: "Target receives source output as input."
+  control: "Target runs only when the source condition holds."
+  approval: "Target is gated on a human or policy approval decision."
+  verification: "Verification of the source must pass before the target runs."
+  failure: "Source failure routes to the target as a recovery path."
+  recovery: "Target is a recovery attempt for a failed source."
+
+invariants:
+  - "The graph is acyclic. A cycle is a validation error, not a runtime surprise."
+  - "Every dependency, data, and recovery edge names an existing node."
+  - "Every node has an objective. A node without an objective cannot be verified."
+  - "A node with risk other than none, or approval other than not_required, is flagged for policy evaluation."
+  - "Retry only runs when idempotent is true, or when the node declares a rollback."
+  - "A node that fails with no failure edge and no recovery edge ends as failed. It never silently succeeds."
+  - "Only one orchestrator exists. Workflows and execution modes lower to this graph."
+
+modes:
+  direct: "A single leaf node."
+  skill: "A graph of nodes sharing one skill."
+  agent: "A graph of nodes delegated to one agent."
+  multi_agent: "A graph with parallel branches, one agent per branch."
+  workflow: "A named, reusable graph template."
+  research: "A graph of evidence-gathering nodes, verified by source provenance."
+  autonomous: "A graph whose branches are chosen by decision nodes at run time."
+  recovery: "A graph whose root is a failure edge from a failed node."
+
+scheduling:
+  default_parallelism: 4
+  ready_rule: "A node is ready when all dependency, data, and verification edges are satisfied."
+  condition_rule: "A control edge is satisfied when its condition evaluates true against the current state."
+  completion_rule: "A node is complete when its executable ran and its verifiers passed."
+  failure_rule: "A node is failed when its executable raised, timed out, or a verifier returned FAIL."
+  inconclusive_rule: "A verifier returning INCONCLUSIVE does not complete a node. It is reported and the node stays unverified."
+  cancellation_rule: "Cancellation stops scheduling new nodes. Running nodes finish or hit their timeout."
