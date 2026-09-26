@@ -47,7 +47,7 @@ classifier used with the optional local replay mode must report
 The fixture audit also checks whether `expected_domains` uses IDs from the
 current `config/capability-index.yaml`. Legacy labels are reported as a warning
 rather than silently treated as current routing vocabulary. The reviewable,
-comparison-only policy in `domain-aliases.json` separates safe umbrella aliases
+comparison-only policy in `domain-aliases.yaml` separates safe umbrella aliases
 from ambiguous labels; ambiguous cases are not domain-scored until reviewed.
 Migrate or explicitly approve those labels before using domain accuracy as a
 model-quality metric. The current suite has no ambiguous domain cases remaining;

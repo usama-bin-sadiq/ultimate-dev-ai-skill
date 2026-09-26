@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parent.parent
 REPO_ROOT = ROOT.parent
 VERSION_FILE = REPO_ROOT / "VERSION"
 MANIFEST_FILE = ROOT / "skill-manifest.yaml"
-INSTALL_TARGETS_FILE = ROOT / "config" / "install-targets.json"
+INSTALL_TARGETS_FILE = ROOT / "config" / "install-targets.yaml"
 AGENT_CATALOG_FILE = ROOT / "config" / "agent-catalog.yaml"
 AGENT_REGISTRY_FILE = ROOT / "config" / "agent_registry.yaml"
 CAPABILITY_INDEX_FILE = ROOT / "config" / "capability-index.yaml"
@@ -282,17 +282,17 @@ def check() -> list[str]:
     workflow_references = collect_workflow_agent_references(workflow)
 
     try:
-        install_targets = json.loads(INSTALL_TARGETS_FILE.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
+        install_targets = yaml.safe_load(INSTALL_TARGETS_FILE.read_text(encoding="utf-8"))
+    except (OSError, yaml.YAMLError) as exc:
         install_targets = {}
-        errors.append(f"config/install-targets.json: {exc}")
+        errors.append(f"config/install-targets.yaml: {exc}")
     profiles = install_targets.get("profiles") if isinstance(install_targets, dict) else None
     if not isinstance(profiles, dict):
-        errors.append("config/install-targets.json: profiles must be a mapping")
+        errors.append(f"config/install-targets.yaml: profiles must be a mapping")
         profiles = {}
     for name, profile in profiles.items():
         if not isinstance(name, str) or not name or not isinstance(profile, dict):
-            errors.append("config/install-targets.json: invalid profile entry")
+            errors.append(f"config/install-targets.yaml: invalid profile entry")
             continue
         relative_path = profile.get("relative_path")
         if not isinstance(relative_path, str) or not relative_path or relative_path.startswith("/") or ".." in Path(relative_path).parts:

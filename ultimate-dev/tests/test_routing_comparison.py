@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts" / "compare-routing-predictions.py"
-ALIASES = ROOT / "evals" / "domain-aliases.json"
+ALIASES = ROOT / "evals" / "domain-aliases.yaml"
 
 
 def test_comparison_can_score_a_declared_field_subset():

@@ -16,7 +16,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
 COMPARE_SCRIPT = ROOT / "scripts" / "compare-routing-predictions.py"
-ALIASES = ROOT / "evals" / "domain-aliases.json"
+ALIASES = ROOT / "evals" / "domain-aliases.yaml"
 
 
 def _load_compare_module() -> Any:

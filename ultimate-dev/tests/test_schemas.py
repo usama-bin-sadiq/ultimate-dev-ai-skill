@@ -37,7 +37,7 @@ class TestSchemas:
         # Basic structure checks
         assert isinstance(content, dict), f"{schema_file} should be a dict"
 
-    @pytest.mark.parametrize("schema_file", ["task-contract.json", "handoff.json", "operation.json"])
+    @pytest.mark.parametrize("schema_file", ["task-contract.yaml", "handoff.yaml", "operation.yaml"])
     def test_runtime_schema_parses(self, schema_file):
         """Runtime JSON contracts should remain parseable and identified."""
         path = os.path.join(RUNTIME_SCHEMAS_DIR, schema_file)

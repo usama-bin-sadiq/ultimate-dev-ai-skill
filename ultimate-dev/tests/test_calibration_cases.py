@@ -6,9 +6,11 @@ import importlib.util
 import json
 from pathlib import Path
 
+import yaml
+
 ROOT = Path(__file__).resolve().parents[1]
-CALIBRATION = ROOT / "evals" / "calibration-cases.json"
-HOLDOUT = ROOT / "evals" / "holdout-cases.json"
+CALIBRATION = ROOT / "evals" / "calibration-cases.yaml"
+HOLDOUT = ROOT / "evals" / "holdout-cases.yaml"
 LINTER = ROOT / "scripts" / "validate-routing-decision.py"
 ENTRYPOINTS = ("SKILL.md", "AGENTS.md", "AGENT.md", "agents/orchestrator.md")
 
@@ -22,7 +24,7 @@ def _load_linter():
 
 
 def _load(path: Path) -> dict:
-    return json.loads(path.read_text(encoding="utf-8"))
+    return yaml.safe_load(path.read_text(encoding="utf-8"))
 
 
 def _decision(row: dict) -> dict:

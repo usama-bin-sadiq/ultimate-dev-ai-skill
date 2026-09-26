@@ -18,6 +18,8 @@ import sys
 from pathlib import Path
 from typing import Any, Callable
 
+import yaml
+
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
@@ -41,8 +43,8 @@ CATEGORY_RE = re.compile(r"(near[-_ ]?miss|negative|unknown|multilingual|capabil
 
 def _domain_alias_policy() -> tuple[dict[str, str], set[str]]:
     try:
-        data = json.loads((ROOT / "evals" / "domain-aliases.json").read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
+        data = yaml.safe_load((ROOT / "evals" / "domain-aliases.yaml").read_text(encoding="utf-8"))
+    except (OSError, yaml.YAMLError):
         return {}, set()
     safe = data.get("safe_aliases") if isinstance(data, dict) else {}
     ambiguous = data.get("ambiguous_labels") if isinstance(data, dict) else []

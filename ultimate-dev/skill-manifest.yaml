@@ -267,6 +267,7 @@ contracts:
 - contracts/middleware-hooks.yaml
 - contracts/subagent-contract.yaml
 - contracts/task-envelope.yaml
+- contracts/task-graph.yaml
 - contracts/task-state-machine.yaml
 scripts:
 - scripts/validate.py

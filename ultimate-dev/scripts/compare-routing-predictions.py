@@ -11,8 +11,10 @@ import json
 from pathlib import Path
 from typing import Any
 
+import yaml
+
 ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_ALIASES = ROOT / "evals" / "domain-aliases.json"
+DEFAULT_ALIASES = ROOT / "evals" / "domain-aliases.yaml"
 FIELDS = {
     "size": "expected_size",
     "risk": "expected_risk",
@@ -24,7 +26,7 @@ FIELDS = {
 
 
 def _load(path: Path) -> Any:
-    return json.loads(path.read_text(encoding="utf-8"))
+    return yaml.safe_load(path.read_text(encoding="utf-8"))
 
 
 def _value(value: Any) -> Any:

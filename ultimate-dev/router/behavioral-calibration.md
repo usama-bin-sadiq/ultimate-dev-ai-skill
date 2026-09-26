@@ -133,7 +133,7 @@ Size rules that are easy to get wrong:
   which lists IoT. A novel case inside a listed signal is still that domain.
   A request that calls the subject novel or unfamiliar usually still names a
   domain the index covers; only fall back when no listed signal fits.
-- Compatibility aliases in `evals/domain-aliases.json` are for fixture comparison,
+- Compatibility aliases in `evals/domain-aliases.yaml` are for fixture comparison,
   not live routing output.
 
 ## Risk calibration
