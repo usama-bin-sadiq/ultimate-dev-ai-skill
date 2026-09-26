@@ -67,6 +67,15 @@ runtime capabilities, continue in prompt-only mode and report that limitation.
 
 ---
 
+## Runtime Detection — the two planes are one gate
+
+Two implementations of one contract, unified by one gate. The plane decides
+what you may claim: `TOOL_ATTESTED` may authorize completion, `SELF_REPORTED`
+never may. Recipe and full rule: `AGENTS.md` §0. If detection fails, assume
+`PROMPT_ONLY` and describe any side effect as unobserved.
+
+---
+
 ## Activation and Precedence
 
 **If this file was loaded, Ultimate-Dev is active.** State that in one line

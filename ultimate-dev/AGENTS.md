@@ -23,21 +23,34 @@ tags:
 
 Ultimate-Dev is usable as a Markdown prompt skill without the Python runtime.
 Prompt-only installation has no Python, Node.js, or model-provider dependency.
-The portable core captures intent, discovers relevant project context, selects
-the smallest useful skill or specialist, executes through host capabilities,
-and verifies with evidence.
+The portable core captures intent, discovers project context, selects the
+smallest useful skill or specialist, executes through host capabilities, and
+verifies with evidence.
 
-Use the durable runtime/JEV path only when the host needs persistent task state,
+Use the durable runtime/JEV path when the host needs persistent task state,
 scoped approvals, long-running recovery, or auditable side effects. A host
-without those capabilities must continue in prompt-only mode and report the
+without those capabilities continues in prompt-only mode and reports the
 limitation rather than inventing runtime services.
-
-The following lifecycle protocol remains the contract for hosts that support
-it; task size still controls how much ceremony is necessary.
 
 # ⚠️ CORE SESSION START (PROMPT-FIRST; RUNTIME CHECKS ARE CONDITIONAL)
 
-**Before any task, complete the smallest applicable initialization:**
+## 0. RUNTIME DETECTION — do this first, every session
+
+**Detect the plane; do not assume it.**
+
+```bash
+python3 ultimate-dev/scripts/runtime-probe.py 2>/dev/null || \
+python3 scripts/runtime-probe.py 2>/dev/null || echo PROMPT_ONLY
+```
+
+`RUNTIME_AVAILABLE` → `TOOL_ATTESTED`: the runtime observed the effect, and it
+may authorize completion. `PROMPT_ONLY` → `SELF_REPORTED`: **never self-certify
+a side effect.** Say it is *unobserved*, name the check a human can run, and
+report `not_run` rather than `pass`. If detection fails, assume `PROMPT_ONLY`.
+
+Rule, rationale, and the `attested_by` prohibition: `router/grounding-rules.md`.
+
+## 1–4. Read version, skill contract, and task state
 
 ```bash
 # 1. READ VERSION
@@ -132,6 +145,7 @@ portable contract is `contracts/four-channels.md`.
 
 ```yaml
 ultimate-dev-preflight:
+  runtime_detected: RUNTIME_AVAILABLE|PROMPT_ONLY
   version_read: true/false
   skill_md_read: true/false
   agents_md_read: true/false
@@ -145,6 +159,9 @@ ultimate-dev-preflight:
     agents: [...]
     verification: {...}
 ```
+
+`runtime_detected` is **required**. Omitting it is a skipped lifecycle step,
+because the evidence grade for the whole task depends on it.
 
 **If this block is MISSING from your first response → YOU FAILED INITIALIZATION**
 
@@ -160,6 +177,8 @@ ultimate-dev-status:
   risk: none|data|security|compliance
   pattern: A|B|C|D|compose
   execution_mode: inline|subagent
+  runtime: available|prompt_only
+  evidence_grade: TOOL_ATTESTED|SELF_REPORTED
   agents:
     - domain: <domain>
       agent: <agent>
@@ -172,6 +191,10 @@ ultimate-dev-status:
   checkpoint_created: true/false
   blockers: [list] or []
 ```
+
+`runtime` and `evidence_grade` are **required**. A `SELF_REPORTED` grade may
+report `pass` only for read-only work; any side effect must be reported as
+unobserved. See `router/grounding-rules.md` for the evidence rule.
 
 ### ZERO-TOLERANCE VIOLATIONS (AUTO-FAIL)
 
@@ -470,34 +493,17 @@ A durable runtime may stage a candidate under
 A prompt-only host returns a candidate handoff. Neither mode writes canonical
 package files automatically.
 
-Potential reviewed artifacts include:
-
-```text
-candidate proposal + evidence
-reviewed manifest/catalog diff
-explicit package-maintainer change
-```
-
-Self-evolution is triggered only when repeated evidence shows that a genuinely
-reusable capability is missing. It must not generate new agents or skills merely
-because an existing specialist could have been used.
+Trigger it only when repeated evidence shows a genuinely reusable capability
+is missing. It must not invent agents or skills because an existing specialist
+could have been used.
 
 ### 3. Optional LEARN Step
 
-When durable memory is available, the operating loop may persist durable findings:
-
 ```text
-project learnings
-    → <project-root>/.memory/ultimate-dev/project-memory.md
-
-new conventions
-    → <project-root>/.memory/ultimate-dev/conventions.md
-
-new reusable patterns
-    → memory receipt or candidate handoff when genuinely novel
-
-new reusable agents
-    → reviewed proposal; never automatic package publication
+project learnings   → .memory/ultimate-dev/project-memory.md
+new conventions     → .memory/ultimate-dev/conventions.md
+reusable patterns   → memory receipt or candidate handoff when novel
+reusable agents     → reviewed proposal; never automatic publication
 ```
 
 Learning must never replace verification.
@@ -518,24 +524,14 @@ the table alone.
 
 ## Agent Registry
 
-The skill contains specialized agents across domains including:
+Specialized agents span core (orchestrator, codebase-investigator,
+skill-creator), frontend, backend, security, DevOps, database, architecture,
+testing, AI/ML, and further domains including mobile, cloud, blockchain, GIS,
+finance, and research.
 
-| Category          | Examples                                                                                                                                                      |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Core**          | orchestrator, codebase-investigator, skill-creator, universal-technology-specialist                                                                           |
-| **Frontend**      | react-specialist, vue-specialist, css-architect, accessibility-engineer, perf-specialist                                                                      |
-| **Backend**       | nodejs-architect, python-engineer, go-engineer, rust-engineer, java-engineer, graphql-engineer, generic-shell-specialist, tui-specialist                      |
-| **Security**      | security-auditor, threat-modeler, incident-responder, compliance-engineer                                                                                     |
-| **DevOps**        | pipeline-engineer, kubernetes-engineer, terraform-engineer, sre-engineer, observability-engineer                                                              |
-| **Database**      | postgres-specialist, sql-optimizer, data-engineer                                                                                                             |
-| **Architecture**  | system-architect, microservices-architect                                                                                                                     |
-| **Testing**       | test-architect, test-automator, qa-engineer, performance-tester                                                                                               |
-| **AI/ML**         | ml-engineer, prompt-engineer, rag-architect                                                                                                                   |
-| **Other domains** | Mobile, cloud, blockchain, data engineering, documentation, research, game development, GIS, finance, marketing, sales, support, and specialized technologies |
-
-The registry in `skill-manifest.yaml` is the release source of truth for
-available agents. `config/agent-catalog.yaml` is its generated routing catalog,
-and `config/capability-index.yaml` is the compact department index.
+`skill-manifest.yaml` is the release source of truth for available agents.
+`config/agent-catalog.yaml` is its generated routing catalog, and
+`config/capability-index.yaml` is the compact department index.
 
 ## Sub-Skills
 

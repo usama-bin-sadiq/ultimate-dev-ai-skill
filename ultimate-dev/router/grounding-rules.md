@@ -29,3 +29,31 @@
 ```
 [ grounded: yes|no | source: <url> | claim: <what> ]
 ```
+
+## Evidence Grade (runtime plane)
+
+
+Grounding answers *is this true*. The evidence grade answers *did this happen*.
+Both are required; neither substitutes for the other.
+
+Run the detection recipe in `AGENTS.md` §0 once per session, then:
+
+| Detection | Grade | May authorize completion? |
+|---|---|---|
+| `RUNTIME_AVAILABLE` | `TOOL_ATTESTED` | Yes, for observed side effects |
+| `PROMPT_ONLY` | `SELF_REPORTED` | **No** for any side effect |
+
+```text
+CLAIMED CHANGE ≠ OBSERVED CHANGE
+KNOWLEDGE     ≠ EVIDENCE
+```
+
+`runtime/core/attestation.py` enforces this when the runtime is present: it
+stamps every side-effecting execution with an observation derived from the
+executor's actual return, and overwrites any caller-supplied `observation`.
+
+## Anti-Rules
+- Never report a side effect as `pass` on a `SELF_REPORTED` grade
+- Never write `attested_by: runtime` yourself — only the runtime may attest
+- Never infer a side effect happened because the code looks correct
+- On `PROMPT_ONLY`, name the check a human can run instead
