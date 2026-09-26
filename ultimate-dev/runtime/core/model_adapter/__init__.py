@@ -37,7 +37,7 @@ class ModelProvider(ABC):
 class OllamaProvider(ModelProvider):
     """Ollama local models."""
     
-    def __init__(self, base_url: str = "http://localhost:11434", model: str = "llama3.1"):
+    def __init__(self, base_url: str = "http://localhost:11434", model: Optional[str] = None):
         self.base_url = base_url.rstrip("/")
         self.model = model
     
@@ -84,8 +84,9 @@ class OllamaProvider(ModelProvider):
 class OpenAIProvider(ModelProvider):
     """OpenAI API."""
     
-    def __init__(self, api_key: Optional[str] = None, model: str = "gpt-4o-mini", *, assume_available: bool = False):
+    def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None, *, assume_available: bool = False, capability_overrides: Optional[Dict[str, Any]] = None):
         self.api_key = api_key or os.environ.get("OPENAI_API_KEY")
+        self.capability_overrides = dict(capability_overrides or {})
         self.model = model
         self.assume_available = bool(assume_available)
     
@@ -114,27 +115,30 @@ class OpenAIProvider(ModelProvider):
         return response.json()["choices"][0]["message"]["content"]
     
     def get_capabilities(self) -> Dict[str, Any]:
-        model_caps = {
-            "gpt-4o": {"reasoning": "deep", "context": 128000},
-            "gpt-4o-mini": {"reasoning": "strong", "context": 128000},
-            "gpt-3.5-turbo": {"reasoning": "standard", "context": 16384},
-        }
-        caps = model_caps.get(self.model, {"reasoning": "strong", "context": 32768})
+        """Report capabilities from configuration, never from a model name.
+
+        A hardcoded table keyed by model string ages badly: model names churn
+        faster than code, and a stale entry silently reports the wrong context
+        window. Capabilities are supplied by the host through
+        ``config/models.yaml`` instead.
+        """
+        caps = self.capability_overrides or {}
         return {
             "provider": "openai",
             "model": self.model,
-            "reasoning": caps["reasoning"],
-            "context_window": caps["context"],
-            "supports_temperature": True,
-            "max_output_tokens": 4096,
+            "reasoning": caps.get("reasoning", "strong"),
+            "context_window": int(caps.get("context", 32768)),
+            "supports_temperature": bool(caps.get("supports_temperature", True)),
+            "max_output_tokens": int(caps.get("max_output_tokens", 4096)),
         }
 
 
 class AnthropicProvider(ModelProvider):
     """Anthropic Claude API."""
     
-    def __init__(self, api_key: Optional[str] = None, model: str = "claude-3-5-sonnet-20241022", *, assume_available: bool = False):
+    def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None, *, assume_available: bool = False, capability_overrides: Optional[Dict[str, Any]] = None):
         self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY")
+        self.capability_overrides = dict(capability_overrides or {})
         self.model = model
         self.assume_available = bool(assume_available)
     
@@ -167,13 +171,15 @@ class AnthropicProvider(ModelProvider):
         return response.json()["content"][0]["text"]
     
     def get_capabilities(self) -> Dict[str, Any]:
+        """Report capabilities from configuration, never from a fixed profile."""
+        caps = self.capability_overrides or {}
         return {
             "provider": "anthropic",
             "model": self.model,
-            "reasoning": "deep",
-            "context_window": 200000,
-            "supports_temperature": True,
-            "max_output_tokens": 8192,
+            "reasoning": caps.get("reasoning", "strong"),
+            "context_window": int(caps.get("context", 32768)),
+            "supports_temperature": bool(caps.get("supports_temperature", True)),
+            "max_output_tokens": int(caps.get("max_output_tokens", 4096)),
         }
 
 
@@ -265,6 +271,7 @@ class ModelAdapter:
         self.config = config or {}
         self.providers: List[ModelProvider] = []
         self.current_provider: Optional[ModelProvider] = None
+        self.unavailable_reasons: Dict[str, str] = {}
         self._discover_providers()
     
     @property
@@ -273,32 +280,61 @@ class ModelAdapter:
         return self.get_capabilities()
     
     def _discover_providers(self) -> None:
-        """Auto-discover available providers in priority order."""
+        """Auto-discover available providers in priority order.
+
+        Model identity is never hardcoded here. A provider is registered only
+        when configuration supplies its model, so the adapter cannot pin the
+        product to one vendor's model lineup. Missing configuration is
+        recorded in ``self.unavailable_reasons`` rather than silently
+        defaulted.
+        """
         # 1. Ollama (local, free)
-        ollama = OllamaProvider(
-            base_url=self.config.get("ollama_url", "http://localhost:11434"),
-            model=self.config.get("ollama_model", "llama3.1")
-        )
-        if ollama.is_available():
-            self.providers.append(ollama)
-        
+        ollama_model = self.config.get("ollama_model")
+        if not ollama_model:
+            self.unavailable_reasons["ollama"] = "no ollama_model configured"
+        else:
+            ollama = OllamaProvider(
+                base_url=self.config.get("ollama_url", "http://localhost:11434"),
+                model=ollama_model,
+            )
+            if ollama.is_available():
+                self.providers.append(ollama)
+            else:
+                self.unavailable_reasons["ollama"] = "endpoint not reachable"
+
         # 2. OpenAI (cloud)
         if os.environ.get("OPENAI_API_KEY"):
-            provider = OpenAIProvider(
-                model=self.config.get("openai_model", "gpt-4o-mini"),
-                assume_available=bool(self.config.get("assume_cloud_available", False)),
-            )
-            if provider.is_available():
-                self.providers.append(provider)
-        
+            openai_model = self.config.get("openai_model")
+            if not openai_model:
+                self.unavailable_reasons["openai"] = "no openai_model configured"
+            else:
+                provider = OpenAIProvider(
+                    model=openai_model,
+                    assume_available=bool(self.config.get("assume_cloud_available", False)),
+                )
+                if provider.is_available():
+                    self.providers.append(provider)
+                else:
+                    self.unavailable_reasons["openai"] = "provider reported unavailable"
+        else:
+            self.unavailable_reasons["openai"] = "OPENAI_API_KEY not set"
+
         # 3. Anthropic (cloud)
         if os.environ.get("ANTHROPIC_API_KEY"):
-            provider = AnthropicProvider(
-                model=self.config.get("anthropic_model", "claude-3-5-sonnet-20241022"),
-                assume_available=bool(self.config.get("assume_cloud_available", False)),
-            )
-            if provider.is_available():
-                self.providers.append(provider)
+            anthropic_model = self.config.get("anthropic_model")
+            if not anthropic_model:
+                self.unavailable_reasons["anthropic"] = "no anthropic_model configured"
+            else:
+                provider = AnthropicProvider(
+                    model=anthropic_model,
+                    assume_available=bool(self.config.get("assume_cloud_available", False)),
+                )
+                if provider.is_available():
+                    self.providers.append(provider)
+                else:
+                    self.unavailable_reasons["anthropic"] = "provider reported unavailable"
+        else:
+            self.unavailable_reasons["anthropic"] = "ANTHROPIC_API_KEY not set"
         
         # 4. Local CLI (custom)
         local_cmd = self.config.get("local_command")

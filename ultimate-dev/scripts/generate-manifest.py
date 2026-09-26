@@ -13,6 +13,22 @@ from datetime import datetime
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MANIFEST_PATH = os.path.join(BASE, "skill-manifest.yaml")
 
+
+def sorted_contracts():
+    """Derive the contract list from the filesystem.
+
+    This was a hardcoded list, which silently drifted: adding a contract
+    required editing this script, and forgetting to do so produced a manifest
+    that validate-consistency.py rejected with no hint about the cause. The
+    filesystem is the single source of truth.
+    """
+    contracts_dir = os.path.join(BASE, "contracts")
+    return sorted(
+        os.path.join("contracts", name)
+        for name in os.listdir(contracts_dir)
+        if not name.startswith(".") and os.path.isfile(os.path.join(contracts_dir, name))
+    )
+
 def parse_frontmatter(filepath):
     """Extract YAML frontmatter from a markdown file."""
     try:
@@ -180,19 +196,7 @@ def generate_manifest():
             "optional_powershell": ">=7",
             "prompt_only_dependencies": [],
         },
-        "contracts": [
-            "contracts/README.md",
-            "contracts/capability-manifest.yaml",
-            "contracts/four-channels.md",
-            "contracts/handoff-contract.yaml",
-            "contracts/hitl-interrupt.yaml",
-            "contracts/host-instruction-provisioning.yaml",
-            "contracts/memory-provenance.yaml",
-            "contracts/middleware-hooks.yaml",
-            "contracts/subagent-contract.yaml",
-            "contracts/task-envelope.yaml",
-            "contracts/task-state-machine.yaml",
-        ],
+        "contracts": sorted_contracts(),
         "scripts": [
             "scripts/validate.py",
             "scripts/generate-manifest.py",
