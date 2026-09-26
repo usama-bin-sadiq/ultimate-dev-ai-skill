@@ -1,7 +1,0 @@
-# Development and validation dependencies for Ultimate-Dev 3.0.2
-# Prompt-only users do not need this file or any Python package.
-# Optional runtime model-adapter tests use requests; it is not required by the
-# Markdown skill, JEV reference engine, or provider-free benchmark.
-PyYAML==6.0.2
-pytest==8.3.5
-requests==2.32.3
