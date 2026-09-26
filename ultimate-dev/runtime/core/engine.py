@@ -23,6 +23,8 @@ from .contracts import (
     validate_identifier,
     validate_jev_packet,
 )
+from .attestation import Observation, is_side_effecting
+from .contracts import CAPABILITY_EFFECTS
 from .policy import Policy
 from .redaction import redact_sensitive
 from .session_manager import RuntimeSessionView, SessionManager
@@ -933,8 +935,18 @@ class Runtime:
         )
 
     def record_execution(self, task_id: str, action: Dict[str, Any], result: Dict[str, Any]):
+        """Record that an action ran, stamping a runtime observation on it.
+
+        The caller is never asked to prove anything. The runtime *is* the
+        observer: by the time a result reaches this method the host executor has
+        already returned, so the runtime records what actually came back. A
+        caller that hand-writes ``observation`` to claim an effect it never
+        performed cannot help itself here, because :func:`_stamp_observation`
+        overwrites the field rather than trusting it.
+        """
         if not isinstance(action, dict) or not isinstance(result, dict):
             raise ValueError("execution action and result must be objects")
+        result = self._stamp_observation(action, result)
         safe_action = redact_sensitive(action)
         safe_result = redact_sensitive(result)
         changed = safe_result.get("changed_files", [])
@@ -947,6 +959,57 @@ class Runtime:
             task_id,
             {"type": "execution", "action": safe_action, "result": safe_result},
         )
+
+    @staticmethod
+    def _declared_effects(action: Mapping[str, Any], result: Mapping[str, Any]) -> set[str]:
+        """Collect the side effects an execution record implicitly claims.
+
+        Callers may declare effects explicitly. They frequently do not, so a
+        result that reports created files or non-empty evidence is treated as
+        claiming a write whether or not it says so.
+        """
+        effects: set[str] = set()
+        raw = action.get("effects", ())
+        if isinstance(raw, str):
+            effects.add(raw)
+        elif isinstance(raw, (list, tuple, set, frozenset)):
+            effects.update(str(item) for item in raw)
+        if action.get("capability_id"):
+            effects.add("execute")
+        if result.get("changed_files"):
+            effects.add("write")
+        if result.get("files_created") or result.get("evidence"):
+            effects.add("write")
+        return effects
+
+    def _stamp_observation(
+        self,
+        action: Mapping[str, Any],
+        result: Mapping[str, Any],
+    ) -> Dict[str, Any]:
+        """Attach a runtime-authored observation describing what came back.
+
+        The observation is derived from the executor's actual return value and
+        overwrites any caller-supplied ``observation``, so the grade reflects
+        runtime truth rather than caller intent.
+        """
+        if not is_side_effecting(self._declared_effects(action, result)):
+            return result
+        raw_exit = result.get("exit_code", result.get("code"))
+        exit_code = raw_exit if isinstance(raw_exit, int) and not isinstance(raw_exit, bool) else None
+        if result.get("uncertain"):
+            status = "failed"
+        elif result.get("success") is False:
+            status = "failed"
+        else:
+            status = "observed"
+        observation = Observation(
+            capability_id=str(action.get("capability_id") or "host.executor"),
+            effect=sorted(self._declared_effects(action, result) & CAPABILITY_EFFECTS)[0],
+            status=status,
+            exit_code=exit_code,
+        ).to_record()
+        return {**result, "observation": observation}
 
     def record_verification(
         self,
