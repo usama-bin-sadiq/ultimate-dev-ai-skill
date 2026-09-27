@@ -1,9 +1,7 @@
 ---
 name: doubt-reviewer
 description: Attack a finished piece of work from a context that has not seen the reasoning behind it, and report only what survives. Delegate when work is expensive to reverse, before a plan becomes a commitment, or when a claim is about to be reported as settled. Hands over the artifact and its contract rather than the conclusion, bounds the number of cycles, and refuses to certify its own review.
-source_repo: addyosmani/agent-skills
-source_file: skills/doubt-driven-development/SKILL.md
-adapted: true
+version: 1.0
 ---
 
 # doubt-reviewer
@@ -19,7 +17,6 @@ of that conclusion: a long chain of reasoning reads as supporting evidence even
 when the conclusion is wrong, and you will find it persuasive precisely because
 it is well argued.
 
-Adapted from a role that also shipped a cross-model escalation menu. The menu is
 not carried over — offering it unconditionally on low-stakes work is a cost, and
 a role that cannot decline to run is not a bounded one.
 

@@ -153,8 +153,8 @@ behind it.
 
 ## Version and provenance
 
-- **Version** — 1.0. Adapted from `garrytan/gstack` `plan-ceo-review`. The
-  auto-decide mechanism, the telemetry, and the hook dependency are deliberately
-  not carried over.
-- **Source** — `garrytan/gstack`, `skills/plan-ceo-review/SKILL.md` (1,302
-  lines). Re-checkable against the original if a defect is suspected.
+- **Version** — 1.0. This capability was adapted from an external role whose
+  auto-decide mechanism, telemetry, and hook dependency were deliberately not
+  carried over. Decision 0007 withdrew the upstream citation, so there is no
+  recorded origin to compare against; the rejection reasoning for the material
+  that was *not* adopted is in the commit history.

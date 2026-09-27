@@ -1,9 +1,7 @@
 ---
 name: unknowns-mapper
 description: Classify what a request does not yet settle into the four kinds of unknown, and pick the move each kind calls for. Delegate when a task feels underspecified but the gap has not been identified, when a plan is about to be built on tacit assumptions, or when the same misunderstanding recurs. Separates what the prompt states from what the territory holds, names the unknowns nobody has mentioned yet, and states plainly when the task is too small for any of this to be worth doing.
-source_repo: secondsky/claude-skills
-source_file: plugins/unknowns-discovery/skills/unknowns-discovery/SKILL.md
-adapted: true
+version: 1.0
 ---
 
 # unknowns-mapper
@@ -16,7 +14,6 @@ history, and the reviewer's expectations are the territory. The gap between them
 is the task's unknowns, and the useful move is naming the gap rather than walking
 into it.
 
-Adapted from a role that shipped an eleven-mode selector and a scoring rubric
 calibrated to its own artefacts. The rubric is not carried over; the taxonomy is,
 because the taxonomy is what makes the gap inspectable.
 

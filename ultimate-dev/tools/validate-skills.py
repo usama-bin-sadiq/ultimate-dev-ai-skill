@@ -65,12 +65,11 @@ REPO_ROOT = SKILL_ROOT.parent
 # rejected: a convention that tolerates extensions cannot be validated.
 ALLOWED_FRONTMATTER_KEYS = frozenset(
     {"name", "description", "license", "allowed-tools", "metadata", "compatibility",
-     # Provenance. Decision 0005 requires every adopted item to record where it
-     # came from so any line can be traced and any defect re-checked against the
-     # original. Without these keys there is nowhere to put that, and a stricter
-     # reading of the rule would have forced provenance into prose, where nothing
-     # can check it.
-     "source_repo", "source_file", "adapted"}
+     # Version, so behaviour is attributable to a revision. Decision 0007
+     # withdrew the upstream-repository keys that stood here: the owner directed
+     # that adopted capabilities carry no citation to the repository they came
+     # from. The cost is recorded there and accepted.
+     "version"}
 )
 
 NAME_MAX_LENGTH = 64

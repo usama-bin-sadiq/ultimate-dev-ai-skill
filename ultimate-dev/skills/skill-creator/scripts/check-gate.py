@@ -27,7 +27,9 @@ What it requires, and where the requirement comes from:
                   unmeasurable.
   promotion       Step 5 -- a JEv record naming the disposition and what would
                   deprecate it
-  provenance      Step 6 -- version and source, so behaviour is attributable
+  provenance      Step 6 -- a version, so behaviour is attributable to a
+                  revision. Decision 0007 withdrew the upstream-repository
+                  requirement that stood here.
 
 Usage:
     python3 skills/skill-creator/scripts/check-gate.py            # report
@@ -82,7 +84,7 @@ REQUIREMENTS: dict[str, tuple[str, ...]] = {
         "## Promotion", "PROMOTED", "disposition", "## Decision record",
     ),
     "provenance": (
-        "source_repo", "source_file", "version:", "## Version",
+        "version: 1.0", "## Version and provenance", "## Version",
     ),
 }
 

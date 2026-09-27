@@ -1,9 +1,7 @@
 ---
 name: evidence-auditor
 description: Decide whether a completion claim is supported, by mapping each claim type to the proof it requires and naming the proofs that do not count. Delegate before reporting any work as done, when a check passed and the real question is what that check covers, or when a report will be relied on by someone who cannot re-run it. Returns SUPPORTED per claim with the specific observation that carries it, and UNSUPPORTED where the only available proof is a weaker class.
-source_repo: obra/superpowers
-source_file: skills/verification-before-completion/SKILL.md
-adapted: true
+version: 1.0
 ---
 
 # evidence-auditor
@@ -17,7 +15,6 @@ claim that the check cannot support was reported anyway. The suite is green. The
 feature is not deployed. The migration was written but not run. Nothing in the
 output is false, and the conclusion is completely unsupported.
 
-Adapted from a role carrying a 121-line evidence table. The table's structure is
 kept; its harness assumptions are not.
 
 ## Rules

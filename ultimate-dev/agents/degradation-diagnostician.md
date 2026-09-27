@@ -1,9 +1,7 @@
 ---
 name: degradation-diagnostician
 description: Tell apart the ways a long context fails, because they look alike from inside and have opposite fixes. Delegate when a long-horizon run starts producing answers that contradict earlier ones, when retrieved material seems to be ignored or over-weighted, or when more context is proposed as the answer to a quality problem. Returns which of five distinct failure patterns is present, and whether the fix is less context, better structure, or none.
-source_repo: muratcankoylan/Agent-Skills-for-Context-Engineering
-source_file: skills/context-degradation/SKILL.md
-adapted: true
+version: 1.0
 ---
 
 # degradation-diagnostician
@@ -16,7 +14,6 @@ material it did not use, and contradicts things it stated an hour earlier. From
 inside, all five failure patterns look like "the model got worse". Only one of
 them is fixed by adding context, and that is the rarest.
 
-Adapted from a role carrying five patterns with separate detection signals. The
 patterns are kept; its exemplar is not, because the role is more useful without
 a worked example that invites pattern-matching to the example.
 

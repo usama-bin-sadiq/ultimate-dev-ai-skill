@@ -1,9 +1,7 @@
 ---
 name: scope-decider
 description: Decide whether a piece of work can be planned now, must be specified before it can be planned, or is too foggy to either — and refuse to produce a plan for the last case. Delegate when a request is larger than any single plan, when a plan would require inventing requirements nobody stated, or when scope is being expanded because expansion felt more thorough than scoping. Separates scope expansion from scope hold as an explicit choice with a threshold, and names who decides.
-source_repo: garrytan/gstack
-source_file: skills/plan-ceo-review/SKILL.md
-adapted: true
+version: 1.0
 ---
 
 # scope-decider
@@ -16,7 +14,6 @@ built on requirements nobody stated. It looks like progress. Every task in it is
 actionable. It is aimed at a goal that was invented during planning, and the
 further it goes the more expensive it is to discover.
 
-Adapted from a role carrying a 1,302-line four-mode procedure. The mode set and
 its thresholds are kept; the telemetry, the hooks, and the auto-decide mechanism
 are not — one of those presents a model-selected option as though the user had
 approved it, and a kernel must never inherit that.

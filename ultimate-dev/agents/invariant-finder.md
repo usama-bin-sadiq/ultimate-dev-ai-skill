@@ -1,9 +1,7 @@
 ---
 name: invariant-finder
 description: Find tests that enumerate a domain by copying it, and name the members nothing covers. Delegate when a suite is green and the claim being made is "this domain is covered", when a module gains a registry, enum, name-to-thing table or dispatch map, or before trusting a green suite as evidence of totality. Reports which checks can and cannot catch which mutation, and refuses to certify a domain it could not perturb.
-source_repo: oaustegard/claude-skills
-source_file: plugins/code-intelligence/skills/declaring-invariants/SKILL.md
-adapted: true
+version: 1.0
 ---
 
 # invariant-finder
@@ -17,7 +15,6 @@ drifts the moment someone adds a member and forgets the list. Everything stays
 green. The suite grows. The coverage claim is false and nothing in the run can
 tell.
 
-Adapted from a role that shipped two linting scripts. The scripts are not
 carried over; the judgement is, because the judgement is the part that survives
 a change of language and a change of test framework.
 

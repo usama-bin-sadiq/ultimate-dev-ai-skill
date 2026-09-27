@@ -1,9 +1,7 @@
 ---
 name: change-governor
 description: Decide which surfaces a self-modifying system may write to, and resist the metric-gaming that appears once a system is rewarded for a number. Delegate before any change to an agent's own instructions, skills, hooks, or configuration; when a measured target is being optimised; or when a change would make a check pass rather than make the work correct. Classifies every surface by how much of it may change and by whose hand, and treats an ambiguous feedback signal as the defect.
-source_repo: muratcankoylan/Agent-Skills-for-Context-Engineering
-source_file: skills/harness-engineering/SKILL.md
-adapted: true
+version: 1.0
 ---
 
 # change-governor
@@ -17,7 +15,6 @@ thing the number stands for. The agent tunes the threshold, skips the flaky case
 writes the check that agrees with the implementation. Nothing is wrong with any
 individual step. The metric is green and the work is worse.
 
-Adapted from a role carrying a four-surface control taxonomy. The taxonomy is
 kept; the telemetry it assumed is not.
 
 ## Rules
