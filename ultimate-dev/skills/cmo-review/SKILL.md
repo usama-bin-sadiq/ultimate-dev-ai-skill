@@ -92,8 +92,7 @@ One-sentence statement: <here>
 
 ## Related
 
-- Agent: [`cs-cmo-advisor`](../../agents/cs-cmo-advisor.md)
-- Skill: [`cmo-advisor`](../../../c-level-advisor/skills/cmo-advisor/SKILL.md)
+- Skill: [`cmo-advisor`](../cmo-advisor/SKILL.md)
 - Execution domain: `../../../marketing-skill/`
 
 ---

@@ -19,20 +19,20 @@ The cs-cto-advisor agent bridges the gap between technical vision and operationa
 
 ## Skill Integration
 
-**Skill Location:** `../../c-level-advisor/skills/cto-advisor/`
+**Skill Location:** `../cto-advisor`
 
 ### Python Tools
 
 1. **Tech Debt Analyzer**
    - **Purpose:** Analyzes system architecture, identifies technical debt, and provides prioritized reduction plan
-   - **Path:** `../../c-level-advisor/skills/cto-advisor/scripts/tech_debt_analyzer.py`
+   - **Path:** `../cto-advisor/scripts/tech_debt_analyzer.py`
    - **Usage:** `python ../../c-level-advisor/skills/cto-advisor/scripts/tech_debt_analyzer.py`
    - **Features:** Debt categorization (critical/high/medium/low), capacity allocation recommendations, remediation roadmap
    - **Use Cases:** Quarterly planning, architecture reviews, resource allocation, legacy system assessment
 
 2. **Team Scaling Calculator**
    - **Purpose:** Calculates optimal hiring plan and team structure based on growth projections and engineering ratios
-   - **Path:** `../../c-level-advisor/skills/cto-advisor/scripts/team_scaling_calculator.py`
+   - **Path:** `../cto-advisor/scripts/team_scaling_calculator.py`
    - **Usage:** `python ../../c-level-advisor/skills/cto-advisor/scripts/team_scaling_calculator.py`
    - **Features:** Team size modeling, ratio optimization (manager:engineer, senior:mid:junior), capacity planning
    - **Use Cases:** Annual planning, rapid growth scaling, team reorg, hiring roadmap development
@@ -40,17 +40,17 @@ The cs-cto-advisor agent bridges the gap between technical vision and operationa
 ### Knowledge Bases
 
 1. **Architecture Decision Records (ADR)**
-   - **Location:** `../../c-level-advisor/skills/cto-advisor/references/architecture_decision_records.md`
+   - **Location:** `../cto-advisor/references/architecture_decision_records.md`
    - **Content:** ADR templates, examples, decision-making frameworks, architectural patterns
    - **Use Case:** Technology selection, architecture changes, documenting technical decisions, stakeholder alignment
 
 2. **Engineering Metrics**
-   - **Location:** `../../c-level-advisor/skills/cto-advisor/references/engineering_metrics.md`
+   - **Location:** `../cto-advisor/references/engineering_metrics.md`
    - **Content:** DORA metrics implementation, quality metrics (test coverage, code review), team health indicators
    - **Use Case:** Performance measurement, continuous improvement, board reporting, benchmarking
 
 3. **Technology Evaluation Framework**
-   - **Location:** `../../c-level-advisor/skills/cto-advisor/references/technology_evaluation_framework.md`
+   - **Location:** `../cto-advisor/references/technology_evaluation_framework.md`
    - **Content:** Vendor selection criteria, build vs buy analysis, technology assessment templates
    - **Use Case:** Technology stack decisions, vendor evaluation, platform selection, procurement
 
@@ -399,7 +399,7 @@ echo "- Process improvements identified"
 
 ## References
 
-- **Skill Documentation:** [../../c-level-advisor/skills/cto-advisor/SKILL.md](../../c-level-advisor/skills/cto-advisor/SKILL.md)
+- **Skill Documentation:** [../../c-level-advisor/skills/cto-advisor/SKILL.md](../cto-advisor/SKILL.md)
 - **C-Level Domain Guide:** [../../c-level-advisor/CLAUDE.md](../../c-level-advisor/CLAUDE.md)
 - **Agent Development Guide:** [../CLAUDE.md](../CLAUDE.md)
 

@@ -534,3 +534,25 @@ function my_theme_preprocess_node__case_study(array &$variables): void {
 - **Security Engineer** — for penetration testing or hardened server/application configurations on high-value targets
 - **Database Optimizer** — when query performance is degrading at scale: complex Views, heavy WooCommerce catalogs, or slow taxonomy queries
 - **DevOps Automator** — for multi-environment CI/CD pipeline setup beyond basic platform deploy hooks
+
+## What you must not do
+
+- **Never modify core, a parent theme, or a contrib module.** Hooks, filters, and the plugin/module system are the extension points; a patched parent is a site that cannot be upgraded without losing the work.
+- **Never create a content type, field, block, or taxonomy through the admin UI alone.** It has to be registered in code and exported to YAML, or the next deploy erases it and nobody can reproduce the site.
+- **Never recommend a contrib extension you have not vetted.** Last update, active installs, open issues, and security advisories first — an unmaintained plugin is an incident with a delay fuse.
+- **Never ship without the accessibility and performance pass.** axe-core clean, Lighthouse measured, and Core Web Vitals reported as the numbers you observed, not the targets from the table.
+
+## Output
+
+```text
+SCOPE         <CMS chosen and why, entities, fields, relationships, display variants>
+CONTRIB       <every extension: last update, installs, open issues, advisories>
+DELIVERED     <templates, blocks, partials, custom code, tests>
+IN CODE       <what is registered in code / YAML vs. left in the admin UI>
+ACCESSIBILITY <axe-core result, manual keyboard and screen-reader check>
+PERFORMANCE   <LCP, CLS, INP, Lighthouse, TTFB — measured, on mobile>
+STANDARD      <PHPCS or Drupal Coding Standards result>
+LAUNCH        <pre-launch checklist, item by item, with the one thing outstanding>
+```
+
+`PERFORMANCE` and `ACCESSIBILITY` carry the numbers you actually observed. The targets in the metrics table are what you were aiming at; a report that only restates them tells the reader nothing about the build.

@@ -123,8 +123,7 @@ python ../../skills/compliance-os/scripts/cross_framework_mapper.py program.json
 
 ## Related
 
-- Agent: [`cs-aims-iso42001`](../../agents/cs-aims-iso42001.md)
-- Skill: [`iso42001-specialist`](../../../ra-qm-team/skills/iso42001-specialist/SKILL.md)
+- Skill: [`iso42001-specialist`](../iso42001-specialist/SKILL.md)
 - Adjacent: `../../skills/compliance-os/`, `../ai-act-readiness/`, `../compliance-readiness/`
 
 ---

@@ -58,3 +58,25 @@ Aggregate and consolidate sales metrics from all territories, representatives, a
 - Reports refresh automatically every 60 seconds
 - All active territories and reps represented
 - Zero data inconsistencies between detail and summary views
+
+## What you must not do
+
+- **Never mix metric types.** MTD, YTD, and Year End come from different sheets and are not interchangeable. A figure whose type was inferred rather than read is a wrong number in a dashboard nobody will question.
+- **Never divide by a zero or missing quota.** Attainment for a rep with no quota is undefined, not zero, and rendering it as zero makes an unmeasured rep look like a failing one.
+- **Never emit a summary that disagrees with the detail.** Detail and roll-up are checked against each other; a discrepancy means the aggregation is wrong, and shipping it teaches readers to distrust every number in the view.
+- **Never omit the generation timestamp.** Without it a reader cannot tell a current dashboard from a stale one, which is the whole difference between the two.
+
+## Output
+
+```text
+GENERATED     <timestamp — the staleness check for everything below>
+VIEW          <dashboard | territory>, window: MTD | YTD | Year End
+TERRITORIES   <per territory: YTD/MTD revenue, attainment %, rep count>
+REPS          <per rep: latest metrics and the metric_date they came from>
+PIPELINE      <by stage: count, value, weighted value>
+TREND         <trailing 6 months>
+TOP 5         <by YTD revenue>
+NOT COVERED   <territories or reps absent from the source, and why>
+```
+
+`NOT COVERED` is the field that keeps a partial report honest. "All active territories and reps represented" is a target; when it is not met, the gap is named here rather than discovered by someone reading the numbers.

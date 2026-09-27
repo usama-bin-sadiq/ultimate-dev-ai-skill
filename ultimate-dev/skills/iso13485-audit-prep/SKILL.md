@@ -147,9 +147,8 @@ python ../../skills/compliance-os/scripts/audit_simulator.py iso13485_scope.json
 
 ## Related
 
-- Agent: [`cs-cqm-iso13485`](../../agents/cs-cqm-iso13485.md)
-- Skill: [`qms-audit-expert`](../../../ra-qm-team/skills/qms-audit-expert/SKILL.md)
-- Playbook: [iso13485_audit_playbook.md](../../../ra-qm-team/skills/qms-audit-expert/references/iso13485_audit_playbook.md)
+- Skill: [`qms-audit-expert`](../qms-audit-expert/SKILL.md)
+- Playbook: [iso13485_audit_playbook.md](../qms-audit-expert/references/iso13485_audit_playbook.md)
 - Adjacent: `../fda-qsr-audit-prep/`, `../aims-audit/`, `../compliance-readiness/`
 
 ---

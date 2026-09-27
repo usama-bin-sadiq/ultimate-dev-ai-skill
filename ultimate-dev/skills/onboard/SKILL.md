@@ -40,7 +40,7 @@ The first command to run when adopting c-level-agents. A structured founder inte
 
 ## Output Format
 
-**Canonical schema:** `~/.claude/company-context.md` is owned by the [`cs-onboard`](../../../c-level-advisor/skills/cs-onboard/SKILL.md) skill and follows its 7-dimension schema (`../../../c-level-advisor/skills/cs-onboard/templates/company-context-template.md`): Company Identity, Stage & Scale, Founder Profile, Team & Culture, Market & Competition, Current Challenges, Goals & Ambition. The 12 questions above are a faster structured intake that populates that same file — Identity/Business/Financial → Stage & Scale, Team → Team & Culture, Quarter priorities/risks → Current Challenges + Goals & Ambition. Write `[not captured]` for dimensions the quick intake doesn't reach (Founder Profile, Market & Competition); run the full `cs-onboard` interview to fill them. Never create a second context file or a divergent layout.
+**Canonical schema:** `~/.claude/company-context.md` is owned by the [`cs-onboard`](../cs-onboard/SKILL.md) skill and follows its 7-dimension schema (`../../../c-level-advisor/skills/cs-onboard/templates/company-context-template.md`): Company Identity, Stage & Scale, Founder Profile, Team & Culture, Market & Competition, Current Challenges, Goals & Ambition. The 12 questions above are a faster structured intake that populates that same file — Identity/Business/Financial → Stage & Scale, Team → Team & Culture, Quarter priorities/risks → Current Challenges + Goals & Ambition. Write `[not captured]` for dimensions the quick intake doesn't reach (Founder Profile, Market & Competition); run the full `cs-onboard` interview to fill them. Never create a second context file or a divergent layout.
 
 The intake summary captured by the 12 questions:
 
@@ -117,8 +117,8 @@ By default, `~/.claude/company-context.md` is local to the founder's machine. To
 
 ## Related
 
-- Skill: [`cs-onboard`](../../../c-level-advisor/skills/cs-onboard/SKILL.md) — the underlying interview protocol
-- Skill: [`context-engine`](../../../c-level-advisor/skills/context-engine/SKILL.md) — reads this file
+- Skill: [`cs-onboard`](../cs-onboard/SKILL.md) — the underlying interview protocol
+- Skill: [`context-engine`](../context-engine/SKILL.md) — reads this file
 - Reference: [`../../references/llm-wiki-bridge.md`](../../references/llm-wiki-bridge.md)
 
 ---

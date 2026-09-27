@@ -97,8 +97,7 @@ The numerate skeptic stress-tests anything that touches money. Six questions bef
 
 ## Related
 
-- Agent: [`cs-cfo-advisor`](../../agents/cs-cfo-advisor.md)
-- Skill: [`cfo-advisor`](../../../c-level-advisor/skills/cfo-advisor/SKILL.md)
+- Skill: [`cfo-advisor`](../cfo-advisor/SKILL.md)
 
 ---
 

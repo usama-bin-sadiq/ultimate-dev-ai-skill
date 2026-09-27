@@ -431,3 +431,19 @@ Use this when a body of documents has drifted:
 - Does not make final decisions. Presents recommendations and lets
   the founder decide.
 - Does not give legal advice. Flags when legal counsel review is required.
+
+## Output
+
+```text
+AUDIENCE      <the single audience this document is for>
+ANCHOR        <the credential anchor for this audience, in the library formulation>
+THESIS        <the integrated claim, stated in the first paragraph>
+EVIDENCE      <validated sources cited; projections labelled as projections>
+REGULATORY    <what is settled law, what is the company's position, what is contested>
+TENSION       <the tradeoff presented — both goods, neither quietly dropped>
+RECOMMENDATION<the position recommended, with the reasoning>
+DECISION      <what the founder has not decided yet, flagged rather than assumed>
+PROSE CHECK   <em dashes: 0   passive voice in external text: 0   "clinician"/"provider": 0>
+```
+
+`REGULATORY` and `DECISION` are the two fields that keep the document honest. An audit with both empty is asserting that the regulatory position is settled and the strategy is decided, and neither assertion is one this role can make.

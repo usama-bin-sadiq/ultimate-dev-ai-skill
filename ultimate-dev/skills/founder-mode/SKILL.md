@@ -99,9 +99,8 @@ gstack requires the founder to know all 23 slash commands and pick the right one
 
 ## Related
 
-- Agent: [`cs-chief-of-staff`](../../agents/cs-chief-of-staff.md) — does the routing
-- Skill: [`chief-of-staff`](../../../c-level-advisor/skills/chief-of-staff/SKILL.md) — routing logic
-- Skill: [`context-engine`](../../../c-level-advisor/skills/context-engine/SKILL.md) — loads context
+- Skill: [`chief-of-staff`](../chief-of-staff/SKILL.md) — routing logic
+- Skill: [`context-engine`](../context-engine/SKILL.md) — loads context
 
 ---
 

@@ -63,3 +63,24 @@ Automate the distribution of consolidated sales reports to representatives based
 - All distribution attempts logged
 - Failed sends identified and surfaced within 5 minutes
 - Zero reports sent to wrong territory
+
+## What you must not do
+
+- **Never send a territory report outside that territory.** A wrong-territory send is a data exposure to a rep who has no business seeing another region's numbers, and it is the one failure in this pipeline with no partial credit.
+- **Never abort the whole run because one recipient failed.** Log the failure per recipient and continue; one bad address must not cost every other rep their morning report.
+- **Never send a report without logging the attempt.** Success criteria require every attempt recorded — an unlogged send is indistinguishable from a send that never happened.
+- **Never let a manual send bypass the same territory check the schedule uses.** The manual trigger is the easiest path to a routing mistake precisely because it skips the automation's consistency.
+
+## Output
+
+```text
+TRIGGER       <scheduled daily 08:00 weekdays | weekly Monday 07:00 | manual>
+RECIPIENTS    <per recipient: rep, territory, report type>
+SENT          <n   FAILED: n   (each failure: recipient and the error message)>
+CONTENT       <territory report or company roll-up, and the generation timestamp inside it>
+AUDIT LOG      <recipient, territory, status, timestamp — queryable>
+NEXT SCHEDULE <the next run, and any change to it>
+EXCEPTIONS    <admins and managers on the company-wide roll-up, and who they are>
+```
+
+`SENT` and `FAILED` are reported as counts with the per-recipient detail in `AUDIT LOG`. A run reported as "complete" with failures folded into the total is the failure mode this log exists to make visible.

@@ -36,7 +36,6 @@ Tool selection guide for prospecting across all three branches.
 - Email accuracy ~60–80% — always validate
 - Bulk export limits apply
 
-**Integration**: see [apollo.md](../../../tools/integrations/apollo.md)
 
 ---
 
@@ -55,7 +54,6 @@ Tool selection guide for prospecting across all three branches.
 - Per-credit pricing can spike on large lists
 - Complexity overhead — easy to over-engineer workflows
 
-**Integration**: see [clay.md](../../../tools/integrations/clay.md)
 
 ---
 
@@ -74,7 +72,6 @@ Tool selection guide for prospecting across all three branches.
 - Overkill for SMB prospecting
 - Locked into multi-year contracts typically
 
-**Integration**: see [zoominfo.md](../../../tools/integrations/zoominfo.md)
 
 ---
 
@@ -92,7 +89,6 @@ Tool selection guide for prospecting across all three branches.
 - HubSpot acquisition (2023) — bundled into HubSpot Breeze Intelligence now
 - Standalone API still available but pricing/access depends on tier
 
-**Integration**: see [clearbit.md](../../../tools/integrations/clearbit.md)
 
 ---
 
@@ -114,7 +110,6 @@ Tool selection guide for prospecting across all three branches.
 - Both are pattern-guessing tools — accuracy depends on the target company's email pattern being inferable
 - Always run results through a dedicated validator (Truelist or similar) before outreach
 
-**Integrations**: see [hunter.md](../../../tools/integrations/hunter.md), [snov.md](../../../tools/integrations/snov.md)
 
 ---
 
@@ -133,7 +128,6 @@ Tool selection guide for prospecting across all three branches.
 
 **Why this matters**: Cold email reputation craters when bounce rates exceed 2%. Validating before sending is non-negotiable. Apollo/ZoomInfo/Hunter data is often 60–80% accurate — Truelist catches the rest.
 
-**Integration**: see [truelist.md](../../../tools/integrations/truelist.md)
 
 ---
 
@@ -205,7 +199,6 @@ Cross-reference both for high-confidence tech stack signals.
 - Very-popular repos (100K+ stars) are mostly noise; smaller targeted repos (5K–25K) give better signal density
 - Most prospects are individuals, not company contacts directly — need to figure out their company from `company` field or LinkedIn
 
-**Integration**: see [github.md](../../../tools/integrations/github.md)
 
 ---
 
@@ -234,7 +227,6 @@ Both tools can technically point at any URL. The hard rule:
 
 Discovery happens on platforms (manual browser-assisted research). Extraction happens on individual public business sites.
 
-**Integrations**: see [firecrawl.md](../../../tools/integrations/firecrawl.md), [browserbase.md](../../../tools/integrations/browserbase.md)
 
 ---
 
@@ -251,7 +243,6 @@ Discovery happens on platforms (manual browser-assisted research). Extraction ha
 - Privacy/GDPR considerations — verify your privacy policy disclosures
 - Person-level identification raises higher concerns than company-level
 
-**Integration**: see [rb2b.md](../../../tools/integrations/rb2b.md)
 
 ---
 

@@ -596,3 +596,27 @@ export default router;
 - Token cache hit rate > 95%, avoiding unnecessary token requests
 - Approval workflow end-to-end time reduced by 50%+ (compared to manual operations)
 - Data sync tasks with zero data loss and automatic error compensation
+
+## What you must not do
+
+- **Never hardcode `app_secret` or `encrypt_key`.** Environment variables or a secrets service, always. A credential in source is a credential in the repository history, and rotating it does not remove it from there.
+- **Never assume an event arrives once.** Feishu retries deliveries, so a handler without idempotency double-processes — and for an approval callback that means an action firing twice.
+- **Never treat a 200 response as success without checking `code`.** Feishu returns HTTP 200 with a non-zero business `code` on failure, and a handler that only looks at the status code logs success for every rejected call.
+- **Never ship a message card you have not rendered in the Card Builder.** Malformed card JSON fails at the user's screen, not yours, and the failure lands on the person you were trying to help.
+
+## Output
+
+```text
+SCOPE         <business scenario, app type, Feishu modules integrated>
+SCOPES        <every permission requested, and the least-privilege justification>
+AUTH          <token type in use, cache and expiry, event verification or decrypt key>
+BUILT         <bot, cards, approvals, Bitable, SSO, webhooks — what shipped>
+RESILIENCE    <retry on 429, error branch, idempotency key, fallback behaviour>
+CARDS         <each card validated in Card Builder before release>
+LEAST PRIV    <development scopes removed before publishing>
+AVAILABILITY  <published scope: all employees or named departments>
+MONITORING    <alerts for token failure, API errors, event timeouts>
+NOT TESTED    <paths the API debugger and the test pass did not cover>
+```
+
+`NOT TESTED` is the field that keeps the 99.5% success-rate target honest. The workflow tests duplicate, out-of-order, and delayed delivery — report which of those you actually exercised and which you assumed.

@@ -231,6 +231,29 @@ technique], candid/posed feel, [color palette], documentary style
 inspired by [photographer], authentic and unretouched aesthetic
 ```
 
+## What you must not do
+
+- **Never use vague descriptors where a technical term exists.** "Blurry background" is not a lens decision; shallow depth of field at f/1.8 with f/1.8 bokeh is, and only one of them is reproducible across generations.
+- **Never write an effect that is not physically achievable.** A prompt asking for a lighting direction the shadows contradict produces a technically impossible image, and it is a sign the spec was not checked against itself.
+- **Never skip the negative prompt where the platform supports one.** Half the failure modes in a layered prompt are the elements you did not exclude, and they get added by default.
+- **Never reference a photographer's name as a substitute for describing the look.** The name is not portable across models and often triggers a refusal; the lighting, lens, and colour treatment you actually want are portable.
+
+## Output
+
+```text
+BRIEF         <visual goal, use case, target platform, aspect ratio and resolution intent>
+REFERENCES    <the look being matched, and the specific elements extracted from it>
+PROMPT        <subject / environment / lighting / technical / style, layered as the framework requires>
+TECHNICAL     <lens, aperture, depth of field, lighting direction and quality, colour temperature>
+NEGATIVE      <what must not appear, for platforms that support it>
+PLATFORM      <syntax and parameters for the named tool, not a generic prompt>
+VARIATIONS    <what changes between takes, and which emphasis each one tests>
+CONSISTENCY   <how this prompt holds the same look as the rest of the set>
+AMBIGUITY     <phrases reviewed for multiple readings, and how each was tightened>
+```
+
+`TECHNICAL` and `NEGATIVE` are the two fields that make the prompt reproducible. Without them the output is a description of a picture someone liked, and the next person cannot get it back.
+
 ---
 
 **Instructions Reference**: Your detailed prompt engineering methodology is in this agent definition - refer to these patterns for consistent, professional photography prompt creation across all AI image generation platforms.

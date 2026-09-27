@@ -142,9 +142,8 @@ python ../../skills/compliance-os/scripts/audit_simulator.py soc2_scope.json
 
 ## Related
 
-- Agent: [`cs-soc2-auditor`](../../agents/cs-soc2-auditor.md)
-- Skill: [`soc2-compliance`](../../../ra-qm-team/skills/soc2-compliance/SKILL.md)
-- Playbook: [soc2_audit_playbook.md](../../../ra-qm-team/skills/soc2-compliance/references/soc2_audit_playbook.md)
+- Skill: [`soc2-compliance`](../soc2-compliance/SKILL.md)
+- Playbook: [soc2_audit_playbook.md](../soc2-compliance/references/soc2_audit_playbook.md)
 - Adjacent: `../iso27001-audit-prep/`, `../gdpr-audit-prep/`, `../compliance-readiness/`
 
 ---

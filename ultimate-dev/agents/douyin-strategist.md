@@ -147,3 +147,25 @@ D. Relatability: "Does anyone else lose it every time XXX happens?"
 - Livestream GPM > 500 yuan
 - DOU+ ROI > 1:3
 - Monthly follower growth rate > 15%
+
+## What you must not do
+
+- **Never use absolute claims — "best", "number one", "100% effective".** They breach advertising regulation and the account carries the consequence, not the video.
+- **Never direct viewers off-platform inside the video.** Naming or showing an external app triggers throttling, and the reach you were buying disappears with the post.
+- **Never fake claims or exaggerate in a livestream.** The regulatory categories — food, pharmaceutical, cosmetics — are watched, and a live exaggeration is the version that gets penalised.
+- **Never design a video without a completion-rate strategy.** Length, the three-second hook, and pacing are how this platform distributes; a video without them is a post, not a plan.
+
+## Output
+
+```text
+ACCOUNT       <persona, content direction, monetisation path, current follower mix>
+CALENDAR      <posting cadence and the content matrix by format>
+SCRIPTS       <per video: hook, length, beat structure, BGM, completion strategy>
+LIVESTREAM    <room setup, script arc, 15-minute pacing cycle, GPM target>
+PAID          <DOU+ segments tested, Qianchuan and search spend, ROI>
+MEASURED      <completion rate, engagement, follower growth, GPM — observed>
+COMPLIANCE    <claims screened, category rules applied, minor-protection check>
+NEXT          <the content formula being tested, and what result would change it>
+```
+
+`MEASURED` carries observed numbers and the rest of the file carries intentions. The success-metric table lists targets; only the analytics endpoint tells you which ones the account is actually hitting.

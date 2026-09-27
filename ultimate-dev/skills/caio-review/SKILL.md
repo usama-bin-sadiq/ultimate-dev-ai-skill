@@ -131,9 +131,8 @@ python ../../../c-level-advisor/skills/chief-ai-officer-advisor/scripts/ai_cost_
 
 ## Related
 
-- Agent: [`cs-caio-advisor`](../../agents/cs-caio-advisor.md)
-- Skill: [`chief-ai-officer-advisor`](../../../c-level-advisor/skills/chief-ai-officer-advisor/SKILL.md)
-- Adjacent: `../../../c-level-advisor/skills/chief-data-officer-advisor/` (training data rights, data strategy)
+- Skill: [`chief-ai-officer-advisor`](../chief-ai-officer-advisor/SKILL.md)
+- Adjacent: `../chief-data-officer-advisor` (training data rights, data strategy)
 
 ---
 

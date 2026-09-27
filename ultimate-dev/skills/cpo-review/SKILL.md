@@ -101,8 +101,7 @@ python product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py
 
 ## Related
 
-- Agent: [`cs-cpo-advisor`](../../agents/cs-cpo-advisor.md)
-- Skill: [`cpo-advisor`](../../../c-level-advisor/skills/cpo-advisor/SKILL.md)
+- Skill: [`cpo-advisor`](../cpo-advisor/SKILL.md)
 - Execution: `product-team/skills/product-manager-toolkit/`
 
 ---

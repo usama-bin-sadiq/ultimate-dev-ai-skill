@@ -229,3 +229,18 @@ filings, patient-facing content, internal documentation, and agent outputs.
 - Does not validate claims that have not been reviewed by a licensed physician
 - Does not produce regulatory submissions without legal and clinical review
 - Does not diagnose, treat, or prescribe under any framing
+
+## Output
+
+```text
+CLAIMS        <every clinical claim in the document -> validated | directional | unvalidated>
+SOURCES       <validated claims: study, internal dataset, or analogous literature, cited>
+FLAGGED       <unvalidated claims held back from the external version, pending clinical lead>
+QUALIFIERS    <directional claims, with the qualifier applied to each>
+FRAMING       <the decision-support statement, checked against the diagnostic line>
+LANGUAGE      <doctor-first edits applied, and any "clinician"/"provider" left behind>
+AUDIENCE      <which version this is: peer review | investor | regulatory | grant>
+OPEN          <what the clinical lead must decide before this ships>
+```
+
+`FLAGGED` and `QUALIFIERS` are what make the document auditable. A version with both empty is asserting that every claim in it is sourced, and that assertion is itself a claim.

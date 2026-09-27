@@ -106,9 +106,8 @@ The dissent column from `/cs:boardroom` is the single most useful piece of organ
 
 ## Related
 
-- Skill: [`decision-logger`](../../../c-level-advisor/skills/decision-logger/SKILL.md)
-- Agent: [`cs-chief-of-staff`](../../agents/cs-chief-of-staff.md)
-- Sibling: [`/em:postmortem`](../../../c-level-advisor/executive-mentor/skills/postmortem/SKILL.md) — adversarial single-decision post-mortem
+- Skill: [`decision-logger`](../decision-logger/SKILL.md)
+- Sibling: [`/em:postmortem`](../postmortem/SKILL.md) — adversarial single-decision post-mortem
 
 ---
 

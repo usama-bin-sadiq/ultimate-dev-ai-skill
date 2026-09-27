@@ -103,9 +103,9 @@ write_file   ← separate tool, separate scrutiny
 delete_file  ← consider not shipping this at all
 ```
 
-Pair this with tool annotations — `readOnlyHint: true` on every read tool, `destructiveHint: true` on delete/overwrite tools. Hosts surface these in permission UI (auto-approve reads, confirm-dialog destructive). See `../build-mcp-server/references/tool-design.md`.
+Pair this with tool annotations — `readOnlyHint: true` on every read tool, `destructiveHint: true` on delete/overwrite tools. Hosts surface these in permission UI (auto-approve reads, confirm-dialog destructive). See `../../build-mcp-server/references/tool-design.md`.
 
-If you ship write/delete, consider requiring explicit confirmation via elicitation (see `../build-mcp-server/references/elicitation.md`) or a confirmation widget (see `build-mcp-app`) so the user approves each destructive call.
+If you ship write/delete, consider requiring explicit confirmation via elicitation (see `../../build-mcp-server/references/elicitation.md`) or a confirmation widget (see `build-mcp-app`) so the user approves each destructive call.
 
 ---
 

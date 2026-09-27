@@ -101,8 +101,7 @@ python ../../../c-level-advisor/skills/cro-advisor/scripts/churn_analyzer.py
 
 ## Related
 
-- Agent: [`cs-cro-advisor`](../../agents/cs-cro-advisor.md)
-- Skill: [`cro-advisor`](../../../c-level-advisor/skills/cro-advisor/SKILL.md)
+- Skill: [`cro-advisor`](../cro-advisor/SKILL.md)
 - Execution: `../../../business-growth/`
 
 ---

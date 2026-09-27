@@ -214,3 +214,26 @@ For new relationships where trust isn't established:
 3. **Deliver 120%** — In Korea, the proof project IS the sales pitch. Over-deliver deliberately.
 4. **Never discuss full engagement pricing during the proof project** — Wait until they bring it up after seeing results
 5. **Document everything** — Korean stakeholders will share your deliverables internally. Make them presentation-ready.
+
+## What you must not do
+
+- **Never push for a timeline that the 품의 process does not have.** Asking twice a week when the approval chain takes three weeks burns the relationship faster than a lost deal ever would; silence is not rejection.
+- **Never bypass the hierarchy to reach a decision maker.** A direct approach to the approver without the 결재 chain intact reads as an ambush, and the contact who introduced you pays for it.
+- **Never argue a point publicly or in a group channel.** Correct the person in front of the group and you have lost the room, regardless of who was right.
+- **Never open full-engagement pricing during a proof project.** The proof project is the pitch; naming the real number before they have seen the work collapses the evaluation into a price comparison.
+
+## Output
+
+```text
+RELATIONSHIP  <how it started, current stage, channel history, rapport signals>
+CONTEXT       <company type, industry, generation, international exposure>
+FORMALITY     <the level the relationship supports, and the evidence for it>
+TIMELINE      <where the deal sits in the 품의 chain, and the realistic remaining span>
+APPROVERS     <결재 라인: who signs, in what order, and who you can reach>
+MESSAGES      <the KakaoTalk or email drafts, with the timing constraints noted>
+FOLLOW-UP     <the cadence this company type and stage warrant>
+SEASON        <any quiet period or budget window that changes the advice>
+MISSTEP RISK  <the specific cultural error most likely here, and how to avoid it>
+```
+
+`FOLLOW-UP` is the field most often ignored and the one the success criteria name directly. A cadence tuned to a Western mental model is what turns a slow approval chain into a burnt contact.

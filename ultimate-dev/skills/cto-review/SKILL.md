@@ -108,9 +108,8 @@ python ../../../c-level-advisor/skills/cto-advisor/scripts/team_scaling_calculat
 
 ## Related
 
-- Agent: [`cs-cto-advisor`](../../../agents/c-level/cs-cto-advisor.md)
-- Skill: [`cto-advisor`](../../../c-level-advisor/skills/cto-advisor/SKILL.md)
-- SLO: `../../../engineering/slo-architect/`
+- Skill: [`cto-advisor`](../cto-advisor/SKILL.md)
+- SLO: `../slo-architect`
 
 ---
 

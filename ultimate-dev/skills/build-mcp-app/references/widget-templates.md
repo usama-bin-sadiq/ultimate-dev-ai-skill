@@ -128,7 +128,7 @@ const { App } = globalThis.ExtApps;
 
 **Tool returns:** `{ content: [{ type: "text", text: JSON.stringify({ message, confirmLabel? }) }] }`
 
-**Note:** For simple confirmation, prefer **elicitation** over a widget — see `../build-mcp-server/references/elicitation.md`. Use this widget when you need custom styling or context beyond what a native form offers.
+**Note:** For simple confirmation, prefer **elicitation** over a widget — see `../../build-mcp-server/references/elicitation.md`. Use this widget when you need custom styling or context beyond what a native form offers.
 
 ---
 

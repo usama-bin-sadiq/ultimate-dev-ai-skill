@@ -25,29 +25,29 @@ Do not skip ahead. Do not bundle. The primary device decides every downstream ch
 
 ## Skill Integration
 
-**Skill Location:** `../../engineering-team/skills/senior-frontend/`
+**Skill Location:** `../senior-frontend`
 
 ### Python Tools
 
 1. **Frontend Decision Engine**
    - **Purpose:** Deterministic framework + rendering picker from the 7 forcing-question answers
-   - **Path:** `../../engineering-team/skills/senior-frontend/scripts/frontend_decision_engine.py`
+   - **Path:** `../senior-frontend/scripts/frontend_decision_engine.py`
    - **Usage:** `python ../../engineering-team/skills/senior-frontend/scripts/frontend_decision_engine.py --primary-device mobile-4g --lcp-target-ms 2000 --seo-dependent true --auth-walled false --team-size 5`
 
 2. **Frontend Scaffolder** (existing)
-   - **Path:** `../../engineering-team/skills/senior-frontend/scripts/frontend_scaffolder.py`
+   - **Path:** `../senior-frontend/scripts/frontend_scaffolder.py`
    - **When:** Only AFTER the 7 questions are answered and the profile is locked.
 
 3. **Component Generator** (existing)
-   - **Path:** `../../engineering-team/skills/senior-frontend/scripts/component_generator.py`
+   - **Path:** `../senior-frontend/scripts/component_generator.py`
 
 4. **Bundle Analyzer** (existing)
-   - **Path:** `../../engineering-team/skills/senior-frontend/scripts/bundle_analyzer.py`
+   - **Path:** `../senior-frontend/scripts/bundle_analyzer.py`
 
 ### Knowledge Bases
 
-1. **Forcing-Question Library** — `../../engineering-team/skills/senior-frontend/references/forcing_questions.md`
-2. **Composition Map** — `../../engineering-team/skills/senior-frontend/references/composition_map.md`
+1. **Forcing-Question Library** — `../senior-frontend/references/forcing_questions.md`
+2. **Composition Map** — `../senior-frontend/references/composition_map.md`
 3. **React Patterns / Next.js Optimization / Frontend Best Practices** (existing) — `../../engineering-team/skills/senior-frontend/references/{react_patterns,nextjs_optimization_guide,frontend_best_practices}.md`
 
 ### Templates / Profiles
@@ -136,7 +136,7 @@ When invoked from another agent, ALWAYS return a ≤ 200-word digest with: match
 
 ## References
 
-- Skill: `../../engineering-team/skills/senior-frontend/SKILL.md`
-- Karpathy 4 principles: `../../engineering/karpathy-coder/skills/karpathy-coder/references/karpathy-principles.md`
+- Skill: `../senior-frontend/SKILL.md`
+- Karpathy 4 principles: `../karpathy-coder/references/karpathy-principles.md`
 - Matt Pocock canon: `../../engineering/grill-me/skills/grill-me/references/forcing_question_patterns.md`
 - Web Vitals (Google): web.dev/vitals

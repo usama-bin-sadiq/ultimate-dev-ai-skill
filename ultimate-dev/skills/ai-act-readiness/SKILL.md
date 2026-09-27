@@ -140,9 +140,8 @@ python ../../skills/compliance-os/scripts/cross_framework_mapper.py program.json
 
 ## Related
 
-- Agent: [`cs-ai-act-compliance`](../../agents/cs-ai-act-compliance.md)
-- Skill: [`eu-ai-act-specialist`](../../../ra-qm-team/skills/eu-ai-act-specialist/SKILL.md)
-- Adjacent: `../../skills/compliance-os/`, `../aims-audit/`, `../compliance-readiness/`, `../../../ra-qm-team/skills/gdpr-dsgvo-expert/`
+- Skill: [`eu-ai-act-specialist`](../eu-ai-act-specialist/SKILL.md)
+- Adjacent: `../../skills/compliance-os/`, `../aims-audit/`, `../compliance-readiness/`, `../gdpr-dsgvo-expert`
 
 ---
 

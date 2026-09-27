@@ -25,30 +25,30 @@ The first question kills more bad architecture than any other. Without QPS + rat
 
 ## Skill Integration
 
-**Skill Location:** `../../engineering-team/skills/senior-backend/`
+**Skill Location:** `../senior-backend`
 
 ### Python Tools
 
 1. **Backend Decision Engine**
    - **Purpose:** Deterministic pattern + language + DB picker from the 7 forcing-question answers
-   - **Path:** `../../engineering-team/skills/senior-backend/scripts/backend_decision_engine.py`
+   - **Path:** `../senior-backend/scripts/backend_decision_engine.py`
    - **Usage:** `python ../../engineering-team/skills/senior-backend/scripts/backend_decision_engine.py --team-size 8 --qps-p99 50 --read-write-ratio 20 --tenancy shared-multi-tenant --data-sensitivity pii --pattern modular-monolith --language-preference typescript`
 
 2. **API Scaffolder** (existing)
-   - **Path:** `../../engineering-team/skills/senior-backend/scripts/api_scaffolder.py`
+   - **Path:** `../senior-backend/scripts/api_scaffolder.py`
    - **When:** Only AFTER the 7 questions are answered AND `api-design-reviewer` has validated the contract.
 
 3. **Database Migration Tool** (existing)
-   - **Path:** `../../engineering-team/skills/senior-backend/scripts/database_migration_tool.py`
+   - **Path:** `../senior-backend/scripts/database_migration_tool.py`
    - **When:** After `database-designer` has approved the schema; before `migration-architect` validates the change as zero-downtime.
 
 4. **API Load Tester** (existing)
-   - **Path:** `../../engineering-team/skills/senior-backend/scripts/api_load_tester.py`
+   - **Path:** `../senior-backend/scripts/api_load_tester.py`
 
 ### Knowledge Bases
 
-1. **Forcing-Question Library** — `../../engineering-team/skills/senior-backend/references/forcing_questions.md`
-2. **Composition Map** — `../../engineering-team/skills/senior-backend/references/composition_map.md`
+1. **Forcing-Question Library** — `../senior-backend/references/forcing_questions.md`
+2. **Composition Map** — `../senior-backend/references/composition_map.md`
 3. **API Design Patterns / Backend Security / Database Optimization** (existing) — `../../engineering-team/skills/senior-backend/references/{api_design_patterns,backend_security_practices,database_optimization_guide}.md`
 
 ### Templates / Profiles
@@ -136,8 +136,8 @@ When invoked from another agent, ALWAYS return a ≤ 200-word digest with: match
 
 ## References
 
-- Skill: `../../engineering-team/skills/senior-backend/SKILL.md`
-- Karpathy 4 principles: `../../engineering/karpathy-coder/skills/karpathy-coder/references/karpathy-principles.md`
+- Skill: `../senior-backend/SKILL.md`
+- Karpathy 4 principles: `../karpathy-coder/references/karpathy-principles.md`
 - Matt Pocock canon: `../../engineering/grill-me/skills/grill-me/references/forcing_question_patterns.md`
-- SLO canon (Google SRE): `../../engineering/slo-architect/skills/slo-architect/references/slo_principles.md`
+- SLO canon (Google SRE): `../slo-architect/references/slo_principles.md`
 - Path-B 11-file contract: `../../business-operations/CLAUDE.md`

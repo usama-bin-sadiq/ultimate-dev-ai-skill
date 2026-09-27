@@ -8,18 +8,18 @@ This map is the routing table for the `cs-frontend-engineer` agent and the `/cs:
 
 | User concern | Fork into | When to fork | Path |
 |---|---|---|---|
-| WCAG audit, contrast checks, screen-reader gaps | **a11y-audit** | After Q7 (WCAG target) is set | `../../../engineering-team/skills/a11y-audit/` |
-| Bundle profiling, Lighthouse perf, runtime CPU/memory | **performance-profiler** | After Q2 (LCP target) is set | `../../../engineering/skills/performance-profiler/` |
-| Cinematic / parallax / scroll-storytelling landing | **epic-design** | When `marketing-site` or `landing-page` profile applies | `../../../engineering-team/skills/epic-design/` |
-| Pre-commit Karpathy review on changed files | **cs-karpathy-reviewer** | Before EVERY commit this skill produces | `../../../engineering/karpathy-coder/` |
-| Pre-flight architecture grill | **cs-grill-master** | Before locking framework or rendering model | `../../../engineering/grill-me/` |
-| Monorepo coordination (Turbo / Nx / pnpm) | **monorepo-navigator** | When frontend shares repo with backend / mobile / extension | `../../../engineering/skills/monorepo-navigator/` |
-| Dependency vulnerability sweep | **dependency-auditor** | Before every major release | `../../../engineering/skills/dependency-auditor/` |
+| WCAG audit, contrast checks, screen-reader gaps | **a11y-audit** | After Q7 (WCAG target) is set | `../../a11y-audit` |
+| Bundle profiling, Lighthouse perf, runtime CPU/memory | **performance-profiler** | After Q2 (LCP target) is set | `../../performance-profiler` |
+| Cinematic / parallax / scroll-storytelling landing | **epic-design** | When `marketing-site` or `landing-page` profile applies | `../../epic-design` |
+| Pre-commit Karpathy review on changed files | **cs-karpathy-reviewer** | Before EVERY commit this skill produces | `../../karpathy-coder` |
+| Pre-flight architecture grill | **cs-grill-master** | Before locking framework or rendering model | `../../grill-me` |
+| Monorepo coordination (Turbo / Nx / pnpm) | **monorepo-navigator** | When frontend shares repo with backend / mobile / extension | `../../monorepo-navigator` |
+| Dependency vulnerability sweep | **dependency-auditor** | Before every major release | `../../dependency-auditor` |
 | Visual / accessibility regression in CI | **api-test-suite-builder** (extend for visual) + **playwright-pro** | After Q7 (WCAG target) is set | `../../../engineering-team/playwright-pro/` |
-| Apple HIG / iOS / macOS / visionOS app review | **apple-hig-expert** | When the surface is Apple-platform-native | `../../../product-team/skills/apple-hig-expert/` |
-| AEO (Answer Engine Optimization) — visibility in LLM search | **aeo** | After Q5 (SEO-dependent surface) is confirmed | `../../../marketing-skill/skills/aeo/` |
+| Apple HIG / iOS / macOS / visionOS app review | **apple-hig-expert** | When the surface is Apple-platform-native | `../../apple-hig-expert` |
+| AEO (Answer Engine Optimization) — visibility in LLM search | **aeo** | After Q5 (SEO-dependent surface) is confirmed | `../../aeo` |
 | SEO crawlability + meta + structured data | **seo-auditor** (if present) | After Q5 (SEO-dependent surface) | search `skills/` for the SEO auditor entry point |
-| API contract from the consumer side | **api-design-reviewer** | When frontend defines/consumes a new API contract | `../../../engineering/skills/api-design-reviewer/` |
+| API contract from the consumer side | **api-design-reviewer** | When frontend defines/consumes a new API contract | `../../api-design-reviewer` |
 
 ## Composition rules
 
@@ -45,6 +45,6 @@ This map is the routing table for the `cs-frontend-engineer` agent and the `/cs:
 
 ## References
 
-- Karpathy 4 principles → `../../../engineering/karpathy-coder/skills/karpathy-coder/references/karpathy-principles.md`
+- Karpathy 4 principles → `../../karpathy-coder/references/karpathy-principles.md`
 - Matt Pocock grill discipline → `../../../engineering/grill-me/skills/grill-me/references/forcing_question_patterns.md`
 - Path-B 11-file contract → `../../../business-operations/CLAUDE.md`

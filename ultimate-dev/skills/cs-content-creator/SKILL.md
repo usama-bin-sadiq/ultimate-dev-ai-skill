@@ -34,32 +34,32 @@ If it exists, it contains brand voice, target audience, keyword targets, and wri
 
 ## Skill Integration
 
-**Skill location:** `../../marketing-skill/skills/content-production/` ([SKILL.md](../../marketing-skill/skills/content-production/SKILL.md))
+**Skill location:** `../content-production` ([SKILL.md](../content-production/SKILL.md))
 
 ### Python Tools (stdlib only — all pass `--help`)
 
 1. **Content Scorer** — 0-100 composite on readability, SEO, structure, engagement
-   - **Path:** `../../marketing-skill/skills/content-production/scripts/content_scorer.py`
+   - **Path:** `../content-production/scripts/content_scorer.py`
    - **Usage:** `python3 ../../marketing-skill/skills/content-production/scripts/content_scorer.py draft.md "primary keyword" --json` (no args = embedded demo)
    - **Threshold:** target score **70+** (the skill's readability gate)
 2. **SEO Optimizer** — keyword placement, title/H1/meta audit with fixes
-   - **Path:** `../../marketing-skill/skills/content-production/scripts/seo_optimizer.py`
+   - **Path:** `../content-production/scripts/seo_optimizer.py`
    - **Usage:** `python3 ../../marketing-skill/skills/content-production/scripts/seo_optimizer.py draft.md --keyword "primary keyword" --secondary "phrase one,phrase two"`
 3. **Brand Voice Analyzer** — tone markers, sentence-rhythm stats, vocabulary fingerprint
-   - **Path:** `../../marketing-skill/skills/content-production/scripts/brand_voice_analyzer.py`
+   - **Path:** `../content-production/scripts/brand_voice_analyzer.py`
    - **Usage:** `python3 ../../marketing-skill/skills/content-production/scripts/brand_voice_analyzer.py draft.md --format json`
    - **Use:** compare output against the brand profile in `.claude/product-marketing-context.md`; rewrite sections that drift
 4. **Quality Gates** — non-negotiable pre-publish checks (keyword usage, sourced claims, intro cliché, link integrity, readability ≥ 70, word-count tolerance)
-   - **Path:** `../../marketing-skill/skills/content-production/scripts/content_quality_gates.py`
+   - **Path:** `../content-production/scripts/content_quality_gates.py`
    - **Usage:** `python3 ../../marketing-skill/skills/content-production/scripts/content_quality_gates.py draft.md --json` (`--demo` for a sample article)
    - **Rule:** any failing gate blocks publish
 
 ### Knowledge Bases
 
-- `../../marketing-skill/skills/content-production/references/content-brief-guide.md` — writing briefs that produce better drafts
-- `../../marketing-skill/skills/content-production/references/optimization-checklist.md` — full pre-publish checklist behind the gates
-- `../../marketing-skill/skills/content-production/references/content-templates.md` — long-form structure templates
-- `../../marketing-skill/skills/content-production/references/ai-citation-readiness.md` — AEO-adjacent readiness checks (pair with cs-aeo)
+- `../content-production/references/content-brief-guide.md` — writing briefs that produce better drafts
+- `../content-production/references/optimization-checklist.md` — full pre-publish checklist behind the gates
+- `../content-production/references/content-templates.md` — long-form structure templates
+- `../content-production/references/ai-citation-readiness.md` — AEO-adjacent readiness checks (pair with cs-aeo)
 
 ### Templates
 
@@ -73,7 +73,7 @@ If it exists, it contains brand voice, target audience, keyword targets, and wri
 
 **Steps:**
 1. **Context** — read `.claude/product-marketing-context.md`; collect topic, primary keyword, audience, goal, length.
-2. **Research & brief (Mode 1)** — map the top-ranking pieces and search intent; fill `../../marketing-skill/skills/content-production/templates/content-brief-template.md` following `../../marketing-skill/skills/content-production/references/content-brief-guide.md`.
+2. **Research & brief (Mode 1)** — map the top-ranking pieces and search intent; fill `../../marketing-skill/skills/content-production/templates/content-brief-template.md` following `../content-production/references/content-brief-guide.md`.
 3. **Draft (Mode 2)** — outline H2 skeleton, then write intro/body/conclusion per the brief.
 4. **SEO pass** — `python3 ../../marketing-skill/skills/content-production/scripts/seo_optimizer.py draft.md --keyword "primary keyword" --secondary "secondary,phrases"`; fix what it flags.
 5. **Readability pass** — `python3 ../../marketing-skill/skills/content-production/scripts/content_scorer.py draft.md "primary keyword" --json`; revise until composite ≥ 70.
@@ -108,7 +108,7 @@ If it exists, it contains brand voice, target audience, keyword targets, and wri
 
 ## Proactive Routing
 
-- "What should we write?" / topic clusters / calendar → `../../marketing-skill/skills/content-strategy/` (out of this agent's lane).
+- "What should we write?" / topic clusters / calendar → `../content-strategy` (out of this agent's lane).
 - Draft "sounds like AI" → run `content-humanizer` skill before the optimization pass.
 - Optimizing for ChatGPT/Perplexity citation → hand off to [cs-aeo](cs-aeo.md).
 - Landing-page or CTA copy → `copywriting` skill, not long-form production.
@@ -128,8 +128,8 @@ If it exists, it contains brand voice, target audience, keyword targets, and wri
 
 ## References
 
-- **Skill documentation:** [../../marketing-skill/skills/content-production/SKILL.md](../../marketing-skill/skills/content-production/SKILL.md)
-- **Planning sibling:** [../../marketing-skill/skills/content-strategy/SKILL.md](../../marketing-skill/skills/content-strategy/SKILL.md)
+- **Skill documentation:** [../../marketing-skill/skills/content-production/SKILL.md](../content-production/SKILL.md)
+- **Planning sibling:** [../../marketing-skill/skills/content-strategy/SKILL.md](../content-strategy/SKILL.md)
 - **Marketing domain guide:** [../../marketing-skill/<agent-instructions>](../../marketing-skill/<agent-instructions>)
 - **Agent development guide:** [../<agent-instructions>](../<agent-instructions>)
 

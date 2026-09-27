@@ -120,9 +120,8 @@ python ../../../c-level-advisor/skills/vpe-advisor/scripts/eng_team_structure_de
 
 ## Related
 
-- Agent: [`cs-vpe-advisor`](../../agents/cs-vpe-advisor.md)
-- Skill: [`vpe-advisor`](../../../c-level-advisor/skills/vpe-advisor/SKILL.md)
-- Adjacent: `../../../engineering/slo-architect/`, `../../../engineering/feature-flags-architect/`, `../../../engineering/chaos-engineering/`
+- Skill: [`vpe-advisor`](../vpe-advisor/SKILL.md)
+- Adjacent: `../slo-architect`, `../feature-flags-architect`, `../chaos-engineering`
 
 ---
 

@@ -108,7 +108,7 @@ The General Counsel lens. Six questions before any contract, term sheet, IP move
 
 ## Workflow Integration with `general-counsel-advisor` skill
 
-Since v2.5.1, this command is backed by a full skill at `../../../c-level-advisor/skills/general-counsel-advisor/` with two Python tools:
+Since v2.5.1, this command is backed by a full skill at `../general-counsel-advisor` with two Python tools:
 
 ```bash
 # Automated contract scan (12 founder-killer patterns)
@@ -122,10 +122,9 @@ The `cs-general-counsel-advisor` agent orchestrates both tools plus 3 references
 
 ## Related
 
-- Skill: [`general-counsel-advisor`](../../../c-level-advisor/skills/general-counsel-advisor/SKILL.md) — full skill with Python tools + references
-- Agent: [`cs-general-counsel-advisor`](../../agents/cs-general-counsel-advisor.md)
+- Skill: [`general-counsel-advisor`](../general-counsel-advisor/SKILL.md) — full skill with Python tools + references
 - Compliance execution: `../../../ra-qm-team/`
-- Adjacent: `../../../c-level-advisor/skills/ma-playbook/`
+- Adjacent: `../ma-playbook`
 
 ---
 

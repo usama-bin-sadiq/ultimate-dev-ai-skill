@@ -147,8 +147,7 @@ python ../../skills/compliance-os/scripts/audit_simulator.py fda_qsr_scope.json
 
 ## Related
 
-- Agent: [`cs-fda-qsr-auditor`](../../agents/cs-fda-qsr-auditor.md)
-- Skill: [`fda-consultant-specialist`](../../../ra-qm-team/skills/fda-consultant-specialist/SKILL.md)
+- Skill: [`fda-consultant-specialist`](../fda-consultant-specialist/SKILL.md)
 - Adjacent: `../iso13485-audit-prep/`, `../compliance-readiness/`
 
 ---

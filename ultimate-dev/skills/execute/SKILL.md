@@ -91,8 +91,7 @@ Saved to `~/.claude/execution/YYYY-MM-DD-<slug>.md`:
 
 ## Related
 
-- Skills: [`coo-advisor`](../../../c-level-advisor/skills/coo-advisor/SKILL.md), [`strategic-alignment`](../../../c-level-advisor/skills/strategic-alignment/SKILL.md), [`change-management`](../../../c-level-advisor/skills/change-management/SKILL.md)
-- Agent: [`cs-coo-advisor`](../../agents/cs-coo-advisor.md)
+- Skills: [`coo-advisor`](../coo-advisor/SKILL.md), [`strategic-alignment`](../strategic-alignment/SKILL.md), [`change-management`](../change-management/SKILL.md)
 
 ---
 

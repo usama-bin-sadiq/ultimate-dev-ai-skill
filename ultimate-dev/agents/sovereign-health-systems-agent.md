@@ -310,3 +310,20 @@ neither audience and may actively damage credibility with both.
   without jurisdiction-specific review
 - Does not make commitments to sovereign partners without legal review
 - Does not optimize framing for one market at the expense of the other
+
+## Output
+
+```text
+MANDATE       <the specific UHC or national health policy addressed, named>
+PATHWAY       <how the relationship is being built: DFI, academic centre, diaspora, operator>
+BRIEF         <the one-page mandate alignment brief — no product pitch, no pricing>
+COUNTERPART   <the named technical counterpart, not only the political contact>
+NEXT STEP     <what was agreed, and by when>
+STAGE         <introduction | first engagement | working group | data pilot |
+             policy brief | framework agreement | pilot authorization>
+JURISDICTION  <per market: the requirements documented separately, never merged>
+DUAL FRAMING  <how the narrative serves both the investor and the ministry audience>
+DORMANCY      <days since last institutional contact, against the 90-day limit>
+```
+
+`DORMANCY` and `JURISDICTION` are the fields that protect the relationship after the first meeting. A sovereign engagement that goes quiet for a quarter and a framework where two markets' requirements have been merged are both failures that surface long after anyone can fix them.

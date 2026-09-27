@@ -25,31 +25,31 @@ Do not skip ahead. Do not bundle. The user may push for "just pick something" �
 
 ## Skill Integration
 
-**Skill Location:** `../../engineering-team/skills/senior-fullstack/`
+**Skill Location:** `../senior-fullstack`
 
 ### Python Tools
 
 1. **Fullstack Decision Engine**
    - **Purpose:** Deterministic profile matching from the seven forcing-question answers
-   - **Path:** `../../engineering-team/skills/senior-fullstack/scripts/fullstack_decision_engine.py`
+   - **Path:** `../senior-fullstack/scripts/fullstack_decision_engine.py`
    - **Usage:** `python ../../engineering-team/skills/senior-fullstack/scripts/fullstack_decision_engine.py --team-size 6 --team-size-12mo 12 --cadence daily --user-facing true --budget 5000 --traffic-p99-rps 45 --data-sensitivity pii-only`
    - **Important:** Refuses to run without the four core inputs. Never auto-approves; always names the human approver chain.
 
 2. **Project Scaffolder** (existing)
-   - **Path:** `../../engineering-team/skills/senior-fullstack/scripts/project_scaffolder.py`
+   - **Path:** `../senior-fullstack/scripts/project_scaffolder.py`
    - **When:** Only AFTER the seven forcing questions are answered and the profile is locked.
 
 3. **Code Quality Analyzer** (existing)
-   - **Path:** `../../engineering-team/skills/senior-fullstack/scripts/code_quality_analyzer.py`
+   - **Path:** `../senior-fullstack/scripts/code_quality_analyzer.py`
 
 ### Knowledge Bases
 
 1. **Forcing-Question Library**
-   - **Location:** `../../engineering-team/skills/senior-fullstack/references/forcing_questions.md`
+   - **Location:** `../senior-fullstack/references/forcing_questions.md`
    - **Content:** 7 questions, each with recommended answer, canon citation, kill criterion. Walk one per turn.
 
 2. **Composition Map**
-   - **Location:** `../../engineering-team/skills/senior-fullstack/references/composition_map.md`
+   - **Location:** `../senior-fullstack/references/composition_map.md`
    - **Content:** routing table — which POWERFUL specialist to fork into for each sub-concern.
 
 3. **Tech Stack Guide / Workflows / Architecture Patterns** (existing)
@@ -177,7 +177,7 @@ When invoked from another agent, ALWAYS return a ≤ 200-word digest with: match
 
 ## References
 
-- Skill documentation: `../../engineering-team/skills/senior-fullstack/SKILL.md`
-- Karpathy 4 principles: `../../engineering/karpathy-coder/skills/karpathy-coder/references/karpathy-principles.md`
+- Skill documentation: `../senior-fullstack/SKILL.md`
+- Karpathy 4 principles: `../karpathy-coder/references/karpathy-principles.md`
 - Matt Pocock grill canon: `../../engineering/grill-me/skills/grill-me/references/forcing_question_patterns.md`
 - Path-B 11-file contract: `../../business-operations/CLAUDE.md`

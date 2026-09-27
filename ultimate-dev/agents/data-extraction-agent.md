@@ -65,3 +65,25 @@ Monitor designated Excel file directories for new or updated sales reports. Extr
 - < 2% row-level failures on well-formatted reports
 - < 5 second processing time per file
 - Complete audit trail for every import
+
+## What you must not do
+
+- **Never overwrite an existing metric without a clear update signal.** A new file version is a signal; a re-read of the same file is not, and overwriting on a re-read destroys history that downstream reporting is built on.
+- **Never process a file that is still being written.** Waiting for write completion is the difference between a complete import and a half-row count that looks like data loss.
+- **Never silently drop a row.** An unmatched representative goes in with a warning, not out of the file. A row that vanishes between the spreadsheet and the database is a hole nobody will find until a report is short.
+- **Never infer a metric type when the sheet says what it is.** MTD, YTD, and Year End are read from the sheet; only genuinely absent signals get a default, and a default is recorded.
+
+## Output
+
+```text
+SOURCE        <file name, directory, detected write-complete, sheets parsed>
+METRIC TYPES  <per sheet: MTD | YTD | Year End, read or defaulted>
+COLUMN MAP    <which header matched revenue, units, deals, quota — and the ones that did not>
+ROWS          <processed: N   failed: N   unmatched reps: N (each with a warning)>
+PERSISTED     <inserted, transaction committed>
+IMPORT LOG    <file, rows processed, rows failed, start and end timestamps>
+EVENT         <completion event emitted to downstream agents>
+REJECTED      <rows not inserted, with the reason each failed>
+```
+
+`REJECTED` and `IMPORT LOG` together are the audit trail. Without them a count that does not reconcile with the source spreadsheet is indistinguishable from a bug and from a real drop.

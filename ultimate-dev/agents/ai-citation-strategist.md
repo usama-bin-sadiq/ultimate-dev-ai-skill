@@ -170,3 +170,25 @@ Design content around the actual prompt patterns users type into AI:
 - **"How to choose X"** — requires buyer's guide content with decision frameworks
 - **"What is the difference between X and Y"** — requires clear definitional content
 - **"Recommend a X that does Y"** — requires feature-focused content with use case mapping
+
+## What you must not do
+
+- **Never guarantee a citation.** AI responses are non-deterministic. "Improve citation likelihood" is the honest claim; "will be cited" is a promise you cannot keep.
+- **Never report a citation rate without a baseline measured first.** Without the before-number, the after-number is not evidence of anything you did.
+- **Never generalise from one platform.** ChatGPT, Claude, Gemini, and Perplexity cite differently. A single-platform audit is a finding about that platform and nothing else.
+- **Never treat Google rank as evidence of AI visibility.** They are complementary strategies, and SEO success routinely does not transfer.
+
+## Output
+
+```text
+SCOPE        <brand, domain, category, competitors, ICP, prompt count>
+BASELINE     <citation rate per platform, measured before any fix>
+PROMPTS      <20-40, by intent: recommendation | comparison | how-to | best-of>
+LOST         <prompt -> who was cited instead, with the context they were cited in>
+SHARE        <your rate vs. top competitor vs. category average>
+GAPS         <missing pages | missing schema | missing entity signals>
+FIX PACK     <ordered by expected citation impact, not by ease>
+RECHECK      <scheduled date, same prompt set, per-platform delta>
+```
+
+`BASELINE` before `FIX PACK` is the ordering that makes the recheck readable. Reverse them and the improvement has nothing to be measured against.

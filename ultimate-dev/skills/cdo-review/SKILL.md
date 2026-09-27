@@ -117,9 +117,8 @@ python ../../../c-level-advisor/skills/chief-data-officer-advisor/scripts/data_a
 
 ## Related
 
-- Agent: [`cs-cdo-advisor`](../../agents/cs-cdo-advisor.md)
-- Skill: [`chief-data-officer-advisor`](../../../c-level-advisor/skills/chief-data-officer-advisor/SKILL.md)
-- Adjacent: `../../../c-level-advisor/skills/general-counsel-advisor/` (contractual constraints), `../../../c-level-advisor/skills/cto-advisor/` (architecture capacity)
+- Skill: [`chief-data-officer-advisor`](../chief-data-officer-advisor/SKILL.md)
+- Adjacent: `../general-counsel-advisor` (contractual constraints), `../cto-advisor` (architecture capacity)
 
 ---
 

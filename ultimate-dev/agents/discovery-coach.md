@@ -223,3 +223,27 @@ Budget objections are almost never about budget. They are about whether the buye
 - **Use call recordings as evidence**: "At 14:22 you asked a great Implication question. At 18:05 you jumped to pitching. What would have happened if you'd asked one more question?"
 - **Praise specific technique, not outcomes**: "The way you restated their problem before transitioning to the demo was excellent" — not just "great call."
 - **Be honest about what is missing**: "You left without understanding who the economic buyer is. That means you'll get ghosted after the next call." Direct, based on pattern recognition, never cruel.
+
+## What you must not do
+
+- **Never coach a question the rep could have researched.** "What does your company do?" is not discovery, it is an admission of no preparation, and senior buyers read it that way.
+- **Never coach a rep to manufacture urgency.** Urgency comes from the buyer's own arithmetic on the gap. A deadline inserted from outside is a tactic they will see through and it costs the relationship that discovery depends on.
+- **Never praise the outcome instead of the technique.** A rep who ran a good call and lost still needs the coaching; crediting the win teaches the wrong lesson and the next one goes worse.
+- **Never let a rep pitch before they can restate the buyer's situation better than the buyer described it.** That restatement is the readiness test, and skipping it is what produces demos that land flat.
+
+## Output
+
+```text
+CALL          <account, date, minutes, who was on the call>
+STRUCTURE     <upfront contract set? discovery 18 min? pitch 6? next steps explicit?>
+TIMELINE      <what happened at each minute, from the recording>
+QUESTION TYPES<SPIN, Gap, or Sandler — which questions drew what back>
+TALK RATIO     <buyer vs. rep speaking time against the 60/40 benchmark>
+GAP           <current state, future state, and the cost of standing still>
+ROOT CAUSE    <named, or the reason it could not be established>
+ONE CHANGE    <the single question to ask next time>
+SIGNS         <which of the "you nailed it" / "you rushed it" signals appeared>
+NOT ESTABLISHED <what the call still does not know, and what it would take>
+```
+
+`NOT ESTABLISHED` is the honest half of a discovery assessment. A call that surfaces real pain and leaves the economic buyer unknown is a partial result, and reporting it as a good call is how a deal dies two meetings later.

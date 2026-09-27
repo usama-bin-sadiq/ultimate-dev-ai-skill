@@ -19,20 +19,20 @@ The cs-ceo-advisor agent bridges the gap between strategic intent and operationa
 
 ## Skill Integration
 
-**Skill Location:** `../../c-level-advisor/skills/ceo-advisor/`
+**Skill Location:** `../ceo-advisor`
 
 ### Python Tools
 
 1. **Strategy Analyzer**
    - **Purpose:** Analyzes strategic position using multiple frameworks (SWOT, Porter's Five Forces) and generates actionable recommendations
-   - **Path:** `../../c-level-advisor/skills/ceo-advisor/scripts/strategy_analyzer.py`
+   - **Path:** `../ceo-advisor/scripts/strategy_analyzer.py`
    - **Usage:** `python ../../c-level-advisor/skills/ceo-advisor/scripts/strategy_analyzer.py`
    - **Features:** Market analysis, competitive positioning, strategic options generation, risk assessment
    - **Use Cases:** Annual strategic planning, market entry decisions, competitive analysis, strategic pivots
 
 2. **Financial Scenario Analyzer**
    - **Purpose:** Models different business scenarios with risk-adjusted financial projections and capital allocation recommendations
-   - **Path:** `../../c-level-advisor/skills/ceo-advisor/scripts/financial_scenario_analyzer.py`
+   - **Path:** `../ceo-advisor/scripts/financial_scenario_analyzer.py`
    - **Usage:** `python ../../c-level-advisor/skills/ceo-advisor/scripts/financial_scenario_analyzer.py`
    - **Features:** Scenario modeling, capital allocation optimization, runway analysis, valuation projections
    - **Use Cases:** Fundraising planning, budget allocation, M&A evaluation, strategic investment decisions
@@ -40,17 +40,17 @@ The cs-ceo-advisor agent bridges the gap between strategic intent and operationa
 ### Knowledge Bases
 
 1. **Executive Decision Framework**
-   - **Location:** `../../c-level-advisor/skills/ceo-advisor/references/executive_decision_framework.md`
+   - **Location:** `../ceo-advisor/references/executive_decision_framework.md`
    - **Content:** Structured decision-making process for go/no-go decisions, major pivots, M&A opportunities, crisis response
    - **Use Case:** High-stakes decision making, option evaluation, stakeholder alignment
 
 2. **Board Governance & Investor Relations**
-   - **Location:** `../../c-level-advisor/skills/ceo-advisor/references/board_governance_investor_relations.md`
+   - **Location:** `../ceo-advisor/references/board_governance_investor_relations.md`
    - **Content:** Board meeting preparation, board package templates, investor communication cadence, fundraising playbooks
    - **Use Case:** Board management, quarterly reporting, fundraising execution, investor updates
 
 3. **Leadership & Organizational Culture**
-   - **Location:** `../../c-level-advisor/skills/ceo-advisor/references/leadership_organizational_culture.md`
+   - **Location:** `../ceo-advisor/references/leadership_organizational_culture.md`
    - **Content:** Culture transformation frameworks, leadership development, change management, organizational design
    - **Use Case:** Culture building, organizational change, leadership team development, transformation management
 
@@ -348,7 +348,7 @@ esac
 
 ## References
 
-- **Skill Documentation:** [../../c-level-advisor/skills/ceo-advisor/SKILL.md](../../c-level-advisor/skills/ceo-advisor/SKILL.md)
+- **Skill Documentation:** [../../c-level-advisor/skills/ceo-advisor/SKILL.md](../ceo-advisor/SKILL.md)
 - **C-Level Domain Guide:** [../../c-level-advisor/CLAUDE.md](../../c-level-advisor/CLAUDE.md)
 - **Agent Development Guide:** [../CLAUDE.md](../CLAUDE.md)
 

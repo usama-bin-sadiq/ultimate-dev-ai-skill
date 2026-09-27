@@ -8,19 +8,19 @@ This map is the routing table for the `cs-fullstack-engineer` agent and the `/cs
 
 | User concern | Fork into | When to fork | Path |
 |---|---|---|---|
-| API contract / REST + GraphQL design / breaking change risk | **api-design-reviewer** | After Q1–Q3 of the forcing-question library reveal API surface area | `../../../engineering/skills/api-design-reviewer/` |
-| Database schema / migration safety / index strategy | **database-designer** + **migration-architect** | After Q4 (traffic forecast) — read/write ratio drives schema choice | `../../../engineering/skills/database-designer/`, `../../../engineering/skills/migration-architect/` |
-| Bundle size, frontend perf, server response perf | **performance-profiler** | After Q7 success criteria include a latency/LCP target | `../../../engineering/skills/performance-profiler/` |
-| Reliability target / SLO / error budget | **slo-architect** | After Q7 lists an uptime or p99 SLA | `../../../engineering/slo-architect/skills/slo-architect/` |
-| CI/CD pipeline (multi-language fullstack) | **ci-cd-pipeline-builder** | After Q2 cadence is daily / per-PR | `../../../engineering/skills/ci-cd-pipeline-builder/` |
-| Dependency vulnerability + license risk | **dependency-auditor** | Before every major release; before any production push | `../../../engineering/skills/dependency-auditor/` |
-| Monorepo tooling (Turbo / Nx / pnpm workspaces) | **monorepo-navigator** | When team size ≥ 6 and the codebase houses multiple deployable surfaces | `../../../engineering/skills/monorepo-navigator/` |
-| API test generation + contract tests | **api-test-suite-builder** | After API contract is stable | `../../../engineering/skills/api-test-suite-builder/` |
-| Observability + golden signals + alert design | **observability-designer** | Concurrent with SLO design | `../../../engineering/skills/observability-designer/` |
-| Architecture onboarding doc for a new team member | **codebase-onboarding** | When ≥ 3 engineers will touch the code in 90 days | `../../../engineering/skills/codebase-onboarding/` |
-| Hardening: AuthZ/AuthN, threat model, sensitive-data handling | **senior-security** + **adversarial-reviewer** | Before public launch; before handling PII/PHI/PCI data | `../../../engineering-team/skills/senior-security/`, `../../../engineering-team/skills/adversarial-reviewer/` |
-| Pre-commit code review (Karpathy 4 principles) | **cs-karpathy-reviewer** | Before EVERY commit this skill produces | `../../../engineering/karpathy-coder/` |
-| Pre-flight grill on a draft architecture | **cs-grill-master** | Before locking the stack picks | `../../../engineering/grill-me/` |
+| API contract / REST + GraphQL design / breaking change risk | **api-design-reviewer** | After Q1–Q3 of the forcing-question library reveal API surface area | `../../api-design-reviewer` |
+| Database schema / migration safety / index strategy | **database-designer** + **migration-architect** | After Q4 (traffic forecast) — read/write ratio drives schema choice | `../../database-designer`, `../../migration-architect` |
+| Bundle size, frontend perf, server response perf | **performance-profiler** | After Q7 success criteria include a latency/LCP target | `../../performance-profiler` |
+| Reliability target / SLO / error budget | **slo-architect** | After Q7 lists an uptime or p99 SLA | `../../slo-architect` |
+| CI/CD pipeline (multi-language fullstack) | **ci-cd-pipeline-builder** | After Q2 cadence is daily / per-PR | `../../ci-cd-pipeline-builder` |
+| Dependency vulnerability + license risk | **dependency-auditor** | Before every major release; before any production push | `../../dependency-auditor` |
+| Monorepo tooling (Turbo / Nx / pnpm workspaces) | **monorepo-navigator** | When team size ≥ 6 and the codebase houses multiple deployable surfaces | `../../monorepo-navigator` |
+| API test generation + contract tests | **api-test-suite-builder** | After API contract is stable | `../../api-test-suite-builder` |
+| Observability + golden signals + alert design | **observability-designer** | Concurrent with SLO design | `../../observability-designer` |
+| Architecture onboarding doc for a new team member | **codebase-onboarding** | When ≥ 3 engineers will touch the code in 90 days | `../../codebase-onboarding` |
+| Hardening: AuthZ/AuthN, threat model, sensitive-data handling | **senior-security** + **adversarial-reviewer** | Before public launch; before handling PII/PHI/PCI data | `../../senior-security`, `../../adversarial-reviewer` |
+| Pre-commit code review (Karpathy 4 principles) | **cs-karpathy-reviewer** | Before EVERY commit this skill produces | `../../karpathy-coder` |
+| Pre-flight grill on a draft architecture | **cs-grill-master** | Before locking the stack picks | `../../grill-me` |
 
 ## Composition rules
 
@@ -47,6 +47,6 @@ This map is the routing table for the `cs-fullstack-engineer` agent and the `/cs
 
 ## References
 
-- Karpathy 4 principles → `../../../engineering/karpathy-coder/skills/karpathy-coder/references/karpathy-principles.md`
+- Karpathy 4 principles → `../../karpathy-coder/references/karpathy-principles.md`
 - Matt Pocock grill discipline → `../../../engineering/grill-me/skills/grill-me/references/forcing_question_patterns.md`
 - Path-B 11-file contract → `../../../business-operations/CLAUDE.md` (canonical statement)

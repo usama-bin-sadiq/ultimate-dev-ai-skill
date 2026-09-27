@@ -121,8 +121,7 @@ python ../../../c-level-advisor/skills/chief-customer-officer-advisor/scripts/cs
 
 ## Related
 
-- Agent: [`cs-cco-advisor`](../../agents/cs-cco-advisor.md)
-- Skill: [`chief-customer-officer-advisor`](../../../c-level-advisor/skills/chief-customer-officer-advisor/SKILL.md)
+- Skill: [`chief-customer-officer-advisor`](../chief-customer-officer-advisor/SKILL.md)
 - Adjacent: `../../../business-growth/` (tactical CS execution)
 
 ---

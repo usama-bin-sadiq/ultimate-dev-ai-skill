@@ -128,9 +128,8 @@ python ../../skills/compliance-os/scripts/cross_framework_mapper.py program.json
 
 ## Related
 
-- Agent: [`cs-ciso-iso27001`](../../agents/cs-ciso-iso27001.md)
-- Skill: [`isms-audit-expert`](../../../ra-qm-team/skills/isms-audit-expert/SKILL.md)
-- Playbook: [iso27001_audit_playbook.md](../../../ra-qm-team/skills/isms-audit-expert/references/iso27001_audit_playbook.md)
+- Skill: [`isms-audit-expert`](../isms-audit-expert/SKILL.md)
+- Playbook: [iso27001_audit_playbook.md](../isms-audit-expert/references/iso27001_audit_playbook.md)
 - Adjacent: `../soc2-audit-prep/`, `../aims-audit/`, `../gdpr-audit-prep/`, `../compliance-readiness/`
 
 ---

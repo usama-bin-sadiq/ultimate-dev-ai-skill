@@ -8,21 +8,21 @@ This map is the routing table for the `cs-backend-engineer` agent and the `/cs:b
 
 | User concern | Fork into | When to fork | Path |
 |---|---|---|---|
-| API contract / REST / GraphQL design / breaking-change risk | **api-design-reviewer** | After Q1–Q3 reveal API shape | `../../../engineering/skills/api-design-reviewer/` |
-| Schema design / ERD / normalization / indexing | **database-designer** + **database-schema-designer** | After Q1 (read/write ratio) is known | `../../../engineering/skills/database-designer/`, `../../../engineering/skills/database-schema-designer/` |
-| Zero-downtime schema migrations | **migration-architect** | Before any production schema change | `../../../engineering/skills/migration-architect/` |
-| SLO + SLI + error-budget design | **slo-architect** | After Q7 (SLO) is set | `../../../engineering/slo-architect/skills/slo-architect/` |
-| Observability / golden signals / alert design | **observability-designer** | Concurrent with SLO design | `../../../engineering/skills/observability-designer/` |
-| MCP server build (tools-from-OpenAPI) | **mcp-server-builder** | When backend exposes tools to LLM agents | `../../../engineering/skills/mcp-server-builder/` |
-| CI/CD pipeline for backend service | **ci-cd-pipeline-builder** | After Q2 (tenancy) and Q5 (pattern) are set | `../../../engineering/skills/ci-cd-pipeline-builder/` |
-| Dependency vulnerability + license risk | **dependency-auditor** | Before every release | `../../../engineering/skills/dependency-auditor/` |
-| API test suite + contract tests | **api-test-suite-builder** | After API contract is stable | `../../../engineering/skills/api-test-suite-builder/` |
-| Security hardening / threat model / authZ | **senior-security** + **adversarial-reviewer** | Before public launch; before handling PII/PHI/PCI | `../../../engineering-team/skills/senior-security/`, `../../../engineering-team/skills/adversarial-reviewer/` |
-| Cloud architecture (AWS / Azure / GCP) | **aws-solution-architect** / **azure-cloud-architect** / **gcp-cloud-architect** | When infrastructure choice is the bottleneck | `../../../engineering-team/skills/aws-solution-architect/` (and siblings) |
-| Feature-flag investment + cleanup | **feature-flags-architect** | After Q5 (pattern) is set; before per-PR cadence | `../../../engineering/feature-flags-architect/` |
-| Chaos engineering / failure-injection experiments | **chaos-engineering** | After SLO is in place + stable | `../../../engineering/chaos-engineering/` |
-| Pre-commit Karpathy review | **cs-karpathy-reviewer** | Before EVERY commit | `../../../engineering/karpathy-coder/` |
-| Pre-flight architecture grill | **cs-grill-master** | Before locking pattern or DB choice | `../../../engineering/grill-me/` |
+| API contract / REST / GraphQL design / breaking-change risk | **api-design-reviewer** | After Q1–Q3 reveal API shape | `../../api-design-reviewer` |
+| Schema design / ERD / normalization / indexing | **database-designer** + **database-schema-designer** | After Q1 (read/write ratio) is known | `../../database-designer`, `../../database-schema-designer` |
+| Zero-downtime schema migrations | **migration-architect** | Before any production schema change | `../../migration-architect` |
+| SLO + SLI + error-budget design | **slo-architect** | After Q7 (SLO) is set | `../../slo-architect` |
+| Observability / golden signals / alert design | **observability-designer** | Concurrent with SLO design | `../../observability-designer` |
+| MCP server build (tools-from-OpenAPI) | **mcp-server-builder** | When backend exposes tools to LLM agents | `../../mcp-server-builder` |
+| CI/CD pipeline for backend service | **ci-cd-pipeline-builder** | After Q2 (tenancy) and Q5 (pattern) are set | `../../ci-cd-pipeline-builder` |
+| Dependency vulnerability + license risk | **dependency-auditor** | Before every release | `../../dependency-auditor` |
+| API test suite + contract tests | **api-test-suite-builder** | After API contract is stable | `../../api-test-suite-builder` |
+| Security hardening / threat model / authZ | **senior-security** + **adversarial-reviewer** | Before public launch; before handling PII/PHI/PCI | `../../senior-security`, `../../adversarial-reviewer` |
+| Cloud architecture (AWS / Azure / GCP) | **aws-solution-architect** / **azure-cloud-architect** / **gcp-cloud-architect** | When infrastructure choice is the bottleneck | `../../aws-solution-architect` (and siblings) |
+| Feature-flag investment + cleanup | **feature-flags-architect** | After Q5 (pattern) is set; before per-PR cadence | `../../feature-flags-architect` |
+| Chaos engineering / failure-injection experiments | **chaos-engineering** | After SLO is in place + stable | `../../chaos-engineering` |
+| Pre-commit Karpathy review | **cs-karpathy-reviewer** | Before EVERY commit | `../../karpathy-coder` |
+| Pre-flight architecture grill | **cs-grill-master** | Before locking pattern or DB choice | `../../grill-me` |
 | RA/QM compliance evidence (HIPAA, ISO 27001, SOC2) | **ra-qm-team** | After Q4 reveals regulated data | `../../../ra-qm-team/` |
 
 ## Composition rules
@@ -52,7 +52,7 @@ This map is the routing table for the `cs-backend-engineer` agent and the `/cs:b
 
 ## References
 
-- Karpathy 4 principles → `../../../engineering/karpathy-coder/skills/karpathy-coder/references/karpathy-principles.md`
+- Karpathy 4 principles → `../../karpathy-coder/references/karpathy-principles.md`
 - Matt Pocock grill discipline → `../../../engineering/grill-me/skills/grill-me/references/forcing_question_patterns.md`
 - Path-B 11-file contract → `../../../business-operations/CLAUDE.md`
-- SLO canon → `../../../engineering/slo-architect/skills/slo-architect/references/slo_principles.md`
+- SLO canon → `../../slo-architect/references/slo_principles.md`

@@ -155,9 +155,8 @@ python ../../skills/compliance-os/scripts/cross_framework_mapper.py program.json
 
 ## Related
 
-- Agent: [`cs-dpo-gdpr`](../../agents/cs-dpo-gdpr.md)
-- Skill: [`gdpr-dsgvo-expert`](../../../ra-qm-team/skills/gdpr-dsgvo-expert/SKILL.md)
-- Playbook: [gdpr_audit_playbook.md](../../../ra-qm-team/skills/gdpr-dsgvo-expert/references/gdpr_audit_playbook.md)
+- Skill: [`gdpr-dsgvo-expert`](../gdpr-dsgvo-expert/SKILL.md)
+- Playbook: [gdpr_audit_playbook.md](../gdpr-dsgvo-expert/references/gdpr_audit_playbook.md)
 - Adjacent: `../iso27001-audit-prep/`, `../ai-act-readiness/`, `../soc2-audit-prep/`, `../compliance-readiness/`
 
 ---

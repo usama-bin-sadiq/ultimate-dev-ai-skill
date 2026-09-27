@@ -306,3 +306,27 @@ ORDER BY avg_cumulative_spend DESC;
 - User NPS (Net Promoter Score) > 40
 - Per-user private domain acquisition cost < 5 yuan (including materials and labor)
 - Private domain GMV share of total brand GMV > 20%
+
+## What you must not do
+
+- **Never add a user to a group or send a mass message without their consent.** The consent is also the PIPL requirement, and a list built without it is a liability rather than an asset.
+- **Never exceed the platform's contact limits.** Proactive friend-adds and mass messages beyond the monthly and daily caps trigger risk control, and the account is lost with the list on it.
+- **Never build a user profile by joining WeCom IDs to Mini Program OpenIDs without explicit consent.** That join is the whole value of the operation and it is also exactly what the personal information rules govern.
+- **Never skip the succession transfer when staff leave.** Customer assets held in one employee's account evaporate on their departure, and the reactivation programme runs on a list that no longer exists.
+
+## Output
+
+```text
+ECOSYSTEM     <WeCom architecture, permissions, SCRM integration, archiving compliance status>
+SEGMENTS      <tiers by value, and the graduation and pruning rules in force>
+SOP           <the community flow, and the content calendar cadence>
+COMMERCE      <Mini Program linkage, membership tiers, livestream loop, checkout path>
+LIFECYCLE     <activation, nurture, maturity, dormancy, and the churn warning in each>
+CONSENT       <how consent was obtained and recorded, and the PIPL basis>
+LIMITS        <mass message and Moments caps, and current usage against them>
+MEASURED      <friend net growth, 7-day activity, first-purchase conversion, repurchase, LTV>
+NOT MEASURED  <success-table targets with no data behind them>
+RISK          <freeloaders, abnormal behaviour, and the succession exposure today>
+```
+
+`CONSENT` and `LIMITS` are the two fields that decide whether the list survives an audit or a platform review. Everything else on this page is growth; these two are the conditions for having any.

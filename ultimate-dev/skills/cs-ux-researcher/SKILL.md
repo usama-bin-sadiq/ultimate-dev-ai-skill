@@ -20,78 +20,78 @@ The cs-ux-researcher agent ensures that user needs drive product development. It
 
 ## Skill Integration
 
-**Primary Skill:** `../../product-team/skills/ux-researcher-designer/`
+**Primary Skill:** `../ux-researcher-designer`
 
 ### All Orchestrated Skills
 
 | # | Skill | Location | Primary Tool |
 |---|-------|----------|-------------|
-| 1 | UX Researcher & Designer | `../../product-team/skills/ux-researcher-designer/` | persona_generator.py |
-| 2 | Product Manager Toolkit | `../../product-team/skills/product-manager-toolkit/` | customer_interview_analyzer.py |
-| 3 | UI Design System | `../../product-team/skills/ui-design-system/` | design_token_generator.py |
+| 1 | UX Researcher & Designer | `../ux-researcher-designer` | persona_generator.py |
+| 2 | Product Manager Toolkit | `../product-manager-toolkit` | customer_interview_analyzer.py |
+| 3 | UI Design System | `../ui-design-system` | design_token_generator.py |
 
 ### Python Tools
 
 1. **Persona Generator**
    - **Purpose:** Create data-driven user personas from research inputs including demographics, goals, pain points, and behavioral patterns
-   - **Path:** `../../product-team/skills/ux-researcher-designer/scripts/persona_generator.py`
+   - **Path:** `../ux-researcher-designer/scripts/persona_generator.py`
    - **Usage:** `python ../../product-team/skills/ux-researcher-designer/scripts/persona_generator.py research-data.json`
    - **Features:** Multiple persona generation, behavioral segmentation, needs hierarchy mapping, empathy map creation
    - **Use Cases:** Persona development, user segmentation, design alignment, stakeholder communication
 
 2. **Customer Interview Analyzer**
    - **Purpose:** NLP-based analysis of interview transcripts to extract pain points, feature requests, themes, and sentiment
-   - **Path:** `../../product-team/skills/product-manager-toolkit/scripts/customer_interview_analyzer.py`
+   - **Path:** `../product-manager-toolkit/scripts/customer_interview_analyzer.py`
    - **Usage:** `python ../../product-team/skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interview.txt`
    - **Features:** Pain point extraction with severity scoring, feature request identification, jobs-to-be-done patterns, theme clustering, key quote extraction
    - **Use Cases:** Interview synthesis, discovery validation, problem prioritization, insight aggregation
 
 3. **Design Token Generator**
    - **Purpose:** Generate design tokens for consistent UI implementation across platforms
-   - **Path:** `../../product-team/skills/ui-design-system/scripts/design_token_generator.py`
+   - **Path:** `../ui-design-system/scripts/design_token_generator.py`
    - **Usage:** `python ../../product-team/skills/ui-design-system/scripts/design_token_generator.py theme.json`
    - **Use Cases:** Research-informed design system updates, accessibility token adjustments
 
 ### Knowledge Bases
 
 1. **Persona Methodology**
-   - **Location:** `../../product-team/skills/ux-researcher-designer/references/persona-methodology.md`
+   - **Location:** `../ux-researcher-designer/references/persona-methodology.md`
    - **Content:** Research-backed persona creation methodology, data collection strategies, validation approaches
    - **Use Case:** Methodological guidance for persona projects
 
 2. **Example Personas**
-   - **Location:** `../../product-team/skills/ux-researcher-designer/references/example-personas.md`
+   - **Location:** `../ux-researcher-designer/references/example-personas.md`
    - **Content:** Sample persona documents with demographics, goals, pain points, behaviors, scenarios
    - **Use Case:** Persona format reference, team training
 
 3. **Journey Mapping Guide**
-   - **Location:** `../../product-team/skills/ux-researcher-designer/references/journey-mapping-guide.md`
+   - **Location:** `../ux-researcher-designer/references/journey-mapping-guide.md`
    - **Content:** Customer journey mapping methodology, touchpoint analysis, emotion mapping, opportunity identification
    - **Use Case:** Journey map creation, experience design, service design
 
 4. **Usability Testing Frameworks**
-   - **Location:** `../../product-team/skills/ux-researcher-designer/references/usability-testing-frameworks.md`
+   - **Location:** `../ux-researcher-designer/references/usability-testing-frameworks.md`
    - **Content:** Test planning, task design, analysis methods, severity ratings, reporting formats
    - **Use Case:** Usability study design, prototype validation, UX evaluation
 
 5. **Component Architecture**
-   - **Location:** `../../product-team/skills/ui-design-system/references/component-architecture.md`
+   - **Location:** `../ui-design-system/references/component-architecture.md`
    - **Content:** Component hierarchy, atomic design patterns, composition strategies
    - **Use Case:** Research-to-design translation, component recommendations
 
 6. **Developer Handoff**
-   - **Location:** `../../product-team/skills/ui-design-system/references/developer-handoff.md`
+   - **Location:** `../ui-design-system/references/developer-handoff.md`
    - **Content:** Design-to-dev handoff process, specification formats, asset delivery
    - **Use Case:** Translating research findings into implementation specs
 
 ### Templates
 
 1. **Research Plan Template**
-   - **Location:** `../../product-team/skills/ux-researcher-designer/assets/research_plan_template.md`
+   - **Location:** `../ux-researcher-designer/assets/research_plan_template.md`
    - **Use Case:** Structuring research studies with methodology, participants, and analysis plan
 
 2. **Design System Documentation Template**
-   - **Location:** `../../product-team/skills/ui-design-system/assets/design_system_doc_template.md`
+   - **Location:** `../ui-design-system/assets/design_system_doc_template.md`
    - **Use Case:** Documenting research-informed design system decisions
 
 ## Workflows
@@ -512,16 +512,16 @@ echo "See: ../../product-team/skills/ui-design-system/references/developer-hando
 - [cs-product-manager](cs-product-manager.md) - Product management lifecycle, interview analysis, PRD development
 - [cs-agile-product-owner](cs-agile-product-owner.md) - Translating research findings into user stories
 - [cs-product-strategist](cs-product-strategist.md) - Strategic research to validate product vision and positioning
-- UI Design System - Design handoff and component recommendations (see `../../product-team/skills/ui-design-system/`)
+- UI Design System - Design handoff and component recommendations (see `../ui-design-system`)
 
 ## References
 
-- **Primary Skill:** [../../product-team/skills/ux-researcher-designer/SKILL.md](../../product-team/skills/ux-researcher-designer/SKILL.md)
-- **Interview Analyzer:** [../../product-team/skills/product-manager-toolkit/SKILL.md](../../product-team/skills/product-manager-toolkit/SKILL.md)
-- **Persona Methodology:** [../../product-team/skills/ux-researcher-designer/references/persona-methodology.md](../../product-team/skills/ux-researcher-designer/references/persona-methodology.md)
-- **Journey Mapping Guide:** [../../product-team/skills/ux-researcher-designer/references/journey-mapping-guide.md](../../product-team/skills/ux-researcher-designer/references/journey-mapping-guide.md)
-- **Usability Testing:** [../../product-team/skills/ux-researcher-designer/references/usability-testing-frameworks.md](../../product-team/skills/ux-researcher-designer/references/usability-testing-frameworks.md)
-- **Design System:** [../../product-team/skills/ui-design-system/SKILL.md](../../product-team/skills/ui-design-system/SKILL.md)
+- **Primary Skill:** [../../product-team/skills/ux-researcher-designer/SKILL.md](../ux-researcher-designer/SKILL.md)
+- **Interview Analyzer:** [../../product-team/skills/product-manager-toolkit/SKILL.md](../product-manager-toolkit/SKILL.md)
+- **Persona Methodology:** [../../product-team/skills/ux-researcher-designer/references/persona-methodology.md](../ux-researcher-designer/references/persona-methodology.md)
+- **Journey Mapping Guide:** [../../product-team/skills/ux-researcher-designer/references/journey-mapping-guide.md](../ux-researcher-designer/references/journey-mapping-guide.md)
+- **Usability Testing:** [../../product-team/skills/ux-researcher-designer/references/usability-testing-frameworks.md](../ux-researcher-designer/references/usability-testing-frameworks.md)
+- **Design System:** [../../product-team/skills/ui-design-system/SKILL.md](../ui-design-system/SKILL.md)
 - **Product Domain Guide:** [../../product-team/<agent-instructions>](../../product-team/<agent-instructions>)
 - **Agent Development Guide:** [../<agent-instructions>](../<agent-instructions>)
 

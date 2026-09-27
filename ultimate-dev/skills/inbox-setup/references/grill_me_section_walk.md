@@ -144,6 +144,6 @@ The sample-emails ask is **the highest-quality voice signal** the skill has. It 
 
 The grill-me discipline this reference enforces is canonical in this repo. See:
 
-- [`engineering/grill-me/`](../../../../engineering/grill-me/) — the source skill that formalized the discipline
+- [`engineering/grill-me/`](../../grill-me) — the source skill that formalized the discipline
 - Matt Pocock's original grill-me skill (MIT)
 - This repo's PR #657 cross-skill consistency audit, which verified the discipline transfers consistently across all intake-having skills (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13)

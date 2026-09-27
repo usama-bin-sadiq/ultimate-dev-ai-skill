@@ -137,8 +137,7 @@ The scorer calibrates per audience temperature (warmer audiences convert better 
 
 ## Related
 
-- Agent: [`cs-webinar-marketer`](../agents/marketing/cs-webinar-marketer.md)
-- Skill: [`webinar-marketing`](../marketing-skill/skills/webinar-marketing/SKILL.md)
+- Skill: [`webinar-marketing`](../webinar-marketing/SKILL.md)
 - Companion: `/cs:aeo` (get supporting content cited by AI search), launch-strategy (full launches)
 
 ---

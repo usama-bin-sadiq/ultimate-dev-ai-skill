@@ -19,35 +19,35 @@ The cs-product-strategist agent operates at the intersection of business strateg
 
 ## Skill Integration
 
-**Primary Skill:** `../../product-team/skills/product-strategist/`
+**Primary Skill:** `../product-strategist`
 
 ### All Orchestrated Skills
 
 | # | Skill | Location | Primary Tool |
 |---|-------|----------|-------------|
-| 1 | Product Strategist | `../../product-team/skills/product-strategist/` | okr_cascade_generator.py |
-| 2 | Competitive Teardown | `../../product-team/skills/competitive-teardown/` | competitive_matrix_builder.py |
-| 3 | Product Manager Toolkit | `../../product-team/skills/product-manager-toolkit/` | rice_prioritizer.py |
+| 1 | Product Strategist | `../product-strategist` | okr_cascade_generator.py |
+| 2 | Competitive Teardown | `../competitive-teardown` | competitive_matrix_builder.py |
+| 3 | Product Manager Toolkit | `../product-manager-toolkit` | rice_prioritizer.py |
 
 ### Python Tools
 
 1. **OKR Cascade Generator**
    - **Purpose:** Generate cascaded OKRs from company objectives to team-level key results with initiative mapping
-   - **Path:** `../../product-team/skills/product-strategist/scripts/okr_cascade_generator.py`
+   - **Path:** `../product-strategist/scripts/okr_cascade_generator.py`
    - **Usage:** `python ../../product-team/skills/product-strategist/scripts/okr_cascade_generator.py growth`
    - **Features:** Multi-level cascade (company > product > team), initiative mapping, scoring framework, tracking cadence
    - **Use Cases:** Quarterly planning, strategic alignment, goal setting, annual planning
 
 2. **Competitive Matrix Builder**
    - **Purpose:** Build competitive analysis matrices, feature comparison grids, and positioning maps
-   - **Path:** `../../product-team/skills/competitive-teardown/scripts/competitive_matrix_builder.py`
+   - **Path:** `../competitive-teardown/scripts/competitive_matrix_builder.py`
    - **Usage:** `python ../../product-team/skills/competitive-teardown/scripts/competitive_matrix_builder.py competitors.csv`
    - **Features:** Multi-dimensional scoring, weighted comparison, gap analysis, positioning visualization
    - **Use Cases:** Competitive intelligence, market positioning, feature gap analysis, strategic differentiation
 
 3. **RICE Prioritizer**
    - **Purpose:** Strategic initiative prioritization using RICE framework for portfolio-level decisions
-   - **Path:** `../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py`
+   - **Path:** `../product-manager-toolkit/scripts/rice_prioritizer.py`
    - **Usage:** `python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py initiatives.csv --capacity 50`
    - **Features:** Portfolio quadrant analysis (big bets, quick wins), capacity planning, strategic roadmap generation
    - **Use Cases:** Initiative prioritization, resource allocation, strategic portfolio management
@@ -55,38 +55,38 @@ The cs-product-strategist agent operates at the intersection of business strateg
 ### Knowledge Bases
 
 1. **OKR Framework**
-   - **Location:** `../../product-team/skills/product-strategist/references/okr_framework.md`
+   - **Location:** `../product-strategist/references/okr_framework.md`
    - **Content:** OKR methodology, cascade patterns, scoring guidelines, common pitfalls
    - **Use Case:** OKR education, quarterly planning preparation
 
 2. **Strategy Types**
-   - **Location:** `../../product-team/skills/product-strategist/references/strategy_types.md`
+   - **Location:** `../product-strategist/references/strategy_types.md`
    - **Content:** Product strategy frameworks, competitive positioning models, growth strategies
    - **Use Case:** Strategy formulation, market analysis, product vision development
 
 3. **Data Collection Guide**
-   - **Location:** `../../product-team/skills/competitive-teardown/references/data-collection-guide.md`
+   - **Location:** `../competitive-teardown/references/data-collection-guide.md`
    - **Content:** Sources and methods for gathering competitive intelligence ethically
    - **Use Case:** Competitive research planning, data source identification
 
 4. **Scoring Rubric**
-   - **Location:** `../../product-team/skills/competitive-teardown/references/scoring-rubric.md`
+   - **Location:** `../competitive-teardown/references/scoring-rubric.md`
    - **Content:** Standardized scoring criteria for competitive dimensions (1-10 scale)
    - **Use Case:** Consistent competitor evaluation, bias mitigation
 
 5. **Analysis Templates**
-   - **Location:** `../../product-team/skills/competitive-teardown/references/analysis-templates.md`
+   - **Location:** `../competitive-teardown/references/analysis-templates.md`
    - **Content:** SWOT, Porter's Five Forces, positioning maps, battle cards, win/loss analysis
    - **Use Case:** Structured competitive analysis, sales enablement
 
 ### Templates
 
 1. **OKR Template**
-   - **Location:** `../../product-team/skills/product-strategist/assets/okr_template.md`
+   - **Location:** `../product-strategist/assets/okr_template.md`
    - **Use Case:** Quarterly OKR documentation with tracking structure
 
 2. **PRD Template**
-   - **Location:** `../../product-team/skills/product-manager-toolkit/assets/prd_template.md`
+   - **Location:** `../product-manager-toolkit/assets/prd_template.md`
    - **Use Case:** Documenting strategic initiatives as formal requirements
 
 ## Workflows
@@ -469,14 +469,14 @@ python ../../product-team/skills/product-strategist/scripts/okr_cascade_generato
 - [cs-agile-product-owner](cs-agile-product-owner.md) - Sprint-level planning and backlog management
 - [cs-ux-researcher](cs-ux-researcher.md) - User research to validate strategic assumptions
 - [cs-ceo-advisor](../c-level/cs-ceo-advisor.md) - Company-level strategic alignment
-- Senior PM Skill - Portfolio context (see `../../project-management/skills/senior-pm/`)
+- Senior PM Skill - Portfolio context (see `../senior-pm`)
 
 ## References
 
-- **Primary Skill:** [../../product-team/skills/product-strategist/SKILL.md](../../product-team/skills/product-strategist/SKILL.md)
-- **Competitive Teardown Skill:** [../../product-team/skills/competitive-teardown/SKILL.md](../../product-team/skills/competitive-teardown/SKILL.md)
-- **OKR Framework:** [../../product-team/skills/product-strategist/references/okr_framework.md](../../product-team/skills/product-strategist/references/okr_framework.md)
-- **Strategy Types:** [../../product-team/skills/product-strategist/references/strategy_types.md](../../product-team/skills/product-strategist/references/strategy_types.md)
+- **Primary Skill:** [../../product-team/skills/product-strategist/SKILL.md](../product-strategist/SKILL.md)
+- **Competitive Teardown Skill:** [../../product-team/skills/competitive-teardown/SKILL.md](../competitive-teardown/SKILL.md)
+- **OKR Framework:** [../../product-team/skills/product-strategist/references/okr_framework.md](../product-strategist/references/okr_framework.md)
+- **Strategy Types:** [../../product-team/skills/product-strategist/references/strategy_types.md](../product-strategist/references/strategy_types.md)
 - **Product Domain Guide:** [../../product-team/CLAUDE.md](../../product-team/CLAUDE.md)
 - **Agent Development Guide:** [../CLAUDE.md](../CLAUDE.md)
 

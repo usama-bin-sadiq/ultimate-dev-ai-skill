@@ -127,7 +127,6 @@ python ../../skills/compliance-os/scripts/audit_simulator.py scope.json
 
 ## Related
 
-- Agent: [`cs-compliance-officer`](../../agents/cs-compliance-officer.md)
 - Skill: [`compliance-os`](../compliance-os/SKILL.md)
 - Adjacent: `ra-qm-team/skills/iso42001-specialist/`, `ra-qm-team/skills/eu-ai-act-specialist/`, `ra-qm-team/skills/information-security-manager-iso27001/`, `ra-qm-team/skills/soc2-compliance/`, `ra-qm-team/skills/gdpr-dsgvo-expert/`
 
