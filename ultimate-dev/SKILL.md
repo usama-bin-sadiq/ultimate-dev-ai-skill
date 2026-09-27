@@ -42,7 +42,6 @@ is, this kernel adds cost and buys nothing.
 RECEIVE → UNDERSTAND → TRIAGE → DECIDE → ACQUIRE → PLAN → EXECUTE
    ▲                                                        │
    │                                                     OBSERVE
-   │                                                        │
    └──── LEARN ← SELF-EVALUATE ← SYNTHESIZE ← VERIFY ←─────┘
                          ▲              │
                          └──── RECOVER ┘
@@ -286,8 +285,9 @@ prohibitions: `verifier` (re-derive a claim rather than re-read it),
 `technical-writer` (answer the reader), `grader` (score against criteria set in
 advance), `comparator` (blind A/B), `security-reviewer` (attack it),
 `invariant-finder` (find the test that copies its own domain), `unknowns-mapper`
-(name the prompt-to-territory gap), `claim-auditor` (false claim vs. undefended
-one). Dispatch is tabulated in `references/delegation.md`, with the upper bound.
+(name the prompt-to-territory gap), `claim-auditor` (false vs. undefended). All
+adopted items carry their source in frontmatter. Dispatch is tabulated in
+`references/delegation.md`, with the upper bound.
 also carries the upper bound.
 
 A delegate gets the context it needs and nothing more; a delegate that finds its

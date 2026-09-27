@@ -64,7 +64,13 @@ REPO_ROOT = SKILL_ROOT.parent
 # Frontmatter keys the Agent Skills convention recognises. An unknown key is
 # rejected: a convention that tolerates extensions cannot be validated.
 ALLOWED_FRONTMATTER_KEYS = frozenset(
-    {"name", "description", "license", "allowed-tools", "metadata", "compatibility"}
+    {"name", "description", "license", "allowed-tools", "metadata", "compatibility",
+     # Provenance. Decision 0005 requires every adopted item to record where it
+     # came from so any line can be traced and any defect re-checked against the
+     # original. Without these keys there is nowhere to put that, and a stricter
+     # reading of the rule would have forced provenance into prose, where nothing
+     # can check it.
+     "source_repo", "source_file", "adapted"}
 )
 
 NAME_MAX_LENGTH = 64
