@@ -346,22 +346,40 @@ def check_references() -> list[str]:
 
 
 def check_orphans() -> list[str]:
-    """Every bundled reference file must be reachable from its SKILL.md."""
+    """Every bundled reference file must be reachable from its SKILL.md.
+
+    For a sub-skill, that means its own SKILL.md. For the kernel's own
+    references, the chain is two hops -- SKILL.md names `references/README.md`,
+    and that index names the files -- because the kernel must stay under a
+    500-line ceiling and cannot inline 53 paths without breaching it.
+
+    A one-hop check reported all 53 kernel references as orphaned the moment the
+    kernel's index was compressed to group names, which is the check being wrong
+    rather than the tree: progressive disclosure is the mechanism, and a reachability
+    model that forbids it is measuring the opposite of what it means to measure.
+    So a kernel reference reachable through the index counts as reachable.
+    """
     problems: list[str] = []
+    index = SKILL_ROOT / "references" / "README.md"
+    via_index = (index.read_text(encoding="utf-8") if index.is_file() else "")
     for skill_md in [SKILL_ROOT / "SKILL.md", *sorted(SKILL_ROOT.glob("skills/*/SKILL.md"))]:
         if not skill_md.is_file():
             continue
         text = skill_md.read_text(encoding="utf-8")
         declared = declared_paths(text)
+        is_kernel = skill_md.parent == SKILL_ROOT
         refs_dir = skill_md.parent / "references"
         if not refs_dir.is_dir():
             continue
         for path in sorted(refs_dir.glob("*.md")):
-            if f"references/{path.name}" not in declared:
-                problems.append(
-                    f"{path.relative_to(SKILL_ROOT)}: not reachable from "
-                    f"{skill_md.relative_to(SKILL_ROOT)}"
-                )
+            if f"references/{path.name}" in declared:
+                continue
+            if is_kernel and path.name in via_index:
+                continue          # reachable via references/README.md
+            problems.append(
+                f"{path.relative_to(SKILL_ROOT)}: not reachable from "
+                f"{skill_md.relative_to(SKILL_ROOT)}"
+            )
     return problems
 
 

@@ -295,19 +295,11 @@ Each file contains: production-quality exemplar, tips specific to that type, and
 
 `references/diagrams/` — architecture, block, c4, class, complex\_examples, er, flowchart, gantt, git\_graph, kanban, mindmap, packet, pie, quadrant, radar, requirement, sankey, sequence, state, timeline, treemap, user\_journey, xy\_chart, zenuml
 
-### Document templates (9 types)
-
-`templates/` — decision\_record, how\_to\_guide, issue, kanban, presentation, project\_documentation, pull\_request, research\_paper, status\_report
-
-### Examples
-
-`assets/examples/example-research-report.md` — a complete scientific research report demonstrating proper heading hierarchy, multiple diagram types (flowchart, sequence, gantt), tables, footnote citations, collapsible sections, and all style guide rules applied.
-
 ---
 
 ## 📝 Attribution
 
-All style guides, diagram type guides, and document templates in this skill are ported from the `SuperiorByteWorks-LLC/agent-project` repository under the Apache-2.0 License.
+The style guides and the 24 diagram type guides in this skill are ported from the `SuperiorByteWorks-LLC/agent-project` repository under the Apache-2.0 License.
 
 - **Source**: https://github.com/SuperiorByteWorks-LLC/agent-project
 - **Author**: Clayton Young / Superior Byte Works, LLC (@borealBytes)

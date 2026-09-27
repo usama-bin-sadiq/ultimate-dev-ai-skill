@@ -247,3 +247,25 @@ For multilingual markets (e.g., BG/EN/FR):
 - GDPR fines increasing: CNIL fined Google 325M EUR (Sept 2025).
 - Consent records: store date, time, method, source URL, IP, scope. Not just a checkbox.
 - Data retention: document policy. Delete/anonymize after 12-24 months of zero engagement.
+
+## ⚠️ What You Must NOT Do
+
+- **Never broadcast.** Every send is a segment defined by at least two attributes; a campaign whose audience is "the list" is a deliverability event waiting to be scheduled.
+- **Never let a contact move backwards through the lifecycle.** A won client does not receive nurture, a lost lead does not receive a review request, and an irrelevant contact enters no sequence at all.
+- **Never optimise on open rate.** Post-Apple MPP most opens are inflated and unreliable; CTR, CTOR, and conversion are the indicators, and an open-rate-led programme optimises for a number the system manufactures.
+- **Never ship a sequence without explicit exit conditions.** Conversion, unsubscribe, hard bounce, complaint, inactivity, duplicate — a sequence that can run indefinitely is a complaint generator with a schedule.
+
+## 📋 Your Output Contract
+
+```text
+SEGMENTS      <per campaign: the attributes, the size, and why this audience>
+LIFECYCLE     <stage, sequence, the emails, and the timing>
+EXIT          <the conditions that end a contact's sequence, and where they are enforced>
+CRM / ESP     <attribute mapping, sync frequency, rate limits, and the error path>
+DELIVERABILITY<SPF / DKIM / DMARC state, bounce handling, complaint rate against the limits>
+MEASUREMENT   <CTR, CTOR, conversion, revenue per email — with the open rate marked directional>
+DATA QUALITY  <validation at capture, hard bounces removed, the last verification run>
+NOT MEASURED  <success-table targets with no campaign data behind them>
+```
+
+`DELIVERABILITY` and `EXIT` are the two fields that protect the sending domain. Everything else in this contract measures whether the campaign worked; those two measure whether there will be a next one.

@@ -53,3 +53,25 @@ Generate professional documents using the right tool for each format:
 - Provide the generation script AND the output file
 - Explain formatting choices and how to customize
 - Suggest the best format for the use case
+
+## ⚠️ What You Must NOT Do
+
+- **Never hardcode fonts, sizes, or colours.** Styles and themes exist so a rebrand is one change; a value pasted into a paragraph is a value someone has to find before the next one.
+- **Never ship a document that ignores the brand guidelines.** Colours, fonts, and logos that drift from the guidelines produce a document that is correct and visibly not yours.
+- **Never treat a one-off script as a deliverable.** The reusable thing is the template function; the run that used it is disposable.
+- **Never skip accessibility because the format makes it awkward.** Alt text, a real heading hierarchy, and tagged PDFs where the format supports them are part of the document, not an enhancement pass.
+
+## 📋 Your Output Contract
+
+```text
+FORMAT        <the target format, and the library chosen because it fits that format>
+TEMPLATE      <the template function used, and whether it is reusable beyond this run>
+STYLES        <the style and theme applied, and the brand guideline they come from>
+DATA          <the input supplied, and where it came from>
+STRUCTURE     <the heading hierarchy, as it will appear in the accessibility tree>
+ACCESSIBILITY <alt text, tagged structure, and contrast where the format carries them>
+OUTPUT        <the file produced, its path, and its size>
+RENDERED CHECK<what was verified in the rendered file, and not just in the source>
+```
+
+`RENDERED CHECK` is the field that catches the class of defect a generator always produces: a document that is structurally correct in the code and broken on the page. Pagination, embedded fonts, and a table running off the edge are all invisible until it is opened.

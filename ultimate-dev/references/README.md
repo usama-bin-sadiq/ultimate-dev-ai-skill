@@ -23,6 +23,8 @@ reached when a specific stage or decision needs it. Total: 54 files.
 
 **Control and safety** — `policy-constraints.md` · `security-and-trust.md` · `human-control.md` · `deterministic-vs-agentic.md` · `delegation.md` · `parallelism.md` · `runtime-portability.md`
 
+**Coordination** — `coordination-modes.md` — how results come back together, and what each of the four modes costs
+
 **Breadth** — `multi-domain.md` · `unknown-domain.md` · `insufficient-capability.md` · `insufficient-evidence.md` · `anti-patterns.md`
 
 ## When to load what

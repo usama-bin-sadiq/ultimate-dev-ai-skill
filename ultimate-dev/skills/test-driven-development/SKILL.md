@@ -356,10 +356,6 @@ then verifies the test passes.
 
 This separation ensures the test is written without knowledge of the fix, making it more robust.
 
-## See Also
-
-
-
 ## Common Rationalizations
 
 | Rationalization | Reality |

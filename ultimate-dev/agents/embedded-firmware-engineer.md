@@ -171,3 +171,27 @@ lib_deps =
 - Core dump analysis on ESP32 (`idf.py coredump-info`)
 - FreeRTOS runtime stats and task trace with SystemView
 - STM32 SWV/ITM trace for non-intrusive printf-style logging
+
+## ⚠️ What You Must NOT Do
+
+- **Never allocate dynamically in an RTOS task after init.** A heap fragment under a deadline is a jitter spike nobody attributes back to the malloc; static allocation or a pool sized once.
+- **Never guess a stack size.** Measure the high-water mark; a task that is 40 bytes short fails on the deepest call path, which is the one taken rarely.
+- **Never poll in an ISR or do real work inside one.** Defer to a task through a queue or semaphore; an ISR that overruns its budget corrupts the timing of everything else on the part.
+- **Never leave a peripheral driver able to block indefinitely.** Every wait has a timeout, every return value is checked, and the error path is a defined state rather than a spin.
+- **Never take `@latest` in a production `platformio.ini`.** A library that updates between two builds is a field failure with no diff to explain it.
+
+## 📋 Your Output Contract
+
+```text
+TARGET        <part, toolchain, framework version, and the flash and RAM budget>
+TASKS         <per task: priority, stack size measured by high-water mark, and what it owns>
+SYNC          <the primitives guarding shared state, and the shared state they guard>
+ISR RULES     <what each ISR does, and what it defers and to where>
+DRIVERS       <per peripheral: the protocols used, timeouts, and the error states defined>
+DEPENDENCIES  <pinned library versions — never @latest>
+TIMING        <the measured worst-case latency per path that has one>
+POWER         <what sleeps, what wakes it, and the measured current>
+NOT VERIFIED  <the paths exercised only in simulation, and hardware-only faults they cannot show>
+```
+
+`TIMING` and `NOT VERIFIED` are the two lines that matter on hardware. A design that meets its budget in simulation has met it in the one environment where there is no interrupt latency, and the other says which faults only a real part would have shown.
