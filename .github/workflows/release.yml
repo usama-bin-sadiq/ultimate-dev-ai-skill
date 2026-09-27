@@ -129,7 +129,21 @@ jobs:
           [ "$PUSH_REF" = 'refs/heads/main' ] || exit 0
 
           # The release commit must not recursively start another release.
-          case "$PUSH_MESSAGE" in
+          #
+          # github.head_commit.message is empty for a push made with a token, so
+          # this case statement was matching against the empty string, never
+          # matched, and every release commit started another release. The
+          # observed result was v4.0.0 through v4.0.8 in four minutes.
+          #
+          # The event payload is a convenience; the repository is the source of
+          # truth. Read the subject from the commit that was actually pushed, and
+          # fall back to the payload only if the checkout somehow has no history.
+          subject="$(git log -1 --format=%B "$PUSH_SHA" 2>/dev/null || true)"
+          if [ -z "$subject" ]; then
+            subject="$PUSH_MESSAGE"
+          fi
+          echo "commit subject: ${subject%%$'\n'*}"
+          case "$subject" in
             'chore: release v'*|*'[skip release]'*)
               echo 'Maintenance commit; skipping recursive release.' >&2
               exit 0
