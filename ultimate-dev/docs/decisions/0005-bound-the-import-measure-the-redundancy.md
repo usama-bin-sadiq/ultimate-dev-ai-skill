@@ -52,25 +52,37 @@ should do when a capability is absent.
 
 ## Decision
 
-Import **by literal clone from a named shortlist**, tool-neutralise what is
-tool-bound, and **measure the redundancy ratio rather than assert it**.
+Adopt **per item, not per repository**, and place each item by what kind of thing
+it is. The unit of adoption is a single skill or agent. Nothing obliges the
+adoption of anything else in the repository it came from, and the owner's
+instruction to clone good material is satisfied item by item rather than by
+taking a source whole.
 
-1. The shortlist is fixed in `research/skill-ecosystem/SHORTLIST.md` with, for
-   each repository, the file count, the cross-cutting proportion, and the
-   disqualifying defects found. The shortlist is closed: a repository not on it
-   is not imported, and adding one is a JEv record.
-2. Cloning is literal. Files are taken as written, then adapted. Adaptation
-   removes tool bindings and persona framing and rewrites the file into this
-   repository's role contract; it does not replace content with a summary of
-   content, because a summary is an extraction and extraction is what this
-   decision rejected.
-3. Every imported file records its source repository and the file it came from
-   in its frontmatter, so any line can be traced and any defect re-checked
-   against the original.
-4. After adaptation, `tools/score-roles.py` scores the result and the redundancy
-   ratio against the existing catalogue is written into `evaluation/RESULTS.md`
-   as a measured number. The number is reported whichever way it falls.
-5. Files carrying a disqualifying defect are recorded as rejections in
+1. **The discriminator is which lifecycle the item needs.** An item that needs
+   the gated creation lifecycle — specification, security review, held-out
+   testing, promotion, deprecation — is a **sub-skill** and goes in
+   `skills/<name>/SKILL.md` with its own `references/`, `scripts/`, and
+   `assets/`. An item that needs only a procedure, an output contract, and a
+   set of prohibitions is a **role** and goes in `agents/<name>.md`.
+2. The test is therefore: *does this encode a judgement to be applied at a
+   decision, or a procedure to be executed with its own gates?* Judgement →
+   role. Procedure with lifecycle → sub-skill. A judgement wrapped in persona
+   framing is still a judgement, and the framing is removed rather than being a
+   reason to reject.
+3. Every adopted item records its source repository and the path of the file it
+   came from in its frontmatter, so any line can be traced and any defect
+   re-checked against the original.
+4. Every adopted item must pass the same reachability rule already enforced for
+   roles: a role with no row in the dispatch table is unreachable and is an
+   error. A sub-skill with no entry in the skill index and no trigger condition
+   is unreachable by the same argument, and the check is extended to cover it.
+5. Every adopted item carries at least one evaluation case. An item with no case
+   is decoration, and decoration is how four roles went recommended and unshipped
+   in this repository before.
+6. After adoption, `tools/score-roles.py` scores the result and the redundancy
+   ratio against the existing catalogue is written into `evaluation/RESULTS.md` as
+   a measured number, reported whichever way it falls.
+7. Items carrying a disqualifying defect are recorded as rejections in
    `VERDICTS.md` with the defect quoted, never silently dropped. The standing
    disqualifiers are: a `description` that advertises rules the file does not
    contain; a file instructing the model to assert its own excellence or to
@@ -82,38 +94,42 @@ tool-bound, and **measure the redundancy ratio rather than assert it**.
 
 ```text
 DECISION
-  question   capability acquisition: how much external material to import, and
-             from where
-  selected   literal clone from a closed five-repository shortlist, adapted to
-             the role contract, with the redundancy ratio measured and reported
-  rejected   (a) clone every repository on the owner's list -- the population is
-                 95.6% singletons plus generated farms and name-squats, so the
-                 instruction has no enumerable target and the import would be
-                 dominated by material with no cross-cutting content
-             (b) extract only the three mechanisms found absent -- this was the
-                 recommendation and the owner declined it; on the evidence it
-                 discards genuine depth in the cross-cutting sources for a
-                 smaller diff, and depth is what the owner asked for
-             (c) import the full shortlist unadapted -- rejected because the
-                 brief requires tool-neutral wording and role-contract
-                 conformance, and because three shortlisted repositories ship
-                 prompt-poisoning or self-modifying behaviour that must not be
-                 executed
-  rationale  the owner's goal is a deep, genuinely cross-cutting catalogue; the
-             evidence says depth is available but only from a closed set, so
-             clone deeply from that set rather than widely from all of them
-  confidence high in the shortlist being the right set of repositories;
-             medium in the adapted result being better than the original,
-             because that depends on adaptation quality and is not yet measured;
-             low in the resulting false-trigger behaviour, which no evidence
-             from any survey bears on
-  cost       roughly 120 files and one full measurement pass; buys a catalogue
-             whose contents are traceable and whose redundancy is known rather
-             than assumed
+  question   capability acquisition: what is the unit of adoption, and where
+             does an adopted item go
+  selected   the individual skill or agent; classified by whether it needs the
+             gated creation lifecycle, into skills/ or agents/ respectively;
+             each traced to its source, reachable from a decision, and carrying
+             an evaluation case
+  rejected   (a) adopt per repository -- rejected because it couples adoption to
+                 everything else in a source, and the sources are 95.6%
+                 singletons plus generated farms; a repository is a search space,
+                 not a unit of value
+             (b) adopt per repository but only from a closed shortlist -- this
+                 was the previous version of this record. It is superseded
+                 because it still made the repository the decision unit, which
+                 over-collects by construction
+             (c) adopt nothing and hand-write every addition -- rejected because
+                 genuine mechanisms exist elsewhere and re-deriving them wastes
+                 effort and loses the provenance that makes them checkable
+  rationale  the owner's instruction was to clone good material; the evidence
+             says much of it is not good and the rest is tool-bound, but the
+             per-item unit honours the instruction exactly while removing the
+             temptation to take a source whole
+  confidence high in the per-item unit being correct, because it is the only
+             granularity at which the judgeable properties -- cross-cutting,
+             tool-neutral, substantive -- are decidable at all;
+             medium in the lifecycle split placing items correctly, because the
+             discriminator is a judgement about a file's shape and will be
+             contested at the boundary;
+             low in the resulting trigger behaviour, which no survey evidence
+             bears on
+  cost       per-item provenance and evaluation work; buys a catalogue whose
+             every entry is individually justified and individually removable
   evidence   OBS-001, OBS-002, OBS-003, OBS-004
-  recovery   if the measured redundancy ratio exceeds 0.6, the import has
-             duplicated rather than deepened the catalogue; revert to the
-             shortlist's mechanisms-only form and record the ratio as the reason
+  recovery   if the measured redundancy ratio over the adopted set exceeds 0.6,
+             adoption is duplicating rather than deepening the catalogue;
+             deprecate the duplicates by the same rule that made them, and record
+             the ratio as the reason
 ```
 
 ## Consequences

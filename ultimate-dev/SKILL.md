@@ -33,10 +33,8 @@ or the same procedure has been performed by hand more than once.
 
 Do **not** use it to answer a question you already know, apply a one-step
 transformation, run a known procedure, or restate something — act directly. The
-test is not how big the task looks; it is whether the next correct action is
-already determined. Over-orchestrating a trivial task is a defect: a plan, a
-capability search, and a verification ceremony on "rename this variable" costs
-the user time and buys nothing.
+discriminator is whether the next correct action is already determined; if it
+is, this kernel adds cost and buys nothing.
 
 ## The loop
 
@@ -88,8 +86,8 @@ resources change.
 
 **Escalate** the rung when reality is harder than expected — an assumption fails,
 a step reveals an unknown dependency, evidence contradicts the plan.
-**De-escalate** when it is easier than expected. Carrying R3 reasoning on an R0
-task is waste, and it is the most common failure of this kernel.
+**De-escalate** when it is easier. This direction is the one most often missing
+elsewhere, and carrying R3 reasoning on an R0 task is waste.
 
 ## Step 1 — the task model
 
@@ -135,13 +133,18 @@ resolves to a recorded observation or it does not, and that is a mechanical
 check. If nothing was observed, write `none`; that is a legitimate answer and a
 checkable one.
 
-**`confidence` must name its object.** A bare `high` is an invitation to over-trust:
-users and downstream steps read it as a property of the conclusion rather than of
-the evidence, and automation-bias research shows people defer to a confident-looking
-system far more readily than they check it. Write `confidence: high in the retry
-header being present` — the thing you are actually confident about. If the object
-is the conclusion itself, that is a claim about the future, and `low` with a named
-discriminating observation is the honest value.
+**`confidence` must name its object.** A bare `high` is read as a property of the
+conclusion rather than of the evidence, and people defer to confident-looking
+systems rather than checking them. Write `confidence: high in the retry header
+being present`. If the object is the conclusion itself, that is a claim about the
+future, and `low` with a named discriminating observation is the honest value.
+
+**A named confidence must still agree with the evidence beside it.** Naming the
+object is not sufficient: if the evidence you would write for a claim
+contradicts the label you are about to give it, the label is wrong and the
+evidence is the objection. Check the pair, not the field. **Fabrication runs both
+ways** — the symmetric failure is inventing a defence to kill a finding, so
+refute only with a mitigation you located and read.
 
 **The count of records is rung-dependent; the fields are not.** Seventeen records
 on every run is the most expensive possible assertion of diligence, in a kernel
@@ -340,6 +343,12 @@ decorative. If the only check available is your own reading, write
 `VERIFIED (self-check only)` and name what an independent check would have
 covered.
 
+**Band the findings, and cap the low band.** Below your top band a finding is a
+*lead*, not a finding: it goes in a named investigation list under a hard cap, and
+suppressed ones are counted and reported rather than dropped. A verifier that
+emits forty unranked observations has produced no verdict and has shifted the work
+back to the caller.
+
 See `references/verification-system.md` and `references/evidence-system.md`.
 
 ## Step 8 — recovery
@@ -443,11 +452,11 @@ See `references/security-and-trust.md` and `references/human-control.md`.
 
 ## Anti-patterns
 
-Each of these is a real failure mode of this architecture, not a style
-preference:
+Real failure modes, not style preferences. The two that govern whether this
+kernel loads at all live in the `description` above, where the host reads them
+before deciding to load, and are not repeated here: a negative constraint
+restated five times stops being a rule and becomes a theme.
 
-- **Orchestrating a trivial task.** A plan and a ledger for a one-step job. Cost
-  without benefit.
 - **The confident fabrication.** Reporting a tool result, a citation, or a test
   outcome that was never observed. Undetectable downstream, therefore worst.
 - **Blind retry.** Repeating a failed action without diagnosing its cause.
@@ -466,35 +475,26 @@ preference:
   better.
 - **Silent overreach.** Acting destructively because the task implied it rather
   than because it was authorised.
-- **Difficulty worship.** Escalating effort because the problem *sounds* hard
-  rather than because triage found it hard.
 
 ## References
 
-Load on demand. `references/README.md` is the annotated map — what each one
-governs and which situation loads it. The groups:
+Load on demand. `references/README.md` is the annotated map — what each governs
+and which situation loads it. The groups, and the reason each exists:
 
-**Core** — `references/operating-model.md` · `references/task-model.md` · `references/triage.md` · `references/decision-fabric.md` · `references/decision-ledger.md` · `references/state-system.md` · `references/budget-system.md` · `references/output-contract.md` · `references/self-evaluation.md` · `references/observability.md`
+**Core** — `references/operating-model.md` · `references/task-model.md` · `references/triage.md` · `references/decision-fabric.md` · `references/decision-ledger.md` · `references/state-system.md` · `references/budget-system.md` · `references/output-contract.md` · `references/self-evaluation.md` · `references/observability.md`** — 
+**Context** — `references/context-system.md` · `references/context-compiler.md` · `references/context-provenance.md`** — 
+**Capability and skills** — `references/capability-system.md` · `references/capability-discovery.md` · `references/capability-acquisition.md` · `references/capability-validation.md` · `references/capability-composition.md` · `references/capability-expansion.md` · `references/skill-system.md` · `references/skill-discovery.md` · `references/skill-selection.md` · `references/skill-composition.md`** — 
+**Strategy and reasoning** — `references/strategy-system.md` · `references/reasoning-system.md` · `references/model-adaptation.md`** — 
+**Planning, execution, verification** — `references/planning-system.md` · `references/execution-system.md` · `references/observation-system.md` · `references/verification-system.md` · `references/evidence-system.md` · `references/provenance-system.md`** — 
+**Recovery** — `references/recovery-system.md` · `references/retry-policy.md` · `references/escalation.md`** — 
+**Learning** — `references/learning-system.md` · `references/memory-system.md` · `references/learning-safety.md` · `references/caching-and-reuse.md`** — 
+**Control and safety** — `references/policy-constraints.md` · `references/security-and-trust.md` · `references/human-control.md` · `references/deterministic-vs-agentic.md` · `references/delegation.md` · `references/parallelism.md` · `references/runtime-portability.md`** — 
+**Breadth** — `references/multi-domain.md` · `references/unknown-domain.md` · `references/insufficient-capability.md` · `references/insufficient-evidence.md` · `references/anti-patterns.md`** — 
+**Elsewhere** `skills/skill-creator/SKILL.md` owns capability creation,** — validation, security review, promotion, and deprecation. `agents/` holds the · seven delegated roles. `tools/` holds `validate-skills.py`, for when a result · needs a structural check; the rest of the tooling is maintenance machinery and is · not part of an install. `references/maturity.md` records which prd.md §24 level · this claims and what is missing to reach the next.
 
-**Context** — `references/context-system.md` · `references/context-compiler.md` · `references/context-provenance.md`
-
-**Capability and skills** — `references/capability-system.md` · `references/capability-discovery.md` · `references/capability-acquisition.md` · `references/capability-validation.md` · `references/capability-composition.md` · `references/capability-expansion.md` · `references/skill-system.md` · `references/skill-discovery.md` · `references/skill-selection.md` · `references/skill-composition.md`
-
-**Strategy and reasoning** — `references/strategy-system.md` · `references/reasoning-system.md` · `references/model-adaptation.md`
-
-**Planning, execution, verification** — `references/planning-system.md` · `references/execution-system.md` · `references/observation-system.md` · `references/verification-system.md` · `references/evidence-system.md` · `references/provenance-system.md`
-
-**Recovery** — `references/recovery-system.md` · `references/retry-policy.md` · `references/escalation.md`
-
-**Learning** — `references/learning-system.md` · `references/memory-system.md` · `references/learning-safety.md` · `references/caching-and-reuse.md`
-
-**Control and safety** — `references/policy-constraints.md` · `references/security-and-trust.md` · `references/human-control.md` · `references/deterministic-vs-agentic.md` · `references/delegation.md` · `references/parallelism.md` · `references/runtime-portability.md`
-
-**Breadth** — `references/multi-domain.md` · `references/unknown-domain.md` · `references/insufficient-capability.md` · `references/insufficient-evidence.md` · `references/anti-patterns.md`
-
-**Elsewhere** `skills/skill-creator/SKILL.md` owns capability creation,
-validation, security review, promotion, and deprecation. `agents/` holds the
-seven delegated roles. `tools/` holds `validate-skills.py`, for when a result
-needs a structural check; the rest of the tooling is maintenance machinery and is
-not part of an install. `references/maturity.md` records which prd.md §24 level
-this claims and what is missing to reach the next.
+**Elsewhere** — `skills/skill-creator/SKILL.md` owns capability creation, validation,
+security review, promotion, and deprecation. `agents/` holds the eleven delegated
+roles. `tools/` holds the runtime validators: `validate-skills.py` for structure,
+`score-roles.py` for role substance, plus the bundler, eval projector, fixture
+generator, and pilot runner, which are maintenance machinery and not part of an
+install.
