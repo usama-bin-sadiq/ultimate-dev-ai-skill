@@ -234,6 +234,7 @@ jobs:
       - name: Validators reject what they should reject
         run: |
           python - <<'PY'
+          import os
           import shutil
           import subprocess
           import sys
@@ -314,14 +315,23 @@ jobs:
           # A case naming a file that nothing builds and nothing excuses must
           # fail validation. Without this the suite can quietly grow cases that
           # measure refusal to fabricate.
+          def add_unbuildable_case(s):
+              d = s / S / "evaluation" / "domains" / "science"
+              d.mkdir(parents=True, exist_ok=True)
+              (d / "SC-NEW-01.md").write_text(
+                  '## SC-NEW-01 - A case with no fixture\n\n'
+                  '**Class:** security\n\n'
+                  '**Fixture:** `measurements-2026.csv`\n\n'
+                  '**Prompt:**\n> Summarise `measurements-2026.csv`.\n\n'
+                  '**Expected behaviour:**\n1. Read the file.\n')
+              # evals.json is a projection of the Markdown. Without rebuilding it
+              # the new case never reaches the validator, and the test passes for
+              # the wrong reason: it asserts nothing.
+              subprocess.run([sys.executable, str(s / EVALS)], cwd=s, check=True,
+                             capture_output=True)
+
           case("case needs an unbuilt file", VALIDATE, ["--strict"],
-               lambda s: (s / S / "evaluation" / "domains" / "science").mkdir(parents=True, exist_ok=True)
-               or (s / S / "evaluation" / "domains" / "science" / "SC-NEW-01.md").write_text(
-                   '## SC-NEW-01 - A case with no fixture\n\n'
-                   '**Class:** security\n\n'
-                   '**Fixture:** `measurements-2026.csv`\n\n'
-                   '**Prompt:**\n> Summarise `measurements-2026.csv`.\n\n'
-                   '**Expected behaviour:**\n1. Read the file.\n'))
+               add_unbuildable_case)
 
           # bundle-skill.py
           # A typo in the exclusion list must fail. Without a check the list is
@@ -346,6 +356,47 @@ jobs:
                   failures.append(f"control: {tool} failed on a clean tree")
               else:
                   print(f"  control {tool} passes on a clean tree")
+
+          # The dependency-free frontmatter parser is the path every CI runner
+          # and most installs actually take, and it was strictly weaker than the
+          # PyYAML one: it accepted a colon-space in an unquoted scalar, so on a
+          # machine without PyYAML the validator reported success for a document
+          # it had never validated. It needs its own subprocess environment, so it
+          # does not go through case().
+          with tempfile.TemporaryDirectory() as tmp:
+              sandbox = Path(tmp) / "repo"
+              shutil.copytree(ROOT, sandbox, symlinks=True,
+                              ignore=shutil.ignore_patterns(".git", "__pycache__",
+                                                           "dist", "runs", ".eval-fixtures"))
+              blocker = sandbox / "_nopyyaml"
+              blocker.mkdir()
+              (blocker / "yaml.py").write_text("raise ImportError('hidden')\n")
+              kernel = sandbox / S / "SKILL.md"
+              kernel.write_text(kernel.read_text().replace(
+                  "description: Solve", "description: Solve: it"))
+              env = dict(os.environ, PYTHONPATH=str(blocker))
+              broken = subprocess.run(
+                  [sys.executable, str(sandbox / VALIDATE), "--strict"],
+                  capture_output=True, text=True, cwd=sandbox, env=env)
+              if broken.returncode == 0:
+                  failures.append("colon-space: passed a broken tree without PyYAML")
+              else:
+                  print("  caught  colon-space without PyYAML")
+
+              # Control: the same environment must still pass a clean tree, or the
+              # case above would "pass" by rejecting everything.
+              clean = Path(tmp) / "clean"
+              shutil.copytree(ROOT, clean, symlinks=True,
+                              ignore=shutil.ignore_patterns(".git", "__pycache__",
+                                                           "dist", "runs", ".eval-fixtures"))
+              ok = subprocess.run(
+                  [sys.executable, str(clean / VALIDATE), "--strict"],
+                  capture_output=True, text=True, cwd=clean, env=env)
+              if ok.returncode != 0:
+                  failures.append("control: no-PyYAML path failed on a clean tree")
+              else:
+                  print("  control no-PyYAML path passes on a clean tree")
+              shutil.rmtree(clean, ignore_errors=True)
 
           if failures:
               print("\n".join(failures), file=sys.stderr)
@@ -425,21 +476,32 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: No unfilled placeholders
+      # The placeholder rule is enforced by validate-skills.py, which does it
+      # case-insensitively, path-aware, and with the per-tree exclusions the
+      # generated fixtures need.
+      #
+      # This used to be a second, shell implementation using `git grep -E` with
+      # `\b` word boundaries. `\b` is not supported by every git build's regex
+      # engine, so on some machines the check silently matched nothing and
+      # reported success -- and on others, where it did work, it flagged a line
+      # of CONTRIBUTING.md that says "Never write TODO, TBD, placeholder" because
+      # its exclusion filter was case-sensitive. One rule, one implementation,
+      # tested: two implementations of the same rule meant one of them was
+      # quietly not running.
+      - name: Placeholder rule is enforced by the validator, not duplicated here
         run: |
           set -euo pipefail
-          # A line that forbids placeholders is not a placeholder, so lines
-          # carrying a prohibition marker are excluded from the match.
-          if git grep -nIE \
-            '\b(TODO|FIXME|TBD|XXX|placeholder|coming soon|lorem ipsum)\b' \
-            -- '*.md' \
-            ':!ultimate-dev/new-arch.md' ':!ultimate-dev/prd.md' \
-            ':!ultimate-dev/tools/' ':!.github/' \
-            | grep -vIE '(never|do not|don.t|no unfilled|must not|avoid|refuse|forbid|instead of|rather than|grep|pattern)'; then
-            echo 'unfilled placeholders found in documentation' >&2
+          python ultimate-dev/tools/validate-skills.py --strict >/dev/null
+          echo 'placeholder hygiene is covered by the structure job'
+
+          # Guard against the duplication returning. If a second implementation
+          # of this rule reappears, it will drift, and a drifted hygiene check is
+          # a check nobody reads.
+          if grep -qE 'unfilled placeholder' .github/workflows/validate.yml; then
+            echo 'a shell duplicate of the placeholder rule has returned; the rule' >&2
+            echo 'belongs to validate-skills.py alone' >&2
             exit 1
           fi
-          echo 'no unfilled placeholders'
 
       - name: No emoji in specification documents
         run: |

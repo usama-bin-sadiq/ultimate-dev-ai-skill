@@ -232,6 +232,19 @@ def parse_frontmatter(content: str) -> dict[str, Any]:
         elif len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
             result[key] = value[1:-1]
         else:
+            # A plain scalar cannot contain a colon-space. PyYAML rejects
+            # `description: Solve: it` outright, and the fallback used to accept
+            # it silently -- so the validator was strictly weaker on a machine
+            # without PyYAML, which is every CI runner and most installs. A check
+            # that quietly stops checking is worse than no check: it reports
+            # success for a document it never validated. Quoting the value, or
+            # removing the colon, is the fix.
+            if ": " in value or value.endswith(":"):
+                raise ValueError(
+                    f"frontmatter value for {key!r} contains a colon-space and is "
+                    f"not quoted; YAML reads this as a nested mapping. Quote the "
+                    f"value or remove the colon: {value[:60]!r}"
+                )
             result[key] = value
 
     # Second pass: join block scalars properly now that we know their extent.

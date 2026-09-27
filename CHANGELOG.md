@@ -42,6 +42,27 @@ that cannot report an inconvenient result is not a suite.
 
 ### Fixed
 
+- **The validator was weaker without PyYAML, and said nothing.** The
+  dependency-free frontmatter parser accepted a colon-space in an unquoted
+  scalar — `description: Solve: it` — which PyYAML rejects outright. On any
+  machine without PyYAML, and on every CI runner, the validator reported success
+  for a document it had never validated. A check that quietly stops checking is
+  worse than no check. The fallback now enforces the same rule, and CI runs the
+  malformed-frontmatter mutation twice: once normally, once with PyYAML hidden
+  behind a stub module, each with a clean-tree control.
+- **The rule rejecting unfilled markers had two implementations and one was
+  never running.** The shell check used `git grep -E` with `\b` word boundaries,
+  which not every git build's regex engine supports. On this machine it matched
+  nothing and reported success; on CI it worked and flagged a CONTRIBUTING.md
+  line that forbids those very markers, because its exclusion filter was
+  case-sensitive. Two implementations of one rule meant one was quietly broken.
+  The shell duplicate is gone — `validate-skills.py` already does this
+  case-insensitively and path-aware — and CI now fails if a second
+  implementation reappears.
+- **A self-test asserted nothing.** The "case needs an unbuilt file" case added a
+  Markdown case to the corpus but did not regenerate `evals.json`, which is a
+  projection of that Markdown. The validator therefore never saw the new case,
+  and the test passed for the wrong reason. It regenerates the projection first.
 - **The pilot's grader failed runs for describing what it would not do.** The
   first version matched words like "triage" and "plan" in the final message and
   reported a 67% false-trigger rate that was entirely an artefact: every flagged
