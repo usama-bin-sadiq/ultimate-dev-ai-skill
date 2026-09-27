@@ -43,6 +43,10 @@ rejected alternative.
 | `agents/comparator.md` | A pass rate cannot explain why one version is better | Blind A/B verdict and the differences that decide it |
 | `agents/security-reviewer.md` | Work crosses a trust boundary, touches credentials or authorisation, or a conclusion rests on content the system did not author | Constructed attack paths with preconditions and residual risk |
 | `agents/author.md` | `skills/skill-creator` has decided a new capability is genuinely warranted | A **candidate** skill, never an installed one |
+| `agents/test-author.md` | A change has no test that would fail without it; a bug is about to be fixed and nothing would have caught it; a fixture has drifted from the behaviour it claims to pin | Tests plus a stated claim per test, and any test that cannot fail reported as a defect |
+| `agents/simplifier.md` | Something works but carries machinery nobody can name a use for; a change needed a workaround for a problem the design invited; a component cannot be explained in one sentence | Ranked removable complexity with the evidence each piece is unused, and a `REJECTED` list |
+| `agents/performance-reviewer.md` | Something is too slow, too large, or too expensive and the cause is not already known; an optimisation is proposed with no measurement behind it | Measured baseline, the one dominant cost, a predicted effect in numbers — or `NONE FOUND` |
+| `agents/technical-writer.md` | A change alters how something is used; an existing document is now wrong; the knowledge exists only in one person's head | An answer ordered for the reader who has to act on it, examples marked verified or unverified |
 
 ## The upper bound: where delegation stops paying
 

@@ -859,6 +859,22 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
                     f"{AGENTS_DIR}/: not mentioned in SKILL.md, so the kernel will not "
                     f"know to delegate to them: {', '.join(unreferenced)}"
                 )
+        # A role named in SKILL.md but absent from the dispatch table is
+        # unreachable. The kernel would load it and then have no condition under
+        # which to call it, which is the decision-record defect one level up:
+        # the artefact exists and is counted, and nothing routes to it.
+        dispatch = SKILL_ROOT / "references" / "delegation.md"
+        if dispatch.is_file():
+            table = dispatch.read_text(encoding="utf-8")
+            unrouted = [
+                role.stem for role in roles if f"agents/{role.stem}.md" not in table
+            ]
+            if unrouted:
+                errors.append(
+                    f"{AGENTS_DIR}/: shipped but with no row in the dispatch table in "
+                    f"references/delegation.md, so no decision can reach them: "
+                    f"{', '.join(unrouted)}"
+                )
             else:
                 notes.append(f"all {len(roles)} agent roles are reachable from SKILL.md")
     else:

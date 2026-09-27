@@ -458,7 +458,8 @@ preference:
 - **Permanent plan commitment.** Defending a plan against contradicting
   evidence instead of revising it.
 - **Capability proliferation.** Minting a skill per task, so nothing is reused
-  and the trigger signal splits.
+  and the trigger signal splits. This is about creation during a run; the roles
+  the kernel ships are a resource set, and each earns its place or goes.
 - **Uncontrolled learning.** Installing a lesson from a single instance as
   permanent behaviour.
 - **Unnecessary delegation.** Spawning specialists to do what one context does

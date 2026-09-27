@@ -91,8 +91,9 @@ step in the plan, not a skill: remove it and fold the procedure into the plan.
 Then check the trigger descriptions, because once several skills exist with
 overlapping scope, selection accuracy falls and the fix costs more with each one.
 
-**Preventing it.** Proliferation is a failure mode, not a feature. The trigger
-negative in each new definition is what keeps selection sharp.
+**Preventing it.** Proliferation at run time is a failure mode, not a feature:
+this is about skills minted mid-task, not about the roles the kernel ships. The
+trigger negative in each new definition is what keeps selection sharp.
 
 ## 6. It retried the same failing action repeatedly
 

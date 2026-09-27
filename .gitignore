@@ -32,3 +32,11 @@ results/
 # OS
 .DS_Store
 Thumbs.db
+
+# Fixture debris. build-fixtures.py stages into the repository because the
+# runtime ignores the per-invocation working directory, so these appear at the
+# root during a pilot run and must never be committed.
+/config.py
+/other.py
+/docs/draft/
+/.eval-fixtures/

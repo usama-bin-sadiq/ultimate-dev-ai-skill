@@ -147,7 +147,14 @@ The architecture is:
 
 # 3. The Most Important Architectural Rule
 
-`ultimate-dev` must **not become an enormous collection of agents**.
+The kernel decides. Agents, skills, and tools are the resources it dispatches
+to, and their number is a budget question rather than an architectural one — the
+constraint is that each one earns its place and is reachable from a decision, not
+that there are few of them.
+
+A role that never fires is cost with no return. A role that competes with
+another for the same trigger splits the signal and teaches nothing. Those are the
+real limits, and they are per-role rather than per-collection.
 
 Instead:
 

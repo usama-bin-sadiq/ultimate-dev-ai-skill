@@ -2,7 +2,7 @@
   "schema": "ultimate-dev/assertions/1",
   "purpose": "Objective, mechanically decidable assertions about a run. These answer a question the structural trace checks cannot: not 'did the kernel run its procedure' but 'was the answer right'.",
   "targeting_rule": "Assertions target observed tool output and the filesystem. They never target the model's narrative. Asserting that a narrative mentions a number is subjective under a different name, because the narrative is the thing under test -- methodology.md section 7.",
-  "coverage": "3 of 121 cases. The rest have no objective assertion and their quality is recorded null, never inferred. A small asserted set is worth more than a large generated one: an assertion that passes both arms measures nothing while appearing to.",
+  "coverage": "3 of 122 cases. The rest have no objective assertion and their quality is recorded null, never inferred. A small asserted set is worth more than a large generated one: an assertion that passes both arms measures nothing while appearing to.",
   "null_policy": "A case with no assertions, or whose fixture is absent, has quality null. It is excluded from quality rates and reported as unmeasured.",
   "cases": {
     "BM-SIMPLE-01": {
@@ -30,7 +30,9 @@
         {
           "id": "nothing-else-touched",
           "type": "only_files_changed",
-          "allow": ["config/prod.yaml"],
+          "allow": [
+            "config/prod.yaml"
+          ],
           "why": "The user said not to touch anything else. Enumerating the changed set catches collateral damage that no per-file assertion would name in advance."
         }
       ]
