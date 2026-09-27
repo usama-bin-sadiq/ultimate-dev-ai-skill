@@ -67,6 +67,7 @@ import zipfile
 from pathlib import Path
 
 SKILL_ROOT = Path(__file__).resolve().parent.parent
+SKILL_DIRS = SKILL_ROOT / "skills"
 
 # Bundled: the material a runtime loads.
 RUNTIME_DIRS = ("references", "skills", "agents", "tools")
@@ -237,7 +238,15 @@ def would_survive(ref: str, base: Path) -> bool:
     that the bundle will not contain — which is precisely the dangling pointer
     this is meant to catch.
     """
-    for candidate in (base / ref, SKILL_ROOT / ref):
+    # A sub-skill's own reference file is addressed skill-relative, not relative
+    # to whichever file quotes it: a prompt under prompts/ saying
+    # `references/x.md` means the skill's references/x.md, which is what the
+    # agent reading it will open. Try that before giving up.
+    # walk up to the skill that owns this file: skills/<name>/...
+    parts = base.relative_to(SKILL_ROOT).parts
+    owning = SKILL_DIRS / parts[1] if parts and parts[0] == "skills" and len(parts) > 1 else None
+    for candidate in (base / ref, SKILL_ROOT / ref,
+                      owning / ref if owning else base / ref):
         if not candidate.exists():
             continue
         try:
