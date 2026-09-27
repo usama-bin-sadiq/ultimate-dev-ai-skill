@@ -38,10 +38,9 @@ Go to: **Settings → Branches → Add rule**
   - ✅ Require branches to be up to date before merging
   - Required checks:
     - `Validate Skill Structure`
-    - `Verify Package Integrity`
-    - `Auto-generate Manifest`
-    - `Sync Documentation`
-    - `Test Installation`
+    - `Check Reference Integrity`
+    - `Test Authoring Tool`
+    - `Check Documentation Hygiene`
     - `PR Quality Check`
 - ✅ Require conversation resolution before merging
 - ✅ Require linear history
@@ -62,6 +61,12 @@ least-privilege fine-grained token with:
 The separate `release` environment remains the approval gate; the write job
 runs in `CICD` so the configured secret is available. Keep branch/tag
 protection enabled.
+
+The decision job that determines *whether* to release uses the default read-only
+`GITHUB_TOKEN` and never holds `ULTIMATE_DEV_TOKEN`. Only the gated
+`create-release` job is write-capable, and it re-validates both skills and the
+bundle test suite before committing, so a release cannot ship a skill that does
+not validate.
 
 ### Branch name pattern: `develop` (if used)
 

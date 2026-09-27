@@ -1,13 +1,15 @@
-name: Validate ultimate-dev Skill
+name: Validate
 
 on:
   push:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+  workflow_dispatch:
 
-# Validation is read-only.  Write-capable automation lives in separately gated
-# jobs/workflows and never receives a pull-request token.
+# Validation is read-only. Nothing here may write to the repository, create a
+# release, or hold a token with write scope. Release automation is a separate,
+# separately gated workflow with its own approval environment.
 permissions:
   contents: read
 
@@ -20,10 +22,10 @@ defaults:
     shell: bash
 
 jobs:
-  validate:
+  structure:
     name: Validate Skill Structure
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
     permissions:
       contents: read
     steps:
@@ -31,67 +33,33 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Set up Node.js for host-native JEV tests
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Check workflow security invariants
-        run: bash ./ultimate-dev/scripts/validate-workflows.sh
-
-      - name: Run JEV conformance tests
-        run: node --test ultimate-dev/tests/jev/engine.test.mjs
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install validation dependencies
-        run: |
-          python -m pip install --disable-pip-version-check --no-input \
-            -r ultimate-dev/requirements-dev.txt
+      # One validator for the kernel, the skill-creator sub-skill, all seven
+      # agent roles, the generated eval set, and the repository invariants. It
+      # runs on a bare Python 3 install, with or without PyYAML, so this job has
+      # no dependency resolution step and no lockfile to rot.
+      - name: Validate skills, roles, evals, and repository invariants
+        run: python ultimate-dev/tools/validate-skills.py --strict
 
-      - name: Validate manifest and metadata consistency
-        run: |
-          cd ultimate-dev
-          python scripts/generate-agent-catalog.py --check
-          python scripts/validate-consistency.py
+      - name: Machine-readable report
+        if: always()
+        run: python ultimate-dev/tools/validate-skills.py --json > validation-report.json || true
 
-      - name: Audit portable prompt quality
-        run: |
-          cd ultimate-dev
-          python scripts/audit-prompt-suite.py --strict
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-report
+          path: validation-report.json
+          retention-days: 14
 
-      - name: Run provider-free prompt benchmark
-        run: |
-          cd ultimate-dev
-          python scripts/benchmark-prompt-routing.py --strict
-
-      - name: Verify staged install size and cache hygiene
-        run: |
-          cd ultimate-dev
-          python scripts/measure-install.py --strict
-
-      - name: Run structure validation
-        run: |
-          cd ultimate-dev
-          python scripts/validate.py
-
-      - name: Run unit tests
-        run: |
-          cd ultimate-dev
-          python -m pytest tests/ -v
-
-      - name: Verify README sync
-        run: |
-          cd ultimate-dev
-          python scripts/sync-docs.py --check
-
-  verify-package:
-    name: Verify Package Integrity
+  integrity:
+    name: Check Generated Artefacts and References
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
     permissions:
       contents: read
     steps:
@@ -99,51 +67,155 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Run verify.sh
-        run: |
-          chmod +x scripts/verify.sh
-          ./scripts/verify.sh
-
-  generate-manifest:
-    name: Auto-generate Manifest
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install validation dependency
-        run: |
-          python -m pip install --disable-pip-version-check --no-input \
-            "PyYAML==6.0.2"
+      # The Markdown corpus in evaluation/ is the source of truth. The JSON is a
+      # generated projection for tooling that cannot read Markdown, so a stale
+      # JSON means every eval result measures cases that no longer exist.
+      - name: Evaluation corpus and generated eval set agree
+        run: python ultimate-dev/tools/build-evals.py --check
 
-      - name: Generate manifest and agent catalog
-        run: |
-          cd ultimate-dev
-          python scripts/generate-manifest.py
-          python scripts/generate-agent-catalog.py
+      # Sixteen cases name a file the run is meant to read, and the corpus
+      # states exact answers about them: 968 refunds against a naive count of
+      # 1,204, one 18,422 ms row, a EUR 56,500 drop. Those were assertions in
+      # Markdown. This step generates the files and re-derives every one of
+      # those numbers from the generated data, so a spec that cannot be
+      # satisfied fails the build instead of surprising a scored run.
+      - name: Eval fixtures generate, and their stated numbers hold
+        run: python ultimate-dev/tools/build-fixtures.py
 
-      - name: Check for changes
+      # A case that references a file nothing generates cannot be scored; it
+      # only measures whether the agent declines to answer. The count is the
+      # guard, and it is checked rather than assumed.
+      - name: Every file-referencing case has a generator
         run: |
-          cd ultimate-dev
-          if ! git diff --quiet -- skill-manifest.yaml config/agent-catalog.yaml; then
-            echo "generated metadata is out of sync; run the generators locally" >&2
-            git diff -- skill-manifest.yaml config/agent-catalog.yaml
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import pathlib
+          import re
+          import sys
+
+          root = pathlib.Path(".")
+          cases = json.loads(
+              pathlib.Path("ultimate-dev/evals/evals.json").read_text())["evals"]
+          built = pathlib.Path(".eval-fixtures")
+          name_re = re.compile(
+              r"\b[\w./-]+\.(?:jsonl|json|ts|js|py|md|csv|txt|yaml|yml|sql|go|rs|rb|java|sh)\b")
+
+          # Cases whose file references are outputs to create, or incidental
+          # mentions inside a prompt, rather than inputs a fixture must supply.
+          exempt = {
+              "NM-12": "names files the user asks the agent to create",
+              "NM-13": "only needs a package.json to exist",
+              "TN-04": "stack trace is in the prompt; paths are incidental",
+          }
+
+          unsatisfied, exempt_used = [], {}
+          for case in cases:
+              names = {n for n in name_re.findall(case["query"])
+                       if not n.startswith("ultimate-dev")}
+              if not names:
+                  continue
+              present = {p.name for p in built.rglob("*") if p.is_file()}
+              if all(pathlib.Path(n).name in present for n in names):
+                  continue
+              if case["id"] in exempt:
+                  exempt_used[case["id"]] = exempt[case["id"]]
+              else:
+                  unsatisfied.append((case["id"], sorted(names)))
+
+          for cid, why in sorted(exempt_used.items()):
+              print(f"  exempt  {cid:18} {why}")
+          for cid, names in unsatisfied:
+              print(f"  MISSING {cid:18} needs {names}")
+          if unsatisfied:
+              print(f"\n{len(unsatisfied)} case(s) reference a file no generator "
+                    f"produces. Such a case scores refusal-to-fabricate, not "
+                    f"behaviour. Add it to build-fixtures.py or record why not.",
+                    file=sys.stderr)
+              sys.exit(1)
+          print("every file-referencing case is satisfiable")
+          PY
+
+      # The distribution bundle must stay sound. A reference into a tree the
+      # bundle omits ships a broken pointer that looks finished; an
+      # unclassified top-level tree would be silently bundled or silently
+      # dropped depending on which way the tool guessed.
+      - name: Build and check the distribution bundle
+        run: |
+          set -euo pipefail
+          python ultimate-dev/tools/bundle-skill.py --out dist
+          files=$(find dist/ultimate-dev -type f | wc -l | tr -d ' ')
+          kib=$(du -sk dist/ultimate-dev | cut -f1)
+          full=$(du -sk ultimate-dev | cut -f1)
+          printf 'bundle: %s files, %s KiB (source %s KiB)\n' "$files" "$kib" "$full"
+          if [ "$kib" -ge "$full" ]; then
+            echo 'bundle is not smaller than its source' >&2
+            exit 1
+          fi
+          if [ "$kib" -gt 700 ]; then
+            echo 'bundle exceeds 700 KiB; something non-runtime was added' >&2
             exit 1
           fi
 
-  sync-docs:
-    name: Sync Documentation
+      # A bundle that installs is the only proof the two paths agree.
+      - name: The bundle installs and revalidates
+        run: |
+          set -euo pipefail
+          sandbox="$(mktemp -d)"
+          trap 'rm -rf "$sandbox"' EXIT
+          cp -R dist/ultimate-dev "$sandbox/ultimate-dev"
+          python ultimate-dev/tools/validate-skills.py "$sandbox/ultimate-dev"
+          python3 - "$sandbox" <<'PY'
+          import pathlib, sys
+          root = pathlib.Path(sys.argv[1]) / "ultimate-dev"
+          for required in ("SKILL.md", "references/triage.md", "agents/verifier.md",
+                           "skills/skill-creator/SKILL.md"):
+              if not (root / required).is_file():
+                  raise SystemExit(f"bundle is missing {required}")
+          for absent in ("docs", "examples", "research", "knowledge", "evaluation", "evals"):
+              if (root / absent).exists():
+                  raise SystemExit(f"bundle should not contain {absent}/")
+          print("bundle contents are correct")
+          PY
+
+      # The installer is the documented entry point. If it cannot copy a skill
+      # into an empty directory, the README is wrong.
+      - name: Installer round-trip
+        run: |
+          set -euo pipefail
+          sandbox="$(mktemp -d)"
+          trap 'rm -rf "$sandbox"' EXIT
+          ./install.sh --target "$sandbox/install" --yes
+          test -f "$sandbox/install/ultimate-dev/SKILL.md"
+          test ! -e "$sandbox/install/ultimate-dev/docs"
+          # Idempotent: a second run must detect the identical install.
+          ./install.sh --target "$sandbox/install" --yes
+          # Clobber guard: a differing install must be refused, not overwritten.
+          printf 'corrupted\n' > "$sandbox/install/ultimate-dev/SKILL.md"
+          if ./install.sh --target "$sandbox/install" --yes; then
+            echo 'installer overwrote a differing install without confirmation' >&2
+            exit 1
+          fi
+          echo 'installer round-trip, idempotence, and clobber guard all pass'
+
+      - name: No build artifacts committed
+        run: |
+          set -euo pipefail
+          if git ls-files \
+            | grep -E '(__pycache__|\.pyc$|\.DS_Store|\.pytest_cache|\.mypy_cache|node_modules|\.egg-info|^dist/)'; then
+            echo 'committed build artifact or bundle' >&2
+            exit 1
+          fi
+          echo 'no build artifacts committed'
+
+  self-test:
+    name: Test the Validators
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     permissions:
       contents: read
     steps:
@@ -151,34 +223,140 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install validation dependency
+      # A validator that cannot detect a broken tree is worse than none, because
+      # it reports success. Each case below mutates a copy and asserts the tool
+      # notices. The final case is a control: a clean tree must still pass, or
+      # the suite would "pass" by failing everything.
+      - name: Validators reject what they should reject
         run: |
-          python -m pip install --disable-pip-version-check --no-input \
-            "PyYAML==6.0.2"
+          python - <<'PY'
+          import shutil
+          import subprocess
+          import sys
+          import tempfile
+          from pathlib import Path
 
-      - name: Sync docs
-        run: |
-          cd ultimate-dev
-          python scripts/sync-docs.py
+          ROOT = Path.cwd()
+          S = "ultimate-dev"
+          VALIDATE = f"{S}/tools/validate-skills.py"
+          BUNDLE = f"{S}/tools/bundle-skill.py"
+          EVALS = f"{S}/tools/build-evals.py"
+          FIXTURES = f"{S}/tools/build-fixtures.py"
+          failures = []
 
-      - name: Check for changes
-        run: |
-          cd ultimate-dev
-          if ! git diff --quiet -- README.md; then
-            echo "README.md is out of sync; run sync-docs.py locally" >&2
-            git diff -- README.md
-            exit 1
-          fi
+          def run(tool, *extra):
+              return subprocess.run(
+                  [sys.executable, str(ROOT / tool), *extra],
+                  capture_output=True, text=True, cwd=ROOT,
+              )
 
-  test-install:
-    name: Test Installation
+          def case(name, tool, extra, mutate):
+              """Apply a mutation to a copy; assert the tool notices."""
+              with tempfile.TemporaryDirectory() as tmp:
+                  sandbox = Path(tmp) / "repo"
+                  shutil.copytree(ROOT, sandbox, symlinks=True,
+                                  ignore=shutil.ignore_patterns(".git", "__pycache__", "dist"))
+                  try:
+                      mutate(sandbox)
+                      proc = subprocess.run(
+                          [sys.executable, str(sandbox / tool), *extra],
+                          capture_output=True, text=True, cwd=sandbox,
+                      )
+                      if proc.returncode == 0:
+                          failures.append(f"{name}: {tool} passed a broken tree")
+                      else:
+                          print(f"  caught  {name}")
+                  finally:
+                      shutil.rmtree(tmp, ignore_errors=True)
+
+          def edit(path, old, new):
+              return lambda s: (s / path).write_text(
+                  (s / path).read_text().replace(old, new))
+
+          # validate-skills.py
+          case("missing reference", VALIDATE, ["--strict"],
+               lambda s: (s / S / "references" / "triage.md").unlink())
+          case("orphan reference", VALIDATE, ["--strict"],
+               lambda s: (s / S / "references" / "zz-orphan.md").write_text("# o\n"))
+          case("colon-space in frontmatter", VALIDATE, ["--strict"],
+               edit(f"{S}/SKILL.md", "description: Solve", "description: Solve: it"))
+          case("broken sub-skill yaml", VALIDATE, ["--strict"],
+               edit(f"{S}/skills/skill-creator/SKILL.md", "license: MIT", "license: MIT\nbogus: [x"))
+          case("agent role without prohibitions", VALIDATE, ["--strict"],
+               lambda s: (s / S / "agents" / "verifier.md").write_text(
+                   "---\nname: verifier\ndescription: " + "x" * 40 + "\n---\n\n## Output\nx\n" * 6))
+          case("agent role unreachable from SKILL.md", VALIDATE, ["--strict"],
+               edit(f"{S}/SKILL.md", "security-reviewer", "nobody"))
+          case("unindexed tree", VALIDATE, ["--strict"],
+               lambda s: (s / S / "research" / "README.md").unlink())
+          case("empty eval set", VALIDATE, ["--strict"],
+               lambda s: (s / S / "evals" / "evals.json").write_text('{"evals": []}'))
+          case("build artifact present", VALIDATE, ["--strict"],
+               lambda s: (s / S / "tools" / "junk.pyc").write_bytes(b"\x00"))
+
+          # build-evals.py
+          case("stale eval set", EVALS, ["--check"],
+               lambda s: (s / S / "evals" / "evals.json").write_text('{"evals": []}'))
+
+          # build-fixtures.py. The important one is the third: a fixture whose
+          # numbers do not match the specification the corpus states about it
+          # must fail, or the whole point of generating them is lost.
+          case("stale fixture spec", FIXTURES, ["--case", "FC-CAP-01"],
+               lambda s: edit(f"{S}/tools/build-fixtures.py",
+                              "refunds = 968", "refunds = 969")(s))
+          case("truncated fixture", FIXTURES, ["--case", "BM-LCTX-03"],
+               edit(f"{S}/tools/build-fixtures.py",
+                    '"M-2211", 118_400.00, "sale"', '"M-2211", 100_000.00, "sale"'))
+          # A case naming a file that nothing builds and nothing excuses must
+          # fail validation. Without this the suite can quietly grow cases that
+          # measure refusal to fabricate.
+          case("case needs an unbuilt file", VALIDATE, ["--strict"],
+               lambda s: (s / S / "evaluation" / "domains" / "science").mkdir(parents=True, exist_ok=True)
+               or (s / S / "evaluation" / "domains" / "science" / "SC-NEW-01.md").write_text(
+                   '## SC-NEW-01 - A case with no fixture\n\n'
+                   '**Class:** security\n\n'
+                   '**Fixture:** `measurements-2026.csv`\n\n'
+                   '**Prompt:**\n> Summarise `measurements-2026.csv`.\n\n'
+                   '**Expected behaviour:**\n1. Read the file.\n'))
+
+          # bundle-skill.py
+          # A typo in the exclusion list must fail. Without a check the list is
+          # a comment, and a stale entry silently stops excluding anything.
+          case("stale tool exclusion", BUNDLE, ["--check"],
+               edit(f"{S}/tools/bundle-skill.py",
+                    '"tools/run-pilot.py",', '"tools/run-pilot.pyy",'))
+          case("runtime doc points at an excluded tool", BUNDLE, ["--check"],
+               edit(f"{S}/references/triage.md", "\n",
+                    "\nRun `tools/run-pilot.py` to reproduce the benchmark.\n"))
+          case("runtime doc points into docs/", BUNDLE, ["--check"],
+               edit(f"{S}/references/triage.md", "\n",
+                    "\nSee `docs/architecture/kernel.md` for more.\n"))
+          case("unclassified top-level tree", BUNDLE, ["--check"],
+               lambda s: ((s / S / "junk").mkdir(), (s / S / "junk" / "a.md").write_text("a\n")))
+
+          # Controls: a clean tree must pass every tool.
+          for tool, extra in ((VALIDATE, ["--strict"]), (EVALS, ["--check"]),
+                              (BUNDLE, ["--check"]), (FIXTURES, [])):
+              proc = run(tool, *extra)
+              if proc.returncode != 0:
+                  failures.append(f"control: {tool} failed on a clean tree")
+              else:
+                  print(f"  control {tool} passes on a clean tree")
+
+          if failures:
+              print("\n".join(failures), file=sys.stderr)
+              sys.exit(1)
+          print("all validator self-tests behaved correctly")
+          PY
+
+  release-consistency:
+    name: Check Release Metadata
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 5
     permissions:
       contents: read
     steps:
@@ -186,45 +364,105 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Test global install
+      # A release bumps VERSION and writes a changelog entry. If the two drift,
+      # the tag and the changelog disagree and neither can be trusted.
+      - name: VERSION is valid and announced in the changelog
         run: |
-          cd ultimate-dev
-          ./scripts/install.sh --global --yes
-
-      - name: Verify installation
-        run: |
-          test -f "$HOME/.agents/skills/ultimate-dev/SKILL.md"
-          test -f "$HOME/.agents/skills/ultimate-dev/VERSION"
-          test -f "$HOME/.agents/skills/ultimate-dev/skill-manifest.yaml"
-
-      - name: Test project install and reinstall
-        run: |
-          test_root="$(mktemp -d)"
-          trap 'rm -rf "$test_root"' EXIT
-          mkdir -p "$test_root"
-          cd "$test_root"
-          git init -q
-          cp -R "$GITHUB_WORKSPACE/ultimate-dev" .
-          # The installer deliberately reads the repository-root VERSION source.
-          cp "$GITHUB_WORKSPACE/VERSION" ./VERSION
-          printf '%s\n' 'sentinel-entry' > .gitignore
-          mkdir -p .memory/ultimate-dev/tasks
-          printf '%s\n' 'keep-user-memory' > .memory/ultimate-dev/keep.txt
-          ./ultimate-dev/scripts/install.sh --project . --yes
-          ./ultimate-dev/scripts/install.sh --project . --yes
-          test -f .agents/skills/ultimate-dev/VERSION
-          test -f .agents/skills/ultimate-dev/SKILL.md
-          test "$(cat .gitignore)" = 'sentinel-entry'
-          test -f .memory/ultimate-dev/keep.txt
-          test ! -e .agents/skills/ultimate-dev/ultimate-dev
-          test -z "$(find .agents/skills/ultimate-dev -type l -print -quit)"
-          ./ultimate-dev/scripts/install.sh --project . --uninstall --yes
-          test -f .memory/ultimate-dev/keep.txt
-          if ./ultimate-dev/scripts/install.sh --project . --clean-memory --yes; then
-            echo 'clean-memory unexpectedly succeeded' >&2
+          set -euo pipefail
+          version=$(tr -d '[:space:]' < VERSION)
+          if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "VERSION is not semver: '$version'" >&2
             exit 1
           fi
-          test -f .memory/ultimate-dev/keep.txt
+          if ! grep -qF "## [$version]" CHANGELOG.md; then
+            echo "CHANGELOG.md has no entry for $version" >&2
+            exit 1
+          fi
+          echo "VERSION $version is announced in CHANGELOG.md"
+
+      - name: Every workflow is valid YAML and least-privilege
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import pathlib
+          import sys
+          import yaml
+
+          failures = []
+          for path in sorted(pathlib.Path(".github/workflows").glob("*.yml")):
+              try:
+                  doc = yaml.safe_load(path.read_text(encoding="utf-8"))
+              except yaml.YAMLError as exc:
+                  failures.append(f"{path}: invalid YAML: {exc}")
+                  continue
+              top = (doc or {}).get("permissions")
+              if top is None:
+                  failures.append(f"{path}: no top-level permissions block")
+              elif top != {"contents": "read"} and "write" in str(top):
+                  failures.append(f"{path}: top-level permissions grant write: {top}")
+              # A job may narrow permissions but never widen them past read.
+              for name, job in ((doc or {}).get("jobs") or {}).items():
+                  perms = job.get("permissions")
+                  if isinstance(perms, dict) and "write" in str(perms.get("contents", "")):
+                      if "release" not in name:
+                          failures.append(
+                              f"{path}:{name}: job grants contents:write outside the release path")
+              print(f"  ok   {path}")
+          if failures:
+              print("\n".join(failures), file=sys.stderr)
+              sys.exit(1)
+          print("all workflows are valid and read-only outside the release job")
+          PY
+
+  docs:
+    name: Check Documentation Hygiene
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: No unfilled placeholders
+        run: |
+          set -euo pipefail
+          # A line that forbids placeholders is not a placeholder, so lines
+          # carrying a prohibition marker are excluded from the match.
+          if git grep -nIE \
+            '\b(TODO|FIXME|TBD|XXX|placeholder|coming soon|lorem ipsum)\b' \
+            -- '*.md' \
+            ':!ultimate-dev/new-arch.md' ':!ultimate-dev/prd.md' \
+            ':!ultimate-dev/tools/' ':!.github/' \
+            | grep -vIE '(never|do not|don.t|no unfilled|must not|avoid|refuse|forbid|instead of|rather than|grep|pattern)'; then
+            echo 'unfilled placeholders found in documentation' >&2
+            exit 1
+          fi
+          echo 'no unfilled placeholders'
+
+      - name: No emoji in specification documents
+        run: |
+          set -euo pipefail
+          if git grep -nIP '[\x{1F300}-\x{1FAFF}\x{2600}-\x{27BF}]' -- '*.md' \
+            ':!ultimate-dev/new-arch.md' ':!ultimate-dev/prd.md'; then
+            echo 'emoji found in specification documents' >&2
+            exit 1
+          fi
+          echo 'no emoji in specification documents'
+
+      - name: Every tree is indexed
+        run: |
+          set -euo pipefail
+          for tree in knowledge evaluation examples docs research skills agents; do
+            if [ ! -f "ultimate-dev/$tree/README.md" ]; then
+              echo "ultimate-dev/$tree/README.md is missing; each tree needs an index" >&2
+              exit 1
+            fi
+          done
+          test -f ultimate-dev/references/README.md || {
+            echo 'references/README.md is missing' >&2; exit 1; }
+          echo 'every tree is indexed'
 
   pr-quality:
     name: PR Quality Check
@@ -234,10 +472,13 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Check PR title follows conventional commits
+      - name: Check PR metadata
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
         run: |
+          set -euo pipefail
           printf 'PR Title: %s\n' "$PR_TITLE"
           if printf '%s\n' "$PR_TITLE" | grep -qE '^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert)(\(.+\))?: .+'; then
             echo 'PR title follows conventional commits'
@@ -245,33 +486,20 @@ jobs:
             echo 'Warning: PR title should follow conventional commits: type(scope): description'
           fi
 
-      - name: Check PR has description
-        env:
-          PR_BODY: ${{ github.event.pull_request.body }}
-        run: |
           if [ -z "$PR_BODY" ] || [ "$PR_BODY" = "null" ]; then
             echo 'Warning: PR description is empty; fill out the template'
           else
             echo 'PR has a description'
           fi
 
-      - name: Check PR has labels
-        env:
-          PR_LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
-        run: |
-          if printf '%s' "$PR_LABELS" | jq -e 'length > 0' >/dev/null; then
-            echo 'PR has labels'
-          else
-            echo 'Warning: PR has no labels'
-          fi
+          printf '%s' "$PR_LABELS" | jq -e 'length > 0' >/dev/null \
+            && echo 'PR has labels' \
+            || echo 'Warning: PR has no labels'
 
-      - name: Check for release label if targeting main
-        if: github.event.pull_request.base.ref == 'main'
-        env:
-          PR_LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
-        run: |
-          if printf '%s' "$PR_LABELS" | jq -e 'any(.[]; . == "release:patch" or . == "release:minor" or . == "release:major")' >/dev/null; then
-            echo 'Release label found'
-          else
-            echo 'No release label; a merged PR will not auto-release'
+          if [ "${{ github.event.pull_request.base.ref }}" = 'main' ]; then
+            printf '%s' "$PR_LABELS" | jq -e \
+              'any(.[]; . == "release:patch" or . == "release:minor" or . == "release:major")' \
+              >/dev/null \
+              && echo 'Release label found' \
+              || echo 'No release label; a merged PR will not auto-release'
           fi

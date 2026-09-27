@@ -14,28 +14,38 @@ Brief summary of changes and motivation.
 
 ## Release Impact
 **Required for merges to `main`** — Select one to trigger auto-release:
-- [ ] `release:patch` — Bug fixes, docs, internal improvements (2.5.2 → 2.5.3)
-- [ ] `release:minor` — New features, backward-compatible (2.5.2 → 2.6.0)
-- [ ] `release:major` — Breaking changes, architecture changes (2.5.2 → 3.0.0)
+- [ ] `release:patch` — Bug fixes, docs, internal improvements (2.0.0 → 2.0.1)
+- [ ] `release:minor` — New features, backward-compatible (2.0.0 → 2.1.0)
+- [ ] `release:major` — Breaking changes, architecture changes (2.0.0 → 3.0.0)
 - [ ] No release needed (documentation only, WIP, etc.)
 
 ## Related Issues
 Closes #(issue number)
 
 ## Checklist
-- [ ] Code follows project style guidelines
+
+Validation, all of which runs in CI and can be run locally:
+
+```bash
+# Validates the kernel, the skill-creator sub-skill, every agent role,
+# reference-path integrity, and the repository invariants. This is the same
+# check CI runs.
+python tools/validate-skills.py --strict
+```
+
+- [ ] `tools/validate-skills.py --strict` passes locally
+- [ ] Bundle test suite passes
+- [ ] Every new reference file is reachable from its `SKILL.md`
+- [ ] Any new eval case carries a **trap** — the specific way a naive agent fails it
+- [ ] Any new example shows a plan that reality contradicted
+- [ ] No domain-specific code path was added to the kernel
 - [ ] Self-review completed
-- [ ] Tests added/updated for changes
-- [ ] All tests pass locally (`pytest tests/ -v`)
-- [ ] Documentation updated (README, CHANGELOG, etc.)
-- [ ] `scripts/validate.py` passes
-- [ ] `scripts/sync-docs.py` checked
-- [ ] PR title follows conventional commits (e.g., `feat: add new agent`)
+- [ ] Documentation updated (`README.md`, `ARCHITECTURE.md`, `CHANGELOG.md`)
+- [ ] No unfilled placeholders (`TODO`, `TBD`, `placeholder`)
+- [ ] PR title follows conventional commits (e.g. `feat: add delegation reference`)
 - [ ] At least one label applied
 
 ## Breaking Changes
 If this is a breaking change, describe impact and migration path:
-
-## Screenshots (if applicable)
 
 ## Additional Context
