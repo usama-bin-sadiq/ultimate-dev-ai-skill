@@ -73,6 +73,7 @@ param(
     [switch]$Global,
     [switch]$Project,
     [string]$Target,
+    [string]$Source,
     [switch]$All,
     [switch]$Bundle,
     [switch]$BundleZip,
@@ -88,7 +89,15 @@ $ErrorActionPreference = 'Stop'
 
 $SkillName = 'ultimate-dev'
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$SourceDir = Join-Path $ScriptDir $SkillName
+# By default the skill is the `ultimate-dev\` directory beside this script. -Source
+# overrides it, so a copy of the skill directory can be installed on its own, with
+# no repository around it. See install.sh, which does the same.
+if ($Source) {
+    $SourceDir = (Resolve-Path -LiteralPath $Source).Path
+    $SkillName = Split-Path -Leaf $SourceDir
+} else {
+    $SourceDir = Join-Path $ScriptDir $SkillName
+}
 
 function Write-Log  { param([string]$Message) Write-Host $Message }
 function Write-Warn2 { param([string]$Message) Write-Warning $Message }
@@ -234,7 +243,7 @@ function Resolve-Target {
 # ---------------------------------------------------------------------------
 
 if (-not (Test-Path -LiteralPath $SourceDir -PathType Container)) {
-    Stop-WithError "cannot find $SourceDir; run install.ps1 from the repository root"
+    Stop-WithError "cannot find the skill at $SourceDir; run install.ps1 from the repository root, or pass -Source DIR"
 }
 
 $prune = -not $All

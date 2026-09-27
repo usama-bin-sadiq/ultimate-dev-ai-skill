@@ -16,6 +16,11 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 SKILL_NAME="ultimate-dev"
+# The skill is whatever directory holds SKILL.md. By default that is the
+# `ultimate-dev/` beside this script, but the skill directory is also usable
+# on its own: copy it anywhere, and point the installer at it with
+# `--source DIR`. A skill that can only be installed from inside the
+# repository it was authored in is not finished.
 SOURCE_DIR="${SCRIPT_DIR}/${SKILL_NAME}"
 
 # Runtimes are listed by where they look, not by product name, so a runtime this
@@ -51,6 +56,9 @@ usage: install.sh [options]
   --global              install for the current user (default)
   --project [DIR]       install into DIR, defaulting to the current directory
   --target DIR          install into an exact directory
+  --source DIR          install the skill from DIR instead of ./ultimate-dev.
+                        Lets the skill directory be copied anywhere and
+                        installed on its own, with no repository around it.
   --all                 keep every file, including docs, examples, and evaluation
   --bundle [DIR]        write a runtime-only bundle to DIR (default: dist) and exit
   --bundle-zip          also write a .zip archive
@@ -207,6 +215,11 @@ while [ $# -gt 0 ]; do
     --target)   MODE="target"; EXPLICIT=1; shift
                 [ $# -gt 0 ] || die "--target needs a directory"
                 TARGET="$1"; shift ;;
+    --source)   shift
+                [ $# -gt 0 ] || die "--source needs a directory"
+                SOURCE_DIR="$(cd -- "$1" && pwd)" || die "no such directory: $1"
+                SKILL_NAME="$(basename -- "$SOURCE_DIR")"
+                shift ;;
     --all)      PRUNE=0; EXPLICIT=1; shift ;;
     --bundle)   MODE="bundle"; EXPLICIT=1; shift
                 BUNDLE_OUT="${1:-dist}"; [ $# -gt 0 ] && shift || true ;;
@@ -221,7 +234,8 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-[ -d "$SOURCE_DIR" ] || die "cannot find ${SOURCE_DIR}; run install.sh from the repository root"
+[ -d "$SOURCE_DIR" ] || die "cannot find the skill at ${SOURCE_DIR}; run install.sh from the repository root, or pass --source DIR"
+[ -f "${SOURCE_DIR}/SKILL.md" ] || die "${SOURCE_DIR} has no SKILL.md, so it is not a skill"
 
 # ---------------------------------------------------------------------------
 # Interactive installer

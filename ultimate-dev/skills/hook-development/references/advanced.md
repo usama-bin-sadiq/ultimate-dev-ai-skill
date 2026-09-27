@@ -415,7 +415,7 @@ export CLAUDE_PLUGIN_ROOT="$(pwd)"
 mkdir -p "$CLAUDE_PROJECT_DIR"
 
 # Test SessionStart hook
-echo '{}' | bash hooks/session-start.sh
+echo '{}' | bash tools/session-hooks/session-start.sh
 if [ -f "/tmp/session-initialized" ]; then
   echo "✓ SessionStart hook works"
 else
