@@ -41,3 +41,10 @@ Thumbs.db
 /docs/draft/
 /.eval-fixtures/
 /runs/
+
+# Upstream catalogue clones. Fetched, not committed: a few hundred megabytes
+# of other people's repositories, each with its own .git directory, and fully
+# reproducible from catalog/fetch-catalog.sh. The derived output -- INDEX.json and
+# OVERLAPS.json -- IS committed, because that is what says what was fetched and
+# what it turned out to be.
+/ultimate-dev/catalog/_src/
