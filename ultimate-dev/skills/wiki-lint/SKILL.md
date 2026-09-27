@@ -61,8 +61,7 @@ Then appends a `lint` entry to `log.md`.
 
 ## Sub-agent
 
-Dispatches the `wiki-linter` sub-agent. See `agents/wiki-linter.md`.
-
+Dispatches the `wiki-linter` sub-agent.
 ## Scripts
 
 - `engineering/llm-wiki/skills/llm-wiki/scripts/lint_wiki.py`

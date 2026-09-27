@@ -150,8 +150,7 @@ Between stages, stringify structured data into the next prompt (`JSON.stringify(
 
 ## Sources
 
-1. Ray Amjad — `claude-code-workflow-creator`, `references/patterns.md` (fan-out, pipeline, judge-panel, loop shapes).
-2. Anthropic — Claude Code Workflow tool documentation (`pipeline`/`parallel` semantics).
+1.
 3. Anthropic — sub-agent orchestration patterns (Agent tool, fresh-context isolation).
 4. Karpathy — LLM agent loop / file-optimization patterns (loop-until-dry analogue).
 5. Google SRE Workbook — error budgets (loop-until-budget guard).

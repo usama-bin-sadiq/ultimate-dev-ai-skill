@@ -121,7 +121,19 @@ BUILD_ARTEFACT_PATTERN = re.compile(
 SOURCE_SPECS = {"new-arch.md", "prd.md", "ARCHITECTURE.md"}
 
 INDEXED_TREES = ("skills", "agents", "knowledge", "evaluation",
-                 "examples", "docs", "research")
+                 "examples", "docs", "research", "evals", "references")
+
+# Top-level directories that are deliberately not content trees, so the rule
+# below stays honest. tools/ holds this validator; it is not a tree a reader
+# browses, and it has no README because it is a program, not documentation.
+#
+# The list of trees used to be hardcoded and complete, which is how it went
+# stale: evals/, references/ and tools/ were added at some point and INDEXED_TREES
+# was never updated, so three trees were being held to no standard and the check
+# silently did not cover them. The list is now derived from what is on disk and
+# anything unaccounted for is an error, so a new tree cannot be added without
+# either an index or an explicit decision that it does not need one.
+NON_TREE_DIRS = frozenset({"tools", "__pycache__"})
 
 # The sub-skill lives here, and the kernel must be able to reach it.
 SUB_SKILL_GLOB = "skills/*"
@@ -522,6 +534,23 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
             errors.append(f"{index}: missing; each tree needs a README.md index")
         elif index.stat().st_size < 200:
             warnings.append(f"{index}: index is nearly empty")
+
+    # A tree that exists but is in neither list is a tree nobody decided about.
+    on_disk = {
+        d.name for d in SKILL_ROOT.iterdir()
+        if d.is_dir() and not d.name.startswith(".") and d.name not in NON_TREE_DIRS
+    }
+    for name in sorted(on_disk - set(INDEXED_TREES)):
+        errors.append(
+            f"{SKILL_ROOT / name}: a top-level directory that is neither an indexed "
+            f"tree nor listed in NON_TREE_DIRS; add it to one or the other, or it is "
+            f"held to no standard at all"
+        )
+    for name in sorted(set(INDEXED_TREES) - on_disk):
+        errors.append(
+            f"{SKILL_ROOT / name}: listed in INDEXED_TREES but the directory does not "
+            f"exist; the list has drifted from the tree"
+        )
 
     # Build artefacts must never be committed.
     for path in repo_root.rglob("*"):

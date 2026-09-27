@@ -134,6 +134,43 @@ WORKSPACE_NAMED = re.compile(
 OUT_OF_SKILL_SHAPE = re.compile(r"[A-Za-z0-9_.-]+[/\\]")
 
 
+FENCE_LINE = re.compile(r"^(\s*)(`{3,}|~{3,})(.*)$")
+
+
+def strip_fenced_code(text: str) -> str:
+    """Drop fenced code blocks, following CommonMark's closing rule.
+
+    A fenced block is a sample, not a claim. skill-development/SKILL.md shows
+    the reader the markdown they should write in their own SKILL.md, and that
+    sample legitimately contains `references/advanced.md` even though this
+    skill ships no such file. Reading it as a reference produces a dangling
+    pointer that can only be fixed by deleting working documentation, which is
+    the wrong repair in the wrong direction.
+
+    The closing rule matters. A fence closes on a run of the same character that
+    is at least as long as the one that opened it and carries no info string, so
+    the ```bash on line 392 of incident-commander does not close the ```markdown
+    opened on line 310 -- it is content. A toggle that treats any fence marker as
+    a closer reads that file as five balanced blocks instead of six with one
+    unclosed, and then blanks or un-blanks the wrong half of the document.
+    """
+    out: list[str] = []
+    fence_char = ""
+    fence_len = 0
+    for line in text.split("\n"):
+        m = FENCE_LINE.match(line)
+        if m:
+            token, info = m.group(2), m.group(3).strip()
+            if not fence_char:
+                fence_char, fence_len = token[0], len(token)
+            elif token[0] == fence_char and len(token) >= fence_len and not info:
+                fence_char, fence_len = "", 0
+            out.append("")
+            continue
+        out.append("" if fence_char else line)
+    return "\n".join(out)
+
+
 def declared_paths(text: str) -> set[str]:
     """Every in-repo path the prose points at, in either form.
 
@@ -141,9 +178,33 @@ def declared_paths(text: str) -> set[str]:
     each match is taken; passing a tuple to a Path operation raises.
     """
     out: set[str] = set()
-    for match in PATH_PATTERN.finditer(text):
+    for match in PATH_PATTERN.finditer(strip_fenced_code(text)):
         out.update(g for g in match.groups() if g and NOT_A_PATH.search(g))
     return out
+
+# A path the skill tells the agent to *write* is not a reference. "Save as
+# `agents/agent-name.md`" names a file that will not exist until the agent
+# creates it, and reporting that as a dangling reference tells the author to
+# delete an instruction that is working exactly as intended. The two were being
+# conflated because declared_paths() throws away the line a path was found on,
+# and the verb is the only thing that distinguishes them.
+OUTPUT_DECLARATION = re.compile(
+    r"(?i)\b(save as|saved as|create|creates|creating|write|writes|writing|"
+    r"add|adds|maintain|maintains|update|updates|generate|generates|emit|"
+    r"emits|store|stores|place|places|put|puts|output to|new file)\b"
+)
+
+
+def declared_output_paths(text: str) -> set[str]:
+    """Paths this document declares as something to produce, not to read."""
+    out: set[str] = set()
+    for line in strip_fenced_code(text).splitlines():
+        if not OUTPUT_DECLARATION.search(line):
+            continue
+        for match in PATH_PATTERN.finditer(line):
+            out.update(g for g in match.groups() if g and NOT_A_PATH.search(g))
+    return out
+
 BUILD_ARTEFACT = re.compile(r"(__pycache__|\.pyc$|\.DS_Store)")
 
 
@@ -269,7 +330,8 @@ def check_references() -> list[str]:
         if path.suffix != ".md":
             continue
         text = path.read_text(encoding="utf-8", errors="replace")
-        for ref in sorted(declared_paths(text)):
+        outputs = declared_output_paths(text)
+        for ref in sorted(declared_paths(text) - outputs):
             if not would_survive(ref, path.parent):
                 top = ref.split("/")[0]
                 reason = (

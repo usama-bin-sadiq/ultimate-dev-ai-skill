@@ -178,8 +178,6 @@ This skill integrates context engineering principles:
 
 - **context-fundamentals** - Progressive disclosure, attention budget management
 - **memory-systems** - JSONL for persistent memory, structured recall
-- **tool-design** - Scripts in `agents/scripts/` follow tool design principles
-- **context-optimization** - Module separation prevents context bloat
 
 ## References
 

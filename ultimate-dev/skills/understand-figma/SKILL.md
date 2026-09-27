@@ -41,8 +41,7 @@ It writes `$UA_DIR/intermediate/scan-manifest.json` and prints the node counts. 
 ## Phase 2 — ANALYZE (LLM enrichment)
 
 1. Read `scan-manifest.json`. Group nodes into batches of ~15, grouped by page when possible.
-2. For each batch, dispatch a subagent using the `design-analyzer` agent definition (`agents/design-analyzer.md`). Pass:
-   - the batch of nodes (`id`, `type`, `name`, `figmaMeta`, child names, token usage),
+2.Pass:
    - the full list of existing node IDs,
    - `$INTERMEDIATE_DIR = $UA_DIR/intermediate`,
    - the batch number for output naming.

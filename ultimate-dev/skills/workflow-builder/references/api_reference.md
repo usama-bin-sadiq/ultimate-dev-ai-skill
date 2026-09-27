@@ -106,8 +106,7 @@ Save workflow files under `.claude/workflows/` in the project, then browse, laun
 ## Sources
 
 1. Anthropic — Claude Code documentation, Workflow tool & `/workflows` (code.claude.com/docs).
-2. Ray Amjad — `claude-code-workflow-creator`, `references/api-reference.md` (github.com/ray-amjad/claude-code-workflow-creator).
-3. Anthropic — Claude Code changelog, v2.1.147 release notes (Workflow tool introduction).
+2.
 4. Anthropic — sub-agents & the Agent tool documentation (fresh-context isolation model).
 5. Anthropic — Claude Agent SDK: orchestration and background-task execution patterns.
 6. JSON Schema specification (json-schema.org) — the `schema` option's validation contract.

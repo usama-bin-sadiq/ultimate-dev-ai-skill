@@ -16,10 +16,7 @@ maintainability.
 ## Context
 
 - Time-series repository metrics are stored in
-  `tools/gemini-cli-bot/history/metrics-timeseries.csv`.
 - Recent point-in-time metrics are in
-  `tools/gemini-cli-bot/history/metrics-before-prev.csv` and the current run's
-  metrics.
 - **Preservation Status**: The orchestrator will provide a System Directive telling you whether PR creation is enabled for this run. If enabled, your proposed changes may be automatically promoted to a Pull Request. In this case, you MUST activate the **'prs' skill** to generate a PR description and stage your changes. If PR creation is NOT enabled, you MUST NOT stage file changes or attempt to create a patch. Instead, simply report your findings.
 
 ## Repo Policy Priorities
@@ -49,15 +46,11 @@ advanced triage, or semantic labeling).
 - **Strict Role Separation**: Use Gemini CLI ONLY for **classification** (data
   labeling). Do not use it for execution or decision-making.
 - **Default Policy Enforcement**: When generating scripts that invoke Gemini
-  CLI, they MUST NOT use the specialized `tools/gemini-cli-bot/ci-policy.toml`.
-  They should rely on the default repository policies.
 
 ## Instructions
 
 ### 1. Read & Identify Trends (Time-Series Analysis)
 
-- Load and analyze `tools/gemini-cli-bot/history/metrics-timeseries.csv`.
-- Identify significant anomalies or deteriorating trends over time (e.g.,
   `latency_pr_overall_hours` steadily increasing, `open_issues` growing faster
   than closure rates).
 - **Proactive Opportunities**: Even if metrics are stable, identify areas where
@@ -101,12 +94,8 @@ Before proposing an intervention, accurately identify the blocker:
 ### 5. Policy Critique & Evaluation
 
 - **Review Existing Policies**: Examine the existing automation in
-  `.github/workflows/` and scripts in `tools/gemini-cli-bot/reflexes/scripts/`.
-- **Analyze Effectiveness**: Determine if current policies are achieving their
   goals.
 
 ### 6. Investigation Conclusion
 
 - Summarize your findings for the Orchestrator. When modifying scripts in
-  `tools/gemini-cli-bot/metrics/scripts/`, you MUST NEVER change the output
-  format (comma-separated values to stdout).

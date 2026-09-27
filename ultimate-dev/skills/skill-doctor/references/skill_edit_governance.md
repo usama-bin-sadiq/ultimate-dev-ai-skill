@@ -1,8 +1,6 @@
 # Skill edit governance — the filing bar for proposing changes to another agent's instructions
 
 The core method and filing bar below are preserved from upstream skill-doctor's
-`references/skill-improvements.md` (MIT, © Denver Technologies, Inc.), because
-they encode the single most important discipline in this skill: **a speculative
 change is worse than none.** The surrounding rationale and the repo integration
 are additions.
 

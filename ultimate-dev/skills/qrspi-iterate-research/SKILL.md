@@ -47,8 +47,7 @@ Use the Edit tool to update the research document. Do NOT rewrite the entire doc
 
 ### Step 3b: Refresh sibling HTML if it exists
 
-After updating the markdown, check whether a sibling `.html` file exists at the same path. Apply the rule from `skills/qrspi/HTML-OUTPUT.md`:
-
+After updating the markdown, check whether a sibling `.html` file exists at the same path.
 - **Sibling `.html` exists**: Refresh affected slides — file map, per-question findings, data flow diagrams, discrepancies table — to match the new markdown content. Prefer surgical Edit; rewrite the full `.html` only if many slides changed. Append an "Updated" `<aside class="meta">` to the title slide.
 - **No sibling, no flag**: Skip — markdown stays canonical.
 - **No sibling but `--output=html` was passed**: Generate a fresh deck per the structure documented in `qrspi-create-research`'s Step 5b.

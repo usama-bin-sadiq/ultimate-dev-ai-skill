@@ -44,8 +44,6 @@ When you detect an implicit trigger, propose the handoff before running it: *"Wa
 
 On first invocation, the skill asks where to save handoffs so the project folder never gets cluttered. Setup is offered once via *"Run setup now? (Y/n)"* — answering N uses OS-temp defaults for this run and never re-prompts. The user can rerun setup any time via `/cs:handoff-setup`.
 
-See [references/configuration.md](references/configuration.md) for the full config field reference.
-
 ## Output Path
 
 The save location is read from the user's config (`~/.config/handoff/config.json`, or the project-local `.handoff/config.json` if present). When no config exists and the user declined setup, fall back to:
@@ -66,12 +64,9 @@ The handoff doc has five sections. Use these exact headers:
 - **Skills to use** — concrete list of 3-5 skills the next session should invoke, each with a one-line *why*.
 - **Artifacts** — paths/URLs to PRDs, plans, ADRs, issues, branches, PRs. Do not duplicate their contents.
 
-See [references/handoff_structure.md](references/handoff_structure.md) for a worked example.
-
 ## The Agent's Job
 
-Filling in the five sections is the agent's job, not the script's. Follow [references/handoff_prompt.md](references/handoff_prompt.md) as a mandatory checklist:
-
+Filling in the five sections is the agent's job, not the script's.
 > For each topic discussed in the conversation, decide explicitly: *include in State of play / log as an Open decision / drop with reason.*
 
 Free-handing the summary leads to rosy progress reports and dropped blockers. The checklist prevents that.
@@ -86,8 +81,6 @@ Matt's no-duplication discipline made concrete:
 - **Do not list 20 skills.** Pick the 3-5 the next session actually needs.
 - **Do not narrate every message in the conversation.** Compress to State + Decisions.
 
-See [references/deduplication_discipline.md](references/deduplication_discipline.md) for the full list.
-
 ## Redaction
 
 Before saving, the linter scans the draft for secrets and PII. In strict mode (default) it blocks save on findings; in warn mode it flags inline and saves anyway.
@@ -99,8 +92,6 @@ Redact:
 - `.env`-style `KEY=value` lines containing secrets
 - Email addresses, phone numbers, names of unrelated third parties
 - Internal URLs containing tokens or session IDs
-
-See [references/redaction_checklist.md](references/redaction_checklist.md) for the full pattern list and manual-review steps for what regex cannot catch.
 
 ## SessionStart Auto-Load
 

@@ -40,8 +40,7 @@ The answer's format follows the question:
 
 ## Sub-agent
 
-This command dispatches the `wiki-librarian` sub-agent. See `agents/wiki-librarian.md`.
-
+This command dispatches the `wiki-librarian` sub-agent.
 ## Scripts
 
 - `engineering/llm-wiki/skills/llm-wiki/scripts/wiki_search.py` — BM25 fallback search

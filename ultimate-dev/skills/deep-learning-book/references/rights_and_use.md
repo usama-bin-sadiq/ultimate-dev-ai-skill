@@ -16,8 +16,7 @@ into a skill."
    authors' contract with MIT Press, and that PDF distribution is not permitted.
 3. **This repository is public.** `book-to-skill`'s own rights gate refuses a `shareable`
    distribution without one of `public-domain`, `open-license`, `internal-docs`, or
-   `author-permission`. None applies here. Its `references/rights_and_provenance.md` lists
-   "publish a compiled skill of a copyrighted book to a public marketplace" under **Do not**.
+      `author-permission`.None applies here.
 
 `book-to-skill` also has a hard rule that it converts files already on disk and never scrapes a
 book from the web — so the requested pipeline could not have been run against a URL regardless.

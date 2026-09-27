@@ -81,8 +81,7 @@ Where `<PORT>` is whatever `detect.py` printed on the last full run — for exam
 ### Stages
 
 1. **Detect** (`detect.py`) — enumerate serial ports, filter to USB-UART bridges (CH9102 vendor `0x1A86`, Silabs CP210x `0x10C4`, FTDI `0x0403`) or the ESP32-S3 native USB-JTAG interface (`0x303A`). Probe with esptool to confirm the chip. Port names differ per OS (`/dev/cu.usbmodem*` on macOS, `/dev/ttyACM*`/`ttyUSB*` on Linux, `COMx` on Windows) but pyserial abstracts that.
-2. **Identify** (`detect.py`) — alongside port discovery, `detect.py` reads the factory-test partition signature and/or scans I2C once UIFlow is on, and cross-references `references/hardware_signatures.md` to suggest the right firmware variant (Basic-16MB, Core2, CoreS3, Cardputer-Adv, etc.). User-facing variant choice happens via `onboard.py --variant`; there is no separate `detect.py --identify` flag.
-3. **Fetch firmware** (`fetch_firmware.py`) — query the M5Burner manifest API and download the appropriate UIFlow 2.0 binary into the system temp dir. Cached between runs — safe to clear the cache anytime, it just re-downloads.
+2.User-facing variant choice happens via `onboard.py --variant`; there is no separate `detect.py --identify` flag.
 4. **Flash** (`flash.py`) — `esptool write_flash 0x0 <image>` at **460800 baud** for UART bridges, `--no-stub` at 115200 baud for native-USB S3 devices. 921600 fails intermittently on the CH9102 bridge — do not increase it. Native-USB flash can intermittently throw `Lost connection, retrying` mid-erase; esptool recovers. The post-flash `watchdog-reset` teardown step can fail even when the flash itself succeeded — `flash.py` parses esptool's stdout, treats that specific failure pattern as non-fatal when `Hash of data verified` appeared, and `onboard.py` falls back to `flash.native_reset()` and then manual-RESET coaching if needed.
 5. **Install apps** (optional, `install_apps.py`) — paste-mode REPL upload of every `.py` from a source directory into `/flash/`, then reboot via `repl_reset` (DTR/RTS is a no-op on native USB — don't reach for it). Source layout: root `*.py` → `/flash/`, `apps/*.py` → `/flash/apps/` (UIFlow's stock launcher scans that). When the bundle ships a root `main.py`, `install_apps.py` also sets NVS `boot_option=2` so UIFlow's own launcher doesn't run and our `main.py` takes over the boot flow — critical for BLE-using apps on ESP32-S3 (see gotchas below).
 6. **Smoke test** (optional, `smoke_test.py`) — I2C scan, LCD test pattern, speaker beep, button read.
@@ -120,8 +119,6 @@ Once `m5-onboard go` finishes at the `DONE` banner, the device is ready to use o
 - `scripts/install_apps.py` — push a directory of `.py` files into `/flash/` via paste-mode REPL; backs up `boot.py` as `boot_uiflow.py` before overwriting; also writes the `boot_option` NVS key when the bundle ships a root `main.py`
 - `scripts/smoke_test.py` — I2C + LCD + speaker + buttons
 - `scripts/mpy_repl.py` — shared serial/REPL helpers (paste mode, hard reset, boot-log capture)
-- `references/hardware_signatures.md` — chip + I2C fingerprints → model → firmware
-- `references/uiflow2_nvs.md` — NVS key reference with types and failure modes
 
 ## Dependencies
 

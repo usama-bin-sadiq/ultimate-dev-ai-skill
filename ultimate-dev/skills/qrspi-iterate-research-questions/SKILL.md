@@ -44,8 +44,7 @@ Use the Edit tool to surgically update the questions document. Renumber question
 
 ### Step 3b: Refresh sibling HTML if it exists
 
-After updating the markdown, check whether a sibling `.html` file exists at the same path. Apply the rule from `skills/qrspi/HTML-OUTPUT.md`:
-
+After updating the markdown, check whether a sibling `.html` file exists at the same path.
 - **Sibling `.html` exists**: Refresh it to match the new markdown. Prefer surgical Edit on the affected slides (added/removed/reframed questions). Rewrite the full file only if changes are widespread. Append `<aside class="meta">Updated YYYY-MM-DD: [reason]</aside>` to the title slide.
 - **No sibling, no flag**: Skip — markdown stays canonical.
 - **No sibling but `--output=html` was passed**: Generate a fresh deck per the structure documented in `qrspi-create-research-questions`'s Step 5a.

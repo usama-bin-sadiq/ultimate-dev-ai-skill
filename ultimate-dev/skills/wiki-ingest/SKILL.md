@@ -33,8 +33,7 @@ A typical ingest touches **5-15 wiki pages**. You (the user) are in the loop: th
 
 ## Sub-agent
 
-This command dispatches the `wiki-ingestor` sub-agent for the heavy lifting. See `agents/wiki-ingestor.md`.
-
+This command dispatches the `wiki-ingestor` sub-agent for the heavy lifting.
 ## Scripts
 
 - `engineering/llm-wiki/skills/llm-wiki/scripts/ingest_source.py` — source prep (metadata + preview)

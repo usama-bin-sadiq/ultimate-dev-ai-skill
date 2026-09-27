@@ -114,7 +114,7 @@ troubleshooting.
 | `licensing_and_citation.md` | Commercial-use questions, mixed-license cohorts, citation formats |
 | `cloud_storage_guide.md` | Direct S3/GCS access, versioning, UUID mapping |
 | `dicomweb_guide.md` | DICOMweb endpoints, PACS integration |
-| `digital_pathology_guide.md` | Slide microscopy (SM), annotations (ANN), pathology workflows |
+| `references/digital_pathology_guide.md` | Slide microscopy (SM), annotations (ANN), pathology workflows |
 | `bigquery_guide.md` | Full DICOM metadata, private elements (requires GCP) |
 | `cli_guide.md` | Command-line tools (`idc download`, manifest files) |
 | `parquet_access_guide.md` | Direct Parquet queries via GCS (no idc-index install needed) |

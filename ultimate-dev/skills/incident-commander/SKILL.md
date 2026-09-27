@@ -369,6 +369,7 @@ Status page: {link}
 ## Common Pitfalls
 - **{Pitfall}:** {description and how to avoid}
 - **{Pitfall}:** {description and how to avoid}
+```
 
 ## Reference Information
 → See references/reference-information.md for details

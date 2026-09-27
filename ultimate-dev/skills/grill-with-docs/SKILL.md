@@ -128,10 +128,6 @@ The additions below are **not** part of Matt's upstream skill. They operationali
 
 ### References (citations behind each rule)
 
-- [`references/ubiquitous_language.md`](references/ubiquitous_language.md) — why a glossary belongs in source control (Evans, Vernon, Khononov, Wlaschin, Brandolini, Avram & Marinescu, Fowler)
-- [`references/adr_practice.md`](references/adr_practice.md) — when an ADR earns its keep (Nygard, Tyree & Akerman, Zimmermann Y-statements, MADR, ThoughtWorks Radar, adr-tools, Backstage)
-- [`references/context_md_as_artifact.md`](references/context_md_as_artifact.md) — CONTEXT.md as living artifact (Khononov on language drift, Kernighan on naming, BoundedContext bliki, Confluent on data contracts, Brandolini on EventStorming glossary)
-
 ### Companion
 
 - Agent: `cs-grill-with-docs` (see `../../agents/cs-grill-with-docs.md`)

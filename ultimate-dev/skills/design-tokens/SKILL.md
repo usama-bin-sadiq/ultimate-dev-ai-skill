@@ -25,8 +25,6 @@ Token architecture, component specifications, systematic design, slide generatio
 
 ## Token Architecture
 
-Load: `references/token-architecture.md`
-
 ### Three-Layer Structure
 
 ```
@@ -67,15 +65,6 @@ node scripts/validate-tokens.cjs --dir src/
 
 ## References
 
-| Topic | File |
-|-------|------|
-| Token Architecture | `references/token-architecture.md` |
-| Primitive Tokens | `references/primitive-tokens.md` |
-| Semantic Tokens | `references/semantic-tokens.md` |
-| Component Tokens | `references/component-tokens.md` |
-| Component Specs | `references/component-specs.md` |
-| States & Variants | `references/states-and-variants.md` |
-| Tailwind Integration | `references/tailwind-integration.md` |
 
 ## Component Spec Pattern
 

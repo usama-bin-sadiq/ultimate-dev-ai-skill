@@ -45,15 +45,15 @@ metadata:
 
 ## 路由表
 
-| 用户意图 | 分类 | 详细文档 |
-|---------|------|---------|
-| 网页搜索/代码搜索 | search | [references/search.md](references/search.md) |
-| 小红书/推特/B站/V2EX/Reddit/Facebook/Instagram | social | [references/social.md](references/social.md) |
-| 招聘/职位/LinkedIn/Boss直聘 | career | [references/career.md](references/career.md) |
-| GitHub/代码 | dev | [references/dev.md](references/dev.md) |
-| 网页/文章/RSS | web | [references/web.md](references/web.md) |
-| YouTube/B站/播客字幕 | video | [references/video.md](references/video.md) |
-| 雪球/股票行情 | finance | [references/finance.md](references/finance.md) |
+| 用户意图 | 分类 |
+| --------- | ------ |
+| 网页搜索/代码搜索 | search |
+| 小红书/推特/B站/V2EX/Reddit/Facebook/Instagram | social |
+| 招聘/职位/LinkedIn/Boss直聘 | career |
+| GitHub/代码 | dev |
+| 网页/文章/RSS | web |
+| YouTube/B站/播客字幕 | video |
+| 雪球/股票行情 | finance |
 
 ## 零配置快速命令
 
@@ -88,8 +88,6 @@ Shell。直接运行 `twitter` 前，必须在子进程环境中显式提供
 用户已有且明确控制的 Chrome 会话；没有现成会话时不要自动登录，改用
 Cookie-Editor 手工导出后配置 xiaohongshu-mcp / 存量工具。
 
-Boss直聘配置触发：当用户说“帮我配 Boss直聘”时，先读取 `references/career.md`
-的 Boss 章节，然后在获得安装授权后运行
 `agent-reach install --env=local --system --channels=boss`。Agent 负责按系统启动
 只绑定 `127.0.0.1:9222` 的专用 Chrome；**拉起后第一步是暂停并让用户肉眼确认**
 窗口内是已登录状态（右上角有头像），未登录则让用户登录/扫码，用户确认后再运行
@@ -151,14 +149,6 @@ conda run -n dl agent-reach doctor --json
 ## 详细文档
 
 根据用户需求，阅读对应的详细文档：
-
-- [搜索工具](references/search.md) — Exa AI 搜索
-- [社交媒体](references/social.md) — 小红书, Twitter, B站, V2EX, Reddit, Facebook, Instagram（多后端/登录态命令组）
-- [职场招聘](references/career.md) — LinkedIn, Boss直聘
-- [开发工具](references/dev.md) — GitHub CLI
-- [网页阅读](references/web.md) — Jina Reader, RSS
-- [视频播客](references/video.md) — YouTube, B站, 小宇宙
-- [金融行情](references/finance.md) — 雪球股票行情、搜索、热门内容
 
 ## 配置渠道
 

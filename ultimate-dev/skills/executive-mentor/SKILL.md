@@ -87,7 +87,6 @@ Lost deal. Failed feature. Missed quarter. No blame sessions, no whitewash. 5 Wh
 
 ## Agents & References
 
-- `agents/devils-advocate.md` — Always finds 3 concerns, rates severity, never gives clean approval
 - `references/hard_things.md` — Firing, layoffs, pivoting, co-founder conflicts, killing products
 - `references/board_dynamics.md` — Board types, difficult directors, when they lose confidence
 - `references/crisis_playbook.md` — Cash crisis, key departure, PR disaster, legal threat, failed fundraise

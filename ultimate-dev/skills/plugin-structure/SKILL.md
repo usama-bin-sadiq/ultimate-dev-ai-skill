@@ -297,6 +297,10 @@ Reference scripts at: ${CLAUDE_PLUGIN_ROOT}/scripts/helper.py
 ```bash
 #!/bin/bash
 
+# ${CLAUDE_PLUGIN_ROOT} available as environment variable
+source "${CLAUDE_PLUGIN_ROOT}/lib/common.sh"
+```
+
 ## Reference files
 
 These ship with the skill and are read on demand; none is needed to
@@ -304,10 +308,6 @@ use it. Each answers one question the sections above do not.
 
 - [`references/component-patterns.md`](references/component-patterns.md)
 - [`references/manifest-reference.md`](references/manifest-reference.md)
-
-# ${CLAUDE_PLUGIN_ROOT} available as environment variable
-source "${CLAUDE_PLUGIN_ROOT}/lib/common.sh"
-```
 
 ## File Naming Conventions
 

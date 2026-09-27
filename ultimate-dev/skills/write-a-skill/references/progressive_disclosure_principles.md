@@ -39,8 +39,7 @@ The 100-line ceiling is empirical: agents reading >100 lines of SKILL.md tend to
 
 > "References one level deep" — Matt Pocock review checklist
 
-Why: agent loading a reference file should resolve its question without further indirection. If `REFERENCE.md` says "see `references/foo.md` for more on bar," then bar's content is the leaf — it shouldn't say "see references/foo/bar/baz.md."
-
+Why: agent loading a reference file should resolve its question without further indirection.
 Operational consequence: keep `references/` flat. No nested subfolders.
 
 ## Anti-Patterns to Avoid
@@ -49,15 +48,13 @@ Operational consequence: keep `references/` flat. No nested subfolders.
 2. **Reference soup** — 20 reference files at one level. Hard to scan; agent can't tell which to load.
 3. **Circular references** — `A.md` → `B.md` → `A.md`. Agent loops or fails.
 4. **No examples in SKILL.md** — "see EXAMPLES.md for usage." Forces agent to load another file to do anything. Provide a *minimum* example in SKILL.md.
-5. **Versioned references** — `references/v1/` and `references/v2/`. Maintenance burden; pick one.
-6. **Auto-generated table-of-contents** — agents don't need this; humans rarely browse `references/`.
+5.Maintenance burden; pick one.
 
 ## How to Apply Progressive Disclosure Concretely
 
 1. Draft SKILL.md with the workflow you want the agent to use 80% of the time
 2. Count lines. If > 100, identify the next-largest section. Move it to `references/<topic>.md`.
-3. Replace the moved section with a 1-2-line pointer: "See [references/topic.md](references/topic.md) for X."
-4. Repeat until SKILL.md ≤ 100 lines.
+3.
 5. Validate: `python scripts/skill_structure_validator.py path/to/skill-folder/`
 
 ## When 100 Is Too Restrictive

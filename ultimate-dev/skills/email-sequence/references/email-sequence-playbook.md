@@ -124,8 +124,6 @@ Key emails:
 6. Advanced tip (day 10-12)
 7. Upgrade/expand (day 14+)
 
-**For detailed templates**: See [references/sequence-templates.md](references/sequence-templates.md)
-
 ---
 
 ## Email Types by Category
@@ -167,8 +165,6 @@ Key emails:
 - Industry news roundup
 - Pricing updates
 
-**For detailed email type reference**: See [references/email-types.md](references/email-types.md)
-
 ---
 
 ## Email Copy Guidelines
@@ -203,7 +199,5 @@ Key emails:
 - Links for secondary actions
 - One clear primary CTA per email
 - Button text: Action + outcome
-
-**For detailed copy, personalization, and testing guidelines**: See [references/copy-guidelines.md](references/copy-guidelines.md)
 
 ---

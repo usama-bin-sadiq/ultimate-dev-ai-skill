@@ -131,7 +131,6 @@ After outputting the quality report, ask user for confirmation before updating.
 + npm run dev  # Start development server on port 3000
 + ```
 ```
-```
 
 ### Phase 5: Apply Updates
 

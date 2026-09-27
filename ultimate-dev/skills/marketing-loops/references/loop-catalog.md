@@ -229,8 +229,6 @@ Loops are grouped by function. Naming follows the "The X loop" convention.
 - **Check cadence**: Daily
 - **Acts when**: A thread/mention clears the ICP-fit + intent + reach score.
 - **Purpose**: Surface the highest-value conversations to engage in, instead of scrolling feeds.
-- **Skills used**: `social` (see its `references/listening.md`), `community-marketing`
-- **Loop body**:
   1. Pull mentions and relevant threads across configured sources.
   2. Score by ICP fit, intent, reach, and comment opportunity.
   3. Draft comments/replies for the top handful.

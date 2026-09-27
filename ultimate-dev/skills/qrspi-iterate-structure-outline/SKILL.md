@@ -54,8 +54,7 @@ Use the Edit tool to update the structure document:
 
 ### Step 3b: Refresh sibling HTML if it exists
 
-After updating the markdown, check whether a sibling `.html` file exists at the same path. Apply the rule from `skills/qrspi/HTML-OUTPUT.md`:
-
+After updating the markdown, check whether a sibling `.html` file exists at the same path.
 - **Sibling `.html` exists**: Refresh the phase overview table AND the SVG timeline — both must reflect the new ordering / counts. Add, remove, or split per-phase slides as needed. Update the "What We're NOT Doing" slide if scope changed. Append an "Updated" `<aside class="meta">` to the title slide.
 - **No sibling, no flag**: Skip — markdown stays canonical.
 - **No sibling but `--output=html` was passed**: Generate a fresh deck per the structure documented in `qrspi-create-structure-outline`'s Step 4b.

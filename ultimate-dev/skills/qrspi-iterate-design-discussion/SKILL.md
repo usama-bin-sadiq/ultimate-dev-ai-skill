@@ -39,8 +39,7 @@ Use the Edit tool to surgically update `thoughts/shared/design/`:
 
 ### Step 2b: Refresh sibling HTML if it exists
 
-After updating the markdown, check whether a sibling `.html` file exists at the same path. Apply the rule from `skills/qrspi/HTML-OUTPUT.md`:
-
+After updating the markdown, check whether a sibling `.html` file exists at the same path.
 - **Sibling `.html` exists**: Refresh affected slides. Specifically: move rejected option slides into a "Resolved Decisions" section (don't delete them), promote the chosen option to a clearly-marked "Approved" slide with `badge ok`, move resolved questions out of the "Open Questions" slide, and update the recommendation. Append an "Updated" `<aside class="meta">` to the title slide.
 - **No sibling, no flag**: Skip — markdown stays canonical.
 - **No sibling but `--output=html` was passed**: Generate a fresh deck per the structure documented in `qrspi-create-design-discussion`'s Step 6b.

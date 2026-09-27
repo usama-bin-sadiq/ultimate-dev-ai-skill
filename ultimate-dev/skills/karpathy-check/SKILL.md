@@ -33,8 +33,7 @@ A structured report with per-principle verdicts and specific line-level fix reco
 
 ## Sub-agent
 
-Dispatches the `karpathy-reviewer` agent. See `agents/karpathy-reviewer.md`.
-
+Dispatches the `karpathy-reviewer` agent.
 ## Scripts
 
 - `engineering/karpathy-coder/skills/karpathy-coder/scripts/complexity_checker.py`

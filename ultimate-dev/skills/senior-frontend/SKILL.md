@@ -568,5 +568,3 @@ Three surfaces:
 1. **Slash command:** `/cs:frontend-review <prompt>` — full grill + decision engine + composition routing.
 2. **Agent subagent:** `Agent({subagent_type: "cs-frontend-engineer", prompt: "..."})` — forks context, returns ≤ 200-word digest.
 3. **Direct tool call:** `python scripts/frontend_decision_engine.py ...` — deterministic profile match when inputs are known.
-
-See `agents/engineering/cs-frontend-engineer.md` for the full invocation contract.

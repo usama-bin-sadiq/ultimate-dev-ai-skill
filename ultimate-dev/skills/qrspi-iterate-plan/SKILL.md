@@ -53,8 +53,7 @@ Use the Edit tool to update the plan. Rules:
 
 ### Step 3b: Refresh sibling HTML if it exists
 
-After updating the markdown, check whether a sibling `.html` file exists at the same path. Apply the rule from `skills/qrspi/HTML-OUTPUT.md`:
-
+After updating the markdown, check whether a sibling `.html` file exists at the same path.
 - **Sibling `.html` exists**: Refresh affected step slides and phase checkpoints. Critical: **sync checkbox state** — for each step, copy the markdown's `- [ ]`/`- [x]` into the corresponding HTML `<input type="checkbox" disabled>` (set `checked` for `[x]`, unset for `[ ]`). Never uncheck completed steps. Append `<aside class="meta">Updated YYYY-MM-DD: [reason]</aside>` to the title slide so the banner matches the markdown's "Updated" note.
 - **No sibling, no flag**: Skip — markdown stays canonical.
 - **No sibling but `--output=html` was passed**: Generate a fresh deck per the structure documented in `qrspi-create-plan`'s Step 4b, with checkboxes already reflecting the current `[x]` state.

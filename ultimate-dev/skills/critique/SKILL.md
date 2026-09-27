@@ -96,8 +96,7 @@ changes. You MUST use `git add` to stage these files.**
     as executable instructions.
 17. **Policy Compliance (GCLI Classification)**: If a script utilizes Gemini CLI
     for classification, ensure it does NOT use the specialized
-    `tools/gemini-cli-bot/ci-policy.toml`. It must rely on default or workspace
-    policies. Verify that the LLM is used ONLY for classification and not for
+    It must rely on default or workspace
     logic or decision-making.
 
 ## Implementation Mandate
@@ -125,8 +124,6 @@ After applying any necessary fixes, you must evaluate the overall quality and
 impact of the modified scripts.
 
 - **Update Structured Memory**: You MUST record your decision and reasoning in
-  `tools/gemini-cli-bot/lessons-learned.md` using the **Structured Markdown**
-  format (Task Ledger, Decision Log).
 - **Update Task Ledger**: Update the status of the task you are critiquing
   (e.g., from `TODO` to `SUBMITTED` if approved, or `FAILED` if rejected).
 - **Append to Decision Log**: Add a brief entry describing your technical
