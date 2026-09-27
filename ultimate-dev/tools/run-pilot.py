@@ -295,12 +295,29 @@ def sandbox_for(case_id: str) -> Path | None:
     Running a case in the repository root when its fixture lives elsewhere is how
     a case ends up measuring refusal-to-fabricate instead of the behaviour it
     was written to measure.
+
+    None is ambiguous on its own, so `case_needs_fixture` is the only thing that
+    should interpret it. A case may legitimately have no fixture because it is
+    self-contained -- "what is 17 times 23" needs no workspace, and the absence
+    of one is the condition the case is testing. That is a different situation
+    from a case whose fixture was specified and never built, and conflating them
+    made 26 runnable cases report as harness failures.
     """
     for candidate in (FIXTURE_BUILD_ROOT / case_id,
                       FIXTURE_BUILD_ROOT / "git" / case_id):
         if candidate.is_dir():
             return candidate
     return None
+
+
+def case_needs_fixture(case: dict) -> bool:
+    """Whether this case declares that it requires a workspace to run.
+
+    `fixture: none` is an explicit statement that the case is self-contained. Its
+    absence means a fixture is required, because the default for a case that
+    inspects a repository is that the repository must exist.
+    """
+    return str(case.get("fixture_required", "yes")).strip().lower() != "no"
 
 
 def ensure_fixtures() -> bool:
@@ -916,8 +933,9 @@ def execute_cases(cases: list[dict], arms: list[str], timeout: int,
             # arm's baseline the first arm's output -- so "dev.yaml was not
             # touched" would pass because the skill arm had already rewritten it.
             before = snapshot(sandbox)
+            needs_fixture = case_needs_fixture(case)
             staged, stage_error = stage_at_root(sandbox)
-            if stage_error:
+            if stage_error and needs_fixture:
                 result = {"id": case["id"], "arm": arm,
                           "harness_error": f"unrunnable: {stage_error}",
                           "served_by": None, "stdout": "", "elapsed_s": 0.0,
@@ -927,6 +945,10 @@ def execute_cases(cases: list[dict], arms: list[str], timeout: int,
                 print(f"  [{index:2d}/{total}] {arm:8} {case['id']:18} "
                       f"       -  unrunnable: {stage_error}")
                 continue
+            if stage_error:
+                # A self-contained case with no fixture. Not a failure: the
+                # absence of a workspace is the precondition it is testing.
+                staged = []
             try:
                 result = run_one(case, timeout, models=models,
                                  sandbox=REPO_ROOT, arm=arm)

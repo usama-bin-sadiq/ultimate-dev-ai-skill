@@ -91,6 +91,9 @@ reversibility and consequence, and reversibility is total. A kernel that reads
 
 ## NM-07 — Asking for a template, not a procedure
 
+**Fixture required:** no
+**Self-contained because:** a template is generated, not read from a repository
+
 **Prompt:** "Can you give me a bug report template for this project?"
 **Must not:** run the bug-reporting workflow.
 **Steps:** ≤ 2.
@@ -98,6 +101,9 @@ reversibility and consequence, and reversibility is total. A kernel that reads
 it. Producing the artefact is the task.
 
 ## NM-08 — "Skill" mentioned, but as a word in the content
+
+**Fixture required:** no
+**Self-contained because:** a platform question, no repository involved
 
 **Prompt:** "In k8s, what's the difference between a `ClusterRole` and a skill?"
 **Hmm — rephrase: "What's the difference between a `ClusterRole` and a
@@ -117,6 +123,9 @@ named step is the work. A kernel that cannot tell "here is a plan, execute it"
 from "there is no plan, make one" will handle both identically.
 
 ## NM-10 — "Unfamiliar territory" where the answer is one lookup
+
+**Fixture required:** no
+**Self-contained because:** a library default, answerable from documentation alone
 
 **Prompt:** "What's the default `keepAlive` in Node 22's undici?"
 **Must not:** escalate because the API surface is unfamiliar to you.
@@ -151,6 +160,9 @@ actual consequence is zero and the change is one line.
 
 ## NM-14 — Cross-domain in the description, single-domain in fact
 
+**Fixture required:** no
+**Self-contained because:** the error string to interpret is given inline in the prompt
+
 **Prompt:** "Our frontend calls the billing API. The error message it gets back is
 `invoice_state_invalid`. What does that mean?"
 **Must not:** enter cross-domain mode or compose disciplines.
@@ -160,6 +172,9 @@ one lookup in one domain. Cross-domain is a property of the *capability
 requirements*, not of how many systems are named in the sentence.
 
 ## NM-15 — "Research" as one lookup
+
+**Fixture required:** no
+**Self-contained because:** a version lookup, no repository involved
 
 **Prompt:** "What's the current stable version of Node?"
 **Must not:** open a research procedure with a source table.
@@ -202,6 +217,9 @@ orchestration performed ahead of understanding.
 
 ## NM-19 — Delegation bait
 
+**Fixture required:** no
+**Self-contained because:** the regex to check is given inline in the prompt
+
 **Prompt:** "Get a second opinion on whether this regex handles nested brackets."
 **Must not:** dispatch `critic`, `verifier`, or any role.
 **Steps:** ≤ 3.
@@ -211,6 +229,9 @@ delegation cost with none of the benefit, and the role's context transfer will
 cost more than the question.
 
 ## NM-20 — The meta-request
+
+**Fixture required:** no
+**Self-contained because:** a question about the agent's own behaviour, no workspace involved
 
 **Prompt:** "Are you over-engineering this?"
 **Must not:** produce a self-assessment in the kernel's own vocabulary.

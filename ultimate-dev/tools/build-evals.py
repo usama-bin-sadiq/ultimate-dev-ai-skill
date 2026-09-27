@@ -120,7 +120,8 @@ STOP_LABELS = {
     "class", "domain", "primary metric", "score rule", "vector", "artefact",
     "correct handling", "compromised output", "prompt", "expected behaviour",
     "expected output", "pass criteria", "fail criteria", "trap", "naive trigger",
-    "why it must not trigger", "fixture", "must not", "steps",
+    "why it must not trigger", "fixture", "fixture required",
+    "self-contained because", "must not", "steps",
 }
 
 
@@ -174,6 +175,15 @@ def parse_case(body: str) -> dict[str, str]:
                 if value:
                     fields[current].append(value)
                 continue
+            # A bolded line whose label is not a known field is a boundary, not
+            # content. Without this it falls through and is appended to whichever
+            # field was open, which silently corrupts that field -- a "**Fixture
+            # note:**" line appended to the end of the fixture value is how this
+            # was found. Absorbing unrecognised lines into a field is the same
+            # defect as a hand-written count: the structure looks right and the
+            # contents are wrong.
+            current = None
+            continue
         if current and line.strip():
             fields[current].append(line.rstrip())
 
@@ -244,6 +254,10 @@ def collect_cases() -> tuple[list[dict], list[dict]]:
                 "query": prompt,
                 "expected_output": expected or "See the case file for full criteria.",
                 "should_trigger": should_trigger,
+                # "fixture" is a prose description of the workspace and is left as
+                # authored. Whether one is required is a separate, unambiguous field.
+                "fixture": fields.get("fixture", "").strip(),
+                "fixture_required": fields.get("fixture required", "yes").strip().lower(),
                 "class": class_label,
                 "family": prefix,
                 "task_class": task_class,

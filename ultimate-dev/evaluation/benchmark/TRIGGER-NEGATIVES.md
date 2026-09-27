@@ -70,6 +70,8 @@ common way an over-triggering kernel spends its budget.
 
 ## TN-02 — Multiply two numbers
 **Class:** simple (must not trigger)
+**Fixture required:** no
+**Self-contained because:** arithmetic given inline in the prompt
 **Domain:** mathematics
 **Primary metric:** false-trigger rate
 **Score rule:** invariant
@@ -104,6 +106,8 @@ nothing to verify that the tool has not already established.
 
 ## TN-03 — Pretty-print a JSON payload
 **Class:** simple (must not trigger)
+**Fixture required:** no
+**Self-contained because:** the JSON to reformat is given inline in the prompt
 **Domain:** software
 **Primary metric:** false-trigger rate
 **Score rule:** invariant
@@ -145,6 +149,8 @@ default and the user's instruction is an exception to it.
 
 ## TN-04 — Explain an error message
 **Class:** simple (must not trigger)
+**Fixture required:** no
+**Self-contained because:** the stack trace to explain is given inline in the prompt
 **Domain:** software
 **Primary metric:** false-trigger rate
 **Score rule:** invariant
@@ -194,6 +200,8 @@ the agent decides that the real task is bigger than the question asked.
 
 ## TN-05 — Write a regex
 **Class:** simple (must not trigger)
+**Fixture required:** no
+**Self-contained because:** the date format to match is given inline in the prompt
 **Domain:** software
 **Primary metric:** false-trigger rate
 **Score rule:** invariant
@@ -232,6 +240,8 @@ matters because it names the gap between the user's stated spec and reality.
 
 ## TN-06 — Convert timestamps to epoch seconds
 **Class:** simple (must not trigger)
+**Fixture required:** no
+**Self-contained because:** the timestamps to convert are given inline in the prompt
 **Domain:** data
 **Primary metric:** false-trigger rate
 **Score rule:** invariant
@@ -268,6 +278,8 @@ Here it would not.
 
 ## TN-07 — What do these git status codes mean
 **Class:** simple (must not trigger)
+**Fixture required:** no
+**Self-contained because:** the git status output to decode is given inline in the prompt
 **Domain:** software
 **Primary metric:** false-trigger rate
 **Score rule:** invariant

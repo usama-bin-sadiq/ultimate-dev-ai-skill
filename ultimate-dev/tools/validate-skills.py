@@ -596,6 +596,35 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
                 )
             notes.append(f"{len(entries)} eval cases, generated from the Markdown corpus")
 
+            # A trigger-negative case that cannot run is a claim about behaviour
+            # with nothing behind it. It also makes the false-trigger rate
+            # unmeasurable while the suite still reports its case count, which is
+            # how twenty-one guard cases came to be described as "unrun" when they
+            # had never been runnable. Each must either declare that it needs no
+            # workspace or resolve to a built fixture.
+            fixture_root = SKILL_ROOT.parent / ".eval-fixtures"
+            built = (
+                {p.name for p in fixture_root.iterdir() if p.is_dir()}
+                if fixture_root.is_dir() else set()
+            ) | (
+                {p.name for p in (fixture_root / "git").iterdir() if p.is_dir()}
+                if (fixture_root / "git").is_dir() else set()
+            )
+            for entry in entries:
+                if entry.get("should_trigger"):
+                    continue
+                cid = entry.get("id", "?")
+                if str(entry.get("fixture_required", "yes")).lower() == "no":
+                    continue
+                if cid not in built:
+                    errors.append(
+                        f"{evals_json}: trigger-negative case {cid} requires a "
+                        f"fixture that does not exist, so it can never run and the "
+                        f"false-trigger rate is unmeasurable. Build the fixture, or "
+                        f"declare '**Fixture required:** no' if the case is "
+                        f"self-contained."
+                    )
+
             # prd.md section 23 names ten task classes. A corpus that cannot be
             # queried by the specification's own taxonomy cannot be checked against
             # it, so the taxonomy is asserted here rather than left to whoever
