@@ -11,6 +11,7 @@ Every meaningful execution produces one entry, in this order:
 
 ```text
 OBSERVATION
+  id           OBS-n, assigned in order, never reused
   action       what was actually done, concretely enough to repeat
   result       what came back, including absence of output
   state change what is different now — files, data, decisions, beliefs
@@ -18,6 +19,19 @@ OBSERVATION
   error        the failure text, classified (see recovery-system.md)
   unexpected   anything that does not fit the plan's model of the situation
 ```
+
+**`id` is what makes `evidence` checkable.** A decision record that cites
+`evidence: OBS-013` is making a promise that a record with that id exists and says
+what was observed. Without a number on the observation, the pointer resolves to
+nothing and the promise is unverifiable — which is the difference between a
+citation and a claim that something was seen. Assign ids sequentially as
+observations are recorded and never reuse one: a reused id makes two different
+observations indistinguishable, and the record that cited the first will appear
+to be supported by the second.
+
+The numbering is deliberately local to a run. It is not global, it is not
+persistent across runs, and it is not a citation into anything external. What it
+buys is decidability *within* a run, which is where the decision records live.
 
 The record is short. Its value is that the `unexpected` and `state change`
 fields are filled honestly, not that the entry is long.

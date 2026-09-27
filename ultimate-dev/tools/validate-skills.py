@@ -683,6 +683,129 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
                 f"alone. Found: {line.strip()[:70]!r}"
             )
 
+    # Decision records must obey the two rules the kernel calls non-negotiable:
+    # `confidence` names its object, and `evidence` is a pointer or `none`.
+    #
+    # This check exists because the repository's own 100 worked examples
+    # violated both, in 100% of cases, while the schema declared a bare `high`
+    # "rejected". A format is taught by its exemplars far more than by its prose,
+    # and every one of those exemplars was teaching the opposite. Nothing in CI
+    # could see it, because nothing ever read a record.
+    #
+    # It walks the records rather than trusting a count, because a count is
+    # satisfiable by records that do not conform -- which is how the control
+    # plane, the skill-creator reference list, and the eval taxonomy all passed
+    # while their contents were wrong.
+    record_re = re.compile(
+        r"(?m)^\s*(confidence|evidence)\s{2,}(.+?)\s*$")
+    blocks_re = re.compile(r"(?m)^DECISION\s*$")
+    exempt_dirs = {".git", "node_modules", "__pycache__"}
+
+    def scan_records(paths, label):
+        """Count records and how many break each rule. Returns (total, bad_ids)."""
+        total = 0
+        bad: list[str] = []
+        for path in paths:
+            try:
+                text = path.read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                continue
+            starts = [m.start() for m in blocks_re.finditer(text)]
+            if not starts:
+                continue
+            for index, start in enumerate(starts):
+                end = starts[index + 1] if index + 1 < len(starts) else len(text)
+                chunk = text[start:end]
+                # Bound the block: a DECISION header followed by a blank line and
+                # prose is not a record.
+                fields = record_re.findall(chunk[:1600])
+                if not fields:
+                    continue
+                # The field template is not a record. It is identified by the
+                # evidence line that describes the field rather than using it,
+                # which is a fixed string in the one file that carries it.
+                if any(k == "evidence" and "POINTERS to observations" in v
+                       for k, v in fields):
+                    continue
+                total += 1
+                rel = path.relative_to(repo_root)
+                seen = {k: v.strip() for k, v in fields}
+                conf = seen.get("confidence", "")
+                evid = seen.get("evidence", "")
+                if conf and conf.lower() in {"high", "medium", "low"}:
+                    bad.append(f"{rel}: bare confidence {conf!r}")
+                elif conf and not re.search(r"\bin\b", conf, re.IGNORECASE):
+                    bad.append(f"{rel}: confidence does not name an object: {conf[:40]!r}")
+                # `none` is a valid answer, and `none - <reason>` is the same
+                # answer with the reason attached. Requiring a bare `none` would
+                # discard the explanation of why there is no evidence, which is
+                # usually the most useful part of the field.
+                if evid and not evid.lower().startswith("none") and not re.search(
+                        r"OBS-\d+", evid):
+                    bad.append(f"{rel}: evidence is prose, not an OBS- pointer or `none`")
+        return total, bad
+
+    # Two populations, two severities, and the split is deliberate.
+    #
+    # references/decision-fabric.md holds the worked records SKILL.md sends every
+    # R2+ run to. An agent that reads the rules and then looks at how a record is
+    # written will copy those, so a violation there changes behaviour. It is an
+    # error.
+    #
+    # examples/ holds 100 recorded traces from earlier runs. They are historical
+    # output, not templates, and rewriting them to satisfy a rule they were
+    # written before would be falsifying a record of what happened. They are
+    # counted on every run, loudly, and left as they are until each is either
+    # re-derived or explicitly retired. A warning would escalate under --strict
+    # and block every commit against a debt nobody is working on; silence would
+    # be the thing this check was written to prevent.
+    runtime_records = [SKILL_ROOT / "references" / "decision-fabric.md"]
+    if (SKILL_ROOT / "examples").is_dir():
+        example_records = sorted((SKILL_ROOT / "examples").rglob("*.md"))
+    else:
+        example_records = []
+
+    rt_total, rt_bad = scan_records(runtime_records, "runtime exemplars")
+    if rt_bad:
+        errors.append(
+            f"{len(rt_bad)} violation(s) in the runtime exemplars of "
+            f"references/decision-fabric.md, which SKILL.md sends every R2+ run "
+            f"to: " + "; ".join(rt_bad[:4])
+        )
+    elif rt_total:
+        notes.append(f"all {rt_total} runtime decision records conform")
+
+    ex_total, ex_bad = scan_records(example_records, "examples")
+    if ex_total:
+        conformant = ex_total - len({b for b in ex_bad})
+        if ex_bad:
+            notes.append(
+                f"DEBT: {len(ex_bad)} violation(s) across {ex_total} decision "
+                f"records in examples/ -- bare confidence or prose evidence, "
+                f"against a schema that rejects both. Historical traces, left "
+                f"unrewritten on purpose; each needs re-derivation or retirement. "
+                f"Runtime exemplars are clean, which is what changes behaviour."
+            )
+        else:
+            notes.append(f"all {ex_total} example decision records conform")
+
+    # The OBS- id space must be defined in the tree an install keeps. If it is
+    # only in knowledge/, which is pruned, then `evidence: OBS-013` is a pointer
+    # to nothing and the "mechanical check" the kernel promises is not available.
+    runtime_obs = sum(1 for name in ("SKILL.md", "references/observation-system.md")
+                      if re.search(r"OBS-\d+", (SKILL_ROOT / name).read_text(
+                          encoding="utf-8", errors="replace")))
+    if runtime_obs < 2:
+        errors.append(
+            "the OBS- id space is not defined in the runtime tree. SKILL.md "
+            "promises that `evidence: OBS-n` is mechanically checkable, but the "
+            "numbering exists only in knowledge/schemas/observation.md, which is "
+            "pruned from every install, and the runtime observation record has no "
+            "id field. The pointer resolves to nothing where it matters."
+        )
+    else:
+        notes.append("the OBS- id space is defined in the runtime tree")
+
     # The control plane new-arch.md draws has eight systems. This check exists
     # because the eighth was missing for a long time and nothing noticed: the
     # repository shipped eight files, so a count-based check passed, while

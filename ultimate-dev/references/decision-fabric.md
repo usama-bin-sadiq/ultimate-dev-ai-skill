@@ -184,10 +184,15 @@ DECISION
               the rewrites are not obviously separable by their effect.
   rationale   A wrong fix costs a migration cycle and teaches nothing; a
               measurement costs one cycle and eliminates the guess.
-  confidence  high
+  confidence  high in the four candidate causes being genuinely inseparable by
+              inspection; low in which one is responsible, since none has been
+              measured
   cost        One profiling run, minutes to hours depending on data volume.
               Buys: a cause that is a fact rather than a hypothesis.
-  evidence    Symptom (consistent 40-minute overrun), no timing data yet.
+  evidence    none — the 40-minute overrun is a reported symptom, not an
+              observation this run made. Nothing has been timed yet, and
+              confidence is high only about the cheapness of measuring, which
+              is why it survives having no evidence.
   recovery    If instrumentation shows a single dominant cause, stop measuring
               and fix it.
 ```
@@ -201,9 +206,12 @@ DECISION
               overload we are responding to.
   rationale   The server already tells us when to retry; believing it beats
               guessing a delay.
-  confidence  medium
+  confidence  high in the server emitting Retry-After on the 429s seen so far;
+              medium in three attempts being the right ceiling, which is a
+              judgement about our tolerance and not something observed
   cost        An afternoon, reversible in one commit.
-  evidence    429 responses observed with Retry-After headers in the logs.
+  evidence    OBS-003, OBS-004 — two 429 responses captured with their
+              Retry-After headers, recorded before this decision.
   recovery    If the 429s lack Retry-After, or success rate is unaffected by
               delay, revisit the strategy rather than tuning the numbers.
 ```

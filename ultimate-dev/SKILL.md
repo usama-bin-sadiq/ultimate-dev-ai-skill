@@ -122,7 +122,8 @@ DECISION
 ```
 
 **`evidence` must point, not narrate.** Write `OBS-013`, not "the logs showed
-retries". A prose evidence field cannot be checked for existence, so a fabricated
+retries". The `OBS-n` ids are assigned in order as observations are recorded —
+the shape, and the rule for reusing one, are in `references/observation-system.md`. A prose evidence field cannot be checked for existence, so a fabricated
 citation is indistinguishable from a real one — which makes it the perfect place
 to hide the system's worst failure. A pointer either resolves to a recorded
 observation or it does not, and that is a mechanical check. If nothing was
