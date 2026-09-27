@@ -1,5 +1,8 @@
 # Changelog
 
+## [4.0.20] — 2026-09-27
+
+_No summary recorded. Review the comparison for details._
 ## [4.0.19] — 2026-09-27
 
 _No summary recorded. Review the comparison for details._
