@@ -83,6 +83,11 @@ superseded number is retired permanently, so links never change meaning.
 | [0002](0002-skills-are-resources-not-agents.md) | Skills are resources, not agents | Accepted | Prevents the architecture from becoming a swarm of specialists |
 | [0003](0003-gated-learning-lifecycle.md) | Gated learning lifecycle | Accepted | Stops self-improvement becoming self-corruption |
 | [0004](0004-explicit-effort-ladder.md) | An explicit effort ladder | Accepted | Makes cost a recorded decision rather than a habit |
+| [0005](0005-bound-the-import-measure-the-redundancy.md) | Measure before importing; bound the import to a named list | Accepted | "Clone all good skills" has no enumerable target; 95.6% of the catalogue appears in exactly one repository |
+| [0006](0006-the-guard-set-is-unrunnable.md) | The guard set is unrunnable | Accepted | 17 of 30 guard cases could never execute, and the suite did not say so |
+| [0007](0007-no-upstream-citation.md) | Adopted capabilities carry no upstream citation | Accepted | Removed the provenance keys; 36 `(gstack)`-style description citations went with them |
+| [0008](0008-coordination-mode.md) | Coordination mode is a decision, and JEv survives the handoff | Accepted | Amends "agents are NOT the architecture" to "JEv is — including when it hands off"; makes RunState a file |
+| [0009](0009-new-arch-divergences.md) | Two divergences from new-arch.md that were never decided | Accepted | The triage axes were swapped and five JEv fields dropped, with no record of the decision |
 
 ## Reviewing an ADR
 
