@@ -468,7 +468,7 @@ def grade(case: dict, result: dict) -> dict:
             "reason": f"direct answer; {trace['tool_calls']} read-only tool call(s)"}
 
 
-def main(argv: list[str] | None = None) -> int:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--cases", type=int, default=20)
     parser.add_argument(
@@ -491,50 +491,41 @@ def main(argv: list[str] | None = None) -> int:
              "Every result records the model that served it.",
     )
     parser.add_argument("--dry-run", action="store_true")
-    args = parser.parse_args(argv)
+    return parser.parse_args(argv)
 
-    if not AGENT_RUNNER.is_file():
-        print(f"error: runtime adapter not found at {AGENT_RUNNER}", file=sys.stderr)
-        print("The skill-creator bundle provides agent_runner.py. Without it this "
-              "script cannot drive a runtime, and an unrun suite is a checklist.",
-              file=sys.stderr)
-        return 1
 
+def resolve_cases(args: argparse.Namespace) -> tuple[list[dict], int] | None:
+    """Pick the sample and report its composition.
+
+    Returns ``None`` if the selection is impossible, which ends the run.
+    """
     all_cases = load_cases()
     if args.only:
         wanted = set(args.only)
         cases = [c for c in all_cases if c["id"] in wanted]
         missing = wanted - {c["id"] for c in cases}
         if missing:
-            print(f"error: no such case id: {', '.join(sorted(missing))}", file=sys.stderr)
-            return 1
+            print(f"error: no such case id: {', '.join(sorted(missing))}",
+                  file=sys.stderr)
+            return None
     else:
         cases = stratify(all_cases, args.cases)
     must_fire = sum(1 for c in cases if c["should_trigger"])
     print(f"pilot sample: {len(cases)} cases "
           f"({must_fire} must fire, {len(cases)-must_fire} must not)")
     print(f"sample: {', '.join(c['id'] for c in cases)}")
+    return cases, must_fire
 
-    if args.dry_run:
-        return 0
 
-    if not ensure_fixtures():
-        return 1
+def execute_cases(cases: list[dict], arms: list[str], timeout: int,
+                  models: list[str]) -> tuple[list[tuple[dict, dict]], list[dict], float]:
+    """Run every case in every arm, serially.
 
-    # Runs are serialised. Concurrent invocations collide on the runtime's
-    # background service and fail, and a harness that only works one case at a
-    # time is still a usable harness -- parallelism here would trade reliability
-    # for speed on a measurement that is already expensive.
-    models = ([m.strip() for m in args.models.split(",") if m.strip()]
-              if args.models else DEFAULT_MODEL_POOL)
-    print(f"running against opencode, serial, timeout {args.timeout}s")
-    print(f"model pool ({len(models)}): {', '.join(models)}")
+    Returns ``(pairs, results, wall_seconds)``, where a pair is the
+    ``(case, raw result)`` that grade() will turn into a verdict.
+    """
     started = time.monotonic()
-    # Arms are interleaved per case, not run as two separate sweeps. A sweep
-    # design lets a rate limit or a model change land entirely on one arm, which
-    # is indistinguishable from an effect of the skill.
-    arms = ["skill", "baseline"] if args.arm == "both" else [args.arm]
-    results = []
+    results: list[dict] = []
     pairs: list[tuple[dict, dict]] = []
     total = len(cases) * len(arms)
     index = 0
@@ -542,7 +533,7 @@ def main(argv: list[str] | None = None) -> int:
         sandbox = sandbox_for(case["id"])
         for arm in arms:
             index += 1
-            result = run_one(case, args.timeout, models=models,
+            result = run_one(case, timeout, models=models,
                              sandbox=sandbox, arm=arm)
             result["arm"] = arm
             results.append(result)
@@ -552,13 +543,63 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  [{index:2d}/{total}] {arm:8} {case['id']:18} "
                   f"{result.get('elapsed_s', 0):6.1f}s  {status}")
             pairs.append((case, result))
-    wall = time.monotonic() - started
+    return pairs, results, time.monotonic() - started
 
-    graded = [grade(c, r) for c, r in pairs]
-    by_id = {c["id"]: c for c in cases}
 
-    out_dir = SKILL_ROOT.parent / args.out
-    out_dir.mkdir(parents=True, exist_ok=True)
+def arm_rates(graded: list[dict], by_id: dict, arm: str) -> dict:
+    """Counts for one arm. Environment failures are counted here, never scored."""
+    rows = [g for g in graded if g.get("arm", "skill") == arm]
+    ok = [g for g in rows if g["verdict"] is not None]
+    neg = [g for g in rows if not by_id[g["id"]]["should_trigger"] and g["verdict"]]
+    return {
+        "runs": len(rows),
+        "decided": len(ok),
+        "passed": sum(1 for g in ok if g["verdict"] == "pass"),
+        "false_triggers": sum(1 for g in neg if g["verdict"] == "fail"),
+        "negatives_decided": len(neg),
+        "environment_failures": sum(1 for g in rows if g.get("kind") == "environment_error"),
+    }
+
+
+def paired_comparison(graded: list[dict], by_id: dict) -> dict:
+    """Compare the arms over the cases both of them decided.
+
+    Only cases with a decided verdict in both arms can enter, and that
+    restriction is the whole point: an improvement computed over different case
+    sets is not an improvement.
+    """
+    def verdict_map(arm: str) -> dict[str, str]:
+        return {g["id"]: g["verdict"] for g in graded
+                if g.get("arm", "skill") == arm and g["verdict"] is not None}
+
+    skill_map, base_map = verdict_map("skill"), verdict_map("baseline")
+    shared = sorted(set(skill_map) & set(base_map))
+    both = [c for c in shared if skill_map[c] == base_map[c]]
+    skill_only = [c for c in shared if skill_map[c] == "pass" and base_map[c] == "fail"]
+    base_only = [c for c in shared if skill_map[c] == "fail" and base_map[c] == "pass"]
+    negatives = [c for c in shared if not by_id[c]["should_trigger"]]
+    return {
+        "cases_in_both_arms": len(shared),
+        "agreed": len(both),
+        "skill_only_pass": skill_only,
+        "baseline_only_pass": base_only,
+        "negative_cases_paired": len(negatives),
+        # Exact binomial sign test on the discordant pairs. With few pairs this
+        # is the only honest test available; a normal approximation on n<10
+        # would report a p-value the data cannot support.
+        "sign_test_p": binom_two_sided(len(skill_only), len(base_only)),
+        "discordant": len(skill_only) + len(base_only),
+    }
+
+
+def build_report(cases: list[dict], graded: list[dict], by_id: dict,
+                 results: list[dict], models: list[str], must_fire: int,
+                 wall: float) -> dict:
+    """Assemble the machine-readable report.
+
+    The summary and per-arm sections are left to the caller, which fills them
+    once the statistics that depend on them exist.
+    """
     report = {
         "kind": "pilot",
         "not_a_suite_result": (
@@ -581,14 +622,13 @@ def main(argv: list[str] | None = None) -> int:
     }
 
     for g in graded:
-        case = by_id[g["id"]]
+        sandbox = sandbox_for(g["id"])
         report["results"].append({
             "id": g["id"],
-            "fixture": (str(Path(sandbox_for(g["id"])).relative_to(REPO_ROOT))
-                        if sandbox_for(g["id"]) else None),
+            "fixture": (str(sandbox.relative_to(REPO_ROOT)) if sandbox else None),
             "arm": g.get("arm", "skill"),
-            "class": case["class"],
-            "should_trigger": case["should_trigger"],
+            "class": by_id[g["id"]]["class"],
+            "should_trigger": by_id[g["id"]]["should_trigger"],
             "verdict": g["verdict"],
             "reason": g.get("reason"),
             "prose_hits": g.get("prose_hits", []),
@@ -598,100 +638,33 @@ def main(argv: list[str] | None = None) -> int:
                                if r["id"] == g["id"] and r.get("arm") == g.get("arm")), None),
             "chars": g.get("chars"),
         })
+    return report
 
+
+def write_run_logs(out_dir: Path, results: list[dict]) -> None:
+    """One stdout transcript per run, so any verdict can be read back by hand."""
     for r in results:
         if "stdout" in r:
             safe = re.sub(r"[^A-Za-z0-9_.-]", "_", r["id"])
             arm = r.get("arm", "skill")
             (out_dir / f"{arm}__{safe}.txt").write_text(r["stdout"], encoding="utf-8")
 
-    served = {g.get("served_by") for g in graded if g.get("served_by")}
-    report["mixed_models"] = len(served) > 1
-    report["models_that_served"] = sorted(m for m in served if m)
 
-    env_failed = [g for g in graded if g.get("kind") == "environment_error"]
-    harness_failed = [g for g in graded if g.get("kind") == "harness_error"]
-    decided = [g for g in graded if g["verdict"] is not None]
-    passed = sum(1 for g in decided if g["verdict"] == "pass")
+def print_summary(report: dict, wall: float, out_dir: Path) -> None:
+    """Print the human-readable summary.
 
-    def arm_slice(arm: str) -> list[dict]:
-        return [g for g in graded if g.get("arm", "skill") == arm]
-
-    def arm_rates(arm: str) -> dict:
-        rows = arm_slice(arm)
-        ok = [g for g in rows if g["verdict"] is not None]
-        neg = [g for g in rows if not by_id[g["id"]]["should_trigger"] and g["verdict"]]
-        return {
-            "runs": len(rows),
-            "decided": len(ok),
-            "passed": sum(1 for g in ok if g["verdict"] == "pass"),
-            "false_triggers": sum(1 for g in neg if g["verdict"] == "fail"),
-            "negatives_decided": len(neg),
-            "environment_failures": sum(1 for g in rows if g.get("kind") == "environment_error"),
-        }
-
-    arms_present = [a for a in ("skill", "baseline") if arm_slice(a)]
-    per_arm = {a: arm_rates(a) for a in arms_present}
-
-    # The paired comparison. A case can only enter this if both arms produced a
-    # decided verdict, which is the whole reason for the guard: an improvement
-    # computed over different case sets is not an improvement.
-    paired: dict | None = None
-    if len(arms_present) == 2:
-        def verdict_map(arm: str) -> dict[str, str]:
-            return {g["id"]: g["verdict"] for g in arm_slice(arm) if g["verdict"] is not None}
-        skill_map, base_map = verdict_map("skill"), verdict_map("baseline")
-        shared = sorted(set(skill_map) & set(base_map))
-        both = [c for c in shared if skill_map[c] == base_map[c]]
-        skill_only = [c for c in shared if skill_map[c] == "pass" and base_map[c] == "fail"]
-        base_only = [c for c in shared if skill_map[c] == "fail" and base_map[c] == "pass"]
-        negatives = [c for c in shared if not by_id[c]["should_trigger"]]
-        paired = {
-            "cases_in_both_arms": len(shared),
-            "agreed": len(both),
-            "skill_only_pass": skill_only,
-            "baseline_only_pass": base_only,
-            "negative_cases_paired": len(negatives),
-            # Exact binomial sign test on the discordant pairs. With few pairs this
-            # is the only honest test available; a normal approximation on n<10
-            # would report a p-value the data cannot support.
-            "sign_test_p": binom_two_sided(len(skill_only), len(base_only)),
-            "discordant": len(skill_only) + len(base_only),
-        }
-
-    needs_review = sorted({
-        f'{g["arm"]}:{g["id"]}' for g in graded
-        if g.get("prose_hits") and not by_id[g["id"]]["should_trigger"]
-        and not (g.get("trace") or {}).get("mutations")})
-
-    negatives = [g for g in graded
-                 if not by_id[g["id"]]["should_trigger"] and g["verdict"]]
-    false_triggers = sum(1 for g in negatives if g["verdict"] == "fail")
-
-    MIN_DECIDED = max(4, int(0.6 * len(pairs)))
-    publishable = len(decided) >= MIN_DECIDED
-
-    report["arms"] = per_arm
-    report["paired"] = paired
-    report["summary"] = {
-        "runs": len(graded),
-        "decided": len(decided),
-        "passed": passed,
-        "failed": len(decided) - passed,
-        "environment_failures": len(env_failed),
-        "harness_failures": len(harness_failed),
-        "min_decided_for_a_rate": MIN_DECIDED,
-        "publishable": publishable,
-        "false_triggers": false_triggers,
-        "negatives_decided": len(negatives),
-        "needs_human_review": needs_review,
-    }
-    (out_dir / "pilot.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
+    The numbers are read back out of the report rather than passed in alongside
+    it, so what a reader sees and what the JSON records cannot drift apart. The
+    one exception is the wall clock, which is printed unrounded exactly as it was
+    measured.
+    """
+    summary = report["summary"]
+    paired = report["paired"]
+    served = report["models_that_served"]
 
     print()
-    print(f"completed {len(graded)} runs in {wall:.0f}s")
-    for arm in arms_present:
-        r = per_arm[arm]
+    print(f"completed {summary['runs']} runs in {wall:.0f}s")
+    for arm, r in report["arms"].items():
         neg = (f"false triggers {r['false_triggers']}/{r['negatives_decided']}"
                if r["negatives_decided"] else "false triggers not measured")
         print(f"  [{arm:8}] decided {r['decided']:3}/{r['runs']:3}  "
@@ -713,33 +686,124 @@ def main(argv: list[str] | None = None) -> int:
         else:
             print("    no discordant pairs; the arms did not differ on any case "
                   "both of them could decide")
-    print(f"  environment failures: {len(env_failed)}  (excluded from every rate)")
-    print(f"  harness failures:     {len(harness_failed)}")
-    print(f"  undecided: {len(graded) - len(decided)}  (recorded null, not guessed)")
-    if needs_review:
-        print(f"  read these by hand: {', '.join(needs_review)}  "
+    print(f"  environment failures: {summary['environment_failures']}  "
+          f"(excluded from every rate)")
+    print(f"  harness failures:     {summary['harness_failures']}")
+    print(f"  undecided: {summary['runs'] - summary['decided']}  "
+          f"(recorded null, not guessed)")
+    if summary["needs_human_review"]:
+        print(f"  read these by hand: {', '.join(summary['needs_human_review'])}  "
               f"(discussed orchestration, left no artefact)")
     if served:
-        print(f"  served by: {', '.join(sorted(m for m in served if m))}")
+        print(f"  served by: {', '.join(served)}")
         if report["mixed_models"]:
             print("  NOTE: more than one model served this run. Results are not "
                   "strictly comparable; per-case attribution is in the report.")
     print()
-    if not publishable:
-        print(f"NO RATE REPORTED. Only {len(decided)} of {len(cases)} cases produced a")
-        print(f"usable result, below the threshold of {MIN_DECIDED}. Publishing a")
+    if not summary["publishable"]:
+        print(f"NO RATE REPORTED. Only {summary['decided']} of "
+              f"{report['sample_size']} cases produced a")
+        print(f"usable result, below the threshold of "
+              f"{summary['min_decided_for_a_rate']}. Publishing a")
         print("false-trigger rate over this sample would be reporting noise as a")
         print("measurement. The per-case results are in the report; the number is not.")
-    elif not negatives:
+    elif not summary["negatives_decided"]:
         # Every must-not-fire case died of quota. The most important number in
         # the run is the one with no data behind it.
         print("  false-trigger rate: NOT MEASURED — every must-not-fire case "
               "failed in the environment, so there is no sample")
     else:
-        print(f"  false-trigger rate: {false_triggers}/{len(negatives)} "
-              f"= {false_triggers/len(negatives)*100:.0f}%")
+        hits, total = summary["false_triggers"], summary["negatives_decided"]
+        print(f"  false-trigger rate: {hits}/{total} = {hits/total*100:.0f}%")
     print()
     print(f"report: {(out_dir / 'pilot.json').relative_to(SKILL_ROOT.parent)}")
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
+
+    if not AGENT_RUNNER.is_file():
+        print(f"error: runtime adapter not found at {AGENT_RUNNER}", file=sys.stderr)
+        print("The skill-creator bundle provides agent_runner.py. Without it this "
+              "script cannot drive a runtime, and an unrun suite is a checklist.",
+              file=sys.stderr)
+        return 1
+
+    selected = resolve_cases(args)
+    if selected is None:
+        return 1
+    cases, must_fire = selected
+
+    if args.dry_run:
+        return 0
+
+    if not ensure_fixtures():
+        return 1
+
+    # Runs are serialised. Concurrent invocations collide on the runtime's
+    # background service and fail, and a harness that only works one case at a
+    # time is still a usable harness -- parallelism here would trade reliability
+    # for speed on a measurement that is already expensive.
+    models = ([m.strip() for m in args.models.split(",") if m.strip()]
+              if args.models else DEFAULT_MODEL_POOL)
+    print(f"running against opencode, serial, timeout {args.timeout}s")
+    print(f"model pool ({len(models)}): {', '.join(models)}")
+    # Arms are interleaved per case, not run as two separate sweeps. A sweep
+    # design lets a rate limit or a model change land entirely on one arm, which
+    # is indistinguishable from an effect of the skill.
+    arms = ["skill", "baseline"] if args.arm == "both" else [args.arm]
+
+    pairs, results, wall = execute_cases(cases, arms, args.timeout, models)
+    graded = [grade(c, r) for c, r in pairs]
+    by_id = {c["id"]: c for c in cases}
+
+    out_dir = SKILL_ROOT.parent / args.out
+    out_dir.mkdir(parents=True, exist_ok=True)
+    report = build_report(cases, graded, by_id, results, models, must_fire, wall)
+    write_run_logs(out_dir, results)
+
+    served = {g.get("served_by") for g in graded if g.get("served_by")}
+    report["mixed_models"] = len(served) > 1
+    report["models_that_served"] = sorted(served)
+
+    env_failed = [g for g in graded if g.get("kind") == "environment_error"]
+    harness_failed = [g for g in graded if g.get("kind") == "harness_error"]
+    decided = [g for g in graded if g["verdict"] is not None]
+    passed = sum(1 for g in decided if g["verdict"] == "pass")
+
+    arms_present = [a for a in ("skill", "baseline")
+                    if any(g.get("arm", "skill") == a for g in graded)]
+    paired = (paired_comparison(graded, by_id)
+              if len(arms_present) == 2 else None)
+
+    needs_review = sorted({
+        f'{g["arm"]}:{g["id"]}' for g in graded
+        if g.get("prose_hits") and not by_id[g["id"]]["should_trigger"]
+        and not (g.get("trace") or {}).get("mutations")})
+    negatives = [g for g in graded
+                 if not by_id[g["id"]]["should_trigger"] and g["verdict"]]
+    false_triggers = sum(1 for g in negatives if g["verdict"] == "fail")
+
+    min_decided = max(4, int(0.6 * len(pairs)))
+
+    report["arms"] = {a: arm_rates(graded, by_id, a) for a in arms_present}
+    report["paired"] = paired
+    report["summary"] = {
+        "runs": len(graded),
+        "decided": len(decided),
+        "passed": passed,
+        "failed": len(decided) - passed,
+        "environment_failures": len(env_failed),
+        "harness_failures": len(harness_failed),
+        "min_decided_for_a_rate": min_decided,
+        "publishable": len(decided) >= min_decided,
+        "false_triggers": false_triggers,
+        "negatives_decided": len(negatives),
+        "needs_human_review": needs_review,
+    }
+    (out_dir / "pilot.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
+
+    print_summary(report, wall, out_dir)
     return 0
 
 

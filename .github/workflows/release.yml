@@ -65,6 +65,14 @@ jobs:
           HEAD_REF: ${{ github.event.pull_request.head.ref }}
           MANUAL_VERSION_TYPE: ${{ inputs.version_type }}
           MANUAL_RELEASE_NOTES: ${{ inputs.release_notes }}
+          # The step below calls the commits-to-pulls API with
+          # $GITHUB_TOKEN under `set -u`. secrets.GITHUB_TOKEN is not exported
+          # into the environment implicitly, so the variable was unbound and the
+          # step died with "GITHUB_TOKEN: unbound variable" on any push whose
+          # message was not itself a release commit. The job had only ever
+          # appeared to work because its own `chore: release v*` output exits
+          # before the call site.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           write_scalar() { printf '%s=%s\n' "$1" "$2" >> "$GITHUB_OUTPUT"; }
