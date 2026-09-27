@@ -108,8 +108,48 @@ KEBAB_CASE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 YAML_KEY = re.compile(r"^([A-Za-z0-9_.-]+)\s*:(.*)$")
 BLOCK_INDICATORS = (">", "|", ">-", "|-", ">+", "|+")
 
+# An unfilled slot is marker SYNTAX, not a vocabulary word.
+#
+# The obvious pattern -- match the bare word "placeholder" -- was wrong here, and
+# the reason is measurable rather than aesthetic. Of the 676 lines it fired on,
+# 458 fired on TODO/FIXME/XXX/TBD and are unaffected by this change. The 218 that
+# fired on the word alone break down as:
+#
+#   185  the noun in prose: "placeholder-only forms" (an accessibility term),
+#        "#lazy_builder placeholder" and "Summary placeholder" (identifiers),
+#        "placeholder mangling" (a C++ term)
+#    26  the HTML attribute in a code sample: <input placeholder="Your name">
+#     7  marker syntax, and three of those are still the word used *about* a
+#        placeholder ("MODEL_ID below is a PLACEHOLDER, not a real model ID")
+#
+# So the bare word is essentially never an unfilled slot in this corpus, and a
+# check that reports it as one trains its reader to ignore the rule. A pointer to
+# the wrong thing fails quietly; a check that cries wolf is ignored, which is the
+# same failure in a different place. The word now has to appear as a slot:
+# shouted, bracketed, interpolated, or labelled and awaiting a value.
+PLACEHOLDER_WORDS = re.compile(
+    r"\b(TODO|FIXME|TBD|XXX|coming soon|lorem ipsum)\b", re.IGNORECASE
+)
+PLACEHOLDER_SLOT = re.compile(
+    # Shouted, standing in for a value. The (?-i:...) scope is load-bearing:
+    # the whole pattern is case-insensitive for TODO and friends, and without
+    # the scope this alternative is just the bare word again -- which is the
+    # exact thing this change exists to stop matching.
+    r"(?-i:\bPLACEHOLDER\b)"
+    r"|<placeholder>"                 # template placeholder
+    r"|\{\{+\s*placeholder\s*\}\}+"  # mustache
+    r"|\$\{?\s*placeholder\s*\}?"     # shell or JS interpolation
+    r"|\bplaceholder\s*:"             # a field label awaiting a value
+    r"|:\s*placeholder\b[\"'\)\]]*\s*$"  # a value slot at the end of a line
+    r"|_{2,}\s*placeholder\s*_{2,}",   # an underlined slot
+    re.IGNORECASE,
+)
+# Built by concatenation rather than by reusing the two compiled patterns,
+# because embedding a compiled pattern's .pattern drops its flags -- which is
+# how "Lorem ipsum" stopped matching in the first attempt at this.
 PLACEHOLDER_PATTERN = re.compile(
-    r"\b(TODO|FIXME|TBD|XXX|placeholder|coming soon|lorem ipsum)\b", re.IGNORECASE
+    r"(?:" + PLACEHOLDER_WORDS.pattern + r")|(?:" + PLACEHOLDER_SLOT.pattern + r")",
+    re.IGNORECASE,
 )
 
 BUILD_ARTEFACT_PATTERN = re.compile(
