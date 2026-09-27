@@ -548,6 +548,13 @@ jobs:
           # both directions are asserted.
           import importlib.util, pathlib, shutil, subprocess, sys, tempfile
 
+          # Importing run-pilot.py as a module writes a .pyc beside it, and
+          # __pycache__/ is gitignored -- so the checkout looks clean to git and
+          # is not. The very next control then runs validate-skills.py, which
+          # refuses a committed build artefact, and fails on a tree nobody
+          # touched. The suite failed for having run itself.
+          sys.dont_write_bytecode = True
+
           S = "ultimate-dev"
           spec = importlib.util.spec_from_file_location("rp", f"{S}/tools/run-pilot.py")
           rp = importlib.util.module_from_spec(spec); spec.loader.exec_module(rp)
