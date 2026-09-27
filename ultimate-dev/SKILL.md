@@ -277,18 +277,16 @@ overhead would exceed the work. See `references/observability.md`.
 
 ### Delegated roles
 
-Seventeen roles in `agents/`, each with a procedure, output contract, and
-prohibitions: `verifier` (re-derive a claim rather than re-read it),
-`investigator` (establish what is actually true), `critic` (attack it), `author`
-(write a skill candidate), `test-author` (claim, then check), `simplifier`
-(subtract, with evidence), `performance-reviewer` (measure, don't guess),
-`technical-writer` (answer the reader), `grader` (score against criteria set in
-advance), `comparator` (blind A/B), `security-reviewer` (attack it),
-`invariant-finder` (find the test that copies its own domain), `unknowns-mapper`
-(name the prompt-to-territory gap), `claim-auditor` (false vs. undefended),
-`evidence-auditor` (does this proof class support this claim),
-`doubt-reviewer` (attack the artifact, not the reasoning), and `scope-decider`
-(fog before size; refuse to plan what cannot yet be stated). All adopted items
+Nineteen roles in `agents/`, each with a procedure, output contract, and
+prohibitions. The verification and challenge set: `verifier` (re-derive rather
+than re-read), `evidence-auditor` (does this proof class support this claim),
+`doubt-reviewer` (attack the artifact, not the reasoning), `claim-auditor` (a
+false claim vs. an undefended one), `invariant-finder` (the test that copies its
+own domain), `critic`, `grader`, `comparator`, `security-reviewer`. The shaping
+set: `scope-decider` (fog before size), `unknowns-mapper`, `simplifier`,
+`test-author`, `performance-reviewer`, `technical-writer`, `investigator`,
+`author`, `change-governor` (what may change, and by whose hand),
+`degradation-diagnostician` (which way a long context failed). All adopted items
 carry their source in frontmatter. Dispatch is tabulated in
 `references/delegation.md`, with the upper bound.
 also carries the upper bound.

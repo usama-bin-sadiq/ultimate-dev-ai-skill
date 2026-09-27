@@ -53,6 +53,8 @@ rejected alternative.
 | `agents/evidence-auditor.md` | Before reporting any work as done; when a check passed and the real question is what that check covers; a report will be relied on by someone who cannot re-run it | Per-claim `SUPPORTED` / `UNSUPPORTED` with the required proof class for each claim type, and what would settle each unsupported one |
 | `agents/doubt-reviewer.md` | Work is expensive to reverse; a plan is about to become a commitment; a claim is about to be reported as settled | Findings in four classes, the actionable count alone, and a doubt-theater self-check |
 | `agents/scope-decider.md` | A request is larger than any single plan; a plan would require inventing requirements nobody stated; scope is expanding because expansion felt more thorough | The question restated or `UNSTATEABLE`, one of four scope modes with its threshold, and who owns the choice |
+| `agents/change-governor.md` | Before any change to this skill's own instructions, skills, hooks or configuration; a measured target is being optimised; a change would make a check pass rather than make the work correct | Every surface named with its class, the two ways the target could be satisfied, and the specific bar-lowering present or none |
+| `agents/degradation-diagnostician.md` | A long-horizon run contradicts its earlier conclusions; retrieved material is ignored or over-weighted; more context is proposed as the answer to a quality problem | Which of five failure patterns, on which axis, plus what a tenth of the context would show |
 
 ## The upper bound: where delegation stops paying
 
