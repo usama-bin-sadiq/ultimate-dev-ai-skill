@@ -287,8 +287,19 @@ set: `scope-decider` (fog before size), `unknowns-mapper`, `simplifier`,
 `test-author`, `performance-reviewer`, `technical-writer`, `investigator`,
 `author`, `change-governor` (what may change, and by whose hand),
 `degradation-diagnostician` (which way a long context failed). All adopted items
-carry their source in frontmatter. Dispatch is tabulated in
-`references/delegation.md`, with the upper bound.
+carry a version.
+
+A far larger catalogue is installed alongside these — 2,877 capabilities in
+total. **Do not read it; search it.** `references/capability-catalogue.md`
+maps it, and `python3 tools/index-tree.py --search <term>` finds an entry by
+name, purpose, or keyword. Every hit is marked **routed** or **UNROUTED**:
+routed means a decision can select it, and almost none of the catalogue is
+routed yet. An installed capability that nothing dispatches to is not
+available, and treating the count as availability is the error the catalogue
+exists to prevent.
+
+Dispatch for the routed roles is tabulated in `references/delegation.md`,
+with the upper bound.
 also carries the upper bound.
 
 A delegate gets the context it needs and nothing more; a delegate that finds its

@@ -543,25 +543,71 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
                 continue
             errors.append(f"{rel}:{lineno}: unfilled placeholder: {line.strip()[:80]!r}")
 
-    # A sub-skill must be reachable from the kernel, or it is not a sub-skill.
-    # A sub-skill nobody can route to is dead weight that still costs a
-    # description competing for attention.
+    # A sub-skill must be DISCOVERABLE, not named in the kernel.
+    #
+    # This check used to demand that every sub-skill appear in SKILL.md. That was
+    # right when there was one, and it became actively wrong at 2,585: naming
+    # 2,585 of them would bury the kernel, and progressive disclosure exists
+    # precisely so that the always-loaded file does not carry what can be found
+    # on demand. The distinction is real and it is the one that matters here:
+    #
+    #   a ROLE is dispatched. Something must decide to call it, so it needs a
+    #     row in delegation.md, and the check below enforces that.
+    #   a SUB-SKILL is discovered. Its description is the discovery signal and
+    #     the catalogue is the index, so the requirement is that it be findable
+    #     there and carry a description -- not that the kernel name it.
+    #
+    # The old check produced 2,544 errors that said "unreachable" about files
+    # that were perfectly reachable, and would have had the effect of bloating
+    # SKILL.md to fix them.
     kernel = SKILL_ROOT / "SKILL.md"
     if kernel.is_file():
-        kernel_body = kernel.read_text(encoding="utf-8")
         subskills = sorted(
             d for d in SKILL_ROOT.glob(SUB_SKILL_GLOB) if (d / "SKILL.md").is_file()
         )
         if not subskills:
             warnings.append(f"{SKILL_ROOT}/skills/ contains no sub-skill")
+        catalogue = SKILL_ROOT / "references" / "capability-catalogue.md"
+        if not catalogue.is_file():
+            errors.append(
+                f"{catalogue}: the capability catalogue is missing, so no sub-skill "
+                f"is discoverable. Run tools/index-tree.py --write-catalogue."
+            )
+        # Coverage is proven against the INDEX, not the catalogue text. The
+        # catalogue is a map that samples names per domain on purpose, so
+        # demanding every name appear in it repeated the mistake the previous
+        # version of this check made with SKILL.md.
+        index = SKILL_ROOT / "TREE.json"
+        indexed: set[str] = set()
+        if index.is_file():
+            try:
+                indexed = {e["dir"] for e in json.loads(
+                    index.read_text(encoding="utf-8"))["entries"]}
+            except Exception:            # noqa: BLE001
+                indexed = set()
+        else:
+            errors.append(
+                f"{index}: the capability index is missing. Run "
+                f"tools/index-tree.py."
+            )
         for sub in subskills:
-            if sub.name not in kernel_body:
+            skill_md = sub / "SKILL.md"
+            head = skill_md.read_text(encoding="utf-8")[:600]
+            if "description:" not in head:
                 errors.append(
-                    f"{kernel}: never mentions the {sub.name!r} sub-skill; it is "
-                    "unreachable from the kernel that is supposed to invoke it"
+                    f"{skill_md}: no description in frontmatter, so nothing can "
+                    f"discover it. A sub-skill's description is its only entry "
+                    f"point; without one the file is unreachable by any means."
                 )
-            else:
-                notes.append(f"kernel references its {sub.name} sub-skill")
+            elif indexed and sub.name not in indexed:
+                errors.append(
+                    f"{index}: {sub.name!r} is installed but absent from the "
+                    f"index, so it cannot be found. Regenerate with "
+                    f"tools/index-tree.py."
+                )
+        notes.append(
+            f"{len(subskills)} sub-skills discoverable via the catalogue"
+        )
     else:
         errors.append(f"{kernel}: the kernel SKILL.md is missing")
 

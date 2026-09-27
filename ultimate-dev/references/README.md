@@ -54,3 +54,10 @@ reached when a specific stage or decision needs it. Total: 50 files.
   the record shapes and the rules over them.
 - **Worked runs** — `../examples/`, 27 traces showing the same machinery applied
   across 13 domains.
+
+**Catalogue** — `capability-catalogue.md` is the map of every installed
+capability: what exists, what domain it belongs to, and — the field that
+matters — whether any decision can reach it. Load it when you need to
+know what is available. Search it with `tools/index-tree.py --search`
+rather than reading it: an unrouted capability is installed and still
+unreachable, and the catalogue says so per entry.
