@@ -15,9 +15,7 @@ description: Use when the next correct action is not already determined and a
 
 # ultimate-dev
 
-A decision kernel, not a workflow. It does not know any domain in advance. It
-knows how to work out what a domain requires, obtain what is missing, do the
-work, check the work, and admit what it could not establish.
+A decision kernel, not a workflow. It does not know any domain in advance.
 
 The rule that everything else serves:
 
@@ -277,13 +275,15 @@ overhead would exceed the work. See `references/observability.md`.
 
 ### Delegated roles
 
-Seven roles in `agents/`, each with its own procedure, output contract, and
+Eleven roles in `agents/`, each with a procedure, output contract, and
 prohibitions: `verifier` (re-derive a claim rather than re-read it),
 `investigator` (establish what is actually true), `critic` (attack a plan before
 it is committed to), `grader` (score against criteria written in advance),
-`comparator` (blind A/B), `security-reviewer` (manufacture an attack),
-`author` (write a candidate skill). When to dispatch each is tabulated in
-`references/delegation.md`, which also carries the upper bound.
+`comparator` (blind A/B), `security-reviewer` (attack it), `author` (write a skill
+candidate), `test-author` (claim, then check), `simplifier` (subtract, with
+evidence), `performance-reviewer` (measure, don't guess), `technical-writer`
+(answer the reader). Dispatch is tabulated in `references/delegation.md`, which
+also carries the upper bound.
 
 A delegate gets the context it needs and nothing more; a delegate that finds its
 scope was wrong says so rather than widening it. If the runtime offers no dispatch
