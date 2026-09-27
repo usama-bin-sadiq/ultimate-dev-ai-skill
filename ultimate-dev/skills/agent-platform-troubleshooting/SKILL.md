@@ -444,6 +444,13 @@ Always produce a structured report. Use this template exactly.
     [Insert the full, untruncated raw logs from IAP here]
 ```
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/agent-identity.md`](references/agent-identity.md)
+
 ## Principles
 
 -   **Hostname mismatch is the #1 cause.** When in doubt, get the *exact*

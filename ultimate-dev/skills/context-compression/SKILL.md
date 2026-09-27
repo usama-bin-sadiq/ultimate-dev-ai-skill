@@ -271,6 +271,13 @@ External resources:
 
 ---
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/evaluation-framework.md`](references/evaluation-framework.md)
+
 ## Skill Metadata
 
 **Created**: 2025-12-22

@@ -434,6 +434,13 @@ This iterative process ensures each edit doesn't create new problems while respe
 
 ---
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/ai-detection-patterns.md`](references/ai-detection-patterns.md)
+
 ## Task-Specific Questions
 
 1. What's the goal of this copy? (Awareness, conversion, retention)

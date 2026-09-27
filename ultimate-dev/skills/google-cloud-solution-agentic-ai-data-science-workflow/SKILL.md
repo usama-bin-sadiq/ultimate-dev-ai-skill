@@ -197,3 +197,11 @@ identifiers.
 - [ ] **Step 6: Iterate**: If the user requests changes, then generate an
   updated validation plan and repeat the validation drafting and script
   generation steps in this phase until the user approves the validation plan.
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/design-recommendations.md`](references/design-recommendations.md)
+- [`references/product-mapping.md`](references/product-mapping.md)

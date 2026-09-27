@@ -305,3 +305,12 @@ resolve duplicates, and validate configs:
 *   [Agent Platform Quality Metrics](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/rubric-metric-details)
 *   [Google Cloud Alerting Policies Guide](https://docs.cloud.google.com/monitoring/alerts)
 *   [Google Cloud Monitoring PromQL Documentation](https://docs.cloud.google.com/monitoring/promql)
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/has_historical_traffic_data.md`](references/has_historical_traffic_data.md)
+- [`references/no_historical_traffic_data.md`](references/no_historical_traffic_data.md)
+- [`references/telemetry_enablement.md`](references/telemetry_enablement.md)

@@ -288,6 +288,14 @@ External resources:
 
 ---
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/architectural_reduction.md`](references/architectural_reduction.md)
+- [`references/best_practices.md`](references/best_practices.md)
+
 ## Skill Metadata
 
 **Created**: 2025-12-20

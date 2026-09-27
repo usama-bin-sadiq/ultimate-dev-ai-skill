@@ -705,6 +705,18 @@ Detailed instructions for each task are in separate reference files to keep this
 
 ---
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/task1-company-research.md`](references/task1-company-research.md)
+- [`references/task2-financial-modeling.md`](references/task2-financial-modeling.md)
+- [`references/task3-valuation.md`](references/task3-valuation.md)
+- [`references/task4-chart-generation.md`](references/task4-chart-generation.md)
+- [`references/task5-report-assembly.md`](references/task5-report-assembly.md)
+- [`references/valuation-methodologies.md`](references/valuation-methodologies.md)
+
 ## Quality Standards
 
 All outputs meet institutional standards from leading investment banks (JPMorgan, Goldman Sachs, Morgan Stanley):

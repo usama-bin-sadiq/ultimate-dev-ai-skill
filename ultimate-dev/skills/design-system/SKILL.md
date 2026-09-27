@@ -154,3 +154,13 @@ python3 .../brand_palette_validator.py --primary "#FF6B35" --accent "#00D4AA"
 - Nielsen-Norman — *Table of Contents Best Practices* (2023)
 - research-ops onboarding pattern: `research-ops/CLAUDE.md` §8
 - Brand palette math source: `marketing/landing/skills/landing/scripts/brand_palette_validator.py`
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/design_token_canon.md`](references/design_token_canon.md)
+- [`references/typography_pairing.md`](references/typography_pairing.md)
+- [`references/wcag_accessibility.md`](references/wcag_accessibility.md)
+

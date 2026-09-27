@@ -92,3 +92,12 @@ dotnet new list winui
 - Support light and dark mode by default for app UI work unless the user explicitly asks for a single-theme result or the product already enforces one.
 - Favor built-in WinUI controls and system styling hooks before adding CommunityToolkit dependencies, custom controls, or app-specific surface systems.
 - Put detailed control, theming, shell, scrolling, responsiveness, packaging, and recovery guidance in the matching reference files instead of duplicating those rules here.
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/motion-animations-and-polish.md`](references/motion-animations-and-polish.md)
+- [`references/sample-source-map.md`](references/sample-source-map.md)
+

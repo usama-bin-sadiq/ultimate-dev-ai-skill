@@ -1,5 +1,5 @@
 ---
-name: Realtime Collaboration Engineer
+name: realtime-collaboration-engineer
 description: Expert realtime systems engineer for WebSocket/SSE infrastructure, presence, CRDT and OT-based collaborative editing, offline-first sync engines, and fan-out scaling with reconnect-safe protocols.
 color: "#E11D48"
 emoji: 🤝

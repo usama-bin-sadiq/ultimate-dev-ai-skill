@@ -550,6 +550,13 @@ uv run scripts/paper_manager.py validate \
 - **Research Article Template**: [tfrere/research-article-template](https://huggingface.co/spaces/tfrere/research-article-template)
 - **arXiv Format Guide**: [arxiv.org/help/submit](https://arxiv.org/help/submit)
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/quick_reference.md`](references/quick_reference.md)
+
 ### Integration with tfrere's Research Template
 
 This skill complements [tfrere's research article template](https://huggingface.co/spaces/tfrere/research-article-template) by providing:

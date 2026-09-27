@@ -365,6 +365,16 @@ Primary sources:
 
 ---
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/bdi-ontology-core.md`](references/bdi-ontology-core.md)
+- [`references/framework-integration.md`](references/framework-integration.md)
+- [`references/rdf-examples.md`](references/rdf-examples.md)
+- [`references/sparql-competency.md`](references/sparql-competency.md)
+
 ## Skill Metadata
 
 **Created**: 2026-01-07

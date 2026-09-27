@@ -690,3 +690,17 @@ For detailed patterns (React cleanup, servers, browser), see **[Code Examples](.
 ---
 
 This skill enables you to integrate state-of-the-art machine learning capabilities directly into JavaScript applications without requiring separate ML servers or Python environments.
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/CACHE.md`](references/CACHE.md)
+- [`references/CONFIGURATION.md`](references/CONFIGURATION.md)
+- [`references/EXAMPLES.md`](references/EXAMPLES.md)
+- [`references/MODEL_ARCHITECTURES.md`](references/MODEL_ARCHITECTURES.md)
+- [`references/MODEL_REGISTRY.md`](references/MODEL_REGISTRY.md)
+- [`references/PIPELINE_OPTIONS.md`](references/PIPELINE_OPTIONS.md)
+- [`references/TEXT_GENERATION.md`](references/TEXT_GENERATION.md)
+

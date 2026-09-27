@@ -141,6 +141,13 @@ Adhere to these principles:
         [references/android_setup.md](references/android_setup.md)
     -   **iOS**: See [references/ios_setup.md](references/ios_setup.md)
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/flutter_setup.md`](references/flutter_setup.md)
+
 ## Common Issues
 
 -   **Login Issues:** If the browser fails to open during the login step, use

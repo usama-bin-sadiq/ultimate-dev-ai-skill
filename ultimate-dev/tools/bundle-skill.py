@@ -70,12 +70,16 @@ SKILL_ROOT = Path(__file__).resolve().parent.parent
 
 # Bundled: the material a runtime loads.
 RUNTIME_DIRS = ("references", "skills", "agents", "tools")
-RUNTIME_FILES = ("SKILL.md",)
+# TREE.json is the generated capability index. The kernel points a reader at
+# references/capability-catalogue.md and at `tools/index-tree.py --search`; the
+# JSON is the machine-readable form of the same map, so it ships.
+RUNTIME_FILES = ("SKILL.md", "TREE.json")
 
 # Excluded: everything a reader of the skill never loads. Listed explicitly so
 # a new top-level tree fails the "unclassified" check rather than being silently
 # bundled or silently dropped.
-EXCLUDED_DIRS = ("knowledge", "evaluation", "examples", "docs", "research", "evals")
+EXCLUDED_DIRS = ("knowledge", "evaluation", "examples", "docs", "research",
+                 "evals", "catalog")
 EXCLUDED_FILES = ("new-arch.md", "prd.md", "ARCHITECTURE.md")
 
 # tools/ is a runtime directory because the kernel tells the agent to run
@@ -96,10 +100,49 @@ EXCLUDED_TOOL_FILES = (
     "tools/run-pilot.py",
 )
 
+_DIRS = (r"references|skills|agents|tools|docs|knowledge|evaluation|examples|"
+         r"research|evals")
+# A path counts as declared in either of the two forms prose actually uses:
+# a backticked span, or a markdown link target. Matching only the backticked
+# form reported 975 files as unreachable when 275 skills that reference them
+# correctly had done so with `[name](references/file.md)`.
 PATH_PATTERN = re.compile(
-    r"`((?:references|skills|agents|tools|docs|knowledge|evaluation|examples|"
-    r"research|evals)/[A-Za-z0-9_./-]+)`"
+    rf"`((?:{_DIRS})/[A-Za-z0-9_./-]+)`"
+    rf"|\]\(\s*((?:{_DIRS})/[A-Za-z0-9_./-]+)(?:#[^)]*)?\s*\)"
 )
+# `tools/call` and `tools/list` are MCP method names, not paths into this
+# repository, and prose about an MCP server mentions them constantly. A
+# declared path must carry a file extension or a trailing separator to count.
+NOT_A_PATH = re.compile(r"\.(md|py|sh|json|toml|ya?ml|txt|csv|js|ts)$|/$")
+# a path that leaves this repository: home-anchored or absolute
+OUT_OF_SKILL = re.compile(
+    r"(?:~|\$HOME|~/|/home/|/Users/|%[A-Z]+%\\)[A-Za-z0-9_./\\-]*"
+)
+# A rate or a ratio ("~60/40", "~1.5s/page") is not a path. Requiring the
+# character after the prefix to be a path character rather than a digit or a
+# unit drops those without dropping a real path.
+NOT_A_PATH_TEXT = re.compile(r"^~?\d")
+# ...and a line that names the directory as the user's own, rather than
+# pointing at repository content that should have been vendored.
+WORKSPACE_NAMED = re.compile(
+    r"(?i)\b(your|user'?s?|output|save|write|writes?|store|stores?|keep|"
+    r"creates?|configures?|set up|working|workspace|vault|reports?|results?|"
+    r"artifacts?|cache|logs?|state|sessions?)\b"
+)
+# ...and looks like a real path rather than a sentence fragment
+OUT_OF_SKILL_SHAPE = re.compile(r"[A-Za-z0-9_.-]+[/\\]")
+
+
+def declared_paths(text: str) -> set[str]:
+    """Every in-repo path the prose points at, in either form.
+
+    Two capture groups means findall yields tuples, so the non-empty group of
+    each match is taken; passing a tuple to a Path operation raises.
+    """
+    out: set[str] = set()
+    for match in PATH_PATTERN.finditer(text):
+        out.update(g for g in match.groups() if g and NOT_A_PATH.search(g))
+    return out
 BUILD_ARTEFACT = re.compile(r"(__pycache__|\.pyc$|\.DS_Store)")
 
 
@@ -217,7 +260,7 @@ def check_references() -> list[str]:
         if path.suffix != ".md":
             continue
         text = path.read_text(encoding="utf-8", errors="replace")
-        for ref in sorted(set(PATH_PATTERN.findall(text))):
+        for ref in sorted(declared_paths(text)):
             if not would_survive(ref, path.parent):
                 top = ref.split("/")[0]
                 reason = (
@@ -236,7 +279,7 @@ def check_orphans() -> list[str]:
         if not skill_md.is_file():
             continue
         text = skill_md.read_text(encoding="utf-8")
-        declared = set(PATH_PATTERN.findall(text))
+        declared = declared_paths(text)
         refs_dir = skill_md.parent / "references"
         if not refs_dir.is_dir():
             continue
@@ -245,6 +288,87 @@ def check_orphans() -> list[str]:
                 problems.append(
                     f"{path.relative_to(SKILL_ROOT)}: not reachable from "
                     f"{skill_md.relative_to(SKILL_ROOT)}"
+                )
+    return problems
+
+
+def check_escapes() -> list[str]:
+    """No skill may point at a path outside itself and outside this repository.
+
+    A reference is a promise to the reader that the named thing is where the
+    text says. A path under the user's home directory, an absolute path on one
+    machine, or a bare cross-skill file path all break that promise in a way
+    that is invisible until someone follows it on a different host.
+
+    Three shapes are rejected:
+      - a home- or machine-anchored path that is not a documented placeholder
+      - a cross-skill path that does not exist
+      - a machine path in an executable script rather than in prose
+    """
+    problems: list[str] = []
+    placeholders = ("<project-root>", "<agent-config-dir>", "<agent-instructions>",
+                    "<path", "/Users/", "/home/", "%APPDATA%", "C:/")
+    # A path under the home directory that names a tool's own configuration or
+    # state is attributable: ~/.gstack/analytics, ~/.config/last30days,
+    # ~/vaults/research, ~/.aeo-data. Recognising the shape rather than a list
+    # of names is the point - a new tool gets this right without an edit here.
+    owned = re.compile(
+        r"^~?/?(?:\$\{?HOME\}?/)?(?:\.[A-Za-z0-9_.-]+|Documents|Desktop|"
+        r"wt|vaults|scripts|writing|marketing-plans|competitor-ads|papers|"
+        r"meetings|code|git|molecule-datasets|Downloads|m5stack|plugins|"
+        r"company-vault|dev|src|projects|repos|understand-anything|"
+        r"[A-Za-z0-9_]+-plans|[A-Za-z0-9_]+-vault)(?:/|$)"
+    )
+    # A skill may legitimately name a path that belongs to something other than
+    # this repository, provided the thing it names is real and identified:
+    #   - the host runtime's own configuration (~/.claude, ~/.codex, ~/.agents)
+    #   - a tool's data or state directory (~/.gstack/analytics, ~/.gbrain)
+    #   - an installed third-party runtime's own files (<agent-config-dir>/...)
+    # What is not legitimate is a path that is neither in this repository nor
+    # attributable to one of those, because a reader cannot tell whether it is
+    # meant to exist. Those are the ones this check reports.
+    attributable = (
+        # host-runtime configuration and cross-runtime skill directories
+        "~/.claude", "~/.codex", "~/.copilot", "~/.agents", "~/.config/agent",
+        "~/.pi/", "~/.gemini", "~/.cursor", "~/.opencode",
+        # a tool's own data/state directory
+        "~/.gstack", "~/.gbrain", "~/.cache/", "~/.config/last30days",
+        "~/.config/research-ops", "~/.research_sessions", "~/.pulse_sessions",
+        "~/.syllabus_sessions", "~/.autoresearch", "~/.agent-reach",
+        "~/.skillopt-sleep", "~/.p3/", "~/.wt/", "~~/wt",
+        # an installed runtime's own files, named by its install prefix
+        "<agent-config-dir>/", "$HOME/<agent-config-dir>/",
+        # library and platform paths a reader can verify
+        "%APPDATA%", "%USERPROFILE%", "/Users/", "/home/", "/Applications/",
+        "/Library/", "C:/", "/opt/homebrew", "site-packages",
+    )
+    for skill_md in sorted(SKILL_ROOT.glob("skills/*/SKILL.md")):
+        rel = skill_md.relative_to(SKILL_ROOT)
+        text = skill_md.read_text(encoding="utf-8", errors="replace")
+        for lineno, line in enumerate(text.splitlines(), 1):
+            for m in OUT_OF_SKILL.finditer(line):
+                target = m.group(0)
+                if any(ph in target for ph in placeholders):
+                    continue
+                if any(ok in target for ok in attributable):
+                    continue
+                if owned.match(target):
+                    continue
+                # A skill may name a working directory it asks the user to keep
+                # their own material in -- ~/marketing-plans, ~/vaults/research.
+                # That is the design, not a leak, provided the line says so.
+                if WORKSPACE_NAMED.search(line):
+                    continue
+                if not OUT_OF_SKILL_SHAPE.search(target):
+                    continue
+                if NOT_A_PATH_TEXT.match(target):
+                    continue
+                # a bare `~/` or `$HOME/` with no component names no file
+                if target.rstrip("/").split("/")[-1] in ("~", "$HOME", ""):
+                    continue
+                problems.append(
+                    f"{rel}:{lineno}  points outside the skill and this "
+                    f"repository: {target}"
                 )
     return problems
 
@@ -262,7 +386,7 @@ def build(out_dir: Path, make_zip: bool) -> dict:
         )
 
     problems = (check_references() + check_orphans()
-                + check_tool_exclusions())
+                + check_tool_exclusions() + check_escapes())
     if problems:
         raise SystemExit(
             "error: the bundle would contain dangling references:\n  "
@@ -357,7 +481,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.check:
         problems = (check_references() + check_orphans()
-                + check_tool_exclusions())
+                + check_tool_exclusions() + check_escapes())
         report["problems"] = problems
         if unknown:
             report["problems"] = report["problems"] + [

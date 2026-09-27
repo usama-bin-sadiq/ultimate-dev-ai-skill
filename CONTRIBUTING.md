@@ -10,9 +10,9 @@ an agent reads to decide how to work. Write accordingly.
 ultimate-dev/                        the skill — everything below is inside it
   SKILL.md                           the kernel
   ARCHITECTURE.md                    how the layers fit together
-  references/                        50 kernel references
-  skills/skill-creator/              the capability-expansion sub-skill
-  agents/                            seven delegated roles
+  references/                        54 kernel references
+  skills/                            2,112 sub-skills, incl. skill-creator
+  agents/                            286 role files, 19 dispatched
   tools/                             deterministic utilities
   knowledge/                         schemas and policies
   evaluation/                        benchmarks, failure cases, security cases

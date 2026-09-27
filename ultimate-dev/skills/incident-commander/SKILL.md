@@ -373,6 +373,18 @@ Status page: {link}
 ## Reference Information
 → See references/reference-information.md for details
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/communication_templates.md`](references/communication_templates.md)
+- [`references/incident-response-framework.md`](references/incident-response-framework.md)
+- [`references/incident_severity_matrix.md`](references/incident_severity_matrix.md)
+- [`references/rca_frameworks_guide.md`](references/rca_frameworks_guide.md)
+- [`references/reference-information.md`](references/reference-information.md)
+- [`references/sla-management-guide.md`](references/sla-management-guide.md)
+
 ## Usage Examples
 
 ### Example 1: Database Connection Pool Exhaustion

@@ -1,5 +1,5 @@
 ---
-name: Rust Refactoring Specialist
+name: rust-refactoring-specialist
 description: Expert Rust engineer for repository-scale refactoring, safe renames, module restructuring, duplication removal, panic hardening, ownership improvements, and compiler or Clippy remediation.
 color: "#991B1B"
 emoji: 🦀

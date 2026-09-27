@@ -65,12 +65,12 @@ paths, and how to verify the install.
 | Path | What it is |
 |---|---|
 | `SKILL.md` | the kernel: the effort gate, the decision fabric, verification, recovery, delivery |
-| `references/` | 50 references, loaded on demand |
-| `skills/skill-creator/` | the sub-skill that creates, validates, and retires other skills |
-| `agents/` | seven delegated roles: verifier, investigator, critic, grader, comparator, security-reviewer, author |
+| `references/` | 54 references, loaded on demand |
+| `skills/` | 2,112 sub-skills, including `skill-creator`, which creates and retires the others |
+| `agents/` | 286 role files, 19 of which carry a dispatch condition in `references/delegation.md` |
 | `tools/` | the structure validator, the bundler, the doc auditor, and the evaluation harnesses |
 | `knowledge/` | data contracts and the policies governing them |
-| `evaluation/` | 121 benchmark, domain, failure, security, and regression cases |
+| `evaluation/` | 122 benchmark, domain, failure, security, and regression cases |
 | `evals/` | the generated case file those harnesses read |
 | `examples/` | 27 worked kernel runs across 13 domains |
 | `docs/` | architecture, concepts, decision records, operations, security |

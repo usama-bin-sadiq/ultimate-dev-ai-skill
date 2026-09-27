@@ -1,5 +1,5 @@
 ---
-name: OrgScript Engineer
+name: orgscript-engineer
 description: Expert in designing, parsing, and implementing OrgScript grammar, AST validation, and business logic definitions.
 color: green
 emoji: 📜

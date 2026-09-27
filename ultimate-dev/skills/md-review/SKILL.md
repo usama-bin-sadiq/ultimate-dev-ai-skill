@@ -97,6 +97,15 @@ python3 markdown-html/skills/md-review/scripts/review_html_renderer.py \
 - WCAG 2.2 §1.4.1 — color-not-sole-signal enforcement
 - See `references/` for full citations (diff_rendering_canon, severity_coding, pr_annotation_ux)
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/diff_rendering_canon.md`](references/diff_rendering_canon.md)
+- [`references/pr_annotation_ux.md`](references/pr_annotation_ux.md)
+- [`references/severity_coding.md`](references/severity_coding.md)
+
 ## Runtime notes
 
 This file was adapted to be tool-neutral: it claimed a general scope and was

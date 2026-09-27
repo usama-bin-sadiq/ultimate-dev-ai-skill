@@ -197,7 +197,7 @@ def roots_for(doc: Path) -> list[Path]:
     roots, cur = [], doc.parent
     while True:
         roots.append(cur)
-        if cur == REPO_ROOT:
+        if cur == REPO_ROOT or cur == cur.parent:
             break
         cur = cur.parent
     for extra in (SKILL_ROOT, REPO_ROOT):
@@ -232,6 +232,41 @@ def is_historical(rel: Path) -> bool:
     return rel.name in {"CHANGELOG.md"}
 
 
+def is_placeholder_target(target: str) -> bool:
+    """True when a markdown target is an example rather than a real path.
+
+    Four shapes occur in this repository, all of them documentation *about*
+    links rather than links:
+      - the bare word `url` or `link`, used as a citation or anchor example
+      - a `<slug>` or `<topic>` angle-bracket slot: `chapters/ch01-<slug>.md`
+      - a `NNN`-prefixed name that is a section number, not a directory:
+        `skills/01-estrategia/...`
+    """
+    t = target.strip()
+    if t.lower() in {"url", "link", "path", "href", "example.com"}:
+        return True
+    if re.search(r"<[^>]+>", t):
+        return True
+    return bool(re.search(r"(^|/)\d{2}-[a-z]", t))
+
+
+def anchor_exists(path: Path, fragment: str) -> bool:
+    """True when `path` has a heading that would produce this anchor.
+
+    GitHub's rule: lowercase the heading, drop punctuation, spaces to hyphens.
+    """
+    if not path.exists() or path.suffix.lower() != ".md":
+        return False
+    want = re.sub(r"[^\w\s-]", "", fragment.lower()).replace(" ", "-")
+    heads = re.findall(r"^#{1,6}\s+(.*)$",
+                       path.read_text(encoding="utf-8", errors="replace"),
+                       re.M)
+    for h in heads:
+        if re.sub(r"[^\w\s-]", "", h.lower()).replace(" ", "-") == want:
+            return True
+    return False
+
+
 def check_links_paths(docs: list[Path], out: dict[str, list[str]]) -> None:
     for doc in docs:
         rel = rel_to_repo(doc)
@@ -245,8 +280,21 @@ def check_links_paths(docs: list[Path], out: dict[str, list[str]]) -> None:
             for target in MD_LINK.findall(clean):
                 if target.startswith(("http://", "https://", "#", "mailto:")):
                     continue
-                if not (doc.parent / target).exists():
+                # A placeholder is not a path. Documentation about how to write
+                # markdown contains `[label](url)` and `[x](references/<topic>.md)`
+                # as illustrative text, and a vendored skill contains `[name](url)`
+                # as a citation template. None of those is a link a reader can
+                # follow, so reporting them as dead would bury the real defects.
+                if is_placeholder_target(target):
+                    continue
+                # resolve the file part, then the anchor against its headings
+                path, _, frag = target.partition("#")
+                hit = next((r for r in roots if (r / path).exists()), None)
+                if hit is None:
                     out["links"].append(f"{rels}:{lineno}  dead link [{target}]")
+                elif frag and not anchor_exists(hit / path, frag):
+                    out["links"].append(
+                        f"{rels}:{lineno}  dead anchor [{target}]")
 
         if historical:
             continue

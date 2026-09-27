@@ -220,3 +220,10 @@ Apply stage-specific facilitation (details in `references/team-dynamics-framewor
 ---
 
 *For deep framework references see `references/velocity-forecasting-guide.md` and `references/team-dynamics-framework.md`. For template assets see `assets/sprint_report_template.md` and `assets/team_health_check_template.md`.*
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/retro-formats.md`](references/retro-formats.md)

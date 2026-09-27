@@ -251,3 +251,18 @@ instructions provided in [list_sessions.md].
 [cancel_session.md]: references/cancel_session.md
 [update_session_expiration.md]: references/update_session_expiration.md
 [list_sessions.md]: references/list_sessions.md
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/cancel_session.md`](references/cancel_session.md)
+- [`references/describe_device.md`](references/describe_device.md)
+- [`references/list_sessions.md`](references/list_sessions.md)
+- [`references/reserve_device.md`](references/reserve_device.md)
+- [`references/session_status.md`](references/session_status.md)
+- [`references/start_adb_forwarder.md`](references/start_adb_forwarder.md)
+- [`references/update_session_expiration.md`](references/update_session_expiration.md)
+- [`references/view_device.md`](references/view_device.md)
+

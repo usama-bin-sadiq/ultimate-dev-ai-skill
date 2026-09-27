@@ -1,5 +1,5 @@
 ---
-name: Application Security Engineer
+name: appsec-engineer
 description: AppSec specialist who secures the software development lifecycle through threat modeling, secure code review, SAST/DAST integration, and developer security education that makes secure code the default.
 color: "#059669"
 emoji: 🔐

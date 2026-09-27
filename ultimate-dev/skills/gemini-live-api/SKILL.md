@@ -69,6 +69,14 @@ Copy `client_server_messages.md`, `client_server_messages.proto`, and
 destination output folder. These files become the source of truth for the
 generated client.
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/client_server_messages.md`](references/client_server_messages.md)
+- [`references/session_manager.md`](references/session_manager.md)
+
 ### Step 2: Reconcile with the public documentation
 
 Examine the public documents linked from `client_server_messages.md`. If there

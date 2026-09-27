@@ -369,6 +369,13 @@ Quote: "I need tools that can keep up with my workflow"
 
 ---
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/example-personas.md`](references/example-personas.md)
+
 ## Knowledge Base
 
 Detailed reference guides in `references/`:

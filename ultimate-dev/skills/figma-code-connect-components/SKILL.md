@@ -347,3 +347,10 @@ For more information about Code Connect:
 
 - [Code Connect Documentation](https://help.figma.com/hc/en-us/articles/23920389749655-Code-Connect)
 - [Figma MCP Server Tools and Prompts](https://developers.figma.com/docs/figma-mcp-server/tools-and-prompts/)
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/mapping-checklist.md`](references/mapping-checklist.md)

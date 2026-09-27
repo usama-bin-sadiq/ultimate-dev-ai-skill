@@ -143,3 +143,10 @@ Deliver email sequences as complete, ready-to-send drafts — include subject li
 | Metrics Benchmarks | Open rate, click rate, and conversion rate targets per email type and sequence goal |
 | Segmentation Rules | Audience entry/exit conditions, behavioral branching, and suppression lists |
 | Subject Line Variations | 3 subject line alternatives per email for A/B testing |
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/email-sequence-playbook.md`](references/email-sequence-playbook.md)

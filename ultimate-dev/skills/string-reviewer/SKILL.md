@@ -97,3 +97,11 @@ format. Do not provide suggestions outside of this list..
   - ❌ "{incorrect phrase}"
   - ✅ `"{corrected phrase}"`
 ```
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/settings.md`](references/settings.md)
+- [`references/word-list.md`](references/word-list.md)

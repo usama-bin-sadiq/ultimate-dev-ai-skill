@@ -217,3 +217,10 @@ Automatically surface form-cro when:
 | Field Order & Layout Spec | Annotated outline | Recommended sequence, grouping, column layout, and mobile considerations |
 | Submit Button Copy Options | 3-option table | Action-oriented button copy variants with reasoning |
 | A/B Test Hypotheses | Table | Hypothesis × variant × success metric × priority for top 3-5 test ideas |
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/form-cro-playbook.md`](references/form-cro-playbook.md)

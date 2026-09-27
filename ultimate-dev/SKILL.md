@@ -277,7 +277,8 @@ overhead would exceed the work. See `references/observability.md`.
 
 ### Delegated roles
 
-Nineteen roles in `agents/`, each with a procedure, output contract, and
+Of the 286 role files in `agents/`, nineteen carry a dispatch condition in
+`references/delegation.md`; each has a procedure, output contract, and
 prohibitions. The verification and challenge set: `verifier` (re-derive rather
 than re-read), `evidence-auditor` (does this proof class support this claim),
 `doubt-reviewer` (attack the artifact, not the reasoning), `claim-auditor` (a
@@ -289,7 +290,7 @@ set: `scope-decider` (fog before size), `unknowns-mapper`, `simplifier`,
 `degradation-diagnostician` (which way a long context failed). All adopted items
 carry a version.
 
-A far larger catalogue is installed alongside these — 2,877 capabilities in
+A far larger catalogue is installed alongside these — 2,398 capabilities in
 total. **Do not read it; search it.** `references/capability-catalogue.md`
 maps it, and `python3 tools/index-tree.py --search <term>` finds an entry by
 name, purpose, or keyword. Every hit is marked **routed** or **UNROUTED**:
@@ -504,11 +505,11 @@ and which situation loads it. The groups, and the reason each exists:
 **Learning** — `references/learning-system.md` · `references/memory-system.md` · `references/learning-safety.md` · `references/caching-and-reuse.md`** — 
 **Control and safety** — `references/policy-constraints.md` · `references/security-and-trust.md` · `references/human-control.md` · `references/deterministic-vs-agentic.md` · `references/delegation.md` · `references/parallelism.md` · `references/runtime-portability.md`** — 
 **Breadth** — `references/multi-domain.md` · `references/unknown-domain.md` · `references/insufficient-capability.md` · `references/insufficient-evidence.md` · `references/anti-patterns.md`** — 
-**Elsewhere** `skills/skill-creator/SKILL.md` owns capability creation,** — validation, security review, promotion, and deprecation. `agents/` holds the · seven delegated roles. `tools/` holds `validate-skills.py`, for when a result · needs a structural check; the rest of the tooling is maintenance machinery and is · not part of an install. `references/maturity.md` records which prd.md §24 level · this claims and what is missing to reach the next.
-
 **Elsewhere** — `skills/skill-creator/SKILL.md` owns capability creation, validation,
-security review, promotion, and deprecation. `agents/` holds the eleven delegated
-roles. `tools/` holds the runtime validators: `validate-skills.py` for structure,
+security review, promotion, and deprecation. `agents/` holds 286 role files, of
+which 19 carry a dispatch condition. `references/maturity.md` records which
+prd.md §24 level this claims and what is missing to reach the next.
+`tools/` holds the runtime validators: `validate-skills.py` for structure,
 `score-roles.py` for role substance, plus the bundler, eval projector, fixture
 generator, and pilot runner, which are maintenance machinery and not part of an
 install.

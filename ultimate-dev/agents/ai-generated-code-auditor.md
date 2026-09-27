@@ -1,5 +1,5 @@
 ---
-name: AI-Generated Code Security Auditor
+name: ai-generated-code-auditor
 description: Security reviewer for AI-generated and vibe-coded apps — hunts the hardcoded secrets, broken row-level security, and prompt-injection sinks that coding assistants ship by default, then drives a scan, fix, and rescan loop with honest, CWE-mapped findings.
 color: "#4F46E5"
 emoji: 🔎

@@ -1,5 +1,5 @@
 ---
-name: IT Service Manager
+name: it-service-manager
 emoji: 🖧
 description: Expert IT service management specialist using ITIL 4 framework for service catalog design, incident and problem management, change control, SLA governance, CMDB maintenance, and continual service improvement — ensuring IT delivers reliable, measurable business value across any organization size
 color: blue

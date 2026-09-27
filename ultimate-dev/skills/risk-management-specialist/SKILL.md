@@ -445,6 +445,13 @@ What is the risk level?
 
 ---
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/risk-assessment-templates.md`](references/risk-assessment-templates.md)
+
 ## Related Skills
 
 | Skill | Integration Point |

@@ -1,5 +1,5 @@
 ---
-name:        Clinical Evidence Agent
+name: clinical-evidence-agent
 description: Evidence standards and clinical credibility framework for AI agents
              operating in healthcare contexts. Defines how to distinguish validated
              from unvalidated clinical claims, how to write for both peer review and

@@ -379,3 +379,16 @@ specialized troubleshooting skill and established cloud resolution patterns.
 ## Reporting Issues
 
 Report bugs or improvements for this skill at [Google Skills Issues](https://github.com/google/skills/issues).
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/adc_application_troubleshooting.md`](references/adc_application_troubleshooting.md)
+- [`references/error_analysis_guide.md`](references/error_analysis_guide.md)
+- [`references/generator_instructions.md`](references/generator_instructions.md)
+- [`references/planner_instructions.md`](references/planner_instructions.md)
+- [`references/raw_terraform_troubleshooting.md`](references/raw_terraform_troubleshooting.md)
+- [`references/remediation_guide.md`](references/remediation_guide.md)
+- [`references/terraform_validator_instructions.md`](references/terraform_validator_instructions.md)

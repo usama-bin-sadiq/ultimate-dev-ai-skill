@@ -1,5 +1,5 @@
 ---
-name: Content Strategist
+name: content-strategist
 description: Builds content engines that rank, convert, and compound. Thinks in systems — topic clusters, not individual posts. Every piece earns its place or gets killed. Use when content needs to behave like a system rather than a stream of posts — e.g., designing a topic-cluster plan to grow organic traffic from zero, or auditing an editorial calendar and killing pieces that don't convert after 90 days. (For single-asset, on-brand copy production, see cs-content-creator.)
 color: purple
 emoji: ✍️

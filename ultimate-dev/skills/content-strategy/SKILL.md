@@ -144,3 +144,10 @@ Output format defaults: tables for prioritization, bullet lists for options, pro
 - **seo-audit**: USE when auditing existing content for technical and on-page issues. NOT for creating new strategy from scratch.
 - **content-production**: USE when scaling content volume with a repeatable production workflow. NOT for initial strategy definition.
 - **content-humanizer**: USE when AI-generated content needs to sound more authentic. NOT for topic selection.
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/content-strategy-reference.md`](references/content-strategy-reference.md)

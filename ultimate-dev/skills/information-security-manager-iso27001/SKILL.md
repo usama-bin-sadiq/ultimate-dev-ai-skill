@@ -311,6 +311,15 @@ Post-incident activities:
 
 ---
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/incident-response.md`](references/incident-response.md)
+- [`references/iso27001-controls.md`](references/iso27001-controls.md)
+- [`references/risk-assessment-guide.md`](references/risk-assessment-guide.md)
+
 ## Validation Checkpoints
 
 ### ISMS Implementation Validation

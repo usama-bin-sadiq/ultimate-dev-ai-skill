@@ -98,3 +98,12 @@ Walk these one at a time before trusting the store.
 4. What would make you delete `.memory/` entirely?
 
 Rationale, open decisions, field schema: [`../../DESIGN.md`](../../DESIGN.md).
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/hook_capture_discipline.md`](references/hook_capture_discipline.md)
+- [`references/promotion_gate_design.md`](references/promotion_gate_design.md)
+- [`references/tiered_memory_canon.md`](references/tiered_memory_canon.md)

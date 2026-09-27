@@ -381,3 +381,13 @@ When `/collab-proof` runs at session end:
 - Merge frame scores (take max per frame across all snapshots)
 - Combine `key_moments` arrays — these preserve tradeoff discussions that were compacted away
 - Delete `.tmp-*.json` files after merging
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/ai-collaboration-evidence.md`](references/ai-collaboration-evidence.md)
+- [`references/developer-portfolio-proof.md`](references/developer-portfolio-proof.md)
+- [`references/session-documentation-patterns.md`](references/session-documentation-patterns.md)
+- [`references/tamper-evident-proof.md`](references/tamper-evident-proof.md)

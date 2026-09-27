@@ -1,5 +1,5 @@
 ---
-name: reasoning-trace-optimizer
+name: interleaved-thinking
 description: "Debug and optimize AI agents by analyzing reasoning traces, context degradation, tool confusion, instruction drift, repeated task failures, and performance regressions."
 neutralised: tool-specific paths and single-runtime invocations replaced
 ---

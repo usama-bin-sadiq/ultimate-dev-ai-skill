@@ -1,5 +1,5 @@
 ---
-name: Git Workflow Master
+name: git-workflow-master
 description: Expert in Git workflows, branching strategies, and version control best practices including conventional commits, rebasing, worktrees, and CI-friendly branch management.
 color: orange
 emoji: 🌿

@@ -155,3 +155,12 @@ both, they are two skills, not one.
 
 **Version:** 1.0.0
 **Derived:** Matt Pocock (MIT) + this repo's wrapper
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/description_design_patterns.md`](references/description_design_patterns.md)
+- [`references/progressive_disclosure_principles.md`](references/progressive_disclosure_principles.md)
+- [`references/quality_gates_for_skills.md`](references/quality_gates_for_skills.md)

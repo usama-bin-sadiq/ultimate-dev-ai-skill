@@ -258,6 +258,13 @@ Prepare for certification body or regulatory audit:
 
 ---
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/iso13485_audit_playbook.md`](references/iso13485_audit_playbook.md)
+
 ## Tools
 
 ### Audit Schedule Optimizer

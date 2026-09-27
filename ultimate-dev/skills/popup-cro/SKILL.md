@@ -227,3 +227,10 @@ Deliver popup recommendations with specificity: name the trigger type, target au
 | Mobile Adaptation Notes | Specific adjustments for mobile trigger, sizing, and dismiss behavior |
 | Compliance Checklist | GDPR consent language, privacy link placement, opt-in mechanic review |
 | A/B Test Plan | Prioritized hypotheses with expected lift and success metrics |
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/popup-cro-playbook.md`](references/popup-cro-playbook.md)

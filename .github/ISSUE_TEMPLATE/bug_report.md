@@ -1,126 +1,129 @@
 ---
 name: Bug report
-description: A defect in the kernel, a reference, a delegated role, a tool, an evaluation case, or the installer.
-title: "[bug] "
+about: A defect in the kernel, an agent, a skill, or the evaluation harness
+title: "<area>: <specific failure or symptom>"
 labels: bug
+assignees: ''
 ---
 
-This repository is a specification and an evaluation suite, not an application.
-It does not crash. A bug here is a documented rule the kernel, a tool, or an
-evaluation case did not follow, or a claim in the prose that nothing checks.
-
-Use this form for a defect. A missing capability is a feature request. A change
-to a layer, a gate, a boundary, the rung ladder, or what the kernel may do
-without asking is an architecture decision, and `CONTRIBUTING.md` says to open
-an issue and discuss it before writing the change.
+<!--
+Title convention: <area>: <specific symptom>
+  areas: skill (SKILL.md), agents/<name>, skills/<name>, evaluation, docs, arch
+  e.g. triage: assigns R3 to a single-constant change
+       verification: reports PARTIAL as VERIFIED
+       eval: BM-SIMPLE-01 does not detect the over-orchestration it exists to catch
+If you cannot name an area yet, say so in the summary. Do not file as a general
+"the kernel is worse" report — a run that fails somewhere is not yet a defect.
+-->
 
 ## Summary
 
-One sentence. What happened, and what the specification requires instead.
+<!-- One or two sentences: what the kernel did, and what it should have done
+     instead. Name the deviation, not the topic. -->
 
-## Class of defect
+## Defect class
 
-- [ ] Kernel behaviour. The kernel departed from a rule in `ultimate-dev/SKILL.md` or a reference.
-- [ ] Reference integrity. A path does not resolve, a file is unreachable, or an index omits a file.
-- [ ] Delegated role. An `agents/` role produced output its contract forbids, or omitted required fields.
-- [ ] Tool or validator. A tool passed a broken tree, or failed a clean one.
-- [ ] Install, bundle, or fixtures. `install.sh` or a `tools/` generator misbehaved.
-- [ ] Security or trust boundary. A control in `ultimate-dev/docs/security/controls.md` did not hold.
-- [ ] Evaluation. A case can be passed without the property it claims to test, or the generated projection is stale.
-- [ ] Documentation drift. Prose no longer matches what the code does.
+The kernel makes a two-sided claim — it must be rigorous when the work is hard
+*and* stay out of the way when the next action is already determined. Both
+sides are bugs. Which one is this?
+
+- [ ] **Over-orchestration** — ceremony on work that did not need it (R3
+      reasoning on an R0 task, a plan for a one-line change, a capability
+      search that found nothing). See `evaluation/benchmark/simple/`.
+- [ ] **Under-orchestration** — a confident direct answer on work that needed
+      more: no plan, no capability check, no verification.
+- [ ] **Wrong effort assignment** — the rung or scale was defensible at
+      Step 0 but never escalated or de-escalated when reality diverged.
+- [ ] **Verification defect** — `VERIFIED` without evidence, `PARTIAL`
+      reported as `VERIFIED`, or a check that cannot fail.
+- [ ] **Recovery defect** — blind retry, budget spent without replanning, or
+      escalation that was not warranted.
+- [ ] **Context defect** — loaded too much and drowned, or too little and
+      decided on unexamined assumptions.
+- [ ] **Capability defect** — wrong tool chosen, or a skill minted for a one-off.
+- [ ] **Security / trust defect** — injection, poisoned capability, unsafe
+      action, or evidence accepted that should not have been. Please see
+      `evaluation/security-cases/` and prefer a private report if the
+      disclosure itself is sensitive.
+- [ ] **Documentation defect** — the docs are wrong, contradictory, or
+      disagree with `SKILL.md`. Docs are part of the deliverable here.
+- [ ] **Harness defect** — an eval, fixture, or metric that mismeasures.
+
+## Where in the loop
+
+<!-- Which stage produced the defect. The kernel can be re-entered at any
+     boundary, so name the boundary, not just the phase.
+     RECEIVE · UNDERSTAND · TRIAGE · DECIDE · ACQUIRE · PLAN · EXECUTE ·
+     OBSERVE · VERIFY · RECOVER · SYNTHESIZE · SELF-EVALUATE · LEARN -->
+
+Stage: <!-- e.g. TRIAGE -->
+
+## Artefact
+
+<!-- Which file's behaviour is wrong. Be specific: the defect is usually in one
+     instruction, not in the design as a whole. -->
+
+- [ ] `SKILL.md`
+- [ ] `agents/<name>.md`
+- [ ] `skills/<name>/`
+- [ ] `evaluation/`
+- [ ] `docs/` or `ARCHITECTURE.md`
+- [ ] Other: <!-- path -->
 
 ## Environment
 
-| Field | Value |
-|---|---|
-| Version (`VERSION` at the repository root) | |
-| Commit SHA (`git rev-parse --short HEAD`) | |
-| How the kernel was obtained | repository checkout, `./install.sh`, or the distribution bundle |
-| Runtime and its version | |
-| Operating system | |
+Diagnostics are collected so the run can be reproduced. If a value cannot be
+obtained, write `Unavailable: <reason>` — do not guess, and do not let a
+missing value block the report.
 
-## The rule that was violated
-
-Quote the file and the rule. The claim you are reporting is that the observed
-behaviour contradicts this line, and the contradiction is what makes it a defect
-rather than a preference.
-
-If the defect is rung discipline, give the rung the kernel chose and the rung
-the task warranted. The ladder is in `ultimate-dev/references/triage.md`.
-
-If the defect is a trust boundary or an unauthorised action, name the control
-from `ultimate-dev/docs/security/controls.md` that failed, and check
-`ultimate-dev/docs/operations/troubleshooting.md` before filing.
+- Commit / ref: <!-- `git rev-parse --short HEAD` -->
+- opencode version: <!-- `opencode --version` -->
+- Model: <!-- held constant per evaluation/methodology.md; state which -->
+- Active skill: <!-- e.g. ultimate-dev @ R2 / L3 — the rung and scale the run chose -->
+- Agent used: <!-- e.g. verifier, critic; or "none" -->
+- OS: <!-- `uname -a` -->
+- Shell: <!-- `$SHELL` -->
+- Other runtime config: <!-- plugins, custom instructions, AGENTS.md -->
 
 ## Reproduction
 
-The smallest input that shows the defect. Reduce until removing anything else
-stops the behaviour.
+<!-- The objective, in the user's terms, plus the minimum steps that show the
+     deviation. Keep it minimal: an issue that needs three files of setup is
+     usually a design disagreement, not a bug. -->
 
-**For a kernel or role defect**, give:
+Objective: <!-- the request as a user would phrase it -->
 
-- The task, in the terms you gave the kernel.
-- What the kernel did, quoted from the transcript. Not a summary of it.
-- The decision record at the boundary where it went wrong, if the run produced one.
+1. <!-- step -->
+2. <!-- step -->
+3. <!-- step -->
 
-**For a tool defect**, give the exact command, the exit code, and the output.
+Linked eval case: <!-- e.g. BM-SIMPLE-01, FC-VER-03, FC-CAP-02 — or "none" -->
 
-```bash
-python3 ultimate-dev/tools/validate-skills.py --strict
-```
+## Expected Behavior
 
-State the output you observed, not the output you expected. A defect in a
-validator is often that it reports success on a tree that is broken, so a
-clean-looking run is part of the report.
+<!-- The behaviour the docs require. Quote the instruction you are holding the
+     run to, and cite the file. "It should be smarter" is not a specification. -->
 
-## Observed and expected
+## Actual Behavior
 
-| | |
-|---|---|
-| Observed | |
-| Expected, and the file that says so | |
-| Frequency | every run, one run in N, or under a condition you can name |
+<!-- What happened, in the run's own words where possible. Include the actual
+     rung/scale chosen, and the exact point where it departed. -->
 
-If a part of this is inference rather than observation, mark it as inference.
-The distinction is the report's value.
+Chosen rung/scale: <!-- e.g. R3 / L3 -->
 
-## Evaluation coverage
+Evidence of departure: <!-- the artefact, transcript, or metric that shows it -->
 
-Give the case id if you ran one. The families are `BM-` benchmark, `DM-`
-domain, `FC-` failure, `SC-` security, `TN-` negative trigger, `NM-` negative
-trigger, and `RG-` regression.
+## Additional Context
 
-- Case id, if any:
-- Does an existing case cover this? If not, say so. `CONTRIBUTING.md` requires a case for every behavioural change, and a case needs a trap and a required plan deviation to be worth adding.
+<!-- Any of: transcript excerpt, score/metric, frequency, workarounds tried,
+     whether it reproduces every time, related issues, screenshots.
 
-## Initial read on the layer
+     Redact tokens, API keys, private URLs, usernames, and confidential data
+     before pasting. If you are unsure whether something is sensitive, leave it
+     out and describe it. -->
 
-Where you believe the defect lives, and why. This is your first read, not a
-decision. A change to a layer, a gate, a boundary, the rung ladder, the output
-contract, or the kernel's authority needs an ADR, and the layer choice is
-yours to make.
+Reproducibility: <!-- every time / intermittent / once -->
 
-- [ ] `ultimate-dev/SKILL.md`
-- [ ] `ultimate-dev/references/`
-- [ ] `ultimate-dev/agents/`
-- [ ] `ultimate-dev/skills/skill-creator/`
-- [ ] `ultimate-dev/tools/`
-- [ ] `ultimate-dev/evaluation/` or `ultimate-dev/evals/`
-- [ ] `ultimate-dev/docs/`, `research/`, `examples/`
-- [ ] `install.sh` or `INSTALL.md`
-- [ ] Not known yet
+Related workarounds: <!-- what you did instead, and whether it helped -->
 
-## Security
-
-Do not paste credentials, tokens, private data, or another person's content.
-If the defect is a vulnerability rather than a functional bug, follow the
-disclosure process in `SECURITY.md` instead of this form.
-
-## Checklist
-
-- [ ] The reproduction is minimal, and it still reproduces after removing what is not needed.
-- [ ] Every command quoted was run, and its output is pasted rather than described.
-- [ ] The violated rule is quoted with its file path.
-- [ ] Observed output is separated from expected behaviour.
-- [ ] Observed facts are separated from inference.
-- [ ] No credential, token, or private data is included.
+Anything else: <!-- -->

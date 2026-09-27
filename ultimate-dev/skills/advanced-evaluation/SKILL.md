@@ -401,6 +401,16 @@ Related skills in this collection:
 
 ---
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/bias-mitigation.md`](references/bias-mitigation.md)
+- [`references/evaluation-pipeline.md`](references/evaluation-pipeline.md)
+- [`references/implementation-patterns.md`](references/implementation-patterns.md)
+- [`references/metrics-guide.md`](references/metrics-guide.md)
+
 ## Skill Metadata
 
 **Created**: 2025-12-24

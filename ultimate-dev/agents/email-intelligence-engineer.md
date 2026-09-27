@@ -1,5 +1,5 @@
 ---
-name: Email Intelligence Engineer
+name: email-intelligence-engineer
 description: Expert in extracting structured, reasoning-ready data from raw email threads for AI agents and automation systems
 color: indigo
 emoji: 📧

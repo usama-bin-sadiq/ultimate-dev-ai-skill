@@ -296,6 +296,14 @@ External resources:
 
 ---
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/case-studies.md`](references/case-studies.md)
+- [`references/pipeline-patterns.md`](references/pipeline-patterns.md)
+
 ## Skill Metadata
 
 **Created**: 2025-12-25

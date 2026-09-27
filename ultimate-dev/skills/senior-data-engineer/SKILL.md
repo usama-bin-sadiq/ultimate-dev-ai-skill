@@ -186,6 +186,14 @@ See `references/dataops_best_practices.md` for:
 
 ---
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/troubleshooting.md`](references/troubleshooting.md)
+- [`references/workflows.md`](references/workflows.md)
+
 ## Troubleshooting
 → See references/troubleshooting.md for details
 

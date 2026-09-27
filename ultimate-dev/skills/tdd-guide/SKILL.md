@@ -387,6 +387,15 @@ Mutation testing modifies your production code (creates "mutants") and checks wh
 
 ---
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/ci-integration.md`](references/ci-integration.md)
+- [`references/framework-guide.md`](references/framework-guide.md)
+- [`references/tdd-best-practices.md`](references/tdd-best-practices.md)
+
 ## Limitations
 
 | Scope | Details |

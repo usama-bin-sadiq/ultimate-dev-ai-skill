@@ -415,3 +415,11 @@ python scripts/gap_analyzer.py --controls current_controls.json --type type2 --j
 - **[gdpr-dsgvo-expert](../gdpr-dsgvo-expert/SKILL.md)** — SOC 2 Privacy criteria overlaps significantly with GDPR requirements; use together when processing EU personal data
 - **[information-security-manager-iso27001](../information-security-manager-iso27001/SKILL.md)** — ISO 27001 Annex A controls map closely to SOC 2 Security criteria; organizations pursuing both can share evidence
 - **[isms-audit-expert](../isms-audit-expert/SKILL.md)** — Audit methodology and finding management patterns transfer directly to SOC 2 audit preparation
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/soc2_audit_playbook.md`](references/soc2_audit_playbook.md)
+

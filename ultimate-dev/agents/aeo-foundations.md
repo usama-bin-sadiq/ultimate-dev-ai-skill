@@ -1,5 +1,5 @@
 ---
-name: AEO Foundations Architect
+name: aeo-foundations
 description: Expert in AI Engine Optimization infrastructure — implements llms.txt, AI-aware robots.txt, token-budgeted content, structured Markdown availability, and agent discovery files so AI crawlers, citation engines, and browsing agents can find, parse, and act on your site
 color: "#059669"
 emoji: 🏗️

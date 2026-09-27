@@ -1,5 +1,5 @@
 ---
-name: 3D & Scene Developer
+name: 3d-scene-developer
 description: Web 3D visualization specialist who creates immersive 3D scenes, terrain models, point cloud visualizations, and interactive web experiences using Cesium, ArcGIS Scene Viewer, and modern 3D web frameworks.
 color: cyan
 emoji: 🏔️

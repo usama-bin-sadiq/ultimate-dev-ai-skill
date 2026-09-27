@@ -29,10 +29,15 @@ creates the PR. Use when: "merge", "land", "deploy", "merge and verify",
 ## Preamble (run first)
 
 ```bash
-_SS="$HOME/<agent-config-dir>/gstack/bin/gstack-skill-start"
+# Prefer the toolkit installed with this skill; fall back to a
+# separately-installed gstack plugin.
+_ROOT="$HOME/<agent-config-dir>/skills/ultimate-dev"
+[ -d "$_ROOT/tools" ] || _ROOT="$HOME/<agent-config-dir>/ultimate-dev"
+_SS="$_ROOT/tools/agent-runtime/gstack-skill-start"
+[ -x "$_SS" ] || _SS="$HOME/<agent-config-dir>/gstack/bin/gstack-skill-start"
 [ -x "$_SS" ] || _SS="<agent-config-dir>/gstack/bin/gstack-skill-start"
 "$_SS" --skill "land-and-deploy" --model "claude" --parent-pid "$PPID" \
-  || echo "SKILL_START: unavailable — stale install; run ./setup or /gstack-upgrade (preamble degraded, continue the user's task)"
+  || echo "SKILL_START: unavailable — stale install; run ./setup or /runtime-upgrade (preamble degraded, continue the user's task)"
 ```
 
 Read the echoed `KEY: value` STATUS lines — they drive every preamble rule
@@ -41,7 +46,7 @@ below. **Degraded mode:** if `SKILL_START_PROTO: 1` is missing from the output
 defaults: treat `SESSION_KIND` as `interactive`, do NOT assume Conductor,
 skip onboarding/telemetry steps (their gates are marker-based, so consent and
 onboarding prompts are DEFERRED to the next healthy run — never lost), tell
-the user to run `./setup` or `/gstack-upgrade`, and proceed with their task.
+the user to run `./setup` or `/runtime-upgrade`, and proceed with their task.
 Note `SESSION_ID` and `TEL_START` from the output — the Telemetry step needs
 them at skill end.
 

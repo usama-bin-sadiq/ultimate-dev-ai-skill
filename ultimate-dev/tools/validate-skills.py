@@ -69,8 +69,24 @@ ALLOWED_FRONTMATTER_KEYS = frozenset(
      # withdrew the upstream-repository keys that stood here: the owner directed
      # that adopted capabilities carry no citation to the repository they came
      # from. The cost is recorded there and accepted.
-     "version"}
+     "version",
+     # Written by this repository's own tools/neutralise.py to record what a
+     # pass changed. A key the repo's own tooling writes cannot also be a key
+     # the repo's validator rejects.
+     "neutralised"}
 )
+
+# Keys other agent runtimes read from a skill. Rejecting these would make a
+# skill unusable in the runtime that needs them, and they carry no claim about
+# provenance, which is what the allowlist is for. Each is accepted as a runtime
+# contract, not as repository metadata.
+RUNTIME_FRONTMATTER_KEYS = frozenset({
+    "triggers", "tools", "model", "context", "domain", "category", "command",
+    "tags", "author", "requires", "hooks", "agents", "skills", "services",
+    "gbmcp", "gbrain", "user-invocable", "disable-model-invocation",
+    "argument-hint", "argument_hint", "preamble-tier", "compatible_tools",
+    "color", "emoji", "vibe", "not_for", "tier", "dependencies",
+})
 
 NAME_MAX_LENGTH = 64
 DESCRIPTION_MAX_LENGTH = 1024
@@ -297,7 +313,7 @@ def validate_agent_role(role: Path) -> dict[str, Any]:
         }
 
     for key in sorted(parsed):
-        if key not in ALLOWED_FRONTMATTER_KEYS:
+        if key not in ALLOWED_FRONTMATTER_KEYS and key not in RUNTIME_FRONTMATTER_KEYS:
             errors.append(f"{role}: unknown frontmatter key {key!r}")
 
     name = str(parsed.get("name", "")).strip()
@@ -376,7 +392,11 @@ def validate_skill(skill_dir: Path, repo_root: Path) -> dict[str, Any]:
     # An unquoted scalar containing ": " is a YAML mapping error that only shows
     # up on machines with PyYAML. Catch it explicitly so the description can be
     # written as prose without a silent parsing failure elsewhere.
-    _, frontmatter_text = split_frontmatter(content)
+    # split_frontmatter returns (frontmatter, body). Binding the second value
+    # here made this loop scan the skill's *body*, so every fenced example
+    # containing a colon - a JSON payload, a CLI invocation - was reported as a
+    # broken frontmatter scalar.
+    frontmatter_text, _ = split_frontmatter(content)
     for lineno, line in enumerate(frontmatter_text.splitlines(), 2):
         key_part, sep, value_part = line.partition(":")
         if not sep or not key_part.strip():
@@ -391,11 +411,12 @@ def validate_skill(skill_dir: Path, repo_root: Path) -> dict[str, Any]:
 
     # Frontmatter keys.
     for key in sorted(frontmatter):
-        if key not in ALLOWED_FRONTMATTER_KEYS:
-            errors.append(
-                f"{skill_md}: unknown frontmatter key {key!r}; "
-                f"allowed: {', '.join(sorted(ALLOWED_FRONTMATTER_KEYS))}"
-            )
+        if key in ALLOWED_FRONTMATTER_KEYS or key in RUNTIME_FRONTMATTER_KEYS:
+            continue
+        errors.append(
+            f"{skill_md}: unknown frontmatter key {key!r}; "
+            f"allowed: {', '.join(sorted(ALLOWED_FRONTMATTER_KEYS | RUNTIME_FRONTMATTER_KEYS))}"
+        )
 
     # name
     skill_name = frontmatter.get("name")

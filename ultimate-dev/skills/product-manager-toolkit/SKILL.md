@@ -350,3 +350,11 @@ python scripts/customer_interview_analyzer.py interview.txt json
 
 - `references/prd_templates.md` - PRD templates for different contexts
 - `references/frameworks.md` - Detailed framework documentation (RICE, MoSCoW, Kano, JTBD, etc.)
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/input-output-examples.md`](references/input-output-examples.md)
+

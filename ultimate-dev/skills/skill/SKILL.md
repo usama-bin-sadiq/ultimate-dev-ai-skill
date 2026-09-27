@@ -1,5 +1,5 @@
 ---
-name: agent-reach
+name: skill
 description: >
   MUST USE when user wants to 调研/research/搜索/search/查/找/look up anything
   on the internet — e.g. 全网调研 X / 帮我调研一下 X / 查一下 X / 搜搜 X /

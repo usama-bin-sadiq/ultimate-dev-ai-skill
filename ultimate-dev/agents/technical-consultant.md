@@ -1,5 +1,5 @@
 ---
-name: Technical Consultant
+name: technical-consultant
 description: Strategic GIS advisor who translates business problems into geospatial solutions — gap analysis, technology roadmaps, RFP responses, and digital transformation strategy across Esri and open-source ecosystems.
 color: navy
 emoji: 🧠

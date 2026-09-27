@@ -317,6 +317,22 @@ not block the user's initial request.** If asked for YAML/recommendations:
 
 --------------------------------------------------------------------------------
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/compute-class-autopilot-mode.md`](references/compute-class-autopilot-mode.md)
+- [`references/compute-class-cost-optimization.md`](references/compute-class-cost-optimization.md)
+- [`references/compute-class-crd-fields.md`](references/compute-class-crd-fields.md)
+- [`references/compute-class-debug.md`](references/compute-class-debug.md)
+- [`references/compute-class-gotchas-and-cuds.md`](references/compute-class-gotchas-and-cuds.md)
+- [`references/compute-class-governance.md`](references/compute-class-governance.md)
+- [`references/compute-class-karpenter-migration.md`](references/compute-class-karpenter-migration.md)
+- [`references/compute-class-lifecycle.md`](references/compute-class-lifecycle.md)
+- [`references/compute-class-prioritization.md`](references/compute-class-prioritization.md)
+- [`references/compute-class-provisioning-methods.md`](references/compute-class-provisioning-methods.md)
+
 ## Workload Usage
 
 Pods must specify the ComputeClass via node selector in the PodSpec:

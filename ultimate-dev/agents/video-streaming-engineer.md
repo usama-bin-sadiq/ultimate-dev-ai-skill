@@ -1,5 +1,5 @@
 ---
-name: Video Streaming Engineer
+name: video-streaming-engineer
 description: Expert video streaming engineer for adaptive bitrate delivery — HLS/DASH packaging, ffmpeg transcode ladders, CMAF low-latency, DRM, CDN delivery, and QoE-driven player tuning.
 color: "#DC2626"
 emoji: 🎬

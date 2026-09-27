@@ -1,5 +1,5 @@
 ---
-name: Customer Success Manager
+name: success-manager
 emoji: 🌟
 description: Strategic customer success specialist for onboarding, health scoring, QBR facilitation, churn prevention, expansion identification, and renewal management — driving net revenue retention by turning customers into long-term partners who achieve measurable outcomes
 color: green

@@ -71,6 +71,16 @@ Copy framework: PAS | AIDA | BAB
 
 ---
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/conversion-patterns.md`](references/conversion-patterns.md)
+- [`references/copy-frameworks.md`](references/copy-frameworks.md)
+- [`references/landing-page-patterns.md`](references/landing-page-patterns.md)
+- [`references/seo-checklist.md`](references/seo-checklist.md)
+
 ## Copy Frameworks
 
 **PAS (Problem → Agitate → Solution)**

@@ -1,5 +1,5 @@
 ---
-name: GIS Analyst
+name: analyst
 description: Day-to-day GIS operator who creates maps, manages layers, performs spatial queries, and maintains geospatial data integrity across desktop and web environments.
 color: teal
 emoji: 🖥️

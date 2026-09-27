@@ -1,5 +1,5 @@
 ---
-name: Strategy Duel Agent
+name: strategy-duel-agent
 emoji: ⚔️
 description: Conducts live strategy duels using game theory and the 36 Chinese stratagems
 color: "#1e90ff"

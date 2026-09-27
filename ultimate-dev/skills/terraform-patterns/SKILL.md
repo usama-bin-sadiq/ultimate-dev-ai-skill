@@ -738,3 +738,11 @@ clawhub install terraform-patterns
 - **aws-solution-architect** — AWS architecture design. Complementary — terraform-patterns implements the infrastructure, aws-solution-architect designs it.
 - **senior-security** — Application security. Complementary — terraform-patterns covers infrastructure security posture, senior-security covers application-level threats.
 - **ci-cd-pipeline-builder** — Pipeline construction. Complementary — terraform-patterns defines infrastructure, ci-cd-pipeline-builder automates deployment.
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/module-patterns.md`](references/module-patterns.md)
+- [`references/state-management.md`](references/state-management.md)

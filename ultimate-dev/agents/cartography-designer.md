@@ -1,5 +1,5 @@
 ---
-name: Cartography Designer
+name: cartography-designer
 description: Map aesthetics specialist who designs beautiful, readable, and effective maps — color theory, typography, label placement, basemap selection, and visual hierarchy for both print and web.
 color: pink
 emoji: 🎨

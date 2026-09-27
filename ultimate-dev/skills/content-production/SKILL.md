@@ -267,3 +267,11 @@ When reviewing drafts: flag issues → explain impact → give specific fix. Don
 - **aeo**: Use when optimizing specifically for AI search citation (ChatGPT, Perplexity, AI Overviews) in addition to traditional SEO.
 - **copywriting**: Use for landing pages, CTAs, and conversion copy. NOT for long-form content (that's this skill).
 - **seo-audit**: Use when auditing an existing content library for SEO gaps. NOT for single-piece production.
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/ai-citation-readiness.md`](references/ai-citation-readiness.md)
+- [`references/content-templates.md`](references/content-templates.md)

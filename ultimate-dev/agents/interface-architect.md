@@ -1,5 +1,5 @@
 ---
-name: XR Interface Architect
+name: interface-architect
 description: Spatial interaction designer and interface strategist for immersive AR/VR/XR environments
 color: neon-green
 emoji: 🫧

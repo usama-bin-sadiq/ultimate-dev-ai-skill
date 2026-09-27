@@ -134,6 +134,14 @@ If the user already has a separately scored audit, ingest those scores directly 
 
 The plan is **opinionated about which skills serve which stages.** Full mapping in `references/ops-stack-mapping.md`.
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/example-quietude.md`](references/example-quietude.md)
+- [`references/measurement-framework.md`](references/measurement-framework.md)
+
 ## The marketing operations stack
 
 This is the differentiator of an fCMO-style plan vs. a generic marketing plan. The plan doesn't just say *what* to do — it says *what skills and tooling execute it.*

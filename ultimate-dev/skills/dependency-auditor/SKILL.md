@@ -83,3 +83,12 @@ python3 scripts/license_checker.py . --policy strict --format json
 4. **False positives**: whitelist with documentation; contact maintainers for license ambiguity.
 
 See [README.md](README.md) for detailed usage and `references/` for the vulnerability/license knowledge bases.
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/dependency_management_best_practices.md`](references/dependency_management_best_practices.md)
+- [`references/license_compatibility_matrix.md`](references/license_compatibility_matrix.md)
+- [`references/vulnerability_assessment_guide.md`](references/vulnerability_assessment_guide.md)

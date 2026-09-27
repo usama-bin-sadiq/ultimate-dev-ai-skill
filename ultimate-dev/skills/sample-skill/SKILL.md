@@ -1,5 +1,5 @@
 ---
-name: sample-text-processor
+name: sample-skill
 description: "Reference BASIC-tier skill used as a fixture by skill-tester. Counts words and characters and applies basic text transformations. Use when validating skill-tester itself or when you need a minimal, known-good skill layout to copy. Not a production skill."
 ---
 
@@ -161,3 +161,10 @@ As a BASIC tier skill, some advanced features are intentionally omitted:
 - Parallel processing for very large datasets
 
 This skill demonstrates the essential structure and quality standards required for BASIC tier skills in the claude-skills ecosystem while remaining simple and focused on core functionality.
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/api-reference.md`](references/api-reference.md)

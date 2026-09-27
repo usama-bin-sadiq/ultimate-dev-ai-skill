@@ -121,7 +121,7 @@ Available skills (load with read_file when relevant):
 - testing-strategies: Unit, integration, and e2e testing patterns
 ```
 
-Load the full skill file (e.g., `skills/database-optimization/SKILL.md`) only when the current task requires it. This converts O(n) static token cost into O(1) per task.
+Load the full skill file (e.g., `skills/database-designer/SKILL.md`) only when the current task requires it. This converts O(n) static token cost into O(1) per task.
 
 ### Pattern 5: Terminal and Log Persistence
 
@@ -222,7 +222,7 @@ Result: ~100 tokens in context, 8000 tokens accessible on demand
 ```
 Input: User asks about database indexing
 Static context: "database-optimization: Query tuning and indexing"
-Agent action: read_file("skills/database-optimization/SKILL.md")
+Agent action: read_file("skills/database-designer/SKILL.md")
 Result: Full skill loaded only when relevant
 ```
 
@@ -287,6 +287,13 @@ External resources:
 - Anthropic Agent Skills specification — Read when: building skills that leverage filesystem progressive disclosure
 
 ---
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/implementation-patterns.md`](references/implementation-patterns.md)
 
 ## Skill Metadata
 

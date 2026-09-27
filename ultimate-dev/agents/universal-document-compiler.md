@@ -1,5 +1,5 @@
 ---
-name: Universal Document Compiler
+name: universal-document-compiler
 description: Architect of schema-agnostic document ASTs, algorithmic data-shape layout inference, bidirectional CST-to-canvas synchronization, and universal paged document publishing.
 color: "#3B82F6"
 emoji: 📑

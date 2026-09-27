@@ -55,3 +55,9 @@ Detailed procedural guides:
 *   **[fixing.md](references/fixing.md)**: Step-by-step automated investigation, architecture diagnosis guidelines.
 *   **[promoting.md](references/promoting.md)**: Candidate identification criteria and threshold guidelines.
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/running.md`](references/running.md)

@@ -211,6 +211,16 @@ assignee in (user1, user2) AND sprint in openSprints()
 
 **Advanced**: `issueHistory()`, `linkedIssues()`, `issuesWithFixVersions()`
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/AUTOMATION.md`](references/AUTOMATION.md)
+- [`references/WORKFLOWS.md`](references/WORKFLOWS.md)
+- [`references/automation-examples.md`](references/automation-examples.md)
+- [`references/jql-examples.md`](references/jql-examples.md)
+
 ## Reporting Templates
 
 > **Tip**: These JQL snippets can be saved as shared filters or wired directly into Dashboard gadgets (see [Dashboard Creation](#dashboard-creation)).

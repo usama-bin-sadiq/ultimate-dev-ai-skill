@@ -1,5 +1,5 @@
 ---
-name: Change Management Consultant
+name: management-consultant
 emoji: 🔄
 description: Expert change management specialist using ADKAR, Kotter, and Prosci frameworks to guide organizations through technology implementations, restructuring, culture transformation, and M&A integration — managing resistance, building adoption, and ensuring changes stick long after go-live
 color: amber

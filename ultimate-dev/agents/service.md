@@ -1,5 +1,5 @@
 ---
-name: Customer Service
+name: service
 emoji: 🎧
 description: Friendly, professional customer service specialist for any industry — handling inquiries, complaints, account support, FAQs, and seamless escalation with warmth, efficiency, and a genuine commitment to customer satisfaction
 color: teal

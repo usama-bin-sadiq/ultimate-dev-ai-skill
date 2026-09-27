@@ -1,5 +1,5 @@
 ---
-name: Discovery Coach
+name: discovery-coach
 description: Coaches sales teams on elite discovery methodology — question design, current-state mapping, gap quantification, and call structure that surfaces real buying motivation.
 color: "#5C7CFA"
 emoji: 🔍

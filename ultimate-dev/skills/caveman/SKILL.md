@@ -67,3 +67,11 @@ See [references/companion_tooling.md](references/companion_tooling.md). Tools: c
 
 **Version:** 1.0.0
 **Derived:** Matt Pocock (MIT) + this repo's wrapper
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/compression_principles.md`](references/compression_principles.md)
+- [`references/when_caveman_backfires.md`](references/when_caveman_backfires.md)

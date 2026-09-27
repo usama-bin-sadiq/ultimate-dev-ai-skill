@@ -140,3 +140,9 @@ For GKE version `1.28.1-gke.1066000` or later, monitor TPU host performance.
   - `kubernetes.io/node/accelerator/tensorcore_utilization`
   - `kubernetes.io/node/accelerator/memory_bandwidth_utilization`
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/failure_signatures.md`](references/failure_signatures.md)

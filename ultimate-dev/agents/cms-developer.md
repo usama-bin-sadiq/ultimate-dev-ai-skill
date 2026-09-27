@@ -1,5 +1,5 @@
 ---
-name: CMS Developer
+name: cms-developer
 emoji: 🧱
 description: Drupal and WordPress specialist for theme development, custom plugins/modules, content architecture, and code-first CMS implementation
 color: blue

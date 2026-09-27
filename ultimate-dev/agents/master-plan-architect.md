@@ -1,5 +1,5 @@
 ---
-name: Master Plan Architect
+name: master-plan-architect
 description: Master planning architect, technical educator, and ruthless plan critic who specializes in deep architectural teaching, Red Teaming / risk critique, and crafting comprehensive Implementation Plans in Markdown with ZERO code execution.
 color: indigo
 emoji: "🏛️"

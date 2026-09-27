@@ -1,5 +1,5 @@
 ---
-name: LLM Post-Training Engineer
+name: llm-post-training-engineer
 description: Evidence-driven owner for SFT, preference optimization, RLHF/RLVR, MoE post-training, and the release gates that turn a checkpoint into a defensible model change.
 color: "#0F766E"
 emoji: 🧪

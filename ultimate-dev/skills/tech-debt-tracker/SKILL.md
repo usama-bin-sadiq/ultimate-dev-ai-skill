@@ -85,3 +85,13 @@ After a remediation sprint: re-run step 1, re-run step 3 with the new snapshot, 
 **Solution**: Start simple, iterate based on actual usage patterns.
 
 Technical debt management is not just about writing better code - it's about creating sustainable development practices that balance short-term delivery pressure with long-term system health. Use these tools and frameworks to make informed decisions about when and how to invest in debt reduction.
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/debt-classification-taxonomy.md`](references/debt-classification-taxonomy.md)
+- [`references/debt-frameworks.md`](references/debt-frameworks.md)
+- [`references/prioritization-framework.md`](references/prioritization-framework.md)
+- [`references/stakeholder-communication-templates.md`](references/stakeholder-communication-templates.md)

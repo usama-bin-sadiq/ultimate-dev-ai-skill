@@ -1,5 +1,5 @@
 ---
-name: Database Reliability Engineer
+name: database-reliability-engineer
 description: Expert database reliability engineer (DBRE) — high availability and replication, automated failover, backup and point-in-time recovery, zero-downtime online schema migrations, connection pooling, and disaster-recovery drills. Focused on keeping data safe and available, not query tuning.
 color: "#B91C1C"
 emoji: 🛟

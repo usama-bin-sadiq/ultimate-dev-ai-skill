@@ -297,6 +297,13 @@ Coordinated Public Disclosure
 | `device_cybersecurity_guidance.md` | FDA cybersecurity requirements, SBOM, threat modeling |
 | `fda_capa_requirements.md` | CAPA process, root cause analysis, effectiveness verification |
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/fda_capa_requirements.md`](references/fda_capa_requirements.md)
+
 ### Usage Examples
 
 ```bash

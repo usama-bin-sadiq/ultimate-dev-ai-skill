@@ -255,3 +255,11 @@ clawhub install agenthub
 - **autoresearch-agent** — Single-agent optimization loop (use AgentHub when you want N agents competing)
 - **self-improving-agent** — Self-modifying agent (use AgentHub when you want external competition)
 - **git-worktree-manager** — Git worktree utilities (AgentHub uses worktrees internally)
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/coordination-strategies.md`](references/coordination-strategies.md)
+- [`references/dag-patterns.md`](references/dag-patterns.md)

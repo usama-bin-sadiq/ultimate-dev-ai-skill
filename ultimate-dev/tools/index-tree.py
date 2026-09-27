@@ -80,15 +80,37 @@ one two get make made need needs want work works way ways time via per any each
 
 
 def frontmatter(text: str) -> dict[str, str]:
+    """Read the scalar keys of a skill's frontmatter.
+
+    A YAML block scalar is a key on one line and its value on the following
+    indented lines:
+
+        description:
+          A specialized skill for Gemini CLI that provides monitoring of
+          GitHub Actions workflows.
+
+    Reading one line at a time sees `description` with an empty value and calls
+    the skill undiscoverable, which is the same defect that made a previous
+    pass report thousands of missing descriptions that were present. The
+    continuation lines are therefore collected into the key they belong to.
+    """
     m = FM.match(text)
     if not m:
         return {}
     out: dict[str, str] = {}
+    key: str | None = None
     for line in m.group(1).splitlines():
+        if line[:1] in (" ", "\t"):          # continuation of the key above
+            if key and not line.strip().startswith("-"):
+                out[key] = f"{out[key]} {line.strip()}".strip()
+            continue
         f = FIELD.match(line)
-        if f and not line.startswith(" "):
-            out[f.group(1).strip().lower()] = f.group(2).strip().strip("\"'")
-    return out
+        if f:
+            key = f.group(1).strip().lower()
+            out[key] = f.group(2).strip().strip("\"'")
+        else:
+            key = None
+    return {k: re.sub(r"\s+", " ", v).strip() for k, v in out.items()}
 
 
 def domain_of(name: str, desc: str) -> str:

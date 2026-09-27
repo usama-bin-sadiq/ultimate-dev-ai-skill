@@ -312,3 +312,13 @@ Fixes:
 - **senior-backend** — application-layer patterns (connection pooling, ORM best practices)
 - **senior-devops** — infrastructure provisioning for database clusters and replicas
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/database-design-reference.md`](references/database-design-reference.md)
+- [`references/database_selection_decision_tree.md`](references/database_selection_decision_tree.md)
+- [`references/index_strategy_patterns.md`](references/index_strategy_patterns.md)
+- [`references/normalization_guide.md`](references/normalization_guide.md)
+

@@ -537,3 +537,11 @@ For extraction-induced motion popping, do not regenerate imagery first. If the s
 - Motion previews do not show unintended size popping, reversed directional cadence, or wrong row semantics.
 - Non-pixel styles are accepted when readable at pet size and consistent across rows.
 - `${CODEX_HOME:-$HOME/.codex}/pets/<pet-name>/pet.json` and `${CODEX_HOME:-$HOME/.codex}/pets/<pet-name>/spritesheet.webp` are staged together for custom pets.
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/codex-pet-contract.md`](references/codex-pet-contract.md)
+- [`references/qa-rubric.md`](references/qa-rubric.md)

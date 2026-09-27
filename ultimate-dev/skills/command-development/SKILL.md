@@ -429,6 +429,17 @@ Please provide a PR number. Usage: /review-pr [number]
 3. **Relative paths:** Use project-relative paths
 4. **Glob support:** Consider using Glob tool for patterns
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/advanced-workflows.md`](references/advanced-workflows.md)
+- [`references/documentation-patterns.md`](references/documentation-patterns.md)
+- [`references/interactive-commands.md`](references/interactive-commands.md)
+- [`references/marketplace-considerations.md`](references/marketplace-considerations.md)
+- [`references/testing-strategies.md`](references/testing-strategies.md)
+
 ### Bash Commands
 
 1. **Limit scope:** Use `Bash(git:*)` not `Bash(*)`

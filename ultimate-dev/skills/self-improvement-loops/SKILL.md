@@ -246,6 +246,13 @@ Numeric, benchmark, volatile, or vendor-performance claims in this skill carry i
 
 ---
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/loop-design-evidence.md`](references/loop-design-evidence.md)
+
 ## Skill Metadata
 
 **Created**: 2026-07-08

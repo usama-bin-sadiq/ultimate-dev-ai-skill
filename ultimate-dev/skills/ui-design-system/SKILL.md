@@ -339,6 +339,13 @@ Large text: ≥18pt regular or ≥14pt bold
 
 ---
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/token-generation.md`](references/token-generation.md)
+
 ## Knowledge Base
 
 Detailed reference guides in `references/`:

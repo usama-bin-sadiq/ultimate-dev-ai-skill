@@ -1,5 +1,5 @@
 ---
-name: Economy Designer
+name: designer
 description: Virtual economy architect - Masters currency systems, sources and sinks, monetization modeling, inflation control, and data-driven economic balancing for live games
 color: green
 emoji: 💰

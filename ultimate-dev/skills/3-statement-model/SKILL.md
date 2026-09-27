@@ -331,6 +331,13 @@ Interest expense creates circularity: Interest → Net Income → Cash → Debt 
 
 Enable iterative calculation in Excel: File → Options → Formulas → Enable iterative calculation. Set maximum iterations to 100, maximum change to 0.001. Add a circuit breaker toggle in Assumptions tab.
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/formatting.md`](references/formatting.md)
+
 ### Check Categories
 
 **Section 1: Currency Consistency**

@@ -455,3 +455,13 @@ sqlite3 dbname ".backup backup.db"
 | **migration-architect** | Complex multi-step migration orchestration |
 | **api-design-reviewer** | Ensuring API endpoints align with query patterns |
 | **observability-platform** | Query performance monitoring, slow query alerts |
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/optimization_guide.md`](references/optimization_guide.md)
+- [`references/orm_patterns.md`](references/orm_patterns.md)
+- [`references/query_patterns.md`](references/query_patterns.md)
+

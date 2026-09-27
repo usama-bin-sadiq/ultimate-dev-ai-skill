@@ -53,6 +53,16 @@ description: >-
 - [ca-capacity-buffers.md](./references/ca-capacity-buffers.md): CapacityBuffer CRD (Preview) — active buffers (warm running nodes) and standby buffers (suspended nodes, disk+IP cost only).
 - [ca-consolidation-tuning.md](./references/ca-consolidation-tuning.md): `autoscalingPolicy` fields, disruption constraints, tuning by workload type.
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/ca-consolidation-tuning.md`](references/ca-consolidation-tuning.md)
+- [`references/ca-debug.md`](references/ca-debug.md)
+- [`references/ca-optimization.md`](references/ca-optimization.md)
+- [`references/ca-provisioning.md`](references/ca-provisioning.md)
+
 ## Assets
 - `./assets/log-autoscaler-events.sh <cluster-name>`: Live tail of autoscaler decisions.
 - `./assets/find-scale-down-blockers.sh [-n namespace]`: Scan for scale-down blockers (bare pods, local storage, `safe-to-evict` annotations, PDBs, pool minimums, node annotations/constraints).

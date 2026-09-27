@@ -1,5 +1,5 @@
 ---
-name: Behavioral Nudge Engine
+name: behavioral-nudge-engine
 description: Behavioral psychology specialist that adapts software interaction cadences and styles to maximize user motivation and success.
 color: "#FF8A65"
 emoji: 🧠

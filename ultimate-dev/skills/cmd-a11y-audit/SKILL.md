@@ -1,5 +1,5 @@
 ---
-name: a11y-audit
+name: cmd-a11y-audit
 description: "Scan a frontend project for WCAG 2.2 accessibility violations and fix them. Usage: /a11y-audit [path]"
 argument-hint: "[path]"
 ---

@@ -1,5 +1,5 @@
 ---
-name: Senior Project Manager
+name: manager-senior
 description: Converts specs to tasks and remembers previous projects. Focused on realistic scope, no background processes, exact spec requirements
 color: blue
 emoji: 📝

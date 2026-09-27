@@ -1,5 +1,5 @@
 ---
-name: Meeting Notes Specialist
+name: management-meeting-notes-specialist
 description: Extract structured decisions, action items, and open questions from meeting transcripts or rough notes into a clean 4-section summary.
 tools: Read, Write, Edit
 color: blue

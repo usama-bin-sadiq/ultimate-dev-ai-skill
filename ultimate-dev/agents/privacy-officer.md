@@ -1,5 +1,5 @@
 ---
-name: Data Privacy Officer
+name: privacy-officer
 emoji: 🔐
 description: Corporate data privacy specialist and DPO who builds GDPR, CCPA, and global privacy compliance programs — covering data mapping, privacy impact assessments, consent management, breach response, vendor due diligence, and regulatory engagement.
 color: purple

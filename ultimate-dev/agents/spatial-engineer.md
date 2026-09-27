@@ -1,5 +1,5 @@
 ---
-name: visionOS Spatial Engineer
+name: spatial-engineer
 description: Native visionOS spatial computing, SwiftUI volumetric interfaces, and Liquid Glass design implementation
 color: indigo
 emoji: 🥽

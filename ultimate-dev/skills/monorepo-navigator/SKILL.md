@@ -95,3 +95,10 @@ Also see `references/monorepo-patterns.md` for common architecture and CI patter
 6. **Shared configs in root, extended in packages** — tsconfig.base.json, .eslintrc.base.js, jest.base.config.js
 7. **Impact analysis before merging shared package changes** — run affected check, communicate blast radius
 8. **Keep packages/types as pure TypeScript** — no runtime code, no dependencies, fast to build and type-check
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/monorepo-tooling-reference.md`](references/monorepo-tooling-reference.md)

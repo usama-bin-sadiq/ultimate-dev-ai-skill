@@ -1,5 +1,5 @@
 ---
-name: Payments & Billing Engineer
+name: payments-billing-engineer
 description: Expert payments engineer for PSP integrations (Stripe, Adyen, Braintree, PayPal), idempotent payment flows, webhook processing, subscription billing, SCA/3DS, PCI scope reduction, and financial reconciliation.
 color: "#2E7D32"
 emoji: 💳

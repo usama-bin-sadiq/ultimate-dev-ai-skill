@@ -1,7 +1,7 @@
 # Kernel references
 
 Loaded on demand. `SKILL.md` keeps the always-in-play four; everything else is
-reached when a specific stage or decision needs it. Total: 50 files.
+reached when a specific stage or decision needs it. Total: 54 files.
 
 ## The map
 
@@ -48,8 +48,9 @@ reached when a specific stage or decision needs it. Total: 50 files.
 - **The kernel itself** — `../SKILL.md`.
 - **Skill creation** — `../skills/skill-creator/`, which owns the capability
   expansion lifecycle and its gates.
-- **Delegated roles** — `../agents/`, seven role definitions with their own
-  procedures and output contracts.
+- **Delegated roles** — `../agents/`, 286 role files with their own procedures
+  and output contracts, 19 of which carry a dispatch condition in
+  `delegation.md`.
 - **Data contracts** — `../knowledge/schemas/` and `../knowledge/policies/`,
   the record shapes and the rules over them.
 - **Worked runs** — `../examples/`, 27 traces showing the same machinery applied

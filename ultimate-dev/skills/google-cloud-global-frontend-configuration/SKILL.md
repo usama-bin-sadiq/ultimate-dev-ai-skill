@@ -130,3 +130,13 @@ Propose a "Recommended Configuration" based entirely on the Workload Type from S
 - [Infrastructure Manager Overview](https://cloud.google.com/infrastructure-manager/docs)
 - [Official Terraform LB-HTTP Module](https://registry.terraform.io/modules/GoogleCloudPlatform/lb-http/google/latest)
 - [Official Terraform Cloud Armor Module](https://registry.terraform.io/modules/GoogleCloudPlatform/cloud-armor/google/latest)
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/drift-detection.md`](references/drift-detection.md)
+- [`references/gcloud-generation.md`](references/gcloud-generation.md)
+- [`references/terraform-generation.md`](references/terraform-generation.md)
+- [`references/terraform-module.md`](references/terraform-module.md)

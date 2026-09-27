@@ -1,5 +1,5 @@
 ---
-name: Desktop App Engineer
+name: desktop-app-engineer
 description: Expert desktop application engineer for Electron and Tauri — secure IPC and process isolation, code signing and notarization, auto-update pipelines, native OS integration, and resource-footprint discipline.
 color: "#475569"
 emoji: 💻

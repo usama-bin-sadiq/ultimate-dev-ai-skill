@@ -427,3 +427,12 @@ resource "aws_instance" "green_environment" {
 ```
 
 This Migration Architect skill provides a comprehensive framework for planning, executing, and validating complex system migrations while minimizing business impact and technical risk. The combination of automated tools, proven patterns, and detailed procedures enables organizations to confidently undertake even the most complex migration projects.
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/data_reconciliation_strategies.md`](references/data_reconciliation_strategies.md)
+- [`references/migration_patterns_catalog.md`](references/migration_patterns_catalog.md)
+- [`references/zero_downtime_techniques.md`](references/zero_downtime_techniques.md)

@@ -240,3 +240,14 @@ If you solve an error that wasn't in the known-errors list, suggest the user PR 
 | Community grant requests (hardware the user can't pay for) | [`references/grants.md`](references/grants.md) |
 | Provider proxy (zero-VRAM big LLM via Cerebras / Fireworks / Together / etc.) | [`references/inference-providers.md`](references/inference-providers.md) |
 | **3D Spaces: generation, CUDA extensions, output formats, and model recipes (incl. gaussian splatting)** | [`references/3d-generation.md`](references/3d-generation.md) |
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/3d-cuda-extensions.md`](references/3d-cuda-extensions.md)
+- [`references/3d-gsplat.md`](references/3d-gsplat.md)
+- [`references/3d-models.md`](references/3d-models.md)
+- [`references/3d-outputs.md`](references/3d-outputs.md)
+

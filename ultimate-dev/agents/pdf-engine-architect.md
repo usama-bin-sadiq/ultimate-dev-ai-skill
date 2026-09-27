@@ -1,5 +1,5 @@
 ---
-name: PDF Engine Architect
+name: pdf-engine-architect
 description: Architect and specialist in deterministic HTML-to-PDF document compilation, Playwright browser context pools, dynamic Euclidean page sizing, LayoutNG subpixel budgeting, tagged PDF (PDF/UA-1 & PDF/A-2b), and 1:1 sheet canvas editors.
 color: "#DC2626"
 emoji: 📑

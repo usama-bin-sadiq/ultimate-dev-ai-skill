@@ -100,3 +100,13 @@ python3 markdown-html/skills/md-slides/scripts/deck_html_renderer.py \
 - Tufte — *The Cognitive Style of PowerPoint* (the polemic)
 - reveal.js / Big / Marp — convergent markdown-to-deck conventions
 - See `references/` for full citations (presentation_ux, keyboard_nav_patterns, single_file_deck_conventions)
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/keyboard_nav_patterns.md`](references/keyboard_nav_patterns.md)
+- [`references/presentation_ux.md`](references/presentation_ux.md)
+- [`references/single_file_deck_conventions.md`](references/single_file_deck_conventions.md)
+

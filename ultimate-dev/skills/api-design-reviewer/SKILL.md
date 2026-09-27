@@ -431,3 +431,11 @@ fi
 
 
 Regular use of the linting, breaking change detection, and scoring tools ensures continuous improvement and helps maintain API quality throughout the development lifecycle.
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/api_antipatterns.md`](references/api_antipatterns.md)
+- [`references/rest_design_rules.md`](references/rest_design_rules.md)

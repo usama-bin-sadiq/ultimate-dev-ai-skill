@@ -266,6 +266,16 @@ Numeric, benchmark, volatile, or vendor-performance claims in this skill carry i
 
 ---
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/cdc-prompt-annotated.md`](references/cdc-prompt-annotated.md)
+- [`references/research-evidence.md`](references/research-evidence.md)
+- [`references/task-brief-template.md`](references/task-brief-template.md)
+- [`references/vendor-guidance.md`](references/vendor-guidance.md)
+
 ## Skill Metadata
 
 **Created**: 2026-07-11

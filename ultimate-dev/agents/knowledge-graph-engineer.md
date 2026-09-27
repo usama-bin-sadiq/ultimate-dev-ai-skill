@@ -1,5 +1,5 @@
 ---
-name: Knowledge Graph Engineer
+name: knowledge-graph-engineer
 emoji: 🧠
 description: Structures information and capabilities into interconnected nodes (entities) and edges (relationships) — enabling dynamic context navigation, modular competency chaining, lower token costs, and hallucination reduction.
 color: violet

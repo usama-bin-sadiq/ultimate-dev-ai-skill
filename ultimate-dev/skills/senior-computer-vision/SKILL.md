@@ -420,6 +420,13 @@ python scripts/dataset_pipeline_builder.py data/final/ \
 ## Reference Documentation
 → See references/reference-docs-and-commands.md for details
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/reference-docs-and-commands.md`](references/reference-docs-and-commands.md)
+
 ## Performance Targets
 
 | Metric | Real-time | High Accuracy | Edge |

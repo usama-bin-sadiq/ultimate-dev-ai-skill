@@ -1,5 +1,5 @@
 ---
-name: Senior Developer
+name: senior-developer
 description: Premium implementation specialist - Masters Laravel/Livewire/FluxUI, advanced CSS, Three.js integration
 color: green
 emoji: 💎

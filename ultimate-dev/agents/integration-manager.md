@@ -1,5 +1,5 @@
 ---
-name: M&A Integration Manager
+name: integration-manager
 emoji: 🤝
 description: Mergers and acquisitions integration specialist who designs and executes post-merger integration programs — covering Day 1 readiness, 100-day planning, synergy tracking, cultural integration, functional workstream coordination, and transition service agreement management.
 color: indigo

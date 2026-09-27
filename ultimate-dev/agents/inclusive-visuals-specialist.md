@@ -1,5 +1,5 @@
 ---
-name: Inclusive Visuals Specialist
+name: inclusive-visuals-specialist
 description: Representation expert who defeats systemic AI biases to generate culturally accurate, affirming, and non-stereotypical images and video.
 color: "#4DB6AC"
 emoji: 🌈

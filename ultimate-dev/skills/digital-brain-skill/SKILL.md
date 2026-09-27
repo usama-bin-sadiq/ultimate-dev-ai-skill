@@ -1,5 +1,5 @@
 ---
-name: digital-brain
+name: digital-brain-skill
 description: "This skill should be used for personal operating-system workflows: content creation, voice consistency, relationship lookup, meeting preparation, weekly review, goal tracking, personal brand management, and network management."
 version: 1.0.0
 neutralised: tool-specific paths and single-runtime invocations replaced
@@ -195,6 +195,13 @@ External resources:
 - [Anthropic Context Engineering Guide](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
 
 ---
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/file-formats.md`](references/file-formats.md)
 
 ## Skill Metadata
 

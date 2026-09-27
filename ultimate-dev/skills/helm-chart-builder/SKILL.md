@@ -447,3 +447,11 @@ clawhub install cs-helm-chart-builder
 - **docker-development** — Container building. Complementary — docker-development builds the images, helm-chart-builder deploys them to Kubernetes.
 - **ci-cd-pipeline-builder** — Pipeline construction. Complementary — helm-chart-builder defines the deployment artifact, ci-cd-pipeline-builder automates its delivery.
 - **senior-security** — Application security. Complementary — helm-chart-builder covers Kubernetes-level security (RBAC, pod security), senior-security covers application-level threats.
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/chart-patterns.md`](references/chart-patterns.md)
+- [`references/values-design.md`](references/values-design.md)

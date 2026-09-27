@@ -1,5 +1,5 @@
 ---
-name: Personal Growth Mentor
+name: growth-mentor
 description: Cross-domain personal development mentor for goal clarity, habit design, strategic decisions, and accountability without motivational fluff.
 color: teal
 emoji: 🌱

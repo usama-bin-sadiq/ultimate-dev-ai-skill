@@ -1,5 +1,5 @@
 ---
-name: Web GIS Developer
+name: web-gis-developer
 description: Full-stack web GIS engineer who builds interactive mapping applications — MapLibre GL JS, ArcGIS JS API, Leaflet, real-time dashboards, REST API integration, and geospatial web services.
 color: blue
 emoji: 🌐

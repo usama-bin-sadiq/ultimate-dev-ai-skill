@@ -270,3 +270,10 @@ All output follows the structured communication standard:
 - **launch-strategy**: Use when planning the full product or feature launch. NOT for tool-specific distribution (use free-tool-strategy for that).
 - **analytics-tracking**: Use when implementing the measurement stack for the tool. NOT for deciding what to measure (use free-tool-strategy for that).
 - **form-cro**: Use when optimizing the lead capture form in the tool. NOT for the tool design or launch strategy.
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/launch-playbook.md`](references/launch-playbook.md)

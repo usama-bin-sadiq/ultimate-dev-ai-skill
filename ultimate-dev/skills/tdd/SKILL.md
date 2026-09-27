@@ -1,38 +1,76 @@
 ---
 name: tdd
-description: Test-driven development. Use when the user wants to build features or fix bugs test-first, mentions "red-green-refactor", or wants integration tests.
+description: "Run a red-green-refactor TDD workflow — generate failing tests first, implement to green, then check coverage gaps. Usage: /tdd <generate|coverage|validate> [target]"
+argument-hint: <generate|coverage|validate> [file-or-dir]
 ---
 
-# Test-Driven Development
+# /tdd
 
-TDD is the red → green loop. This skill is the reference that makes that loop produce tests worth keeping: what a good test is, where tests go, the anti-patterns, and the rules of the loop. Every section applies on every cycle — consult them before and during the loop, not after.
+Drive a test-first workflow for `$ARGUMENTS` using the TDD Guide skill. The first word of `$ARGUMENTS` selects the mode (`generate`, `coverage`, or `validate`); the rest is the target file or directory. If `$ARGUMENTS` is empty, ask which mode and target.
 
-When exploring the codebase, read `CONTEXT.md` (if it exists) so test names and interface vocabulary match the project's domain language, and respect ADRs in the area you're touching.
+> **Note on tooling:** the tdd-guide scripts are **Python library modules, not CLI tools** — import them; do not invoke them as commands. Runnable patterns below.
 
-## What a good test is
+## Modes
 
-Tests verify behavior through public interfaces, not implementation details. Code can change entirely; tests shouldn't. A good test reads like a specification — "user can checkout with valid cart" tells you exactly what capability exists — and survives refactors because it doesn't care about internal structure.
+### `/tdd generate <file-or-dir>` — write failing tests FIRST
 
-See [tests.md](tests.md) for examples and [mocking.md](mocking.md) for mocking guidelines.
+1. Read `engineering-team/skills/tdd-guide/SKILL.md` and `engineering-team/skills/tdd-guide/references/tdd-best-practices.md` for the red-green-refactor discipline and test-case taxonomy (happy path, edge cases, error cases)
+2. Detect the project's test framework — use `engineering-team/skills/tdd-guide/references/framework-guide.md` for Jest/Vitest/pytest/JUnit conventions
+3. Write the tests **before** any implementation; run them and confirm they FAIL (red)
+4. Implement the minimum code to pass (green), then refactor with tests staying green
+5. Optionally use the library for stub scaffolding:
 
-## Seams — where tests go
+```bash
+cd engineering-team/skills/tdd-guide/scripts && python3 -c "
+from test_generator import TestGenerator, TestFramework
+g = TestGenerator(framework=TestFramework.PYTEST, language='python')
+cases = g.generate_from_requirements({'acceptance_criteria': [
+    {'id': 'AC1', 'description': 'validates email format'},
+    {'id': 'AC2', 'description': 'rejects duplicate emails'}]})
+print(g.generate_test_file('registration', cases))
+"
+```
 
-A **seam** is the public boundary you test at: the interface where you observe behavior without reaching inside. Tests live at seams, never against internals.
+### `/tdd coverage <coverage-report>` — analyze gaps against a threshold
 
-**Test only at pre-agreed seams.** Before writing any test, write down the seams under test and confirm them with the user. No test is written at an unconfirmed seam. You can't test everything — agreeing the seams up front is how testing effort lands on the critical paths and complex logic instead of every edge case.
+1. Generate a real coverage report with the project's native runner first (`pytest --cov --cov-report=lcov`, `vitest run --coverage`, `jest --coverage`)
+2. Parse it and list prioritized gaps:
 
-Ask: "What's the public interface, and which seams should we test?"
+```bash
+cd engineering-team/skills/tdd-guide/scripts && python3 -c "
+from coverage_analyzer import CoverageAnalyzer
+a = CoverageAnalyzer()
+a.parse_coverage_report(open('<path-to-lcov-or-json>').read(), 'lcov')  # or 'json' / 'xml'
+print(a.calculate_summary())
+for gap in a.identify_gaps(threshold=80.0): print(gap)
+"
+```
 
-When the shape of that interface is itself in question — how deep the module is, where the seam belongs, what the interface should expose — call the Skill tool with "codebase-design" for the vocabulary. It is the shared source of the module, interface, depth, seam, adapter, leverage and locality terms, and it is a reference to consult, not a session to run.
+(Smoke-test input available at `engineering-team/skills/tdd-guide/assets/sample_coverage_report.lcov`.)
 
-## Anti-patterns
+3. For each gap, return to `/tdd generate` — coverage gaps are filled with tests, not excuses
 
-- **Implementation-coupled** — mocks internal collaborators, tests private methods, or verifies through a side channel (querying the database instead of using the interface). The tell: the test breaks when you refactor but behavior hasn't changed.
-- **Tautological** — the assertion recomputes the expected value the way the code does (`expect(add(a, b)).toBe(a + b)`, a snapshot derived by hand the same way, a constant asserted equal to itself), so it passes by construction and can never disagree with the code. Expected values must come from an independent source of truth — a known-good literal, a worked example, the spec.
-- **Horizontal slicing** — writing all tests first, then all implementation. Bulk tests verify _imagined_ behavior: you test the _shape_ of things rather than user-facing behavior, the tests go insensitive to real changes, and you commit to test structure before understanding the implementation. Work in **vertical slices** instead — one test → one implementation → repeat, each test a **tracer bullet** that responds to what the last cycle taught you.
+### `/tdd validate <test-file>` — review test quality
 
-## Rules of the loop
+Read the test file and check it against `engineering-team/skills/tdd-guide/references/tdd-best-practices.md`:
 
-- **Red before green.** Write the failing test first, then only enough code to pass it. Don't anticipate future tests or add speculative features.
-- **One slice at a time.** One seam, one test, one minimal implementation per cycle.
-- **Refactoring is not part of the loop.** It belongs to the review stage (see the `code-review` skill), not the red → green implementation cycle.
+- [ ] Every test has at least one meaningful assertion (no assertion-free tests)
+- [ ] Edge cases and error paths covered, not just happy path
+- [ ] Tests are independent (no order coupling, no shared mutable state)
+- [ ] Test names describe behavior, not implementation
+- [ ] No testing of private internals — behavior only
+
+Report failures with concrete rewrite suggestions.
+
+## CI Integration
+
+For wiring coverage thresholds into CI, follow `engineering-team/skills/tdd-guide/references/ci-integration.md`.
+
+## Repo Assets (verified paths)
+
+- Skill: `engineering-team/skills/tdd-guide/SKILL.md` (+ `HOW_TO_USE.md`)
+- Best practices: `engineering-team/skills/tdd-guide/references/tdd-best-practices.md`
+- Framework conventions: `engineering-team/skills/tdd-guide/references/framework-guide.md`
+- CI integration: `engineering-team/skills/tdd-guide/references/ci-integration.md`
+- Library modules: `engineering-team/skills/tdd-guide/scripts/` (test_generator, coverage_analyzer, tdd_workflow, fixture_generator, metrics_calculator — import-only)
+- Sample inputs: `engineering-team/skills/tdd-guide/assets/`

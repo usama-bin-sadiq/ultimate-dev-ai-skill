@@ -29,6 +29,15 @@ it and has to reconstruct it.
 | [security-reviewer](security-reviewer.md) | Content crosses a trust boundary, or a capability is being promoted | A concrete attack, and the control that would actually stop it |
 | [author](author.md) | `skill-creator` has decided a new capability is warranted | A **candidate** skill, never an installed one |
 
+The seven above are the kernel's own roles. `agents/` holds 286 role files in
+total: the remaining 285 were adopted from the catalogue and are reachable by
+name but carry no dispatch condition in `references/delegation.md`, so nothing
+decides to call them. Search before assuming a role is missing:
+
+```bash
+python3 tools/index-tree.py --search <term>
+```
+
 ## The rules that apply to all of them
 
 - **The delegate gets the context it needs and nothing more.** Over-briefing costs

@@ -224,6 +224,13 @@ python scripts/isms_audit_scheduler.py --controls controls.csv --format markdown
 
 ---
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/iso27001_audit_playbook.md`](references/iso27001_audit_playbook.md)
+
 ## Audit Performance Metrics
 
 | KPI | Target | Measurement |

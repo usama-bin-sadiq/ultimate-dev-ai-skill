@@ -54,6 +54,13 @@ Gather this context (ask if not provided):
 
 ---
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/listening-sources-template.md`](references/listening-sources-template.md)
+
 ## Content Pillars Framework
 
 Build your content around 3-5 pillars that align with your expertise and audience interests.

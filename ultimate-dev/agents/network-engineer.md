@@ -1,5 +1,5 @@
 ---
-name: Network Engineer
+name: network-engineer
 description: Expert network engineer for Cisco IOS/IOS-XE, Cisco ASA/FTD, Juniper Junos, and Palo Alto PAN-OS routing, switching, firewalling, and troubleshooting.
 color: "#008c95"
 emoji: 🌐

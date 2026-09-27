@@ -246,3 +246,10 @@ npx prisma-erd-generator
 5. **Index foreign keys** — every FK column should have an index
 6. **Partial indexes** — use `WHERE deleted_at IS NULL` for active-only queries
 7. **RLS over application-level filtering** — database enforces tenancy, not just app code
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/full-schema-examples.md`](references/full-schema-examples.md)

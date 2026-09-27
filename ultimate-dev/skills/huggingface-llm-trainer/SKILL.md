@@ -703,6 +703,13 @@ Add to PEP 723 header:
 - `references/troubleshooting.md` - Common issues and solutions
 - `references/local_training_macos.md` - Local training on macOS
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/reliability_principles.md`](references/reliability_principles.md)
+
 ### Scripts (In This Skill)
 - `scripts/train_sft_example.py` - Production SFT template
 - `scripts/train_dpo_example.py` - Production DPO template

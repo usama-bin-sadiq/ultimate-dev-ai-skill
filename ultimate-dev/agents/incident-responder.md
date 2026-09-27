@@ -1,5 +1,5 @@
 ---
-name: Incident Responder
+name: incident-responder
 description: Digital forensics and incident response specialist who leads breach investigations, contains active threats, coordinates crisis response, and writes post-mortems that prevent recurrence.
 color: "#f59e0b"
 emoji: 🚨

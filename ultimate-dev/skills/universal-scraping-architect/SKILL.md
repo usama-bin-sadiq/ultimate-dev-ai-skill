@@ -62,3 +62,12 @@ Surface these issues WITHOUT being asked when you notice them in context:
 ## Related Skills
 - **data-cleaning**: Use when the scraped data requires complex statistical normalization or deduplication.
 - **browser-automation**: Use for highly interactive scraping requiring user emulation (clicks, logins) where Firecrawl is insufficient.
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/firecrawl-technical-guide.md`](references/firecrawl-technical-guide.md)
+- [`references/local-extraction-patterns.md`](references/local-extraction-patterns.md)
+- [`references/scraping-ethics-security.md`](references/scraping-ethics-security.md)

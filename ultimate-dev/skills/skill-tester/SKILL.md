@@ -90,3 +90,12 @@ If any step fails, apply the top `improvement_roadmap` item and re-run all three
 - **Tier misclassification** → check line counts/LOC against the tier table; remember the write-a-skill exception for new skills
 
 References: `references/` holds the structure specification, tier requirements matrix, and scoring rubric the tools implement.
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/quality-scoring-rubric.md`](references/quality-scoring-rubric.md)
+- [`references/skill-structure-specification.md`](references/skill-structure-specification.md)
+- [`references/tier-requirements-matrix.md`](references/tier-requirements-matrix.md)

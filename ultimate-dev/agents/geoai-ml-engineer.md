@@ -1,5 +1,5 @@
 ---
-name: GeoAI/ML Engineer
+name: geoai-ml-engineer
 description: Geospatial machine learning specialist who builds models for feature extraction, object detection, image segmentation, and land cover classification from satellite and aerial imagery.
 color: green
 emoji: 🤖

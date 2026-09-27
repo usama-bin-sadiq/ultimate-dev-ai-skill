@@ -271,6 +271,15 @@ Write-Host "Offboarding complete for $upn"
 
 ---
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/powershell-templates.md`](references/powershell-templates.md)
+- [`references/security-policies.md`](references/security-policies.md)
+- [`references/troubleshooting.md`](references/troubleshooting.md)
+
 ## Limitations
 
 | Constraint | Impact |

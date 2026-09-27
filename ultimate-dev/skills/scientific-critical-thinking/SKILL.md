@@ -43,7 +43,7 @@ Only add figures when the **user explicitly requests** a diagram (for example, a
 Run from the repository root, with `OPENROUTER_API_KEY` set:
 
 ```bash
-python skills/scientific-schematics/scripts/generate_schematic.py "GRADE evidence assessment flowchart with downgrade and upgrade factors" -o figures/grade_flowchart.png --doc-type report
+python scripts/generate_schematic.py "GRADE evidence assessment flowchart with downgrade and upgrade factors" -o figures/grade_flowchart.png --doc-type report
 ```
 
 **Disclosure:** AI schematic generation sends your prompt to [OpenRouter](https://openrouter.ai/) (a third-party API). Do not include unpublished sensitive details unless that transmission is appropriate for your project.

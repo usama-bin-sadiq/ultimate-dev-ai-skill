@@ -228,3 +228,11 @@ description: Atlassian Administrator for managing and organizing Atlassian produ
 - Support Jira/Confluence Experts by performing UI/REST admin changes they cannot do via MCP
 - Ensure Senior PM has visibility into org health (exports from admin.atlassian.com)
 - Enable Scrum Master with team provisioning (admin console)
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/security-hardening-guide.md`](references/security-hardening-guide.md)
+- [`references/user-provisioning-checklist.md`](references/user-provisioning-checklist.md)

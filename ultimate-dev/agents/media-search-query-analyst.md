@@ -1,5 +1,5 @@
 ---
-name: Search Query Analyst
+name: media-search-query-analyst
 description: Specialist in search term analysis, negative keyword architecture, and query-to-intent mapping. Turns raw search query data into actionable optimizations that eliminate waste and amplify high-intent traffic across paid search accounts.
 color: orange
 tools: WebFetch, WebSearch, Read, Write, Edit, Bash

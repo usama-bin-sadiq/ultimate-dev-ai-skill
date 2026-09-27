@@ -6,8 +6,8 @@ cannot tell which is right.
 
 ## What this is
 
-2877 capabilities are installed: 2585 sub-skills and
-292 roles. This file is the map, not the territory — it tells
+2398 capabilities are installed: 2112 sub-skills and
+286 roles. This file is the map, not the territory — it tells
 you a capability exists and where it lives, and it does not load any of
 them. A catalogue printed into context would cost more than the task.
 
@@ -27,12 +27,12 @@ hit is **routed** — whether a decision can actually reach it — or
 
 | | |
 |---|---|
-| sub-skills | 2585 |
-| roles | 292 |
-| **discoverable** (has a description) | **2860** |
-| **undiscoverable** (no description) | **17** |
+| sub-skills | 2112 |
+| roles | 286 |
+| **discoverable** (has a description) | **2398** |
+| **undiscoverable** (no description) | **0** |
 | roles with a dispatch condition | 19 |
-| tool-bound | 765 |
+| tool-bound | 614 |
 
 ## Two different mechanisms, not one count
 
@@ -88,71 +88,71 @@ which is the mistake progressive disclosure exists to prevent.
 python3 tools/index-tree.py --search <term>
 ```
 
-### data — 877 installed, 0 routed, 877 not
+### data — 860 installed, 0 routed, 860 not
 
-  `-21risk-automation`, `-2chat-automation`, `3-statement-model`, `3-statement-model`, `ably-automation`, `abstract-automation`, `abuselpdb-automation`, `abyssale-automation`, `accelo-automation`, `accredible-certificates-automation`, `acculynx-automation`, `active-campaign-automation`, ... (877 total)
+  `21risk-automation`, `2chat-automation`, `3-statement-model`, `ably-automation`, `abstract-automation`, `abuselpdb-automation`, `abyssale-automation`, `accelo-automation`, `accredible-certificates-automation`, `acculynx-automation`, `active-campaign-automation`, `addresszen-automation`, ... (860 total)
 
-### testing — 522 installed, 9 routed, 513 not
+### testing — 448 installed, 9 routed, 439 not
 
-  `3D & Scene Developer`, `ab-test-setup`, `ab-test-setup`, `ab-testing`, `Accessibility Auditor`, `Account Strategist`, `Accounts Payable Agent`, `Ad Creative Strategist`, `ad-creative`, `ad-creative`, `ad-creative`, `aeon`, ... (513 total)
+  `3d-scene-developer`, `ab-test-setup`, `ab-testing`, `abroad-advisor`, `accessibility-auditor`, `account-strategist`, `ad-creative`, `aeon`, `agent-platform-deploy`, `agent-platform-inference`, `agent-tui`, `ai-data-remediation-engineer`, ... (439 total)
 
-### verification — 432 installed, 7 routed, 425 not
+### verification — 334 installed, 7 routed, 327 not
 
-  `a11y-audit`, `a11y-audit`, `a11y-audit`, `access`, `access`, `adversarial-reviewer`, `adversarial-reviewer`, `aeo`, `aeo`, `agent-decision-receipts`, `agent-decision-receipts`, `agent-harness`, ... (425 total)
+  `a11y-audit`, `academy-guide`, `access`, `adversarial-reviewer`, `aeo`, `agent-decision-receipts`, `agent-harness`, `agentic-search-optimizer`, `ahrefs-automation`, `ai-citation-strategist`, `ai-generated-code-auditor`, `ai-readiness`, ... (327 total)
 
-### general — 205 installed, 0 routed, 205 not
+### planning — 144 installed, 1 routed, 143 not
 
-  `academy-guide`, `algorithmic-art`, `alloydb-basics`, `Anthropologist`, `antigravity-support`, `ar-status`, `ar-status`, `arena`, `bids`, `bigquery-ai-ml`, `bigquery-basics`, `bigquery-bigframes`, ... (205 total)
+  `accrual-schedule`, `agent-memory`, `agile-product-owner`, `business-growth-skills`, `capa-officer`, `capability-diagnosis`, `capsule-crm-automation`, `capture`, `ceo-advisor`, `cfo-advisor`, `challenge`, `chatgpt-apps`, ... (143 total)
 
-### planning — 192 installed, 1 routed, 191 not
+### design — 127 installed, 0 routed, 127 not
 
-  `accrual-schedule`, `accrual-schedule`, `agent-memory`, `agent-memory`, `agile-product-owner`, `agile-product-owner`, `business-growth-skills`, `business-growth-skills`, `capa-officer`, `capa-officer`, `Capsule CRM Automation`, `capture`, ... (191 total)
+  `adaptyv`, `agent-designer`, `agent-workflow-designer`, `alphagenome`, `anthropic-brand-kit`, `api-and-interface-design`, `application-design-center-design-deploy`, `architect`, `artifacts-builder`, `aws-solution-architect`, `azure-cloud-architect`, `banner-design`, ... (127 total)
 
-### design — 145 installed, 0 routed, 145 not
+### general — 90 installed, 0 routed, 90 not
 
-  `adaptyv`, `agent-designer`, `agent-designer`, `agent-workflow-designer`, `agent-workflow-designer`, `alphagenome`, `api-and-interface-design`, `application-design-center-design-deploy`, `architect`, `artifacts-builder`, `aws-solution-architect`, `aws-solution-architect`, ... (145 total)
+  `algorithmic-art`, `anthropologist`, `ar-status`, `arena`, `braintree-automation`, `bro`, `buyer-list`, `cardputer-buddy`, `careful`, `caveman`, `change-management`, `chief-of-staff`, ... (90 total)
 
-### documentation — 123 installed, 1 routed, 122 not
+### documentation — 88 installed, 1 routed, 87 not
 
-  `adrapid-automation`, `agent-development`, `arquiteto-de-empresa`, `arquiteto-de-empresa`, `arquiteto-de-empresa`, `board`, `board`, `changelog-generator`, `cim-builder`, `clinical-decision-support`, `cold-email`, `cold-email`, ... (122 total)
+  `adrapid-automation`, `agent-development`, `antigravity-support`, `arquiteto-de-empresa`, `bigquery-ai-ml`, `board`, `cim-builder`, `clinical-decision-support`, `cloud-monitoring-promql-query`, `cold-email`, `command-development`, `content-research-writer`, ... (87 total)
 
-### agent — 76 installed, 1 routed, 75 not
+### security — 64 installed, 0 routed, 64 not
 
-  `Agent Name`, `agent-platform-alert-configuration`, `agent-platform-eval-flywheel`, `agent-platform-inference`, `agent-platform-model-registry`, `agent-platform-prompt-management`, `agent-platform-rag-engine-management`, `agent-platform-skill-registry`, `agent-platform-tuning`, `agent-platform-tuning-management`, `agent-reach`, `agent-tui`, ... (75 total)
+  `agent-launcher-orchestrator`, `agent-platform-alert-configuration`, `agent-platform-endpoint-management`, `agent-platform-troubleshooting`, `ai-security`, `api-platform-engineer`, `auth0-automation`, `behuman`, `book-co-author`, `book-sft-pipeline`, `book-to-skill`, `ciso-advisor`, ... (64 total)
 
-### security — 66 installed, 0 routed, 66 not
+### devops — 51 installed, 0 routed, 51 not
 
-  `agent-launcher-orchestrator`, `agent-launcher-orchestrator`, `Agentic Identity & Trust Architect`, `ai-security`, `ai-security`, `API Platform Engineer`, `auth0-automation`, `behuman`, `behuman`, `Book Co-Author`, `book-sft-pipeline`, `book-to-skill`, ... (66 total)
+  `aeo-foundations`, `agent-platform-model-registry`, `agent-platform-prompt-management`, `agent-platform-tuning`, `agent-platform-tuning-management`, `ai-act-readiness`, `biopython`, `brief`, `c-level-agents`, `canary`, `cloud-build-basics`, `cloud-run-alert-configuration`, ... (51 total)
 
-### research — 54 installed, 0 routed, 54 not
+### agent — 51 installed, 1 routed, 50 not
 
-  `advanced-evaluation`, `boardroom`, `boardroom`, `bond-futures-basis`, `business-investment-advisor`, `business-investment-advisor`, `chief-of-staff`, `chief-of-staff`, `cobrapy`, `collab-proof`, `collab-proof`, `competitive-ads-extractor`, ... (54 total)
+  `agent-platform-skill-registry`, `aging-parent-care-companion`, `anti-overengineering-help`, `ask-matt`, `bdi-mental-states`, `c-level-skills`, `capability-selection`, `claude-handoff`, `codebase-pattern-finder`, `context-restore`, `context-save`, `cs-onboard`, ... (50 total)
 
-### performance — 49 installed, 0 routed, 49 not
+### research — 42 installed, 0 routed, 42 not
 
-  `ads`, `benchmark`, `benchmark-models`, `bigquery-slot-cost-optimizer`, `claude-coach`, `claude-coach`, `client-report`, `content-humanizer`, `content-humanizer`, `context-compression`, `context-degradation`, `context-optimization`, ... (49 total)
+  `advanced-evaluation`, `boardroom`, `bond-futures-basis`, `business-investment-advisor`, `chief-of-staff`, `cobrapy`, `collab-proof`, `competitive-ads-extractor`, `competitive-matrix`, `competitor-alternatives`, `consciousness-council`, `developer-growth-analysis`, ... (42 total)
 
-### devops — 48 installed, 0 routed, 48 not
+### performance — 37 installed, 0 routed, 37 not
 
-  `AEO Foundations Architect`, `agent-platform-deploy`, `Agents Orchestrator`, `ai-act-readiness`, `ai-act-readiness`, `biopython`, `brief`, `brief`, `c-level-agents`, `c-level-agents`, `canary`, `ci`, ... (48 total)
+  `ads`, `anti-overengineering-impact`, `benchmark`, `benchmark-models`, `claude-coach`, `client-report`, `content-humanizer`, `context-compression`, `context-degradation`, `context-optimization`, `cro`, `dd-meeting-prep`, ... (37 total)
 
-### backend — 26 installed, 0 routed, 26 not
+### backend — 18 installed, 0 routed, 18 not
 
-  `agent-platform-endpoint-management`, `build-mcpb`, `chief-ai-officer-advisor`, `chief-ai-officer-advisor`, `chief-ai-officer-advisor`, `claude-api`, `connect-apps`, `developing-genkit-python`, `Dynamics 365 Automation`, `gemini-agents-api`, `gemini-api`, `gemini-interactions-api`, ... (26 total)
+  `build-mcpb`, `chief-ai-officer-advisor`, `connect-apps`, `developing-genkit-python`, `dynamics365-automation`, `gemini-agents-api`, `gemini-api`, `gemini-interactions-api`, `gemini-live-api`, `genomic-intelligence`, `hook-development`, `huggingface-local-models`, ... (18 total)
 
-### debugging — 19 installed, 0 routed, 19 not
+### business — 13 installed, 0 routed, 13 not
 
-  `agent-platform-troubleshooting`, `context-engineering-collection`, `diagnosing-bugs`, `gke-ai-troubleshooting-handle-disruption-gpu-tpu`, `gke-ai-troubleshooting-jobset-interruption`, `gke-ai-troubleshooting-tpu-dynamic-slices-monitoring`, `gke-ai-troubleshooting-tpu-vbar-oom`, `gke-storage-troubleshooting`, `gke-workload-scaling-troubleshooting`, `gke-workload-troubleshooting`, `google-cloud-filestore-log-troubleshooting`, `iam-helper-for-troubleshooting`, ... (19 total)
+  `ashby-automation`, `china-market-localization-strategist`, `demo-video`, `distribution-agent`, `french-consulting-market`, `gumroad-automation`, `korean-business-navigator`, `marketing-ideas`, `marketing-psychology`, `netsuite-automation`, `omnisend-automation`, `solo-founder`, ... (13 total)
 
-### business — 16 installed, 0 routed, 16 not
+### code-quality — 13 installed, 0 routed, 13 not
 
-  `Ashby Automation`, `China Market Localization Strategist`, `demo-video`, `demo-video`, `French Consulting Market Navigator`, `Gumroad Automation`, `Korean Business Navigator`, `marketing-ideas`, `marketing-ideas`, `marketing-psychology`, `marketing-psychology`, `NetSuite Automation`, ... (16 total)
+  `defuddle`, `file-organizer`, `filesystem-context`, `flag-cleanup`, `git-guardrails-claude-code`, `internal-narrative`, `jupyter-notebook`, `memory`, `merge`, `output-skill`, `principle-laziness-protocol`, `principle-subtract-before-you-add`, ... (13 total)
 
-### code-quality — 15 installed, 0 routed, 15 not
+### frontend — 9 installed, 0 routed, 9 not
 
-  `defuddle`, `file-organizer`, `filesystem-context`, `flag-cleanup`, `full-output-enforcement`, `git-guardrails-claude-code`, `internal-narrative`, `internal-narrative`, `jupyter-notebook`, `memory`, `merge`, `merge`, ... (15 total)
+  `atlassian-templates`, `codebase-locator`, `google-mobile-ads-get-started`, `improve-codebase-architecture`, `nav-tieout`, `pi-agent`, `playground`, `plugin-structure`, `show-me`
 
-### frontend — 12 installed, 0 routed, 12 not
+### debugging — 9 installed, 0 routed, 9 not
 
-  `atlassian-templates`, `atlassian-templates`, `codebase-locator`, `improve-codebase-architecture`, `nav-tieout`, `nav-tieout`, `pi-agent`, `playground`, `plugin-structure`, `qt-figma-component-generation`, `show-me`, `vercel-react-native-skills`
+  `diagnosing-bugs`, `google-ads-api-quickstart`, `interleaved-thinking`, `investigate`, `ios-clean`, `ios-sync`, `managed-airflow-dag-troubleshooting`, `obsidian-cli`, `spinning-up-deep-rl`
 

@@ -1,5 +1,5 @@
 ---
-name: Healthcare Customer Service
+name: customer-service
 emoji: 🏥
 description: Empathetic healthcare customer service specialist for patient support, billing inquiries, appointment management, insurance questions, complaint resolution, and seamless escalation to clinical or administrative staff
 color: teal

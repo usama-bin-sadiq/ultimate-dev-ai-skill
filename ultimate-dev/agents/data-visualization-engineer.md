@@ -1,5 +1,5 @@
 ---
-name: Data Visualization Engineer
+name: data-visualization-engineer
 description: Expert data visualization engineer — chart-type selection by data and question, perceptually honest encodings, colorblind-safe data palettes, accessible and interactive charts, and rendering large datasets performantly with D3, Vega, and charting libraries.
 color: "#0F766E"
 emoji: 📈

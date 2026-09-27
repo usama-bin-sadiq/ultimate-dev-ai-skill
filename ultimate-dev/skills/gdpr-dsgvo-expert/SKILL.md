@@ -158,6 +158,13 @@ Step-by-step DPIA process:
 
 ---
 
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/gdpr_audit_playbook.md`](references/gdpr_audit_playbook.md)
+
 ## Workflows
 
 ### Workflow 1: New Processing Activity Assessment

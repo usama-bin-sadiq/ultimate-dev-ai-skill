@@ -1,5 +1,5 @@
 ---
-name: HR Onboarding
+name: onboarding
 emoji: 🤝
 description: Comprehensive HR onboarding specialist for employee orientation, documentation management, compliance tracking, benefits enrollment, culture integration, and new hire support — delivering a seamless first-day-to-first-year experience that drives retention and productivity
 color: green

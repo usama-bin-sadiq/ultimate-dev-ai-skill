@@ -435,3 +435,13 @@ curl -X POST \
 > For troubleshooting quota/resource exhausted errors and hardware fallback,
 > load `load_skill_resource(skill_name='agent-platform-deploy',
 > file_path='references/troubleshooting.md')`.
+
+## Reference files
+
+These ship with the skill and are read on demand; none is needed to
+use it. Each answers one question the sections above do not.
+
+- [`references/region_availability.md`](references/region_availability.md)
+- [`references/troubleshooting.md`](references/troubleshooting.md)
+- [`references/undeploy_guide.md`](references/undeploy_guide.md)
+- [`references/usage.md`](references/usage.md)

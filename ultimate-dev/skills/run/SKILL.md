@@ -1,84 +1,110 @@
 ---
 name: "run"
-description: "Run a single experiment iteration. Edit the target file, evaluate, keep or discard. Use when the user runs /ar:run or asks for one manual autoresearch iteration."
-command: /ar:run
+description: "One-shot lifecycle command that chains init → baseline → spawn → eval → merge in a single invocation. Use when the user runs /hub:run or asks to execute a full AgentHub competition end-to-end."
+command: /hub:run
 ---
 
-# /ar:run — Single Experiment Iteration
+# /hub:run — One-Shot Lifecycle
 
-Run exactly ONE experiment iteration: review history, decide a change, edit, commit, evaluate.
+Run the full AgentHub lifecycle in one command: initialize, capture baseline, spawn agents, evaluate results, and merge the winner.
 
 ## Usage
 
 ```
-/ar:run engineering/api-speed              # Run one iteration
-/ar:run                                     # List experiments, let user pick
+/hub:run --task "Reduce p50 latency" --agents 3 \
+  --eval "pytest bench.py --json" --metric p50_ms --direction lower \
+  --template optimizer
+
+/hub:run --task "Refactor auth module" --agents 2 --template refactorer
+
+/hub:run --task "Cover untested utils" --agents 3 \
+  --eval "pytest --cov=utils --cov-report=json" --metric coverage_pct --direction higher \
+  --template test-writer
+
+/hub:run --task "Write 3 email subject lines for spring sale campaign" --agents 3 --judge
 ```
+
+## Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `--task` | Yes | Task description for agents |
+| `--agents` | No | Number of parallel agents (default: 3) |
+| `--eval` | No | Eval command to measure results (skip for LLM judge mode) |
+| `--metric` | No | Metric name to extract from eval output (required if `--eval` given) |
+| `--direction` | No | `lower` or `higher` — which direction is better (required if `--metric` given) |
+| `--template` | No | Agent template: `optimizer`, `refactorer`, `test-writer`, `bug-fixer` |
 
 ## What It Does
 
-### Step 1: Resolve experiment
+Execute these steps sequentially:
 
-If no experiment specified, run `python {skill_path}/scripts/setup_experiment.py --list` and ask the user to pick.
+### Step 1: Initialize
 
-### Step 2: Load context
-
-```bash
-# Read experiment config
-cat .autoresearch/{domain}/{name}/config.cfg
-
-# Read strategy and constraints
-cat .autoresearch/{domain}/{name}/program.md
-
-# Read experiment history
-cat .autoresearch/{domain}/{name}/results.tsv
-
-# Checkout the experiment branch
-git checkout autoresearch/{domain}/{name}
-```
-
-### Step 3: Decide what to try
-
-Review results.tsv:
-- What changes were kept? What pattern do they share?
-- What was discarded? Avoid repeating those approaches.
-- What crashed? Understand why.
-- How many runs so far? (Escalate strategy accordingly)
-
-**Strategy escalation:**
-- Runs 1-5: Low-hanging fruit (obvious improvements)
-- Runs 6-15: Systematic exploration (vary one parameter)
-- Runs 16-30: Structural changes (algorithm swaps)
-- Runs 30+: Radical experiments (completely different approaches)
-
-### Step 4: Make ONE change
-
-Edit only the target file specified in config.cfg. Change one thing. Keep it simple.
-
-### Step 5: Commit and evaluate
+Run `/hub:hub-init` with the provided arguments:
 
 ```bash
-git add {target}
-git commit -m "experiment: {short description of what changed}"
-
-python {skill_path}/scripts/run_experiment.py \
-  --experiment {domain}/{name} --single
+python {skill_path}/scripts/hub_init.py \
+  --task "{task}" --agents {N} \
+  [--eval "{eval_cmd}"] [--metric {metric}] [--direction {direction}]
 ```
 
-### Step 6: Report result
+Display the session ID to the user.
 
-Read the script output. Tell the user:
-- **KEEP**: "Improvement! {metric}: {value} ({delta} from previous best)"
-- **DISCARD**: "No improvement. {metric}: {value} vs best {best}. Reverted."
-- **CRASH**: "Evaluation failed: {reason}. Reverted."
+### Step 2: Capture Baseline
 
-### Step 7: Self-improvement check
+If `--eval` was provided:
 
-After every 10th experiment (check results.tsv line count), update the Strategy section of program.md with patterns learned.
+1. Run the eval command in the current working directory
+2. Extract the metric value from stdout
+3. Display: `Baseline captured: {metric} = {value}`
+4. Append `baseline: {value}` to `.agenthub/sessions/{session-id}/config.yaml`
 
-## Rules
+If no `--eval` was provided, skip this step.
 
-- ONE change per iteration. Don't change 5 things at once.
-- NEVER modify the evaluator (evaluate.py). It's ground truth.
-- Simplicity wins. Equal performance with simpler code is an improvement.
-- No new dependencies.
+### Step 3: Spawn Agents
+
+Run `/hub:spawn` with the session ID.
+
+If `--template` was provided, use the template dispatch prompt from `../agenthub/references/agent-templates.md` instead of the default dispatch prompt. Pass the eval command, metric, and baseline to the template variables.
+
+Launch all agents in a single message with multiple Agent tool calls (true parallelism).
+
+### Step 4: Wait and Monitor
+
+After spawning, inform the user that agents are running. When all agents complete (Agent tool returns results):
+
+1. Display a brief summary of each agent's work
+2. Proceed to evaluation
+
+### Step 5: Evaluate
+
+Run `/hub:eval` with the session ID:
+
+- If `--eval` was provided: metric-based ranking with `result_ranker.py`
+- If no `--eval`: LLM judge mode (coordinator reads diffs and ranks)
+
+If baseline was captured, pass `--baseline {value}` to `result_ranker.py` so deltas are shown.
+
+Display the ranked results table.
+
+### Step 6: Confirm and Merge
+
+Present the results to the user and ask for confirmation:
+
+```
+Agent-2 is the winner (128ms, -52ms from baseline).
+Merge agent-2's branch? [Y/n]
+```
+
+If confirmed, run `/hub:merge`. If declined, inform the user they can:
+- `/hub:merge --agent agent-{N}` to pick a different winner
+- `/hub:eval --judge` to re-evaluate with LLM judge
+- Inspect branches manually
+
+## Critical Rules
+
+- **Sequential execution** — each step depends on the previous
+- **Stop on failure** — if any step fails, report the error and stop
+- **User confirms merge** — never auto-merge without asking
+- **Template is optional** — without `--template`, agents use the default dispatch prompt from `/hub:spawn`

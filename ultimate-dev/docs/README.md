@@ -16,6 +16,8 @@ Read in this order if you are new.
 | [operations/](operations/) | How to run it, what to do when it misbehaves, how to bound cost |
 | [security/](security/) | The threat model, the controls, and what to do when a control fails |
 | [evaluation/](evaluation/) | Which kernel property each test class exercises |
+| [tool-integration/](tool-integration/) | Per-agent setup guides (Cursor, Codex, Copilot, Gemini CLI, Windsurf, and others) and how to author a skill |
+| [PERSONAS.md](PERSONAS.md) | The persona format specification. Describes a tree this repository does not ship |
 
 ## Start here
 
