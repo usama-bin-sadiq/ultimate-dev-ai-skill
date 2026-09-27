@@ -18,7 +18,7 @@ All three tools:
 
 ## cs-skill-author Persona Agent
 
-Lives at `../agents/cs-skill-author.md`. Voice: forcing-question interrogator. Surfaces Matt's skill-authoring workflow as an interrogation before any new skill commit.
+Voice: forcing-question interrogator. Surfaces Matt's skill-authoring workflow as an interrogation before any new skill commit.
 
 **Opening question:** "What capability does this skill provide, and what's the trigger phrase that distinguishes it from existing skills?"
 
@@ -32,7 +32,7 @@ Lives at `../agents/cs-skill-author.md`. Voice: forcing-question interrogator. S
 
 ## `/cs:write-a-skill` Slash Command
 
-Lives at `../commands/cs-write-a-skill.md`. Three-step flow:
+Three-step flow:
 
 1. Run `cs-skill-author` interrogation (6 questions)
 2. Draft skill files per Matt's structure pattern

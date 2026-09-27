@@ -298,17 +298,6 @@ Vary one numerical control at a time, then perform selected joint checks:
 Define acceptance thresholds before looking at the final comparison. Report
 absolute and relative differences and handle near-zero denominators explicitly.
 
-## Portable result audit
-
-`../scripts/result_audit.py` reads only bounded strict JSON. It checks schema,
-version, finite values, monotonic time grids, population bounds, analytic
-reference error when available, convergence deltas, and whether assumptions,
-seeds, and solver stats were recorded. It does not load QuTiP result files or
-other Python-object serialization.
-
-`../scripts/steady_state_spectrum_planner.py` produces a bounded plan for
-steady-state and direct/FFT spectrum checks without running a model.
-
 ## Sources (verified 2026-07-23)
 
 - [Solver, correlation, spectrum, and steady-state API](https://qutip.readthedocs.io/en/stable/apidoc/solver.html)

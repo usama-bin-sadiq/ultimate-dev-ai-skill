@@ -122,9 +122,6 @@ python ../../engineering/karpathy-coder/skills/karpathy-coder/scripts/diff_surge
 - [cs-fullstack-engineer](cs-fullstack-engineer.md) — parent orchestrator
 - [cs-frontend-engineer](cs-frontend-engineer.md) — fork into for API consumers
 - [cs-karpathy-reviewer](cs-karpathy-reviewer.md) — invoke before every commit
-- [cs-cto-advisor](../c-level/cs-cto-advisor.md) — escalate strategic build-vs-buy
-- [cs-vpe-advisor](../../c-level-agents/agents/cs-vpe-advisor.md) — escalate throughput / org / DORA
-- [cs-ciso-advisor](../../c-level-agents/agents/cs-ciso-advisor.md) — escalate regulated-data exposure
 
 ## Invocation Contract
 
@@ -138,6 +135,4 @@ When invoked from another agent, ALWAYS return a ≤ 200-word digest with: match
 
 - Skill: `../senior-backend/SKILL.md`
 - Karpathy 4 principles: `../karpathy-coder/references/karpathy-principles.md`
-- Matt Pocock canon: `../../engineering/grill-me/skills/grill-me/references/forcing_question_patterns.md`
 - SLO canon (Google SRE): `../slo-architect/references/slo_principles.md`
-- Path-B 11-file contract: `../../business-operations/CLAUDE.md`

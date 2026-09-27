@@ -130,8 +130,8 @@ The additions below are **not** part of Matt's upstream skill. They operationali
 
 ### Companion
 
-- Agent: `cs-grill-with-docs` (see `../../agents/cs-grill-with-docs.md`)
-- Command: `/cs:grill-with-docs` (see `../../commands/cs-grill-with-docs.md`)
+- Agent: `cs-grill-with-docs`
+- Command: `/cs:grill-with-docs`
 
 ---
 

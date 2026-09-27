@@ -494,8 +494,6 @@ echo "Template: ../../project-management/skills/senior-pm/assets/executive_repor
 
 ## Related Agents
 
-- [cs-product-manager](../product/cs-product-manager.md) -- Product prioritization with RICE, customer discovery, PRD development
-- [cs-agile-product-owner](../product/cs-agile-product-owner.md) -- User story generation, backlog management, acceptance criteria (planned)
 - cs-scrum-master -- Dedicated Scrum ceremony facilitation and team coaching (planned)
 
 ## References
@@ -505,8 +503,6 @@ echo "Template: ../../project-management/skills/senior-pm/assets/executive_repor
 - **Jira Expert Skill:** [../../project-management/skills/jira-expert/SKILL.md](../jira-expert/SKILL.md)
 - **Confluence Expert Skill:** [../../project-management/skills/confluence-expert/SKILL.md](../confluence-expert/SKILL.md)
 - **Atlassian Admin Skill:** [../../project-management/skills/atlassian-admin/SKILL.md](../atlassian-admin/SKILL.md)
-- **PM Domain Guide:** [../../project-management/CLAUDE.md](../../project-management/CLAUDE.md)
-- **Agent Development Guide:** [../CLAUDE.md](../CLAUDE.md)
 
 ---
 

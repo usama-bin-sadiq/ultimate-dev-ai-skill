@@ -124,7 +124,6 @@ python ../../engineering/karpathy-coder/skills/karpathy-coder/scripts/diff_surge
 - [cs-fullstack-engineer](cs-fullstack-engineer.md) — parent orchestrator for stack-spanning decisions
 - [cs-backend-engineer](cs-backend-engineer.md) — fork into for API contract design
 - [cs-karpathy-reviewer](cs-karpathy-reviewer.md) — invoke before every commit
-- [cs-content-creator](../marketing/cs-content-creator.md) — escalate for marketing copy + brand voice
 
 ## Invocation Contract
 
@@ -138,5 +137,4 @@ When invoked from another agent, ALWAYS return a ≤ 200-word digest with: match
 
 - Skill: `../senior-frontend/SKILL.md`
 - Karpathy 4 principles: `../karpathy-coder/references/karpathy-principles.md`
-- Matt Pocock canon: `../../engineering/grill-me/skills/grill-me/references/forcing_question_patterns.md`
 - Web Vitals (Google): web.dev/vitals

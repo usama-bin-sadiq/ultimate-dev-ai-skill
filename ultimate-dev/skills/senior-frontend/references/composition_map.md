@@ -46,5 +46,3 @@ This map is the routing table for the `cs-frontend-engineer` agent and the `/cs:
 ## References
 
 - Karpathy 4 principles → `../../karpathy-coder/references/karpathy-principles.md`
-- Matt Pocock grill discipline → `../../../engineering/grill-me/skills/grill-me/references/forcing_question_patterns.md`
-- Path-B 11-file contract → `../../../business-operations/CLAUDE.md`

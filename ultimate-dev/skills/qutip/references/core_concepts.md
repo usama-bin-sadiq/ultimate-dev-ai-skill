@@ -281,17 +281,6 @@ An excitation-number-restricted space does not have the same factorization as
 the corresponding full tensor space. Do not apply subsystem operations unless
 their meaning in the restricted representation is established.
 
-## Local model validation
-
-`../scripts/qobj_model_validator.py` accepts a bounded strict-JSON model made
-only of numeric arrays. It rejects URLs, symlinks, duplicate keys, non-finite
-numbers, unknown roles, executable coefficients, dimensions whose product
-exceeds 64, and incompatible subsystem structures. It checks Hamiltonian and
-observable Hermiticity, initial-state norm/trace/positivity, and nonnegative
-collapse rates.
-
-It is a preflight audit, not a proof that the physical model is appropriate.
-
 ## Sources (verified 2026-07-23)
 
 - [QuTiP 5.3 quantum-object API](https://qutip.readthedocs.io/en/stable/apidoc/quantumobject.html)

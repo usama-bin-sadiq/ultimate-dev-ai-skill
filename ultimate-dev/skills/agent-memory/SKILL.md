@@ -97,7 +97,6 @@ Walk these one at a time before trusting the store.
 3. When two remembered rules disagree, who decides — and when?
 4. What would make you delete `.memory/` entirely?
 
-Rationale, open decisions, field schema: [`../../DESIGN.md`](../../DESIGN.md).
 
 ## Reference files
 

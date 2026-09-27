@@ -26,11 +26,11 @@ This is within 10-15% of cl100k_base / o200k_base tokenizers for English. For ex
 
 ## cs-caveman-mode Persona Agent
 
-Lives at `../agents/cs-caveman-mode.md`. Voice: terse, fragments-OK, no filler. Persistence is the hard rule — once activated stays active until "stop caveman" / "normal mode".
+Voice: terse, fragments-OK, no filler. Persistence is the hard rule — once activated stays active until "stop caveman" / "normal mode".
 
 ## `/cs:caveman` Slash Command
 
-Lives at `../commands/cs-caveman.md`. Single-trigger activation. Equivalent to typing "caveman mode" but more explicit.
+Single-trigger activation. Equivalent to typing "caveman mode" but more explicit.
 
 ## When Caveman Backfires (See main SKILL.md "Auto-Clarity Exception")
 

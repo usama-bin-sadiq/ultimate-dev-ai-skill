@@ -11,7 +11,6 @@ compatible_tools: [claude-code, codex-cli, cursor, antigravity, opencode, gemini
 # Phase 1 — Interview → Plan
 
 Open warmly with one or two examples from
-[`../../references/examples-bank.md`](../../references/examples-bank.md), then interview
 the founder into a **build sheet**. No API key needed in this phase — the output
 is a plan.
 
@@ -26,7 +25,6 @@ is a plan.
 | **Done** | "How would you grade a good run?" | outcome `rubric` (required) |
 | **Recurrence** | "Once, on request, or on a cadence?" | single-pass / grade-loop / cron-loop |
 
-See [`../../references/interview-to-config.md`](../../references/interview-to-config.md)
 for the full mapping.
 
 ## Workflow

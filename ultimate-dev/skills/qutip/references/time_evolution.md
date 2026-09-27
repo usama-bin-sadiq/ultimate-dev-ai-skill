@@ -356,10 +356,6 @@ The bundled CLIs use bounded strict JSON and never pickle results.
 
 ## Local tools
 
-- `../scripts/two_level_simulation.py`: bounded `mesolve`/`mcsolve` example.
-- `../scripts/solver_config_planner.py`: solver and option checklist.
-- `../scripts/convergence_sweep.py`: deterministic or trajectory convergence.
-- `../scripts/result_audit.py`: portable JSON audit.
 
 ## Sources (verified 2026-07-23)
 

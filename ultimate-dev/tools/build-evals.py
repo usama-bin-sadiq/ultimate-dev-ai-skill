@@ -62,6 +62,11 @@ CLASS_MAP = {
     "DM": (True, "domain"),
     "SC": (True, "security"),
     "FC": (True, "failure-prone"),
+    # Coordination-mode cases: the nineteenth JEv boundary. Registered rather
+    # than dropped, because a prefix the builder does not know is a case the
+    # builder cannot score, and an unscored case is indistinguishable from a
+    # case that does not exist.
+    "CM": (True, "coordination"),
     "RG": (True, "regression"),
 }
 
@@ -94,6 +99,7 @@ EXTRA_CLASS_MAP = {
     "DM": "cross-domain",
     "SC": "security",
     "FC": "failure-prone",
+    "CM": "coordination",
     "RG": "regression",
 }
 

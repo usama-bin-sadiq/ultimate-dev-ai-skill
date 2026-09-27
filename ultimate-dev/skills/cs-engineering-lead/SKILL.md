@@ -82,5 +82,3 @@ Engineering team lead coordinating across specializations: frontend, backend, QA
 
 ## Related Agents
 
-- [cs-senior-engineer](../engineering/cs-senior-engineer.md) -- Architecture decisions, code review, and CI/CD pipeline setup
-- [cs-product-manager](../product/cs-product-manager.md) -- Feature prioritization and requirements alignment

@@ -106,5 +106,3 @@ python ../../finance/skills/financial-analyst/scripts/dcf_valuation.py valuation
 
 ## Related Agents
 
-- [cs-ceo-advisor](../c-level/cs-ceo-advisor.md) -- Strategic financial decisions, board reporting, and fundraising planning
-- [cs-growth-strategist](../business-growth/cs-growth-strategist.md) -- Revenue operations data and pipeline forecasting inputs

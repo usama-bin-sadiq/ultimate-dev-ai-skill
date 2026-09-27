@@ -102,7 +102,6 @@ python ../../../c-level-advisor/skills/cro-advisor/scripts/churn_analyzer.py
 ## Related
 
 - Skill: [`cro-advisor`](../cro-advisor/SKILL.md)
-- Execution: `../../../business-growth/`
 
 ---
 

@@ -53,6 +53,4 @@ This map is the routing table for the `cs-backend-engineer` agent and the `/cs:b
 ## References
 
 - Karpathy 4 principles → `../../karpathy-coder/references/karpathy-principles.md`
-- Matt Pocock grill discipline → `../../../engineering/grill-me/skills/grill-me/references/forcing_question_patterns.md`
-- Path-B 11-file contract → `../../../business-operations/CLAUDE.md`
 - SLO canon → `../../slo-architect/references/slo_principles.md`

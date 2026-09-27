@@ -468,7 +468,6 @@ python ../../product-team/skills/product-strategist/scripts/okr_cascade_generato
 - [cs-product-manager](cs-product-manager.md) - Feature-level execution, RICE prioritization, PRD development
 - [cs-agile-product-owner](cs-agile-product-owner.md) - Sprint-level planning and backlog management
 - [cs-ux-researcher](cs-ux-researcher.md) - User research to validate strategic assumptions
-- [cs-ceo-advisor](../c-level/cs-ceo-advisor.md) - Company-level strategic alignment
 - Senior PM Skill - Portfolio context (see `../senior-pm`)
 
 ## References
@@ -477,8 +476,6 @@ python ../../product-team/skills/product-strategist/scripts/okr_cascade_generato
 - **Competitive Teardown Skill:** [../../product-team/skills/competitive-teardown/SKILL.md](../competitive-teardown/SKILL.md)
 - **OKR Framework:** [../../product-team/skills/product-strategist/references/okr_framework.md](../product-strategist/references/okr_framework.md)
 - **Strategy Types:** [../../product-team/skills/product-strategist/references/strategy_types.md](../product-strategist/references/strategy_types.md)
-- **Product Domain Guide:** [../../product-team/CLAUDE.md](../../product-team/CLAUDE.md)
-- **Agent Development Guide:** [../CLAUDE.md](../CLAUDE.md)
 
 ---
 

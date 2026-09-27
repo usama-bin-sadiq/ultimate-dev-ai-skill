@@ -162,8 +162,6 @@ python ../../engineering/karpathy-coder/skills/karpathy-coder/scripts/diff_surge
 - [cs-backend-engineer](cs-backend-engineer.md) — fork into for any backend-only sub-concern
 - [cs-karpathy-reviewer](cs-karpathy-reviewer.md) — invoke before every commit
 - [cs-senior-engineer](cs-senior-engineer.md) — cross-cutting engineering lead (use for non-stack questions like CI/CD, security review)
-- [cs-cto-advisor](../c-level/cs-cto-advisor.md) — escalate for strategic build-vs-buy or technical debt prioritization
-- [cs-vpe-advisor](../../c-level-agents/agents/cs-vpe-advisor.md) — escalate for org-design + throughput
 
 ## Invocation Contract
 
@@ -179,5 +177,3 @@ When invoked from another agent, ALWAYS return a ≤ 200-word digest with: match
 
 - Skill documentation: `../senior-fullstack/SKILL.md`
 - Karpathy 4 principles: `../karpathy-coder/references/karpathy-principles.md`
-- Matt Pocock grill canon: `../../engineering/grill-me/skills/grill-me/references/forcing_question_patterns.md`
-- Path-B 11-file contract: `../../business-operations/CLAUDE.md`

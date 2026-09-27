@@ -33,7 +33,6 @@ Use this file when the user is starting from scratch, choosing a project templat
 ## Setup Baseline
 
 - Use the setup-and-scaffold flow in [../SKILL.md](../SKILL.md) for prerequisite setup, template verification, and the first scaffold.
-- Treat [../config.yaml](../config.yaml) as the bundled WinGet bootstrap source for setup and remediation.
 - Return to this reference only after that workflow completes or when the task moves beyond initial project creation.
 - Windows 10 version 1809 (build 17763) or later is the floor.
 - Windows SDK 10.0.19041.0 or later is the practical baseline.

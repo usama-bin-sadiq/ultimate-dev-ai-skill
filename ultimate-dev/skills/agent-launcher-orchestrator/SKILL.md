@@ -16,8 +16,7 @@ reads that goal, routes to the right phase, and compiles the goal into a **loop 
 a workflow**. Heavy intake stays in the forked context; the parent gets a digest.
 
 Inspired by Anthropic's `launch-your-agent` reference skill (Apache-2.0). This is
-an independent re-implementation; CMA semantics come from
-[`../../references/cma-primitives.md`](../../references/cma-primitives.md).
+an independent re-implementation.
 
 ## The through-line: the session goal
 
@@ -54,7 +53,7 @@ python3 scripts/loop_compiler.py \
 
 `loop_compiler.py` emits `plan.v1`: `single-pass`, `grade-iterate` (always with a
 `max_iterations` cap 1..20), or `cron-loop` (optionally nesting a self-grading
-outcome per firing). See [`../../references/loops-and-workflows.md`](../../references/loops-and-workflows.md).
+outcome per firing).
 
 ## Pre-flight gates (hard refusals)
 

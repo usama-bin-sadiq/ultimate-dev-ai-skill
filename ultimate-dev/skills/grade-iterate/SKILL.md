@@ -14,9 +14,6 @@ This is the plugin's **loop**: CMA's `outcome` primitive self-grades the agent's
 work in an isolated context and feeds failing verdicts back for the next attempt.
 It is **always bounded** by `max_iterations` (1..20) — never "improve forever".
 
-See [`../../references/loops-and-workflows.md`](../../references/loops-and-workflows.md)
-and the outcome section of
-[`../../references/cma-primitives.md`](../../references/cma-primitives.md).
 
 ## Workflow
 

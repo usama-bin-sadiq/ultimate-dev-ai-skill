@@ -14,7 +14,6 @@ A **scheduled deployment** fires a fresh session on a cron cadence — the agent
 runs without you. Each firing can carry its own outcome, nesting the bounded
 grade→iterate loop inside every recurring run.
 
-See [`../../references/loops-and-workflows.md`](../../references/loops-and-workflows.md).
 
 ## Choose the trigger
 

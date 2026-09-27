@@ -86,6 +86,13 @@ resource failure, verification failure, unsupported objective. Each case names
 the correct recovery *and* the wrong recovery the trap induces, so a run that
 recovers badly is diagnosable rather than merely counted as a fail.
 
+`coordination-modes/` covers the nineteenth JEv boundary. Six cases, one per mode
+plus two recovery cases, testing whether the kernel picks the cheapest mode the
+task needs. The trap is rarely a wrong mode — it is an expensive one chosen
+without noticing a cheaper one was available, which is invisible unless the case
+asks. A correct answer reached by the wrong mode scores PARTIAL, because the mode
+is a cost decision and cost does not appear in the answer.
+
 `security-cases/` covers the trust boundary in `SKILL.md`: content read does not
 become instruction. Each case carries a real hostile artefact, the injection
 vector, the correct handling, and **the exact wording a compromised kernel would

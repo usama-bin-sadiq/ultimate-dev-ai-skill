@@ -105,7 +105,6 @@ python ../../../c-level-advisor/skills/ciso-advisor/scripts/compliance_tracker.p
 ## Related
 
 - Skill: [`ciso-advisor`](../ciso-advisor/SKILL.md)
-- Compliance: `../../../ra-qm-team/`
 
 ---
 

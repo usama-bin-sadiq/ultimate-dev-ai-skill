@@ -63,7 +63,7 @@ If it exists, it contains brand voice, target audience, keyword targets, and wri
 
 ### Templates
 
-- `../../marketing-skill/skills/content-production/templates/content-brief-template.md` — fill before drafting (Mode 1 output)
+
 
 ## Workflows
 
@@ -73,7 +73,7 @@ If it exists, it contains brand voice, target audience, keyword targets, and wri
 
 **Steps:**
 1. **Context** — read `.claude/product-marketing-context.md`; collect topic, primary keyword, audience, goal, length.
-2. **Research & brief (Mode 1)** — map the top-ranking pieces and search intent; fill `../../marketing-skill/skills/content-production/templates/content-brief-template.md` following `../content-production/references/content-brief-guide.md`.
+2. **Research & brief (Mode 1)** — map the top-ranking pieces and search intent, following `../content-production/references/content-brief-guide.md`.
 3. **Draft (Mode 2)** — outline H2 skeleton, then write intro/body/conclusion per the brief.
 4. **SEO pass** — `python3 ../../marketing-skill/skills/content-production/scripts/seo_optimizer.py draft.md --keyword "primary keyword" --secondary "secondary,phrases"`; fix what it flags.
 5. **Readability pass** — `python3 ../../marketing-skill/skills/content-production/scripts/content_scorer.py draft.md "primary keyword" --json`; revise until composite ≥ 70.

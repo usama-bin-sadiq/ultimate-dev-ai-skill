@@ -140,8 +140,6 @@ It holds ICP, positioning, personas, and competitive landscape — required befo
 ## References
 
 - **Skill documentation:** [marketing-demand-acquisition](../marketing-demand-acquisition/SKILL.md) · [paid-ads](../paid-ads/SKILL.md) · [email-sequence](../email-sequence/SKILL.md)
-- **Marketing domain guide:** [../../marketing-skill/CLAUDE.md](../../marketing-skill/CLAUDE.md)
-- **Agent development guide:** [../CLAUDE.md](../CLAUDE.md)
 
 ---
 

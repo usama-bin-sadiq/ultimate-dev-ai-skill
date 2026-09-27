@@ -93,7 +93,6 @@ One-sentence statement: <here>
 ## Related
 
 - Skill: [`cmo-advisor`](../cmo-advisor/SKILL.md)
-- Execution domain: `../../../marketing-skill/`
 
 ---
 

@@ -93,5 +93,3 @@ Cross-cutting senior engineer covering architecture, backend, DevOps, security, 
 
 ## Related Agents
 
-- [cs-engineering-lead](../engineering-team/cs-engineering-lead.md) -- Team coordination, incident response, and cross-functional delivery
-- [cs-product-manager](../product/cs-product-manager.md) -- Feature prioritization and requirements context
