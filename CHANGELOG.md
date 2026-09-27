@@ -1,5 +1,8 @@
 # Changelog
 
+## [4.0.1] — 2026-09-27
+
+_No summary recorded. Review the comparison for details._
 All notable changes to this project are recorded here. The format follows
 Keep a Changelog. Versions follow semantic versioning.
 
