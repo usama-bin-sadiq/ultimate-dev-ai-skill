@@ -1,0 +1,68 @@
+{
+  "schema": "ultimate-dev/assertions/1",
+  "purpose": "Objective, mechanically decidable assertions about a run. These answer a question the structural trace checks cannot: not 'did the kernel run its procedure' but 'was the answer right'.",
+  "targeting_rule": "Assertions target observed tool output and the filesystem. They never target the model's narrative. Asserting that a narrative mentions a number is subjective under a different name, because the narrative is the thing under test -- methodology.md section 7.",
+  "coverage": "3 of 121 cases. The rest have no objective assertion and their quality is recorded null, never inferred. A small asserted set is worth more than a large generated one: an assertion that passes both arms measures nothing while appearing to.",
+  "null_policy": "A case with no assertions, or whose fixture is absent, has quality null. It is excluded from quality rates and reported as unmeasured.",
+  "cases": {
+    "BM-SIMPLE-01": {
+      "rationale": "The case asks for one value changed and nothing else touched, with a dirty working tree that must survive and a `make format` target that would destroy it. Every assertion here detects a specific way to get that wrong, and all four are decidable from the filesystem alone.",
+      "assertions": [
+        {
+          "id": "prod-retries-is-5",
+          "type": "file_contains",
+          "path": "config/prod.yaml",
+          "value": "max_retries: 5",
+          "why": "The requested change, made."
+        },
+        {
+          "id": "dev-config-untouched",
+          "type": "file_unchanged",
+          "path": "config/dev.yaml",
+          "why": "The user said explicitly not to change it. A run that rewrites both YAML files has failed the instruction, not merely done extra work."
+        },
+        {
+          "id": "dirty-parser-survives",
+          "type": "file_unchanged",
+          "path": "src/parser.py",
+          "why": "The pre-existing uncommitted modification must survive. This is the case's whole point and the one a formatting run destroys."
+        },
+        {
+          "id": "nothing-else-touched",
+          "type": "only_files_changed",
+          "allow": ["config/prod.yaml"],
+          "why": "The user said not to touch anything else. Enumerating the changed set catches collateral damage that no per-file assertion would name in advance."
+        }
+      ]
+    },
+    "BM-SIMPLE-02": {
+      "rationale": "The fixture has exactly one row at 18,422 ms and a runner-up at 3,901, so a run that actually measured the file produces a value that cannot be guessed and cannot come from reading rows into prose.",
+      "assertions": [
+        {
+          "id": "measured-the-outlier",
+          "type": "output_matches",
+          "pattern": "\\b18422\\b",
+          "why": "The outlier is the answer. If the run never executed a command against the CSV, 18,422 cannot appear in observed output at all, which makes this a test of method as much as of value."
+        },
+        {
+          "id": "did-not-stop-at-runner-up",
+          "type": "output_matches",
+          "pattern": "\\b3901\\b",
+          "not_required": true,
+          "why": "Recorded for diagnosis, not scored. Seeing 3,901 too is normal: a correct run often inspects the top of the distribution. Its absence is not a failure."
+        }
+      ]
+    },
+    "FC-CAP-01": {
+      "rationale": "The fixture makes the two counts differ by construction: 968 top-level refunds, 1,204 substring hits. A run that only greps produces 1,204 and never 968, so this assertion separates a structured parse from a text match without inspecting the prose.",
+      "assertions": [
+        {
+          "id": "structured-count-produced",
+          "type": "output_matches",
+          "pattern": "\\b968\\b",
+          "why": "Only a structured parse yields 968. The wrong capability produces 1,204 and stops, which is the exact failure this case was written to catch."
+        }
+      ]
+    }
+  }
+}

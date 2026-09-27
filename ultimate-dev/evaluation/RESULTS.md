@@ -102,6 +102,64 @@ zero false triggers in either arm.
 - **`n = 4` negative pairs.** Zero false triggers in both arms is not a
   difference; it is two small samples of the same zero.
 
+## Run 3 — 2026-09-27, quality-graded, paired arms
+
+The first two runs graded *process*: did the kernel run its procedure. Both arms
+passed that, which is why both passed while either could have been wrong. The
+corpus states the right answer for many cases — 968, 18,422, `max_retries: 5` —
+and nothing compared a run to it. This run grades *quality* against those
+answers.
+
+`evaluation/assertions.json` holds the objective assertions. They target observed
+tool output and the filesystem, never the model's narrative, because
+`methodology.md` §7 forbids the latter and asserting on prose is subjective under
+a different name. Three of 121 cases have them.
+
+| Arm | Process | Quality |
+|---|---|---|
+| skill | 3/3 | **3/3** |
+| baseline | 3/3 | **3/3** |
+
+Paired: 3 cases decided in both arms, 3 agreed, **0 discordant**. Zero
+environment failures, zero harness faults. On `BM-SIMPLE-01` the only file either
+arm changed was `config/prod.yaml` — the one file the case permits changing, with
+`config/dev.yaml` and the dirty `src/parser.py` untouched in both.
+
+**This is a trustworthy null.** It is the same answer as Run 2, but earned
+differently: the instrument is falsifiable, the assertions are objective, the runs
+demonstrably operated on the fixtures, and nothing was excluded to reach it.
+
+It is still `n = 3`, so it constrains nothing. What it does establish is that the
+suite can now *detect* a difference if one exists, which it could not before.
+
+## What it took to get a valid run
+
+Three of the four failures below were the instrument, not the skill. All four
+produced numbers that looked like results.
+
+- **The runtime ignores the working directory it is launched with.** Two
+  background servers are running; the agent reported `/Users/usamakhan` no matter
+  what `--cwd` said, and `--standalone` did not change it. Every fixture-based
+  case therefore ran against a repository with no fixture in it, and the agent
+  correctly reported that the files did not exist — which the grader read as a
+  wrong answer. Fixtures are now staged at the repository root for the duration of
+  a run, which is the one directory the agent reliably sees. Staging refuses to
+  overwrite anything and is removed in a `finally` block.
+- **A run modified the shared fixture**, because a per-arm copy sat beside the
+  original and one glob matched both. The next run then started from a different
+  state, and the assertion reported "did not make the edit" for a run that had
+  made it elsewhere. There is now a pollution guard, and it fired twice on real
+  corruption before being tuned to ignore `__pycache__` and `.pytest_cache` —
+  artefacts a run creates by doing its job.
+- **Engagement was enforced by requiring a `Read` of `SKILL.md`.** The prompt
+  invites native discovery, this runtime has it, and runs that loaded the kernel
+  the sanctioned way were failed for not also opening the file. One said so
+  outright: "available natively in this runtime". The skill arm scored 0/4 while
+  applying the effort gate correctly — a measurement of the prompt, not the skill.
+  Engagement is now recorded, not enforced.
+- **Assertions graded from a filesystem that had already been unstaged.** They now
+  grade from a state captured while the fixture was still in place.
+
 ## Two earlier runs were discarded, and why
 
 Both are recorded because a discarded measurement that leaves no trace reads as

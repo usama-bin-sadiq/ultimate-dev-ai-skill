@@ -450,6 +450,116 @@ jobs:
           case("unclassified top-level tree", BUNDLE, ["--check"],
                lambda s: ((s / S / "junk").mkdir(), (s / S / "junk" / "a.md").write_text("a\n")))
 
+          # The objective assertions must be able to FAIL. An assertion set that
+          # only ever passes is worse than none, because it converts an
+          # unmeasured case into a measured pass. Each pair below is a correct
+          # run and the specific wrong run the case was written to catch, and
+          # both directions are asserted.
+          python - <<'PY'
+          import importlib.util, pathlib, shutil, subprocess, sys, tempfile
+
+          S = "ultimate-dev"
+          spec = importlib.util.spec_from_file_location("rp", f"{S}/tools/run-pilot.py")
+          rp = importlib.util.module_from_spec(spec); spec.loader.exec_module(rp)
+          # ensure_fixtures builds where sandbox_for looks. Building to the
+          # repository default instead would leave sandbox_for returning None and
+          # every case below would report "no fixture" -- a self-test that fails
+          # for a reason that has nothing to do with what it is testing.
+          if not rp.ensure_fixtures():
+              raise SystemExit("fixture build failed")
+          assertions = rp.load_assertions()
+
+          def judge(case_id, stderr_text, mutate=None):  # noqa: C901
+              # A case with no authored assertions has no fixture and no spec.
+                  # That is the state the null test below is checking, so it is
+              # handled here rather than raised: an assertion store that can only
+              # be consulted for cases it already knows about would make the
+              # unasserted majority invisible instead of unmeasured.
+              spec = assertions.get(case_id)
+              sandbox = rp.sandbox_for(case_id)
+              if spec is None:
+                  return {"quality": None, "detail": [],
+                          "note": "no objective assertions authored for this case"}
+              if sandbox is None:
+                  raise SystemExit(f"{case_id} has no fixture; cannot self-test it")
+              # apply_assertions grades from a captured (hash, text) state, the
+              # same shape a real run produces. The test builds that shape
+              # directly rather than staging at the repository root, so it cannot
+              # touch the checkout.
+              import hashlib
+              before = rp.snapshot(sandbox)
+              box = pathlib.Path(tempfile.mkdtemp()) / "sb"
+              shutil.copytree(sandbox, box, symlinks=True)
+              try:
+                  if mutate:
+                      mutate(box)
+                  staged = sorted(p.name for p in box.iterdir() if p.name != ".git")
+                  after = {}
+                  for name in staged:
+                      f = box / name
+                      targets = [f] if f.is_file() else (
+                          sorted(x for x in f.rglob("*") if x.is_file())
+                          if f.is_dir() else [])
+                      for x in targets:
+                          raw = x.read_bytes()
+                          after[str(x.relative_to(box))] = (
+                              hashlib.sha256(raw).hexdigest(),
+                              raw.decode("utf-8", "replace"))
+                  return rp.apply_assertions(case_id, spec,
+                                             rp.read_trace(stderr_text), after, before)
+              finally:
+                  shutil.rmtree(box.parent, ignore_errors=True)
+
+          def edit(path, old, new):
+              return lambda s: (s / path).write_text(
+                  (s / path).read_text().replace(old, new))
+
+          def ruin(sandbox):
+              for p in ("config/prod.yaml", "config/dev.yaml", "src/parser.py"):
+                  (sandbox / p).write_text("upstream:\n  max_retries: 9\n")
+              (sandbox / "logs.txt").write_text("noise\n")
+
+          TURN = "> build\n$ echo done\ndone\n> build"
+          cases = [
+              # A structured parse yields 968; a substring match yields 1204 and
+              # never 968. This is the capability question the case exists for.
+              ("FC-CAP-01",
+               "> b\n$ jq -r '.kind' f | sort | uniq -c\n 968 refund\n> b", "pass"),
+              ("FC-CAP-01",
+               "> b\n$ grep -c '\"kind\":\"refund\"' f\n1204\n> b", "fail"),
+              # Counting rows is not measuring the maximum.
+              ("BM-SIMPLE-02",
+               "> b\n$ sort -t, -k5 -rn f | head -1\nuploads/a.jpg,18422\n> b", "pass"),
+              ("BM-SIMPLE-02",
+               "> b\n$ wc -l f\n2000\n> b", "fail"),
+              # The targeted edit passes; a formatting run fails all four and
+              # names every file it moved.
+              ("BM-SIMPLE-01", TURN, "pass", edit("config/prod.yaml", "max_retries: 3", "max_retries: 5")),
+              ("BM-SIMPLE-01", TURN, "fail", ruin),
+          ]
+          bad = []
+          for case in cases:
+              case_id, trace, want = case[0], case[1], case[2]
+              mutate = case[3] if len(case) > 3 else None
+              got = judge(case_id, trace, mutate)
+              if got["quality"] != want:
+                  bad.append(f"{case_id}: wanted {want}, got {got['quality']} "
+                             f"({[d['id'] for d in got['detail'] if d.get('passed') is False]})")
+              else:
+                  print(f"  falsifiable {case_id} -> {want}")
+
+          # A case with no authored assertions must be null, never a pass.
+          unasserted = judge("FC-VER-01", TURN)
+          if unasserted["quality"] is not None:
+              bad.append("an unasserted case returned a verdict instead of null")
+          else:
+              print("  unasserted case -> null (not a pass)")
+
+          if bad:
+              print("\n".join(bad), file=sys.stderr)
+              sys.exit(1)
+          PY
+
           # Controls: a clean tree must pass every tool.
           for tool, extra in ((VALIDATE, ["--strict"]), (EVALS, ["--check"]),
                               (BUNDLE, ["--check"]), (FIXTURES, [])):
