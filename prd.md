@@ -1,5 +1,7 @@
 Absolutely. The product should now be specified as **`ultimate-dev`**, with **`skill-creator` as a first-class capability for dynamically creating/extending skills**, while keeping the core itself compact, model-agnostic, and scalable.
 
+`skill-creator` is a **sub-skill of `ultimate-dev`**, shipped inside it at `ultimate-dev/skills/skill-creator/`. It is not a sibling product and not a second entry point: only the kernel decides that a capability gap exists, and only the kernel hands the gap to the engine.
+
 The key change is that `ultimate-dev` is **not a coding skill** despite the name. It is a universal problem-solving and engineering kernel capable of working on anything from a simple text task to an OS-scale engineering program.
 
 # ULTIMATE-DEV — Production PRD
@@ -176,6 +178,17 @@ The kernel remains the decision-maker.
 
 This is the structure I recommend as the canonical product repository.
 
+> **Correction — `skill-creator` is a sub-skill, not a sibling.** An earlier
+> revision of this tree placed `skill-creator/` beside `ultimate-dev/` under
+> `skill/`, which made it a peer of the kernel. That is wrong, and wrong in a way
+> that matters: as a sibling it would be a second entry point a user or an
+> external indexer could select directly, bypassing the kernel's effort gate.
+> Capability creation is a decision the kernel makes, not a request a user routes
+> around it — which is the whole of §3. It now sits at
+> `ultimate-dev/skills/skill-creator/`, and the kernel must reference it for the
+> tree to be valid. The shipped implementation already had it in the right place;
+> only this specification was wrong.
+
 ```text
 ultimate-dev/
 │
@@ -269,31 +282,33 @@ ultimate-dev/
 │   │       ├── insufficient-evidence.md
 │   │       ├── output-contract.md
 │   │       └── anti-patterns.md
-│   │
-│   │
-│   └── skill-creator/
-│       │
-│       ├── SKILL.md
-│       │   # ⭐ SKILL CREATION ENGINE
-│       │   # Creates, improves, composes and validates
-│       │   # reusable skills when the kernel identifies
-│       │   # a capability gap.
-│       │
-│       └── references/
-│           │
-│           ├── skill-design.md
-│           ├── skill-contract.md
-│           ├── skill-discovery.md
-│           ├── skill-generation.md
-│           ├── skill-composition.md
-│           ├── skill-validation.md
-│           ├── skill-testing.md
-│           ├── skill-versioning.md
-│           ├── skill-security.md
-│           ├── skill-provenance.md
-│           ├── skill-promotion.md
-│           ├── skill-deprecation.md
-│           └── skill-anti-patterns.md
+│   │   │
+│   │   └── skills/
+│   │       │
+│   │       └── skill-creator/
+│   │           │
+│   │           ├── SKILL.md
+│   │           │   # ⭐ SKILL CREATION ENGINE
+│   │           │   # A SUB-SKILL OF ultimate-dev, not a sibling.
+│   │           │   # Creates, improves, composes and validates
+│   │           │   # reusable skills when the kernel identifies
+│   │           │   # a capability gap.
+│   │           │
+│   │           └── references/
+│   │               │
+│   │               ├── skill-design.md
+│   │               ├── skill-contract.md
+│   │               ├── skill-discovery.md
+│   │               ├── skill-generation.md
+│   │               ├── skill-composition.md
+│   │               ├── skill-validation.md
+│   │               ├── skill-testing.md
+│   │               ├── skill-versioning.md
+│   │               ├── skill-security.md
+│   │               ├── skill-provenance.md
+│   │               ├── skill-promotion.md
+│   │               ├── skill-deprecation.md
+│   │               └── skill-anti-patterns.md
 │
 │
 ├── knowledge/
@@ -493,6 +508,11 @@ rather than blindly minimizing tokens or tool calls.
 # 7. Skill Creator
 
 This is an important addition.
+
+`skill-creator` is a **sub-skill of `ultimate-dev`**, invoked by the kernel and
+not selectable directly. Its description must say so, because the failure mode it
+guards against is a user or an external indexer routing straight to it and
+skipping triage — which is precisely the capability proliferation §3 prohibits.
 
 `skill-creator` should **not mean "generate Markdown whenever something is missing."**
 
