@@ -278,14 +278,16 @@ overhead would exceed the work. See `references/observability.md`.
 
 ### Delegated roles
 
-Eleven roles in `agents/`, each with a procedure, output contract, and
+Fourteen roles in `agents/`, each with a procedure, output contract, and
 prohibitions: `verifier` (re-derive a claim rather than re-read it),
-`investigator` (establish what is actually true), `critic` (attack a plan before
-it is committed to), `grader` (score against criteria written in advance),
-`comparator` (blind A/B), `security-reviewer` (attack it), `author` (write a skill
-candidate), `test-author` (claim, then check), `simplifier` (subtract, with
-evidence), `performance-reviewer` (measure, don't guess), `technical-writer`
-(answer the reader). Dispatch is tabulated in `references/delegation.md`, which
+`investigator` (establish what is actually true), `critic` (attack it), `author`
+(write a skill candidate), `test-author` (claim, then check), `simplifier`
+(subtract, with evidence), `performance-reviewer` (measure, don't guess),
+`technical-writer` (answer the reader), `grader` (score against criteria set in
+advance), `comparator` (blind A/B), `security-reviewer` (attack it),
+`invariant-finder` (find the test that copies its own domain), `unknowns-mapper`
+(name the prompt-to-territory gap), `claim-auditor` (false claim vs. undefended
+one). Dispatch is tabulated in `references/delegation.md`, with the upper bound.
 also carries the upper bound.
 
 A delegate gets the context it needs and nothing more; a delegate that finds its

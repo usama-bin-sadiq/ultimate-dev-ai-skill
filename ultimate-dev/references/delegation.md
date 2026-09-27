@@ -47,6 +47,9 @@ rejected alternative.
 | `agents/simplifier.md` | Something works but carries machinery nobody can name a use for; a change needed a workaround for a problem the design invited; a component cannot be explained in one sentence | Ranked removable complexity with the evidence each piece is unused, and a `REJECTED` list |
 | `agents/performance-reviewer.md` | Something is too slow, too large, or too expensive and the cause is not already known; an optimisation is proposed with no measurement behind it | Measured baseline, the one dominant cost, a predicted effect in numbers — or `NONE FOUND` |
 | `agents/technical-writer.md` | A change alters how something is used; an existing document is now wrong; the knowledge exists only in one person's head | An answer ordered for the reader who has to act on it, examples marked verified or unverified |
+| `agents/invariant-finder.md` | A suite is green and the claim is "this domain is covered"; a module gains a registry, enum, name-to-thing table or dispatch map | The registry and the literal copy beside it, which perturbation classes the checks catch, and which they are blind to |
+| `agents/unknowns-mapper.md` | A task feels underspecified but the gap has not been identified; a plan is about to rest on tacit assumptions; the same misunderstanding recurs | Four quadrants of unknown, the questions nothing is waiting on, and `NOT WORTH` when the task is too small |
+| `agents/claim-auditor.md` | A conclusion is about to be reported as established; a check passed and the check's coverage is the real question; docs and code disagree | `SUPPORTED` / `UNSUPPORTED` / `CONTRADICTED` / `UNDECIDABLE` per claim, with the refutation that would falsify each |
 
 ## The upper bound: where delegation stops paying
 
