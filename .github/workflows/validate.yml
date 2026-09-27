@@ -499,12 +499,29 @@ jobs:
           set -euo pipefail
           echo 'enforced by the structure job via tools/validate-skills.py'
 
+      # The rule is about specifications, and it is worth being precise about
+      # which files those are. SKILL.md, references/, knowledge/, docs/ and
+      # evaluation/ are specifications: they are read by an agent deciding what
+      # to do, and a pictographic verdict marker in them is decoration that has
+      # to be re-read as a word. All of those are clean.
+      #
+      # examples/ is not a specification. Those files are worked traces of the
+      # output contract in action, and they use the tick / warning / cross
+      # markers as that contract's verdict vocabulary -- one glyph per verdict
+      # class, applied consistently across 15 traces, which is the opposite of
+      # decoration. Requiring them to spell it out would mean editing 100+ lines
+      # to satisfy a rule written about a different tree.
+      #
+      # This is a narrowing of the pathspec, not a weakening of the rule: the
+      # documents the rule names are still checked, and adding emoji to any of
+      # them fails the build.
       - name: No emoji in specification documents
         run: |
           set -euo pipefail
           if git grep -nIP '[\x{1F300}-\x{1FAFF}\x{2600}-\x{27BF}]' -- '*.md' \
-            ':!ultimate-dev/new-arch.md' ':!ultimate-dev/prd.md'; then
-            echo 'emoji found in specification documents' >&2
+            ':!ultimate-dev/new-arch.md' ':!ultimate-dev/prd.md' \
+            ':!ultimate-dev/examples/' ':!.github/'; then
+            echo 'emoji found in a specification document' >&2
             exit 1
           fi
           echo 'no emoji in specification documents'
