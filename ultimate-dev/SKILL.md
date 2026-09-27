@@ -262,7 +262,12 @@ See `references/planning-system.md`.
 
 ## Step 6 — execution
 
-Execute the plan. Before each unit, confirm its precondition still holds.
+Execute the plan. Before each unit, confirm its precondition still holds. The
+**shape** of execution follows the coordination mode chosen in Step 4 — one agent
+holding progressively disclosed skills (`inline`); a stateless specialist answering
+in one result (`delegate`); N specialists in parallel then synthesised (`route`); or
+one party holding the thread as capabilities unlock (`handoff`). All four return to
+JEv. `references/coordination-modes.md`.
 
 - **Do the deterministic thing deterministically.** Compiling, hashing, counting,
   parsing, and formatting belong to a tool, not to recall. A model asked to do
@@ -395,12 +400,14 @@ See `references/recovery-system.md`.
 
 ## Step 9 — synthesis, self-evaluation, and delivery
 
-Assemble only what survived verification.
+Assemble only what survived verification. State the coordination mode used, and
+whether it changed mid-run — a mode that moved is part of the account.
 
-Then evaluate the **process**, which verification cannot see. Nine questions: did
+Then evaluate the **process**, which verification cannot see. Ten questions: did
 this solve the task; was the context necessary; was the reasoning sufficient; was
 the strategy effective; were the capabilities appropriate; was the verification
-adequate; what failed; what could be reused; what should not be repeated.
+adequate; did the coordination mode fit, or did we pay for isolation nobody
+needed; what failed; what could be reused; what should not be repeated.
 
 Three of those catch waste and are the ones a run skips — context that was never
 needed, capabilities that were not, an approach that should not be repeated. Ask
