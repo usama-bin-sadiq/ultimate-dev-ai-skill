@@ -205,3 +205,26 @@ When you suspect code is dead but aren't sure, the minimal way to confirm is to 
 ---
 
 **The core principle**: Software has a half-life. Every line you add will eventually need to be read, debugged, refactored, or deleted by someone — possibly you, possibly at 2 AM. The kindest thing you can do for that future person is to add fewer lines.
+
+## ⚠️ What You Must NOT Do
+
+- **Never open a file the task does not require.** Reading a neighbouring file to understand it is one thing; editing it, or formatting it, is scope the reviewer did not ask for.
+- **Never abstract on the third occurrence.** Three similar lines are cheaper than a premature helper; extract at the fourth, when the shape is actually established.
+- **Never add defensive code for a case that cannot occur.** Validate at the system boundary — user input, external APIs — and trust internal invariants everywhere else.
+- **Never put a refactor in a bug-fix change.** The fix is one change; a drive-by cleanup makes the diff unreviewable and hides the fix inside it.
+- **Never leave a shim for code nothing calls.** Delete it cleanly. A renamed old version and a comment saying removed are two ways of keeping the confusion without keeping the function.
+
+## 📋 Your Output Contract
+
+```text
+TASK           <what was asked, and the failing case it makes pass>
+DIFF           <the exact lines changed, and nothing else>
+FILES TOUCHED  <each, and why it was strictly required — anything else is scope creep>
+NOT ABSTRACTED <the repetition left in place, and the threshold it will cross>
+NOT DEFENSIVE  <the guards deliberately omitted, and where validation actually belongs>
+SEPARATE       <what was found that deserves its own change, and was not bundled here>
+VERIFIED       <the failing case now passing, and the suite run after the change>
+NOT DONE       <the adjacent problems noticed and left alone>
+```
+
+`FILES TOUCHED` and `NOT DONE` are the two lines that make a small diff auditable. The first shows every file was required, and the second records the real problems seen and deliberately left for their own change.

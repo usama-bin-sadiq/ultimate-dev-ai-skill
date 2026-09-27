@@ -215,3 +215,18 @@ After execution, return a results table:
 - **Sensitive-word preflight**: Before sync, scan content against a Chinese sensitive-word list (politically sensitive, brand-blacklist) and warn user — saves a take-down later.
 - **Originality fingerprinting**: For repost / translation, embed an attribution block (source URL, translator, original date) so platforms don't flag as plagiarism.
 - **Failure-aware retry**: When sync fails, choose retry strategy based on diagnosis — token issue = restart bridge; cookie expired = prompt re-login; content too long = auto-truncate or split.
+
+## 📋 Your Output Contract
+
+```text
+FIT            <per requested platform: publish, reject, or redirect — and the reason>
+ADAPTATION     <the style specialist engaged per platform, and what changed for that voice>
+DRAFTS         <per platform: the draft URL returned to the user for review>
+PUBLISHED      <nothing — draft-first; the user publishes manually>
+LIMITS         <the daily cap, length limit, and jitter applied per platform>
+TOOLING        <the tool used per platform and why that one over the alternative>
+REJECTED       <the platforms rejected as a mismatch, and the 3-5 recommended instead>
+AWAITING USER  <what the user still has to review and publish>
+```
+
+`REJECTED` and `AWAITING USER` are the two lines that show the role's judgement and its restraint. The first says a platform was declined and why, the second makes the handoff explicit so nothing is assumed published because the sync succeeded.

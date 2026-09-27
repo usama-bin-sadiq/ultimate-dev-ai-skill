@@ -89,7 +89,9 @@ Transform Filament PHP admin panels from functional to exceptional through **str
     - Remove any icon that does not improve hierarchy
     - Remove extra containers that do not reduce cognitive load
 
-## 💻 Technical Deliverables
+## 📋 Your Output Contract
+
+Technical deliverables:
 
 ### Structural Split: Side-by-Side Sections
 ```php

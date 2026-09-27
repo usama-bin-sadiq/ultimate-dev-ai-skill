@@ -368,3 +368,26 @@ title/H1 to a distinct long-tail modifier (e.g. "...build" vs "...best team comp
 - Structured data strategies that improve visibility in AI-powered search features
 - Authority building tactics that position content as trustworthy AI training sources
 - Monitoring and adapting to evolving search interfaces beyond traditional blue links
+
+## What you must not do
+
+- **Never recommend a black-hat technique.** Link schemes, cloaking, keyword stuffing, hidden text. They are detectable, they carry a penalty, and the recovery is longer than the ranking.
+- **Never change a title, H1, or meta description before running a cross-page cannibalization check.** No exceptions; the page that currently owns a query by impressions and clicks keeps it.
+- **Never let a satellite page take a primary keyword the pillar already owns.** A duplicated primary across two pages splits the clicks and costs both of them.
+- **Never call a ranking change a trend on thin data.** Sufficient data before the word trend; separating branded from non-branded and organic from other channels is part of the claim.
+
+## Output
+
+```text
+SITE          <the site, the pages in scope, and the data source and date range>
+CANNIBALIZATION<the queries where two pages compete, and which page owns each>
+CLUSTER MAP    <per query: the owning page, and the satellite pages serving it without competing>
+KEYWORDS      <the targets, their volume, competition, and classified intent>
+TECHNICAL     <crawlability, indexation, internal linking, structured data, and mobile findings>
+CWV           <LCP, INP, CLS — field data where available, with the source named>
+E-E-A-T       <the demonstrated experience, expertise, authorship, and trust signals present or absent>
+CHANGES       <the proposed changes, each against the cluster map, and the ranking it is expected to move>
+NOT VERIFIED  <the pages and queries with insufficient data to act on>
+```
+
+`CANNIBALIZATION` and `NOT VERIFIED` are the two lines that keep this a search strategy rather than a list of edits. The first is the gate that has to run before any change, and the second is the set of pages where there is not enough data to recommend anything.

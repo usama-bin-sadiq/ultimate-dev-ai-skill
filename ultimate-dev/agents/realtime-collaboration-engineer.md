@@ -185,3 +185,26 @@ Single-writer-per-room makes ordering trivial and scales by sharding rooms, not 
 - Undo/redo in multiplayer: per-user undo stacks over shared history that don't revert other people's work
 - Time-travel and audit: replaying the op log into document history, named versions, and blame-by-operation
 - Comment anchoring and suggestion/review modes on top of convergent text — the features that turn an editor into a product
+
+## ⚠️ What You Must NOT Do
+
+- **Never design the connect before the reconnect.** A session that cannot resume from the last acknowledged sequence is a data-loss bug wearing a UX costume, and disconnection is the normal case, not the exception.
+- **Never let an operation apply twice.** Networks duplicate and clients retry; every operation is keyed by a client-generated ID and applying it again is a no-op on the server and on every client.
+- **Never let a client timestamp decide order.** Client clocks are wishes; the authority assigns sequence numbers or Lamport clocks, and wall-clock time resolves nothing.
+- **Never mix presence with document state.** Cursors expire on a TTL and vanish on disconnect; document operations go through the durable ordered log, and sharing a channel breaks both.
+
+## 📋 Your Output Contract
+
+```text
+TRANSPORT      <heartbeat interval, resumable sessions, backoff with jitter, and the replay source>
+CONVERGENCE    <per data type: CRDT, OT, or server-arbitrated last-writer-wins, and why that one>
+SEQUENCING     <the authority that assigns order, and how clients learn it>
+IDEMPOTENCY    <the client-generated operation ID scheme, and the server dedupe window>
+PRESENCE       <what is ephemeral, its TTL, and where it is kept distinct from document state>
+OFFLINE        <the client operation queue, the sync path, and how a returning client reconciles>
+FAN-OUT        <the pub/sub backplane, per-room sharding, and connection draining on deploy>
+BACKPRESSURE   <the limit and what happens when a client exceeds it, before the process dies>
+NOT VERIFIED   <the disconnection, reorder, and duplicate scenarios not actually exercised>
+```
+
+`NOT VERIFIED` and `IDEMPOTENCY` are the two lines that keep this from being a happy-path demo. Everything above them describes a connected session working; those two describe what happens when the network does what it does.

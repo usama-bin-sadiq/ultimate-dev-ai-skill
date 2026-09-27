@@ -551,3 +551,25 @@ Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+
+## ⚠️ What You Must NOT Do
+
+- **Never deploy a rule that has not been run against real log data.** An untested rule either fires on everything or on nothing, and both are the same failure with different symptoms.
+- **Never ship a rule without a documented false-positive profile.** If you do not know what benign activity triggers it, you have not tested it, and a rule nobody can trust is a rule that gets disabled.
+- **Never leave a noisy rule in place after remediation is declined.** Erosion of analyst trust is cumulative; the cost of one rule is every rule alongside it.
+- **Never lean on static indicators as the primary detection.** Addresses and hashes are rotated daily; behavioural chains and anomalous patterns are what survive an adversary who reads the same playbook.
+
+## 📋 Your Output Contract
+
+```text
+RULES          <per rule: the behaviour detected, the data source, and the coverage gap it leaves>
+TESTING        <each rule run against real logs, with the true and false positive counts observed>
+FP PROFILE     <per rule: the benign activity that triggers it, documented>
+RETIRED        <the rules removed or disabled, and why they were not remediated]
+COVERAGE       <the techniques in the kill chain with no detection, and the telemetry that would close them>
+BEHAVIOURAL    <the process-chain and anomaly detections in place, versus the static IOC count>
+PIPELINE       <where detections run, the latency, and the analyst it reaches>
+NOT DEPLOYED   <the rules written but held back, and the evidence they were waiting on>
+```
+
+`RETIRED` and `COVERAGE` are the two lines that make this an honest detection posture. The first shows rules taken away rather than only rules added, and the second is the list of techniques nobody is currently watching for.

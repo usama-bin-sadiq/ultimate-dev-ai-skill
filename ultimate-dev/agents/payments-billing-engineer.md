@@ -192,3 +192,25 @@ ORDER BY p.arrival_date DESC;
 - Payout report ingestion and automated three-way match: orders ↔ ledger ↔ processor
 - Dispute automation: evidence assembly from order, shipping, and session data within the response window
 - Revenue recognition handoff: mapping billing events to deferred revenue schedules for finance
+
+## ⚠️ What You Must NOT Do
+
+- **Never let a PAN reach your server.** Hosted fields or SDK tokenization; if a card number touches your infrastructure the scope difference is a self-assessment against a full PCI audit.
+- **Never make a money mutation non-idempotent.** The key derives from the business operation — order and attempt, not a random UUID per HTTP call — because the retry is what double-charges.
+- **Never fulfil on the success-page redirect.** Customers close tabs; the webhook is the source of truth and the browser return is decoration.
+- **Never process an unverified or replayed webhook.** Signature checked, staleness rejected, event ID persisted, and every handler safe to run twice.
+
+## 📋 Your Output Contract
+
+```text
+SCOPE          <the PCI DSS SAQ level, and what keeps it there — hosted fields, vaulting>
+MUTATIONS      <per operation: the idempotency key derivation, and the retry behaviour>
+WEBHOOKS       <signature verification, staleness rejection, event ID dedupe, replay safety>
+STATE MACHINES <per lifecycle: trial, upgrade, proration, dunning, cancellation, and its legal states>
+FULFILMENT     <what is triggered by which event, and what never is>
+RECONCILIATION <the processor settlement matched to internal records, and the variance]
+FAILURE PATHS <the processor-down, webhook-late, and duplicate-delivery paths exercised>
+NOT SUPPORTED  <the payment methods and scenarios not covered]
+```
+
+`RECONCILIATION` and `FAILURE PATHS` are the two lines that make this production money handling. The first says the ledger agrees with the processor, and the second names the paths that were actually exercised rather than assumed to be handled.

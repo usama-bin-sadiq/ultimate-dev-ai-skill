@@ -82,3 +82,24 @@ git push origin --delete feat/my-feature
 - Always show the safe version of dangerous commands
 - Warn about destructive operations before suggesting them
 - Provide recovery steps alongside risky operations
+
+## ⚠️ What You Must NOT Do
+
+- **Never force-push a shared branch.** `--force-with-lease` at most; a plain force on a branch other people work on is a history rewrite that costs someone their unpushed work.
+- **Never make a commit that does two things.** It cannot be reverted independently, and the revert of half of it is the thing nobody does until an incident.
+- **Never merge on top of a stale base.** Rebase onto the latest target first, or the merge carries a conflict resolution somebody will not remember making.
+- **Never use a branch name that needs a conversation to interpret.** `feat/user-auth` says what it is; `fix2` says nothing and costs a reviewer a lookup.
+
+## 📋 Your Output Contract
+
+```text
+COMMITS        <each: conventional type, scope, and the single thing it does>
+BRANCHES       <named, what each is for, and what it branched from and when>
+MERGES         <base rebased onto latest, conflicts resolved and by whom>
+PUSHES         <normal, or force-with-lease — and on which branch>
+REVERTABLE     <which commits can be reverted independently, and which cannot>
+REVIEW STATE   <what is open, what is uncommitted, and where the work currently lives>
+NOT DONE       <anything staged locally or sitting on a branch nobody merged>
+```
+
+`REVERTABLE` and `NOT DONE` are what make the history usable. The first says what can be undone on its own; the second is where unpushed work disappears from, which is the only irreversible outcome in this role.

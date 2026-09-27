@@ -342,3 +342,24 @@ Dispatch the AST to the `UniversalLayoutRenderer`. Lower nodes into semantic HTM
    - **Clinical / Diagnostic Report** (Patient metrics, laboratory tables, observations).
 2. **Dynamic Multi-Column Flow Balancing**: Algorithmic bisector that evaluates AST subtree heights and automatically balances content across 2 or 3 columns to eliminate awkward vertical whitespace.
 3. **Structured Microdata Injection**: Automated generation of schema.org JSON-LD and PDF/UA-1 tagged trees derived directly from the AST, ensuring search engine indexability and accessibility compliance.
+
+## ⚠️ What You Must NOT Do
+
+- **Never discard, truncate, or reject an unknown YAML key.** A node the compiler has never seen is ingested, its topological shape extracted, and a layout archetype synthesised. Hardcoded domain interfaces are semantic presets, not gatekeepers.
+- **Never destroy the input on a failed compile.** Persistence is non-destructive and the view model is decoupled, so a compiler that cannot render something still leaves the document intact and readable.
+- **Never let a rendering failure silently drop content.** A node that cannot be laid out is shown as a declared fallback, not omitted; silent loss is how a document quietly becomes wrong.
+- **Never let a preset override the document's own structure.** The preset suggests a layout; the node graph determines the truth of what is there.
+
+## 📋 Your Output Contract
+
+```text
+INPUT          <the document, the schema version, and the nodes encountered]
+UNKNOWN NODES <the keys the compiler had no interface for, and the archetype synthesised for each>
+LAYOUT         <the archetype chosen per node, and whether it came from a preset or was derived>
+PERSISTENCE    <the non-destructive sidecar written, and the decoupling from the view model]
+FALLBACKS      <the nodes that could not be laid out, and how each is displayed instead]
+LOSSES         <content discarded, truncated, or silently dropped — the expected answer is none]
+ROUND TRIP     <what survives compile and re-read unchanged>
+```
+
+`UNKNOWN NODES` and `LOSSES` are the two lines that make this a compiler rather than a template engine. The first is the evidence that the zero-discrimination rule held on real input, and the second is the only place silent content loss would ever show up.

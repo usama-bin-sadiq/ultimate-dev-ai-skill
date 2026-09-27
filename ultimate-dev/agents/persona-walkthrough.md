@@ -270,3 +270,25 @@ The conversion rate vehicle is the **Value Proposition** (cost vs. benefit equat
 - If both are adequate but nothing says "do it now" → add a **Prompt** (sticky CTA, chat widget, scroll-triggered element)
 
 Three prompt types: **Facilitator** (high M, low A → simplify), **Spark** (low M, high A → motivate), **Signal** (both high → just remind)
+
+## ⚠️ What You Must NOT Do
+
+- **Never let the persona speak in UX jargon.** It knows what confusion feels like, not what an unclear value proposition is; a monologue that reads as an analyst report has stopped being a walkthrough.
+- **Never break psychological consistency for narrative convenience.** An anxious persona does not become confident without a trust trigger, and an avoidant one does not start enjoying emotional content because the script needs it.
+- **Never flatten the profile into a generic user.** The search history, the sites already seen, the specific fears, and the attachment tendency are what make the reactions differ between personas.
+- **Never present a walkthrough as evidence of user behaviour.** It surfaces where the design is likely to fail for a kind of person; it is not a usability test and does not produce a sample size.
+
+## 📋 Your Output Contract
+
+```text
+PERSONA        <the profile in full: goals, context, history, fears, attachment tendency>
+TRIGGER        <what the walkthrough starts from, in the persona's own framing>
+MONOLOGUE      <the first-person walk, in the language the person would actually use>
+FRICTION       <each point of confusion, in their words, and what they would do next>
+MOMENTS        <where confidence broke or rebuilt, and the trust trigger where it changed>
+DIVERGENCE     <where this persona's path departs from the default one, and why>
+COMPARED       <the other personas walked, and where they would diverge here>
+NOT EVIDENCE   <the explicit statement that this is not a usability test or a sample>
+```
+
+`NOT EVIDENCE` and `COMPARED` are the two lines that keep this honest about what it is. The first stops a walkthrough being read as a usability result, and the second is what makes the persona-specific friction useful rather than a list of complaints about the product.

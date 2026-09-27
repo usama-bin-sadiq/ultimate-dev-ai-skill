@@ -268,3 +268,24 @@ spec:
 - The platform abstracts the cloud so application engineers don't write cloud-specific code
 - Migration between clouds becomes a platform concern, not an application concern
 - Each cloud adapter is a separate paved road; the application layer is portable
+
+## ⚠️ What You Must NOT Do
+
+- **Never present five framework choices in a scaffold.** A golden path that offers options has not made the decision; pick one and write down why in the ADR.
+- **Never leave the wrong way easy.** An opinionated default that can be bypassed without thought is a default that will be bypassed, and the bypass is where the incident comes from.
+- **Never treat a default as censorship without recording the trade.** Every opinionated choice is a trade-off; undocumented it reads as arbitrary and gets overridden at the first difficult case.
+- **Never let the golden path stop at a working service.** Observability, deployment, security baseline, and on-call are part of what is encoded, or the first incident teaches what they were for.
+
+## 📋 Your Output Contract
+
+```text
+GOLDEN PATH    <clone to production in under thirty minutes, and the step it actually took>
+DEFAULTS       <per choice: what it is, the ADR, and the trade accepted>
+ENABLED        <observability, deployment, security baseline, and on-call, as shipped by default>
+ESCAPE HATCHES <how a team departs from the path, and what it then owns>
+ADOPTION       <how many services were created on the path, and where teams left it>
+DEBT           <the workarounds teams built because the path did not cover their case>
+NOT ENFORCED   <the controls the platform recommends but does not make the default>
+```
+
+`DEBT` and `NOT ENFORCED` are the two lines that make this a platform report rather than a design document. The first is where the teams went around it, and the second is the honest boundary between a guardrail and a suggestion.

@@ -161,3 +161,25 @@ iOS (App Store phased release, 7-day default ramp)     Android (Play staged roll
 - Crash and ANR SLOs with automated rollout-halt hooks wired to the crash reporter's live metrics
 - Privacy-compliance automation: iOS privacy manifests and required-reason API audits, Android Data safety mapping, and SDK-inventory tracking as regulations shift
 - Post-launch experimentation: staged feature exposure via remote config layered over phased binary rollout, separating "shipped" from "enabled"
+
+## ⚠️ What You Must NOT Do
+
+- **Never let a signing identity live on one engineer's laptop.** Certificates and keystores live in a shared, encrypted, access-controlled store; a lost keystore can mean never shipping an update again.
+- **Never ship to the full population at once.** There is no rollback for a binary, only roll-forward, so every release is phased with halt-on-crash-spike thresholds agreed in advance.
+- **Never resubmit after a review rejection without reading the rejection.** The common triggers are privacy strings, sign-in requirements, purchase policy, and misleading metadata, and a blind resubmission is a slower version of the same rejection.
+- **Never skip the pre-submission checklist.** Build number, entitlements, privacy manifest, symbols, screenshots, minimum OS — each skipped item is either a rejection or a crash nobody can symbolicate.
+
+## 📋 Your Output Contract
+
+```text
+SIGNING        <where each identity lives, its access control, and the version it is pinned to>
+PIPELINE       <the tagged commit to store-ready artefact path, and any manual step in it>
+SUBMISSION     <the store, the metadata, and the privacy declarations submitted>
+CHECKLIST      <each pre-submission item, verified, with the one thing outstanding>
+ROLLOUT        <the phase percentages, the crash-free gate, and the halt threshold>
+REJECTIONS     <any rejection, its reason, and what changed before resubmission>
+SYMBOLS        <what was uploaded, and the crash-reporting it enables>
+NOT SHIPPED    <what the release pipeline still does by hand>
+```
+
+`ROLLOUT` and `NOT SHIPPED` are the two lines that keep this from being a build that happened to work. The first is the only real recovery available for a shipped binary, and the second is where a pipeline still depends on a person who is not on call.

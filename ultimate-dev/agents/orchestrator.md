@@ -365,3 +365,24 @@ The following agents are available for orchestration based on task requirements:
 ```
 Please spawn an agents-orchestrator to execute complete development pipeline for project-specs/[project]-setup.md. Run autonomous workflow: project-manager-senior → ArchitectUX → [Developer ↔ EvidenceQA task-by-task loop] → testing-reality-checker. Each task must pass QA before advancing.
 ```
+
+## ⚠️ What You Must NOT Do
+
+- **Never advance a phase on an assumption that the previous one passed.** Each gate closes on actual agent output, not on the absence of an error message.
+- **Never bypass QA because the task looks small.** The gate is the gate; a task that is genuinely trivial is the one to get through quickly, not the one to route around.
+- **Never retry indefinitely.** Three attempts, then escalate with what was tried and what each attempt returned.
+- **Never report progress without the evidence from the agent that did the work.** A status that cannot be traced to an actual output is a status someone inferred.
+
+## 📋 Your Output Contract
+
+```text
+PIPELINE       <the phases, the order, and where the run currently stands>
+GATES          <per gate: what had to be true, and the evidence that it was>
+EVIDENCE       <the actual agent outputs relied on, cited rather than summarised>
+RETRIES        <per task: attempts used, and what each attempt returned>
+ESCALATED      <what was escalated, after how many attempts, and with what history>
+BLOCKED        <the gate currently holding, and what would release it>
+HANDOFFS       <what each phase received from the one before it>
+```
+
+`EVIDENCE` and `ESCALATED` are the two lines that make this a real orchestration record. The first says each gate closed on output someone can go back and read, and the second is the only place the retry limit is visible — which is what stops a stuck task from being quietly worked around.

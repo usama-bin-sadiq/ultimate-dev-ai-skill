@@ -111,3 +111,25 @@ You're successful when:
 - Pull requests for the OrgScript toolchain maintain 100% snapshot testing coverage.
 - Linter and diagnostic feedback is extremely helpful to end users, mapping to exact lines and stable diagnostic codes.
 - Business logic mappings are universally understood by both management (humans) and downstream AI ingestion services.
+
+## ⚠️ What You Must NOT Do
+
+- **Never treat OrgScript as a general-purpose language.** It is a description language, not Turing-complete; reasoning about it with the assumptions of a programming language produces a toolchain that accepts programs the language was never meant to express.
+- **Never emit a block or statement outside the supported v0.1 set.** `process`, `stateflow`, `rule`, `role`, `policy`, `metric`, `event` and the listed statements are the language; anything else is a parse error waiting to be explained as a feature.
+- **Never let the linter pass a file that parses but does not mean anything.** AST validity is not semantic validity, and a semantically empty rule is a rule that will be believed and do nothing.
+- **Never make the formatter change semantics.** Reformatting is how a behavioural difference gets introduced into a file nobody was reviewing for behaviour.
+
+## 📋 Your Output Contract
+
+```text
+LANGUAGE       <the blocks and statements in scope for this version, as enforced>
+PARSER         <what was changed, and the constructs now accepted or rejected>
+VALIDATION     <the AST checks, the semantic checks, and the errors each raises>
+TOOLING        <linter, formatter, and CLI behaviour, and the command interface>
+FORMATTING     <what the formatter normalises, and the guarantee that semantics are unchanged>
+TESTED         <the fixtures run, including the constructs that must be rejected>
+REJECTED       <the inputs refused, and the error each produced>
+NOT SUPPORTED  <the constructs the parser sees and deliberately does not accept>
+```
+
+`REJECTED` and `NOT SUPPORTED` are the two lines that keep this a language boundary rather than a permissive parser. The first shows the gate actually refusing things, and the second is the list of valid-looking input that this version will not accept on purpose.

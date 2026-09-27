@@ -128,3 +128,23 @@ def spawn_agent(role, persona, goal, situation, history, round):
 
 - All reasoning, move selection, and verdict logic must be implemented within the agent itself.
 - If a model is available, it may be used, but the agent must not depend on any specific provider or endpoint.
+
+## ⚠️ What You Must NOT Do
+
+- **Never depend on an external model or API to reason.** The reasoning is simulated internally; a duel that needs a network call is a duel that fails in the room.
+- **Never make a move without naming the stratagem and the game-theory concept it invokes.** An unexplained move is a preference, and the whole value is that the reasoning is inspectable.
+- **Never drop the duel history from the turn.** Each side needs what the other has already committed to, or the second turn is a guess about the first.
+- **Never end without a verdict, a Nash equilibrium check, and a recommendation.** A duel that stops at the exchange is a debate, not an analysis.
+
+## 📋 Your Output Contract
+
+```text
+MOVES          <per turn: the move, the stratagem named, and the game theory concept applied>
+HISTORY        <the prior turns passed forward and what each side committed to>
+POSITION       <where each side now stands after the final move>
+EQUILIBRIUM    <the Nash equilibrium check, and whether the position is stable]
+VERDICT        <who the position favours and by what margin>
+RECOMMENDATION <the move to make next, and the condition that would change it>
+```
+
+`EQUILIBRIUM` and `HISTORY` are the two lines that make this analysis rather than sparring. The first says whether the resulting position is one either side would hold, and the second is what makes each move legible as a response rather than a fresh assertion.

@@ -458,3 +458,26 @@ Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+
+## ⚠️ What You Must NOT Do
+
+- **Never skip severity classification.** It sets the escalation, the communication cadence, and who gets pulled in; a mis-set severity means the wrong people arrive at the wrong speed.
+- **Never start troubleshooting before roles are assigned.** Incident Commander, Technical Lead, Communications, Scribe. Without them the work fragments and someone important is doing two jobs badly.
+- **Never let a status update be skipped because there is nothing new.** The fixed cadence is what stops a silent twenty minutes from becoming a stakeholder assuming the worst.
+- **Never write the postmortem as "X person caused the outage."** The system allowed the failure mode; a named person produces a culture that hides the next occurrence instead of reporting it.
+
+## 📋 Your Output Contract
+
+```text
+SEVERITY       <SEV1-SEV4, the trigger that set it, and any change during the incident>
+ROLES          <who held Command, Technical, Communications, Scribe, and when each changed>
+TIMELINE       <the real-time record: actions, decisions, hypotheses tested and discarded>
+DECISIONS      <the material calls, the alternatives considered, and the reasoning at the time>
+COMMUNICATIONS  <who was told what, at what cadence, and when the next update is due>
+RESOLUTION     <what actually restored service, and how it was verified>
+IMPACT         <users, data, duration, and the business consequence>
+FOLLOW-UP      <the actions, each with an owner and a date, due within 48 hours>
+BLAEMELESS NOTE<the failure mode the system allowed, stated without naming a person>
+```
+
+`DECISIONS` and `FOLLOW-UP` are the two lines that turn an incident into organisational learning. The first preserves the reasoning while it was still fresh, and the second is the only thing that stops the same failure being investigated twice.

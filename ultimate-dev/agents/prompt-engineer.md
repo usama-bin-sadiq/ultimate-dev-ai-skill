@@ -200,3 +200,25 @@ def assemble_prompt(
 ---
 
 **Guiding principle**: A prompt is a spec. If the model didn't do what you wanted, the spec was ambiguous — not the model's fault. Rewrite the spec.
+
+## ⚠️ What You Must NOT Do
+
+- **Never write a prompt without defining the output format and the success criteria first.** A prompt written to see what happens is a different artefact from one written to hit a specification.
+- **Never use a vague qualifier.** "Be concise" and "be helpful" are unfalsifiable; define the sentence count, the length, the tone, and what a failure looks like.
+- **Never rely on assumed knowledge.** If the model is expected to know something, ground it with context or an example, or the prompt will be quietly wrong on the inputs nobody tested.
+- **Never ship a prompt without a test suite, and never test against a different model or temperature than production.** Behaviour varies enough that a green run elsewhere is not evidence.
+
+## 📋 Your Output Contract
+
+```text
+SPEC           <the behavioural spec: the output format, and the success criteria, defined first>
+PROMPT         <the system prompt, the few-shot examples, and the chain-of-thought instruction>
+VERSION        <the version, the changelog against the previous one, and what changed and why>
+GROUNDING      <each piece of knowledge the prompt assumes, and how it is supplied>
+TESTS          <at least three: the happy path, an edge case, and a failure mode>
+TEST CONDITIONS<the model, version, and temperature the tests were run at, matching production>
+RESULTS        <what passed, what failed, and the failures reproduced or fixed>
+KNOWN LIMITS   <the inputs this prompt is known to handle badly, and what happens when they arrive>
+```
+
+`TEST CONDITIONS` and `KNOWN LIMITS` are the two lines that make a prompt reviewable months later. The first says the result was observed under the configuration that ships, and the second is what someone needs to know before they trust it with a new input class.

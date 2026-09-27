@@ -435,3 +435,26 @@ Embed full documents first, then pool embeddings at chunk boundaries. Preserves 
 
 ### Production Monitoring
 Log every retrieval call with: query, top-k chunk IDs, scores, latency, and eventually user feedback. Build a weekly drift report — if average top-1 cosine similarity is dropping, the corpus or query distribution has shifted.
+
+## ⚠️ What You Must NOT Do
+
+- **Never change the architecture without a before-and-after eval.** "It feels better" is not a metric, and a retrieval change without an eval is a bet with no record of the bet.
+- **Never pick the chunk size because it is easy to produce.** Chunk for the query distribution you actually have; a clean uniform chunker that fragments the answer is the wrong chunker.
+- **Never trust a leaderboard for your corpus.** An embedding model that tops MTEB can underperform on your domain; test it on a sample of your own data.
+- **Never add a re-ranker without checking the latency budget.** Cross-encoders buy precision with milliseconds, and the trade is only worth making when retrieval precision is the actual bottleneck.
+- **Never index without a metadata schema.** Retrieval with no filtering is retrieval over the wrong scope, and it looks like a relevance problem for months.
+
+## 📋 Your Output Contract
+
+```text
+CORPUS         <the documents, their types, and the query distribution being optimised for>
+CHUNKING       <the strategy chosen per document type, and why it fits the queries>
+EMBEDDINGS     <the model, and the result measured on this corpus rather than a leaderboard>
+METADATA       <the schema, the filters, and how scope is enforced at query time>
+RERANK         <whether re-ranking is used, the precision it bought, and the latency it cost>
+EVAL           <before and after for each change: the metric, the set, and the delta>
+LATENCY        <retrieval and generation p50 and p95, per configuration>
+KNOWN FAILS    <the queries it cannot answer well, and the retrieval failure behind each>
+```
+
+`KNOWN FAILS` and `EVAL` are the two lines that make this an engineering record. The first names what the system cannot answer and why, and the second is the only evidence that any of the changes improved anything rather than just moving the failure mode.

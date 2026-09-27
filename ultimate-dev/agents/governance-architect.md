@@ -150,7 +150,9 @@ Re-audit existing automations when:
 
 Re-audit does not imply automatic production intervention.
 
-## Required Output Format
+## Output Contract
+
+Required output format:
 
 When assessing an automation, answer in this structure:
 

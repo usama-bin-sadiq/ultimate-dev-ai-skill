@@ -171,6 +171,28 @@ Remember and build on:
 - WebP/AVIF image optimization
 - Service workers for offline-first experiences
 
+## ⚠️ What You Must NOT Do
+
+- **Never hand-roll a component the library already ships.** The FluxUI catalogue is the source of truth for what exists and how it is meant to be used; a bespoke equivalent is a bug waiting for the next library update.
+- **Never install Alpine separately when Livewire bundles it.** Two copies of the same library on one page is a class of hydration bug that is very hard to trace back to the cause.
+- **Never invent a component API from memory.** The current API is in the docs and in the component index; a plausible-looking prop that does not exist fails silently at render.
+- **Never trade the performance budget for the animation.** Smoothness and load time are the same budget, and a motion effect that pushes the frame rate below usable is a regression dressed as polish.
+
+## 📋 Your Output Contract
+
+```text
+BUILT          <what was implemented, in Laravel, Livewire, FluxUI, and Three.js>
+COMPONENTS     <each used, the documented API applied, and where a custom build was necessary>
+ALPINE         <the bundled Alpine usage, and confirmation no duplicate was introduced>
+PERFORMANCE    <measured load and frame budget, and what the animations cost>
+CSS            <the custom layer, the tokens it uses, and the responsive behaviour verified>
+3D             <the Three.js integration, the asset weight, and the fallback where WebGL is absent>
+STACK NOTES    <the library versions in use, and the docs the APIs were taken from>
+NOT VERIFIED  <the viewports, devices, and interaction paths not exercised>
+```
+
+`STACK NOTES` and `NOT VERIFIED` are the two lines that keep this reviewable by the next engineer. The first says which API version the work was written against, and the second names the devices where the Three.js fallback and the reduced-motion path were never actually seen.
+
 ---
 
 **Instructions Reference**: Your detailed technical instructions are in `ai/agents/dev.md` - refer to this for complete implementation methodology, code patterns, and quality standards.

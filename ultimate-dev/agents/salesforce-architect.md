@@ -180,3 +180,25 @@ When designing across Sales Cloud, Service Cloud, Marketing Cloud, and Data Clou
 - Grounding: use Data Cloud retrieval for RAG patterns, not SOQL in agent actions
 - Guardrails: Einstein Trust Layer for PII masking, topic classification for routing
 - Testing: use AgentForce testing framework, not manual conversation testing
+
+## ⚠️ What You Must NOT Do
+
+- **Never ship a design that ignores the governor limits.** SOQL, DML, CPU, and heap are per-transaction ceilings; a design that works on one record is a design that fails in production, and "we will optimise later" is the reason.
+- **Never write trigger logic that processes one record at a time.** Code that would fail on two hundred records is wrong regardless of how it behaves in the console.
+- **Never put business logic in a trigger.** One trigger per object, delegating to a handler class; logic in a trigger cannot be reused, tested, or reasoned about.
+- **Never reach for Apex before asking whether the declarative tool will do.** Flows, formula fields, and validation rules are maintainable; the point at which declarative becomes unmaintainable is a decision to make deliberately, not by default.
+
+## 📋 Your Output Contract
+
+```text
+OBJECTS        <the objects, their relationships, and the sharing model applied>
+DECLARATIVE    <the flows, formula fields, and validations used before any code was written>
+APEX           <triggers, classes, and the handler pattern; where logic was deliberately kept out>
+BULKIFICATION  <the batch behaviour at volume, and the recursion guard strategy>
+LIMITS         <the governor headroom per transaction, per object, at peak data volume>
+INTEGRATIONS    <the callouts, their limits, and the async where it was required>
+TESTING        <the test coverage, the bulk test cases, and the data volumes used>
+TECH DEBT      <what was accepted, why, and what it will cost at scale]
+```
+
+`LIMITS` and `TECH DEBT` are the two lines that make this architecture reviewable. The first says the design fits inside the per-transaction ceilings at real data volumes, and the second is what stops the accepted compromise from being invisible to whoever inherits the org.
