@@ -1,7 +1,16 @@
 ---
 license: MIT
 name: ultimate-dev
-description: Solve arbitrary objectives with an adaptive decision kernel that acquires context and capabilities on demand, scales strategy and reasoning depth to risk, plans, executes, verifies against observed evidence, recovers from failure, and retains only validated learning. Use when a request is too open-ended, multi-step, cross-domain, unfamiliar, or high-consequence to answer directly; when a plan must be built or revised as new evidence arrives; when a result must be verified rather than assumed; or when a repeated manual procedure should become a reusable skill. Produces a verified deliverable with its evidence, assumptions, confidence, and limits.
+description: Use when the next correct action is not already determined and a
+  direct answer would be unearned — work whose parts interact, whose method is
+  unsettled, or whose consequences make being wrong expensive. Also for a repeated
+  manual procedure that should become a reusable capability. The test is not how
+  big the task looks; if the next action is already determined, act directly. Do
+  not use for a question you can answer, a single edit, an established procedure,
+  or a restatement — a plan, a capability search, and a verification ceremony on a
+  one-line change is a defect, not thoroughness. Scales from one hard problem to a
+  long programme. Returns a deliverable with evidence, assumptions,
+  limits, and what it could not establish.
 ---
 
 # ultimate-dev
@@ -25,13 +34,11 @@ interact; the right approach is not yet known; the cost of being wrong is high;
 or the same procedure has been performed by hand more than once.
 
 Do **not** use it to answer a question you already know, apply a one-step
-transformation, run a known procedure, or restate something. For those, act
-directly. Over-orchestrating a trivial task is a defect, not thoroughness — a
-plan, a capability search, and a verification ceremony on "rename this
-variable" costs the user time and attention and buys nothing.
-
-The test is not how big the task looks. It is whether the next correct action is
-already determined. If it is, do it.
+transformation, run a known procedure, or restate something — act directly. The
+test is not how big the task looks; it is whether the next correct action is
+already determined. Over-orchestrating a trivial task is a defect: a plan, a
+capability search, and a verification ceremony on "rename this variable" costs
+the user time and buys nothing.
 
 ## The loop
 
@@ -122,12 +129,13 @@ DECISION
 ```
 
 **`evidence` must point, not narrate.** Write `OBS-013`, not "the logs showed
-retries". The `OBS-n` ids are assigned in order as observations are recorded —
-the shape, and the rule for reusing one, are in `references/observation-system.md`. A prose evidence field cannot be checked for existence, so a fabricated
-citation is indistinguishable from a real one — which makes it the perfect place
-to hide the system's worst failure. A pointer either resolves to a recorded
-observation or it does not, and that is a mechanical check. If nothing was
-observed, write `none`; that is a legitimate answer and a checkable one.
+retries"; ids are assigned in order, and the shape is in
+`references/observation-system.md`. A prose evidence field cannot be checked for
+existence, so a fabricated citation is indistinguishable from a real one — which
+makes it the perfect place to hide the system's worst failure. A pointer either
+resolves to a recorded observation or it does not, and that is a mechanical
+check. If nothing was observed, write `none`; that is a legitimate answer and a
+checkable one.
 
 **`confidence` must name its object.** A bare `high` is an invitation to over-trust:
 users and downstream steps read it as a property of the conclusion rather than of
@@ -483,11 +491,9 @@ governs and which situation loads it. The groups:
 
 **Breadth** — `references/multi-domain.md` · `references/unknown-domain.md` · `references/insufficient-capability.md` · `references/insufficient-evidence.md` · `references/anti-patterns.md`
 
-**Standing claim** `references/maturity.md` records which prd.md §24 level this kernel claims, on what evidence, and what is missing to reach the next.
-
 **Elsewhere** `skills/skill-creator/SKILL.md` owns capability creation,
 validation, security review, promotion, and deprecation. `agents/` holds the
-seven delegated roles. `tools/` holds one runtime tool, `validate-skills.py`, for
-when a result needs a structural check. The repository's other tooling — the
-bundler, the eval projector, the fixture generator, the pilot runner — is
-maintenance machinery and is not part of an install.
+seven delegated roles. `tools/` holds `validate-skills.py`, for when a result
+needs a structural check; the rest of the tooling is maintenance machinery and is
+not part of an install. `references/maturity.md` records which prd.md §24 level
+this claims and what is missing to reach the next.
