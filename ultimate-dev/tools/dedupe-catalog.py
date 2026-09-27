@@ -126,6 +126,30 @@ def main() -> int:
               if len(g) >= args.min_group]
     groups.sort(key=lambda g: (-len(g), rank(g[0])))
 
+    def cohesion(g: list[dict]) -> float:
+        """Mean pairwise similarity inside a group.
+
+        A group whose members are near-identical is not a set of overlapping
+        capabilities that needs a winner chosen -- it is one file committed under
+        many names, and the correct action is to keep one or keep none. The
+        732-member Composio group is the case in point: raising the threshold
+        from 0.35 to 0.65 barely shrank it, because the members really are the
+        same text with a noun substituted. Naming a "winner" there would be a
+        number that means nothing.
+        """
+        if len(g) < 2:
+            return 0.0
+        t = {e["path"]: terms(e) for e in g}
+        pairs = [(i, j) for i in range(len(g)) for j in range(i + 1, len(g))]
+        sample = pairs[:: max(1, len(pairs) // 60)][:60]
+        return sum(jaccard(t[g[i]["path"]], t[g[j]["path"]])
+                   for i, j in sample) / max(1, len(sample))
+
+    measured = [{"members": g, "size": len(g),
+                 "cohesion": round(cohesion(g), 3)} for g in groups]
+    for m in measured:
+        m["template_family"] = m["size"] >= 5 and m["cohesion"] >= 0.65
+
     out = {
         "disclaimer": (
             "Grouping is Jaccard overlap on name and description tokens, a "
@@ -137,12 +161,17 @@ def main() -> int:
         "entries_considered": len(entries),
         "groups": [],
     }
-    for g in groups:
+    for m in measured:
+        g = m["members"]
+        fam = m["template_family"]
         ranked = sorted(g, key=rank)
         win = ranked[0]
         out["groups"].append({
-            "winner": win["name"],
-            "winner_path": win["path"],
+            "winner": None if fam else win["name"],
+            "winner_path": None if fam else win["path"],
+            "action": ("template-family: keep one or keep none, the members are "
+                       "one file under many names" if fam else "pick-winner"),
+            "cohesion": m["cohesion"],
             "size": len(g),
             "members": [
                 {
@@ -172,9 +201,21 @@ def main() -> int:
     covered = sum(g["size"] for g in out["groups"])
     print(f"  {len(entries)} entries, threshold {args.threshold}")
     print(f"  {len(out['groups'])} overlapping group(s) covering {covered} entries\n")
-    for g in out["groups"][:18]:
+    shown = 0
+    for g in out["groups"]:
+        if g["action"].startswith("template-family") and shown:
+            continue
+        shown += 1
+        if shown > 16: break
+        if g["action"].startswith("template-family"):
+            print(f"  [{g['size']:4}] TEMPLATE FAMILY  cohesion={g['cohesion']}  "
+                  f"-> {g['action'].split(':')[1]}")
+            names = ", ".join(m["name"][:18] for m in g["members"][:4])
+            print(f"        e.g. {names}, and {g['size'] - 4} more")
+            print()
+            continue
         print(f"  [{g['size']:3}] winner: {g['winner']}  "
-              f"({g['winner_path'].split('/')[-1]})")
+              f"(cohesion {g['cohesion']})")
         for m in g["members"][1:6]:
             flags = []
             if m["disqualifiers"]:
