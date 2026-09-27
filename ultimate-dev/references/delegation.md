@@ -50,6 +50,9 @@ rejected alternative.
 | `agents/invariant-finder.md` | A suite is green and the claim is "this domain is covered"; a module gains a registry, enum, name-to-thing table or dispatch map | The registry and the literal copy beside it, which perturbation classes the checks catch, and which they are blind to |
 | `agents/unknowns-mapper.md` | A task feels underspecified but the gap has not been identified; a plan is about to rest on tacit assumptions; the same misunderstanding recurs | Four quadrants of unknown, the questions nothing is waiting on, and `NOT WORTH` when the task is too small |
 | `agents/claim-auditor.md` | A conclusion is about to be reported as established; a check passed and the check's coverage is the real question; docs and code disagree | `SUPPORTED` / `UNSUPPORTED` / `CONTRADICTED` / `UNDECIDABLE` per claim, with the refutation that would falsify each |
+| `agents/evidence-auditor.md` | Before reporting any work as done; when a check passed and the real question is what that check covers; a report will be relied on by someone who cannot re-run it | Per-claim `SUPPORTED` / `UNSUPPORTED` with the required proof class for each claim type, and what would settle each unsupported one |
+| `agents/doubt-reviewer.md` | Work is expensive to reverse; a plan is about to become a commitment; a claim is about to be reported as settled | Findings in four classes, the actionable count alone, and a doubt-theater self-check |
+| `agents/scope-decider.md` | A request is larger than any single plan; a plan would require inventing requirements nobody stated; scope is expanding because expansion felt more thorough | The question restated or `UNSTATEABLE`, one of four scope modes with its threshold, and who owns the choice |
 
 ## The upper bound: where delegation stops paying
 

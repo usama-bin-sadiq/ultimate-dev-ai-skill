@@ -277,7 +277,7 @@ overhead would exceed the work. See `references/observability.md`.
 
 ### Delegated roles
 
-Fourteen roles in `agents/`, each with a procedure, output contract, and
+Seventeen roles in `agents/`, each with a procedure, output contract, and
 prohibitions: `verifier` (re-derive a claim rather than re-read it),
 `investigator` (establish what is actually true), `critic` (attack it), `author`
 (write a skill candidate), `test-author` (claim, then check), `simplifier`
@@ -285,8 +285,11 @@ prohibitions: `verifier` (re-derive a claim rather than re-read it),
 `technical-writer` (answer the reader), `grader` (score against criteria set in
 advance), `comparator` (blind A/B), `security-reviewer` (attack it),
 `invariant-finder` (find the test that copies its own domain), `unknowns-mapper`
-(name the prompt-to-territory gap), `claim-auditor` (false vs. undefended). All
-adopted items carry their source in frontmatter. Dispatch is tabulated in
+(name the prompt-to-territory gap), `claim-auditor` (false vs. undefended),
+`evidence-auditor` (does this proof class support this claim),
+`doubt-reviewer` (attack the artifact, not the reasoning), and `scope-decider`
+(fog before size; refuse to plan what cannot yet be stated). All adopted items
+carry their source in frontmatter. Dispatch is tabulated in
 `references/delegation.md`, with the upper bound.
 also carries the upper bound.
 
