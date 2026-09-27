@@ -313,6 +313,7 @@ jobs:
       - name: Commit, tag, and push
         env:
           NEW_VERSION: ${{ steps.version.outputs.new_version }}
+          ULTIMATE_DEV_TOKEN: ${{ secrets.ULTIMATE_DEV_TOKEN }}
         run: |
           set -euo pipefail
           git add -- VERSION CHANGELOG.md
@@ -322,7 +323,26 @@ jobs:
           fi
           git commit -m "chore: release v$NEW_VERSION"
           git tag -a "v$NEW_VERSION" -m "Release v$NEW_VERSION"
-          git push origin main --tags
+
+          # checkout is configured with persist-credentials: false, so the token
+          # was used to fetch and then discarded. Nothing was left for the push,
+          # and it failed with "could not read Username for 'https://github.com'"
+          # -- an authentication error that reads like a permissions problem and
+          # is actually a missing credential. This is the same class of bug as
+          # the unbound GITHUB_TOKEN: the release path had never run end to end,
+          # because the step before it always died first.
+          #
+          # The token is supplied per-command via http.extraheader rather than by
+          # turning persistence back on, so it is not left sitting in
+          # .git/config for any later step to pick up.
+          if [ -z "${ULTIMATE_DEV_TOKEN:-}" ]; then
+            echo 'ULTIMATE_DEV_TOKEN is empty. It must be set on the CICD' >&2
+            echo 'environment; the job cannot push without it.' >&2
+            exit 1
+          fi
+          auth=$(printf 'x-access-token:%s' "$ULTIMATE_DEV_TOKEN" | base64 | tr -d '\n')
+          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $auth" \
+              push origin main --tags
 
       - name: Create GitHub Release
         env:
