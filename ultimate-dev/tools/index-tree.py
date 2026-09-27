@@ -126,6 +126,7 @@ def collect() -> list[dict]:
             "domain": domain_of(name, desc),
             "tool_bound": bool(TOOLBOUND.search(body)),
             "routed": d.name in routed,
+            "discoverable": bool(desc),
             "has_frontmatter": bool(fm),
             "path": f"skills/{d.name}/SKILL.md",
             "tokens": sorted(tokens(name, desc)),
@@ -143,6 +144,7 @@ def collect() -> list[dict]:
             "domain": domain_of(name, desc),
             "tool_bound": bool(TOOLBOUND.search(text)),
             "routed": f.stem in routed,
+            "discoverable": bool(desc),
             "has_frontmatter": bool(fm),
             "path": f"agents/{f.stem}.md",
             "tokens": sorted(tokens(name, desc)),
@@ -169,6 +171,8 @@ def main() -> int:
             "agents": sum(1 for e in entries if e["kind"] == "agent"),
             "routed": sum(1 for e in entries if e["routed"]),
             "unrouted": sum(1 for e in entries if not e["routed"]),
+            "discoverable": sum(1 for e in entries if e["discoverable"]),
+            "undiscoverable": sum(1 for e in entries if not e["discoverable"]),
             "no_frontmatter": sum(1 for e in entries if not e["has_frontmatter"]),
             "tool_bound": sum(1 for e in entries if e["tool_bound"]),
         },
@@ -211,9 +215,9 @@ def main() -> int:
     print(f"  total            {c['total']}")
     print(f"    skills         {c['skills']}")
     print(f"    agents         {c['agents']}")
-    print(f"  routed           {c['routed']}")
-    print(f"  UNROUTED         {c['unrouted']}   <- present but no decision can reach them")
-    print(f"  no frontmatter   {c['no_frontmatter']}   <- undiscoverable by any runtime")
+    print(f"  DISCOVERABLE     {c['discoverable']}   <- has a description; the runtime can find it")
+    print(f"  undiscoverable   {c['undiscoverable']}   <- no description; invisible to every runtime")
+    print(f"  roles dispatched {c['routed']}   <- have a condition in delegation.md")
     print(f"  tool-bound       {c['tool_bound']}")
     print(f"\n  index: {OUT.relative_to(ROOT)}")
     print("\n  by domain:")
@@ -258,16 +262,28 @@ def write_catalogue(entries: list[dict], payload: dict) -> None:
         "",
         "| | |",
         "|---|---|",
-        f"| installed | {c['total']} |",
-        f"| routed from a decision | {c['routed']} |",
-        f"| **unrouted** | **{c['unrouted']}** |",
-        f"| missing frontmatter (undiscoverable) | {c['no_frontmatter']} |",
+        f"| sub-skills | {c['skills']} |",
+        f"| roles | {c['agents']} |",
+        f"| **discoverable** (has a description) | **{c['discoverable']}** |",
+        f"| **undiscoverable** (no description) | **{c['undiscoverable']}** |",
+        f"| roles with a dispatch condition | {c['routed']} |",
         f"| tool-bound | {c['tool_bound']} |",
         "",
-        f"**{c['unrouted']} of {c['total']} are unrouted.** An unrouted capability",
-        "is installed, indexed, and cannot be selected by anything. Its presence",
-        "in this table is not evidence that it is reachable, and treating the",
-        "count as availability is the error this table exists to prevent.",
+        "## Two different mechanisms, not one count",
+        "",
+        "A **sub-skill is discovered.** The runtime scans every",
+        "`skills/*/SKILL.md`, puts the `description` into a system-reminder",
+        "listing, and the model chooses from that listing. The description IS the",
+        "registration: there is no registry to update and no kernel to edit. So a",
+        "sub-skill with a description is already reachable, and a count of",
+        "\"dispatch rows\" says nothing about it.",
+        "",
+        "A **role is dispatched.** Something has to decide to call it, so it needs",
+        "a condition in `delegation.md`.",
+        "",
+        "This catalogue previously reported a single `unrouted` figure covering",
+        "both, which made 2,584 perfectly discoverable sub-skills look unreachable.",
+        "The two counts are separate and are now separate here.",
         "",
         "## By domain",
         "",

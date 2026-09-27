@@ -27,16 +27,28 @@ hit is **routed** — whether a decision can actually reach it — or
 
 | | |
 |---|---|
-| installed | 2877 |
-| routed from a decision | 19 |
-| **unrouted** | **2858** |
-| missing frontmatter (undiscoverable) | 7 |
+| sub-skills | 2585 |
+| roles | 292 |
+| **discoverable** (has a description) | **2860** |
+| **undiscoverable** (no description) | **17** |
+| roles with a dispatch condition | 19 |
 | tool-bound | 765 |
 
-**2858 of 2877 are unrouted.** An unrouted capability
-is installed, indexed, and cannot be selected by anything. Its presence
-in this table is not evidence that it is reachable, and treating the
-count as availability is the error this table exists to prevent.
+## Two different mechanisms, not one count
+
+A **sub-skill is discovered.** The runtime scans every
+`skills/*/SKILL.md`, puts the `description` into a system-reminder
+listing, and the model chooses from that listing. The description IS the
+registration: there is no registry to update and no kernel to edit. So a
+sub-skill with a description is already reachable, and a count of
+"dispatch rows" says nothing about it.
+
+A **role is dispatched.** Something has to decide to call it, so it needs
+a condition in `delegation.md`.
+
+This catalogue previously reported a single `unrouted` figure covering
+both, which made 2,584 perfectly discoverable sub-skills look unreachable.
+The two counts are separate and are now separate here.
 
 ## By domain
 
@@ -45,25 +57,25 @@ count as availability is the error this table exists to prevent.
 These have a row in `delegation.md`, so a run can select them. They
 are the only entries reachable without editing anything.
 
-- `author` (agent) — (no description)
-- `change-governor` (agent) — (no description)
-- `claim-auditor` (agent) — (no description)
-- `comparator` (agent) — (no description)
-- `critic` (agent) — (no description)
-- `degradation-diagnostician` (agent) — (no description)
-- `doubt-reviewer` (agent) — (no description)
-- `evidence-auditor` (agent) — (no description)
-- `grader` (agent) — (no description)
-- `invariant-finder` (agent) — (no description)
-- `investigator` (agent) — (no description)
-- `performance-reviewer` (agent) — (no description)
-- `scope-decider` (agent) — (no description)
-- `security-reviewer` (agent) — (no description)
-- `simplifier` (agent) — (no description)
-- `technical-writer` (agent) — (no description)
-- `test-author` (agent) — (no description)
-- `unknowns-mapper` (agent) — (no description)
-- `verifier` (agent) — (no description)
+- `author` (agent) — Write a new skill from a stated capability gap, following the contract-first procedure and leaving specification, tests,
+- `change-governor` (agent) — Decide which surfaces a self-modifying system may write to, and resist the metric-gaming that appears once a system is r
+- `claim-auditor` (agent) — Audit whether a claim is protected, not merely stated, and separate a claim that is wrong from a claim that is merely un
+- `comparator` (agent) — Compare two candidate outputs on stated criteria, without knowing which is new, and deliver a verdict that names the spe
+- `critic` (agent) — Attack a proposed plan, design, or draft before it is executed, and find the specific way it fails. Delegate before comm
+- `degradation-diagnostician` (agent) — Tell apart the ways a long context fails, because they look alike from inside and have opposite fixes. Delegate when a l
+- `doubt-reviewer` (agent) — Attack a finished piece of work from a context that has not seen the reasoning behind it, and report only what survives.
+- `evidence-auditor` (agent) — Decide whether a completion claim is supported, by mapping each claim type to the proof it requires and naming the proof
+- `grader` (agent) — Score an output against pre-stated, objective criteria, and record undecidable judgements as null rather than guessing. 
+- `invariant-finder` (agent) — Find tests that enumerate a domain by copying it, and name the members nothing covers. Delegate when a suite is green an
+- `investigator` (agent) — Find out what is actually true in an unfamiliar situation, and return evidence rather than a conclusion you were not ask
+- `performance-reviewer` (agent) — Find the actual bottleneck by measurement and name the change that removes it. Delegate when something is too slow, too 
+- `scope-decider` (agent) — Decide whether a piece of work can be planned now, must be specified before it can be planned, or is too foggy to either
+- `security-reviewer` (agent) — Manufacture an attack against a plan, a change, or a claim, and report what an adversary would achieve. Delegate before 
+- `simplifier` (agent) — Reduce a design to the smallest thing that still does the job, without changing what it does. Delegate when something wo
+- `technical-writer` (agent) — Write documentation for the reader who has to act on it, at the moment they need it. Delegate when a change alters how s
+- `test-author` (agent) — Write tests that fail for the right reason and pass for the right reason. Delegate when a change needs coverage and the 
+- `unknowns-mapper` (agent) — Classify what a request does not yet settle into the four kinds of unknown, and pick the move each kind calls for. Deleg
+- `verifier` (agent) — Independently check whether a specific claim is true, by re-deriving it rather than by re-reading the reasoning that pro
 
 ## Everything else
 
@@ -76,71 +88,71 @@ which is the mistake progressive disclosure exists to prevent.
 python3 tools/index-tree.py --search <term>
 ```
 
-### general — 1963 installed, 8 routed, 1955 not
+### data — 877 installed, 0 routed, 877 not
 
-  `21risk-automation`, `2chat-automation`, `3-statement-model`, `3-statement-model-anthropics-financial`, `3d-scene-developer`, `ably-automation`, `abroad-advisor`, `abstract-automation`, `abuselpdb-automation`, `abyssale-automation`, `academy-guide`, `accelo-automation`, ... (1955 total)
+  `-21risk-automation`, `-2chat-automation`, `3-statement-model`, `3-statement-model`, `ably-automation`, `abstract-automation`, `abuselpdb-automation`, `abyssale-automation`, `accelo-automation`, `accredible-certificates-automation`, `acculynx-automation`, `active-campaign-automation`, ... (877 total)
 
-### agent — 140 installed, 0 routed, 140 not
+### testing — 522 installed, 9 routed, 513 not
 
-  `agent-decision-receipts`, `agent-decision-receipts-alirezarezvani`, `agent-development`, `agent-harness`, `agent-harness-alirezarezvani`, `agent-launcher-orchestrator`, `agent-launcher-orchestrator-alirezarezvani`, `agent-mail-automation`, `agent-memory`, `agent-memory-alirezarezvani`, `agent-platform-alert-configuration`, `agent-platform-eval-flywheel`, ... (140 total)
+  `3D & Scene Developer`, `ab-test-setup`, `ab-test-setup`, `ab-testing`, `Accessibility Auditor`, `Account Strategist`, `Accounts Payable Agent`, `Ad Creative Strategist`, `ad-creative`, `ad-creative`, `ad-creative`, `aeon`, ... (513 total)
 
-### verification — 132 installed, 5 routed, 127 not
+### verification — 432 installed, 7 routed, 425 not
 
-  `a11y-audit`, `a11y-audit-alirezarezvani`, `accessibility-auditor`, `adversarial-reviewer`, `adversarial-reviewer-alirezarezvani`, `ai-generated-code-auditor`, `aims-audit`, `aims-audit-alirezarezvani`, `analytical-method-validation`, `api-design-reviewer`, `api-design-reviewer-alirezarezvani`, `async-pr-review`, ... (127 total)
+  `a11y-audit`, `a11y-audit`, `a11y-audit`, `access`, `access`, `adversarial-reviewer`, `adversarial-reviewer`, `aeo`, `aeo`, `agent-decision-receipts`, `agent-decision-receipts`, `agent-harness`, ... (425 total)
 
-### data — 82 installed, 0 routed, 82 not
+### general — 205 installed, 0 routed, 205 not
 
-  `agent-platform-migrate-from-ai-studio`, `ai-data-remediation-engineer`, `analytics`, `analytics-reporter`, `analytics-tracking`, `analytics-tracking-alirezarezvani`, `asin-data-api-automation`, `big-data-cloud-automation`, `campaign-analytics`, `campaign-analytics-alirezarezvani`, `chief-data-officer-advisor`, `chief-data-officer-advisor-alirezarezvani`, ... (82 total)
+  `academy-guide`, `algorithmic-art`, `alloydb-basics`, `Anthropologist`, `antigravity-support`, `ar-status`, `ar-status`, `arena`, `bids`, `bigquery-ai-ml`, `bigquery-basics`, `bigquery-bigframes`, ... (205 total)
 
-### testing — 74 installed, 1 routed, 73 not
+### planning — 192 installed, 1 routed, 191 not
 
-  `ab-test-setup`, `ab-test-setup-alirezarezvani`, `ab-testing`, `api-test-suite-builder`, `api-test-suite-builder-alirezarezvani`, `api-tester`, `baidu-seo-specialist`, `billing-coding-specialist`, `bim-specialist`, `browser-testing-with-devtools`, `cockpit-interaction-specialist`, `composio-webapp-testing`, ... (73 total)
+  `accrual-schedule`, `accrual-schedule`, `agent-memory`, `agent-memory`, `agile-product-owner`, `agile-product-owner`, `business-growth-skills`, `business-growth-skills`, `capa-officer`, `capa-officer`, `Capsule CRM Automation`, `capture`, ... (191 total)
 
-### research — 71 installed, 2 routed, 69 not
+### design — 145 installed, 0 routed, 145 not
 
-  `analyst`, `clinical-research`, `clinical-research-alirezarezvani`, `codebase-analyzer`, `competitive-analysis`, `competitive-analysis-anthropics-financial`, `comprehensive-research-agent`, `comps-analysis`, `comps-analysis-anthropics-financial`, `cs-financial-analyst`, `cs-product-analyst`, `customer-research`, ... (69 total)
+  `adaptyv`, `agent-designer`, `agent-designer`, `agent-workflow-designer`, `agent-workflow-designer`, `alphagenome`, `api-and-interface-design`, `application-design-center-design-deploy`, `architect`, `artifacts-builder`, `aws-solution-architect`, `aws-solution-architect`, ... (145 total)
 
-### design — 70 installed, 0 routed, 70 not
+### documentation — 123 installed, 1 routed, 122 not
 
-  `agent-designer`, `agent-designer-alirezarezvani`, `agent-workflow-designer`, `agent-workflow-designer-alirezarezvani`, `api-and-interface-design`, `application-design-center-design-deploy`, `banner-design`, `banner-design-nextlevelbuilder-ui`, `brand`, `brand-guardian`, `brand-guidelines`, `brand-guidelines-alirezarezvani`, ... (70 total)
+  `adrapid-automation`, `agent-development`, `arquiteto-de-empresa`, `arquiteto-de-empresa`, `arquiteto-de-empresa`, `board`, `board`, `changelog-generator`, `cim-builder`, `clinical-decision-support`, `cold-email`, `cold-email`, ... (122 total)
 
-### documentation — 57 installed, 1 routed, 56 not
+### agent — 76 installed, 1 routed, 75 not
 
-  `adrapid-automation`, `changelog`, `changelog-generator`, `changelog-generator-alirezarezvani`, `composio-changelog-generator`, `composio-docx`, `content-research-writer`, `contract-and-proposal-writer`, `contract-and-proposal-writer-alirezarezvani`, `deep-documentation`, `doc-coauthoring`, `dock-certs-automation`, ... (56 total)
+  `Agent Name`, `agent-platform-alert-configuration`, `agent-platform-eval-flywheel`, `agent-platform-inference`, `agent-platform-model-registry`, `agent-platform-prompt-management`, `agent-platform-rag-engine-management`, `agent-platform-skill-registry`, `agent-platform-tuning`, `agent-platform-tuning-management`, `agent-reach`, `agent-tui`, ... (75 total)
 
-### backend — 56 installed, 0 routed, 56 not
+### security — 66 installed, 0 routed, 66 not
 
-  `agent-platform-endpoint-management`, `ai-ml-api-automation`, `api-bible-automation`, `api-labz-automation`, `api-ninjas-automation`, `api-platform-engineer`, `api-sports-automation`, `api2pdf-automation`, `apiflash-automation`, `apify-automation`, `apilio-automation`, `apipie-ai-automation`, ... (56 total)
+  `agent-launcher-orchestrator`, `agent-launcher-orchestrator`, `Agentic Identity & Trust Architect`, `ai-security`, `ai-security`, `API Platform Engineer`, `auth0-automation`, `behuman`, `behuman`, `Book Co-Author`, `book-sft-pipeline`, `book-to-skill`, ... (66 total)
 
-### business — 55 installed, 0 routed, 55 not
+### research — 54 installed, 0 routed, 54 not
 
-  `business-growth-skills`, `business-growth-skills-alirezarezvani`, `business-investment-advisor`, `business-investment-advisor-alirezarezvani`, `business-name-fit`, `business-name-fit-alirezarezvani`, `business-operations-skills`, `business-operations-skills-alirezarezvani`, `china-market-localization-strategist`, `co-marketing`, `community-marketing`, `cs-webinar-marketer`, ... (55 total)
+  `advanced-evaluation`, `boardroom`, `boardroom`, `bond-futures-basis`, `business-investment-advisor`, `business-investment-advisor`, `chief-of-staff`, `chief-of-staff`, `cobrapy`, `collab-proof`, `collab-proof`, `competitive-ads-extractor`, ... (54 total)
 
-### security — 42 installed, 1 routed, 41 not
+### performance — 49 installed, 0 routed, 49 not
 
-  `ai-security`, `ai-security-alirezarezvani`, `auth0-automation`, `book-co-author`, `claude-security`, `cloud-security`, `cloud-security-alirezarezvani`, `cloud-security-architect`, `doppler-secretops-automation`, `env-secrets-manager`, `env-secrets-manager-alirezarezvani`, `gke-platform-security`, ... (41 total)
+  `ads`, `benchmark`, `benchmark-models`, `bigquery-slot-cost-optimizer`, `claude-coach`, `claude-coach`, `client-report`, `content-humanizer`, `content-humanizer`, `context-compression`, `context-degradation`, `context-optimization`, ... (49 total)
 
-### devops — 35 installed, 0 routed, 35 not
+### devops — 48 installed, 0 routed, 48 not
 
-  `agent-platform-deploy`, `ai-citation-strategist`, `book-sft-pipeline`, `cdr-platform-automation`, `ci`, `ci-cd-and-automation`, `ci-cd-pipeline-builder`, `ci-cd-pipeline-builder-alirezarezvani`, `cim-builder`, `cincopa-automation`, `cirq`, `ciso-advisor`, ... (35 total)
+  `AEO Foundations Architect`, `agent-platform-deploy`, `Agents Orchestrator`, `ai-act-readiness`, `ai-act-readiness`, `biopython`, `brief`, `brief`, `c-level-agents`, `c-level-agents`, `canary`, `ci`, ... (48 total)
 
-### performance — 33 installed, 0 routed, 33 not
+### backend — 26 installed, 0 routed, 26 not
 
-  `agentic-search-optimizer`, `app-store-optimization`, `app-store-optimization-alirezarezvani`, `app-store-optimizer`, `autonomous-optimization-architect`, `benchmark`, `benchmark-email-automation`, `benchmark-models`, `bigquery-slot-cost-optimizer`, `competitor-profiling`, `context-optimization`, `dhdna-profiler`, ... (33 total)
+  `agent-platform-endpoint-management`, `build-mcpb`, `chief-ai-officer-advisor`, `chief-ai-officer-advisor`, `chief-ai-officer-advisor`, `claude-api`, `connect-apps`, `developing-genkit-python`, `Dynamics 365 Automation`, `gemini-agents-api`, `gemini-api`, `gemini-interactions-api`, ... (26 total)
 
-### planning — 28 installed, 0 routed, 28 not
+### debugging — 19 installed, 0 routed, 19 not
 
-  `accrual-schedule`, `accrual-schedule-anthropics-financial`, `capacity-planner`, `capacity-planner-alirezarezvani`, `cloud-logging-cross-project-configuration`, `cs-project-manager`, `executing-plans`, `hf-cloud-sagemaker-deployment-planner`, `living-plan`, `management-project-shepherd`, `marketing-plan`, `master-plan-architect`, ... (28 total)
+  `agent-platform-troubleshooting`, `context-engineering-collection`, `diagnosing-bugs`, `gke-ai-troubleshooting-handle-disruption-gpu-tpu`, `gke-ai-troubleshooting-jobset-interruption`, `gke-ai-troubleshooting-tpu-dynamic-slices-monitoring`, `gke-ai-troubleshooting-tpu-vbar-oom`, `gke-storage-troubleshooting`, `gke-workload-scaling-troubleshooting`, `gke-workload-troubleshooting`, `google-cloud-filestore-log-troubleshooting`, `iam-helper-for-troubleshooting`, ... (19 total)
 
-### debugging — 23 installed, 0 routed, 23 not
+### business — 16 installed, 0 routed, 16 not
 
-  `agent-platform-troubleshooting`, `debug`, `debugging-and-error-recovery`, `gke-ai-troubleshooting-handle-disruption-gpu-tpu`, `gke-ai-troubleshooting-jobset-interruption`, `gke-ai-troubleshooting-tpu-dynamic-slices-monitoring`, `gke-ai-troubleshooting-tpu-vbar-oom`, `gke-storage-troubleshooting`, `gke-workload-scaling-troubleshooting`, `gke-workload-troubleshooting`, `google-cloud-filestore-log-troubleshooting`, `iam-helper-for-troubleshooting`, ... (23 total)
+  `Ashby Automation`, `China Market Localization Strategist`, `demo-video`, `demo-video`, `French Consulting Market Navigator`, `Gumroad Automation`, `Korean Business Navigator`, `marketing-ideas`, `marketing-ideas`, `marketing-psychology`, `marketing-psychology`, `NetSuite Automation`, ... (16 total)
 
-### frontend — 10 installed, 0 routed, 10 not
+### code-quality — 15 installed, 0 routed, 15 not
 
-  `figma-code-connect-components`, `html-to-image-automation`, `markdown-html-orchestrator`, `markdown-html-orchestrator-alirezarezvani`, `nextdns-automation`, `nextflow`, `qt-figma-component-generation`, `react-best-practices`, `react-native-skills`, `react-view-transitions`
+  `defuddle`, `file-organizer`, `filesystem-context`, `flag-cleanup`, `full-output-enforcement`, `git-guardrails-claude-code`, `internal-narrative`, `internal-narrative`, `jupyter-notebook`, `memory`, `merge`, `merge`, ... (15 total)
 
-### code-quality — 6 installed, 1 routed, 5 not
+### frontend — 12 installed, 0 routed, 12 not
 
-  `campaign-cleaner-automation`, `code-simplification`, `flag-cleanup`, `ios-clean`, `maintainx-automation`
+  `atlassian-templates`, `atlassian-templates`, `codebase-locator`, `improve-codebase-architecture`, `nav-tieout`, `nav-tieout`, `pi-agent`, `playground`, `plugin-structure`, `qt-figma-component-generation`, `show-me`, `vercel-react-native-skills`
 
