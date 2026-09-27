@@ -48,7 +48,7 @@ SKILL_ROOT = REPO_ROOT / "ultimate-dev"
 EXTERNAL_SUBJECT_DIRS = {"evaluation", "examples", "research"}
 
 # Historical inputs, not maintained prose.
-SOURCE_SPECS = {"new-arch.md", "prd.md"}
+SOURCE_SPECS = {"new-arch.md", "new-arch-updated.md", "prd.md"}
 
 DOC_EXTS = {".md", ".py", ".sh", ".json", ".yml", ".yaml", ".txt", ".toml"}
 INDEX_NAME = "README.md"

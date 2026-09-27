@@ -87,6 +87,7 @@ Decisions that require a record:
 | Boundary | The question |
 |---|---|
 | Task understanding | What is actually being asked? |
+| **Coordination mode** | **How do the pieces come back together — inline, delegate, route, handoff?** |
 | Decomposition | Does splitting help, or add coordination cost? |
 | Context depth | How much do I need to know before deciding? |
 | Context retrieval | From where, and how do I trust it? |
@@ -111,10 +112,19 @@ most of them do. The rung sets the *default* granularity; the cost of being wron
 sets the actual one.
 
 What is **not** negotiable is the shape. Whenever a record is written, `rejected`
-and `recovery` are filled. Making all seventeen mandatory on every run would be
+and `recovery` are filled. Making all nineteen mandatory on every run would be
 the most expensive possible assertion of diligence in a kernel whose most common
 defect is doing too much, and agents reliably find valid approaches that a fixed
 checklist did not anticipate — so a mandatory count buys assertion, not quality.
+
+**Coordination mode is the one boundary that gates the others.** It is asked before
+capability selection, because it determines which of the remaining eighteen are even
+reachable: a run in mode `inline` has no delegation decision to make, and one in
+mode `handoff` has a different set again. It carries an extra required field —
+`coordination` — plus the condition that would reverse it, so a mode that turns out
+to be wrong is a recorded fact rather than an invisible one. `tools/run-state.py
+set-mode` writes it; `check` refuses a state where the mode has no stated reason.
+See `references/coordination-modes.md`.
 
 ## Confidence must name its object
 

@@ -17,6 +17,9 @@ RunState
   objective           one sentence, user's terms
   requirements        numbered, checkable
   constraints         time, tools, data, permissions, prohibitions
+  coordination        mode — why — until — changed[]      (see coordination-modes.md)
+  active_agent        who holds the conversation          ◄── revision 2
+  authority           inline | delegated                  ◄── revision 2
   assumptions         claim — if false: X — confidence — checked by: Y
   unknowns            item — blocking / non-blocking
   evidence            claim → evidence → source            (see evidence-system.md)
@@ -36,6 +39,23 @@ RunState
   provenance          origin and transformation chain
   result              the delivered outcome
 ```
+
+**This structure is now implemented.** `tools/run-state.py` creates, reads, updates and
+checks it — one JSON file per run under `.ultimate-dev/`. It was specified here for the
+whole life of the repository with nothing reading or writing it, which meant every claim
+the architecture made about resumption rested on a file that did not exist.
+
+`run-state.py check` is the gate, and it is deliberately strict about the four ways this
+file becomes a decoration:
+
+| Check | Why it exists |
+|---|---|
+| `coordination.why` is non-empty | An unexplained mode is a default nobody will review |
+| mode `handoff` requires `active_agent` | Otherwise the conversation has no owner |
+| `authority` only outside a handoff | Authority cannot sit in a mode that has no holder |
+| `evidence` is `OBS-n` or `none`, and resolves | Prose evidence cannot be checked for existence, so fabrication is undetectable |
+| `rejected` and `recovery` are non-empty | A decision with no alternative is an assertion |
+| mode changed 3+ times | That is a signal the first choice was wrong, not that the task is hard |
 
 ## The fields that earn their keep
 

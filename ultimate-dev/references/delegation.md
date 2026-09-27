@@ -97,6 +97,21 @@ responsibility across a boundary and needs verification on return. Parallelism
 shares one context and needs a merge. Do not dispatch a specialist to run your
 own units concurrently — that is `parallelism.md` with a worse hand-off.
 
+## Coordination modes ② and ④
+
+Delegation is two mechanisms, not one, and the difference is a single field.
+Mode ② **DELEGATE** calls a stateless specialist as a tool; the result returns
+through JEv, which stays the decider. Mode ④ **HANDOFF** is the same call with
+`active_agent` written into run state, so the specialist holds the
+conversation across stages rather than answering once and returning.
+
+Holding the conversation is not authority. The specialist still has no workflow
+of its own: it cannot triage, verify, or recover. It answers, and JEv decides
+what happens next. That is what keeps the claim at the top of this file true
+through a handoff — JEv is the architecture, including when it hands off — and
+it is why ④ is the mode to buy last. The full selection, including the two
+modes this file does not cover, is in `coordination-modes.md`.
+
 ## What to hand over
 
 Give the delegate four things and nothing more:
@@ -137,4 +152,4 @@ what each delegate was for, what it returned, and whether it was usable. If the
 same hand-off keeps failing, the problem is the specification, not the delegate —
 rewrite the context, the criteria, or the split before dispatching again.
 
-Cross-reference `parallelism.md`, `capability-validation.md`, `state-system.md`, `decision-fabric.md`, and `anti-patterns.md`.
+Cross-reference `coordination-modes.md`, `parallelism.md`, `capability-validation.md`, `state-system.md`, `decision-fabric.md`, and `anti-patterns.md`.

@@ -31,7 +31,7 @@ What is excluded, and why
     docs/                 architecture, ADRs, operations, security analysis
     research/             external survey; informs changes, not runs
     evals/                generated projection of evaluation/
-    new-arch.md, prd.md, ARCHITECTURE.md   source specifications
+    new-arch.md, new-arch-updated.md, prd.md, ARCHITECTURE.md   source specs
 
 Usage
 -----
@@ -82,7 +82,8 @@ RUNTIME_FILES = ("SKILL.md", "TREE.json")
 # bundled or silently dropped.
 EXCLUDED_DIRS = ("knowledge", "evaluation", "examples", "docs", "research",
                  "evals", "catalog")
-EXCLUDED_FILES = ("new-arch.md", "prd.md", "ARCHITECTURE.md")
+EXCLUDED_FILES = ("new-arch.md", "new-arch-updated.md", "prd.md",
+                   "ARCHITECTURE.md")
 
 # tools/ is a runtime directory because the kernel tells the agent to run
 # tools/validate-skills.py when it needs a structural check. The rest of that

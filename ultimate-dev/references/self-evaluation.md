@@ -13,9 +13,9 @@ The agent that produced the work is the agent judging the work, and a self-repor
 of "that went well" is worthless. So the output of this layer is not a verdict. It
 is a set of specific answers that a reader can check.
 
-## The nine questions
+## The ten questions
 
-Answer all nine at R3 and above. At R2, answer the first three and the last two.
+Answer all ten at R3 and above. At R2, answer the first three and the last two.
 At R0 and R1, this layer does not run — the process was short and determined.
 
 | # | Question | A good answer names |
@@ -29,9 +29,13 @@ At R0 and R1, this layer does not run — the process was short and determined.
 | 7 | What failed? | The failure, its classification, and whether the response was right |
 | 8 | What could be reused? | A pattern worth a learning candidate, with the evidence it would need |
 | 9 | What should not be repeated? | An approach that cost more than it returned |
+| 10 | Did the coordination mode fit, or did we pay for isolation nobody needed? | The mode used, and whether a cheaper one would have done |
 
-Questions 2, 5, and 9 are the ones that catch waste. They are also the ones a run
-skips, because waste is invisible from inside the run that caused it.
+Questions 2, 5, 9, and 10 are the ones that catch waste. They are also the ones
+a run skips, because waste is invisible from inside the run that caused it.
+Question 10 catches the mode case: loading four skills to answer a one-line
+question, or handing off a thread one agent could have held, is isolation
+nobody needed, and it stays invisible without a question that asks for it.
 
 ## The three that actually change behaviour
 
@@ -60,7 +64,7 @@ verification only looks at whether the answer came out right.
 run. A correct result from an unsound process is a warning, not a success, and it
 is the case most likely to fail differently next time.
 
-**Not delivered in full to the user.** Nine answers is a lot of attention to ask
+**Not delivered in full to the user.** Ten answers is a lot of attention to ask
 for. What belongs in the delivery is question 9 and anything from questions 2, 5,
 or 7 that the user would want to know. The rest is the run's own record, and its
 purpose is the next run.
@@ -101,8 +105,8 @@ like insight.
 - **Critiquing the result instead of the process.** Verification's job, done badly.
 - **The private ledger.** Findings recorded and never surfaced, so the reader
   cannot act on them and the next run cannot inherit them.
-- **Answering 8 and 9 and skipping 2 and 5.** The two that catch waste, dropped
-  because they are the two that indict the run.
+- **Answering 8 and 9 and skipping 2, 5, and 10.** The ones that catch waste,
+  dropped because they are the ones that indict the run.
 - **Treating self-evaluation as self-criticism of the answer.** Different
   question, and conflating them produces either duplicate verification or a review
   of nothing.

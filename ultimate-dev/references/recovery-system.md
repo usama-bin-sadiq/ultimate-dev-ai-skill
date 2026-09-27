@@ -21,6 +21,12 @@ cause is missing context or wrong capability, and both are recoverable.
 | Resource failure | Reduce scope, lower effort, or report the block. | No slack left → report the block |
 | Verification failure | Treat as a real failure of the work, not of the check. | Same criterion fails twice → re-decide |
 | Unsupported objective | Say so plainly, with what is missing. Stop. | Terminal; do not hunt for a workaround |
+| Coordination failure | Re-choose the mode; a mode error is not a capability error. | Two mode changes → re-triage |
+
+Recovery may change `coordination`, and the change is recorded like any other
+field. A delegate that fails twice where a route would have covered the ground
+is a mode error, and recording it is what makes the correction reviewable
+instead of invisible.
 
 ## Failures are data
 
@@ -35,7 +41,7 @@ FAILURE
   observed        the actual error or result, quoted rather than paraphrased
   classification  missing context | wrong capability | wrong strategy
                   | bad assumption | execution | resource
-                  | verification | unsupported objective
+                  | verification | unsupported objective | coordination
   cause           the identified reason, in one line
   response        acquire | re-resolve | re-decide | replan | retry | reduce | stop
   attempts        attempt count for this unit so far

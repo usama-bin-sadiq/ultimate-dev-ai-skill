@@ -158,7 +158,8 @@ BUILD_ARTEFACT_PATTERN = re.compile(
 
 # Documents that are the source specifications rather than maintained
 # documentation, and so are exempt from the placeholder and emoji rules.
-SOURCE_SPECS = {"new-arch.md", "prd.md", "ARCHITECTURE.md"}
+SOURCE_SPECS = {"new-arch.md", "new-arch-updated.md", "prd.md",
+                 "ARCHITECTURE.md"}
 
 INDEXED_TREES = ("skills", "agents", "knowledge", "evaluation",
                  "examples", "docs", "research", "evals", "references")

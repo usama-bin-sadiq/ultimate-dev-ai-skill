@@ -35,6 +35,16 @@ Each step is a JEv boundary and takes a decision record whose `rejected` field
 names what you chose against. "No existing capability covers this" is a claim
 you must be able to show, not assume.
 
+## Resolution is after the mode
+
+The order above answers *what* to use, which is a decision taken after *how the
+results come back together*. The five steps are mode ①: the rungs are walked by
+the agent that already holds the conversation, so each step may draw on
+everything already loaded. Modes ②, ③, and ④ walk the same rungs unchanged,
+and differ only in scope — the specialist resolves against the capability
+named for it, not against the whole corpus. Choose the mode at
+`coordination-modes.md` first, then walk this order.
+
 ## The disqualifying question
 
 Before anything is created, ask:

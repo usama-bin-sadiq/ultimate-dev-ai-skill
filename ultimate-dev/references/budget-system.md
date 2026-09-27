@@ -19,6 +19,22 @@ Effort, not tokens. A kernel that counts tokens optimises for the wrong thing.
 | **Delegations** | Charged plus the parent's coordination cost. |
 | **Wall-clock and user attention** | The scarcest resource, and the one users actually notice. |
 
+## What a coordination mode costs
+
+The mode is chosen before the capability is resolved, and it is charged here.
+
+| Mode | Price |
+|---|---|
+| ① INLINE | 0 extra calls · context accumulates |
+| ② DELEGATE | +1 call per result |
+| ③ ROUTE | N calls, parallel · a repeat re-pays classification |
+| ④ HANDOFF | Stateful · the most expensive one to get wrong |
+
+The prices are not equal, so "cheapest adequate" in rule 1 has to be read as
+cheapest per **call** — which is not the same as cheapest per unit of work. A
+mode that is free per call is not free per unit, because ① pays in context
+that every later unit then carries.
+
 ## The measurement rule
 
 **A budget figure you could not measure is reported as unmeasured.** Not zero,

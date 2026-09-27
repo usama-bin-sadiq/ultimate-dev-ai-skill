@@ -196,7 +196,7 @@ esac
 # gigabyte into a directory the agent reads on every session. The index derived
 # from it is kept; the clones are not.
 PRUNABLE=(docs examples evaluation research knowledge catalog)
-PRUNABLE_FILES=(ARCHITECTURE.md new-arch.md prd.md)
+PRUNABLE_FILES=(ARCHITECTURE.md new-arch.md new-arch-updated.md prd.md)
 
 # Sub-paths pruned even under --all, because --all means "keep the
 # documentation", not "ship a gigabyte of other people's git repositories".

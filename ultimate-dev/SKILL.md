@@ -121,6 +121,7 @@ DECISION
   cost          expected effort, and what it buys
   evidence      POINTERS to observations (OBS-n), not prose. "none" is valid.
   recovery      the condition that would reverse this
+  coordination  inline | delegate | route | handoff  <- only at a mode boundary
 ```
 
 **`evidence` must point, not narrate.** Write `OBS-013`, not "the logs showed
@@ -139,11 +140,11 @@ being present`. If the object is the conclusion itself, that is a claim about th
 future, and `low` with a named discriminating observation is the honest value.
 
 **A named confidence must still agree with the evidence beside it.** Naming the
-object is not sufficient: if the evidence you would write for a claim
-contradicts the label you are about to give it, the label is wrong and the
-evidence is the objection. Check the pair, not the field. **Fabrication runs both
-ways** — the symmetric failure is inventing a defence to kill a finding, so
-refute only with a mitigation you located and read.
+object is not sufficient: if the evidence you would write for a claim contradicts
+the label you are about to give it, the label is wrong and the evidence is the
+objection. Check the pair, not the field. **Fabrication runs both ways** — the
+symmetric failure is inventing a defence to kill a finding, so refute only with a
+mitigation you located and read.
 
 **The count of records is rung-dependent; the fields are not.** Seventeen records
 on every run is the most expensive possible assertion of diligence, in a kernel
@@ -151,10 +152,10 @@ whose most common defect is doing too much. What is non-negotiable is the
 *shape*: whenever you record a decision, `rejected` and `recovery` are filled. How
 many decisions you record is set by the rung, as in `references/triage.md`.
 
-The boundaries that can require a record: task understanding, decomposition,
-context depth, capability choice, capability acquisition, strategy, reasoning
-depth, delegation, parallelisation, verification depth, retry, replan, escalation,
-and learning promotion.
+The boundaries that can require a record: task understanding, **coordination mode**,
+decomposition, context depth, capability choice, capability acquisition, strategy,
+reasoning depth, delegation, parallelisation, verification depth, retry, replan,
+escalation, and learning promotion.
 
 **`rejected` is the field that earns its place.** A decision without a recorded
 alternative is an assertion, not a decision, and cannot be reviewed later. If you
@@ -196,13 +197,28 @@ would change the decision, and no more.
 
 See `references/context-system.md` and `references/context-compiler.md`.
 
-## Step 4 — capability resolution
+## Step 4 — coordination mode, then capability
 
 A capability is any means of making progress: a skill, a tool, a command, a
 person, a document, a model, a deterministic operation, or something you must
-first create.
+first create. **How** those are assembled is decided first.
 
-Resolve in this order, and stop at the first that works:
+**Coordination mode** — read in order, stop at the first that fits:
+
+1. **inline** — one capability, already in context. No extra call. The default.
+2. **delegate** — a specialist whose context must not pollute this one, answering
+   in a single result. Costs one extra call per result.
+3. **route** — the question spans several sources needing one merged answer.
+   Stateless, so a repeat re-pays classification.
+4. **handoff** — one party must hold the conversation across stages. Sets
+   `active_agent`; the decider does not change, only who is talking.
+
+Read "cheapest adequate" as cheapest per **call**, which is not cheapest per unit
+of work: inline is free per call and can cost most overall, because loaded skills
+stay in context and are paid for again. Selection is gated on reachability — a
+specialist the kernel cannot route to is not selectable. `references/coordination-modes.md`.
+
+**Then resolve capability**, in this order, stopping at the first that works:
 
 1. **Do it directly** — no capability needed. Most tasks end here.
 2. **Existing capability** — a skill, tool, or reference that already covers it.
@@ -216,7 +232,9 @@ skill proliferation, and it is a failure mode, not a feature.
 
 A capability is validated before use — it exists, it does what it claims, its
 output is what you think it is. An unvalidated capability produces confident
-nonsense.
+nonsense. A *mode* is recorded the same way: `run-state.py set-mode` keeps the
+reason and the condition that would reverse it, because a mode that turns out
+wrong should be a recorded fact rather than an invisible one.
 
 **Composition and creation are delegated to `skill-creator`**, the capability
 expansion engine in `skills/skill-creator/`. Do not hand-author a skill inline;
@@ -246,49 +264,37 @@ See `references/planning-system.md`.
 
 Execute the plan. Before each unit, confirm its precondition still holds.
 
-- **Do the deterministic thing deterministically.** Compiling, hashing,
-  counting, parsing, and formatting belong to a tool, not to recall. A model
-  asked to do arithmetic by hand will sometimes be wrong; a tool asked will not.
+- **Do the deterministic thing deterministically.** Compiling, hashing, counting,
+  parsing, and formatting belong to a tool, not to recall. A model asked to do
+  arithmetic by hand will sometimes be wrong; a tool asked will not.
 - **Parallelise** units that are genuinely independent, and only those. Two units
   that share mutable state are sequential however they are scheduled.
 - **Delegate** only when specialisation clearly beats doing it, and give the
   delegate the context it needs and nothing more. Delegation is a cost, not a
   default. See `references/delegation.md`.
-- **Observe, do not assume.** Record what actually happened — output, error,
-  and any surprise. See `references/observation-system.md`.
+- **Observe, do not assume.** Record what actually happened — output, error, and
+  any surprise. See `references/observation-system.md`.
 
-**Never report a tool result you did not observe.** If a command was not run,
-its output is unknown, not expected. This is the single most damaging failure in
-this system, because it is invisible downstream.
-
-See `references/execution-system.md`.
+**Never report a tool result you did not observe.** If a command was not run, its
+output is unknown, not expected. This is the single most damaging failure in this
+system, because it is invisible downstream. See `references/execution-system.md`.
 
 ### Stay observable
 
 At R2 and above, say where you are at every boundary: the rung, the current work
-unit, its precondition, and what is about to happen. This is what lets a human
-steer or stop you at a meaningful boundary rather than mid-write, and it is what
-makes the run resumable by someone else. From R3, also name the observation behind
-each load-bearing claim — three failures are only catchable mid-run if the run can
-show its evidence.
-
-At R0 and R1 the run is short enough to hold in your head; emit nothing. The
-overhead would exceed the work. See `references/observability.md`.
+unit, its precondition, and what is about to happen. This is what lets a human steer
+or stop you at a meaningful boundary rather than mid-write, and it is what makes
+the run resumable by someone else. From R3, also name the observation behind each
+load-bearing claim. At R0 and R1 the run is short enough to hold in your head;
+emit nothing — the overhead would exceed the work.
+See `references/observability.md`.
 
 ### Delegated roles
 
-Of the 286 role files in `agents/`, nineteen carry a dispatch condition in
+Of the 291 role files in `agents/`, nineteen carry a dispatch condition in
 `references/delegation.md`; each has a procedure, output contract, and
-prohibitions. The verification and challenge set: `verifier` (re-derive rather
-than re-read), `evidence-auditor` (does this proof class support this claim),
-`doubt-reviewer` (attack the artifact, not the reasoning), `claim-auditor` (a
-false claim vs. an undefended one), `invariant-finder` (the test that copies its
-own domain), `critic`, `grader`, `comparator`, `security-reviewer`. The shaping
-set: `scope-decider` (fog before size), `unknowns-mapper`, `simplifier`,
-`test-author`, `performance-reviewer`, `technical-writer`, `investigator`,
-`author`, `change-governor` (what may change, and by whose hand),
-`degradation-diagnostician` (which way a long context failed). All adopted items
-carry a version.
+prohibitions. That file is the index — role, trigger, and what it must not do.
+**A role with no dispatch condition is not available**, however good it is.
 
 A far larger catalogue is installed alongside these — 2,398 capabilities in
 total. **Do not read it; search it.** `references/capability-catalogue.md`
@@ -338,11 +344,10 @@ Decide one of three ways, and say which:
 discarding good work because one criterion failed.
 
 **Verification can also be too much, and that failure is measured.** Carried-over
-instructions to verify carefully have been observed to produce *over*-verification
-on current models: redundant re-checking of work a tool already confirmed, extra
-turns spent re-deriving settled facts, and a net loss of quality through
-attention spent on ceremony. The fix is not to verify less in general — it is to
-verify what is load-bearing and stop.
+instructions to verify carefully have been observed to produce *over*-verification:
+redundant re-checking of work a tool already confirmed, extra turns re-deriving
+settled facts, and a net loss of quality through attention spent on ceremony. The
+fix is not to verify less in general — it is to verify what is load-bearing and stop.
 
 So bound it explicitly. Ask first: **what would this check have to observe for the
 result to be wrong?** If you cannot name it, you are not verifying, you are
@@ -350,13 +355,11 @@ performing. If the answer is "a tool already returned a non-zero exit code", the
 check is done. A second opinion is worth its cost when the first was produced by
 the same reasoning that made the claim — not when it was produced by a compiler.
 
-**Self-critique is not verification.** Re-reading your own output and agreeing
-with it adds no information: it shares every blind spot with the thing it is
-checking, and self-correction without external feedback has been measured to
-*reduce* accuracy rather than raise it. The independence requirement is not
-decorative. If the only check available is your own reading, write
-`VERIFIED (self-check only)` and name what an independent check would have
-covered.
+**Self-critique is not verification.** Re-reading your own output and agreeing with
+it adds no information: it shares every blind spot with the thing it is checking,
+and self-correction without external feedback has been measured to *reduce*
+accuracy. If the only check available is your own reading, write `VERIFIED
+(self-check only)` and name what an independent check would have covered.
 
 **Band the findings, and cap the low band.** Below your top band a finding is a
 *lead*, not a finding: it goes in a named investigation list under a hard cap, and
@@ -368,19 +371,20 @@ See `references/verification-system.md` and `references/evidence-system.md`.
 
 ## Step 8 — recovery
 
-Classify before responding. Blind retry is prohibited — repeating an action
-whose cause is unknown reproduces the failure and burns budget while producing
-the appearance of effort.
+Classify before responding. Blind retry is prohibited — repeating an action whose
+cause is unknown reproduces the failure and burns budget while producing the
+appearance of effort.
 
 | Classification | Response |
 |---|---|
-| Missing context | Acquire it, then resume. Do not retry blind. |
+| Missing context | Acquire it, then resume. |
 | Wrong capability | Re-resolve, or create one. |
 | Wrong strategy | Re-decide at JEv. |
-| Bad assumption | Correct it, then re-plan what depended on it. |
-| Execution failure | Fix the cause, then retry. Retry counts are bounded. |
-| Resource failure | Reduce scope, lower effort, or report the block. |
-| Verification failure | Treat as a real failure of the work, not of the check. |
+| Bad assumption | Correct it, re-plan what depended on it. |
+| Execution failure | Fix the cause, then retry. Retries are bounded. |
+| Coordination failure | Re-choose the mode; a mode error is not a capability error. |
+| Resource failure | Cut scope, lower effort, or report the block. |
+| Verification failure | A real failure of the work, not of the check. |
 | Unsupported objective | Say so plainly, with what is missing. Stop. |
 
 Escalate to the human when the objective is ambiguous in a way that changes the

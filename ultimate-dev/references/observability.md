@@ -41,10 +41,16 @@ Not continuously. At boundaries, which are already defined:
 | On any decision record | The record |
 | On verification | The checks performed, the criteria, the verdict |
 | On recovery | The classification and the chosen response |
+| On a coordination-mode change | The mode before, the mode after, and the reason |
 | On delivery | The output contract |
 
 That is roughly one line per boundary. A run emitting more than that is reporting
 process rather than position, and the extra volume buries the thing a reader needs.
+
+A mode change earns its own line because it is a claim about the run that only
+the run itself can make. A mode that changes three times in one run is not a run
+that adapted well; it is evidence the first choice was wrong, and nothing
+further down will say so.
 
 ## Why a run must be able to report its own basis
 
