@@ -596,6 +596,35 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
                 )
             notes.append(f"{len(entries)} eval cases, generated from the Markdown corpus")
 
+            # prd.md section 23 names ten task classes. A corpus that cannot be
+            # queried by the specification's own taxonomy cannot be checked against
+            # it, so the taxonomy is asserted here rather than left to whoever
+            # reads the JSON.
+            spec_classes = {
+                "simple", "medium", "complex", "ambiguous", "long-context",
+                "multi-step", "cross-domain", "novel-domain", "high-assurance",
+                "failure-prone",
+            }
+            present = {e.get("task_class") for e in entries} - {None, ""}
+            uncovered = sorted(spec_classes - present)
+            if uncovered:
+                # A class with no case is a gap in the suite, and a gap that is
+                # only visible by reading two documents side by side is a gap
+                # nobody closes. Surfaced on every run until it is either filled
+                # or consciously accepted.
+                warnings.append(
+                    f"{evals_json}: prd.md section 23 task classes with no case: "
+                    f"{uncovered}. The suite cannot demonstrate the specification's "
+                    f"own taxonomy while these are empty."
+                )
+            extra = sorted(present - spec_classes)
+            if extra:
+                notes.append(
+                    f"task classes beyond the specification's ten: {extra}")
+            notes.append(
+                f"{len(spec_classes) - len(uncovered)}/{len(spec_classes)} "
+                f"specified task classes have cases")
+
             # A case that names a file nothing generates cannot be scored. It
             # measures whether the agent declines to answer, which is a different
             # and much easier thing to pass, and it does so silently: the case
@@ -653,6 +682,37 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
                 f"unfilled-marker rule; it belongs to tools/validate-skills.py "
                 f"alone. Found: {line.strip()[:70]!r}"
             )
+
+    # The control plane new-arch.md draws has eight systems. This check exists
+    # because the eighth was missing for a long time and nothing noticed: the
+    # repository shipped eight files, so a count-based check passed, while
+    # "Evidence / Provenance" had been split into two files and
+    # "Policy / Constraints" had never been written at all. A count that can be
+    # satisfied by the wrong contents is not a check, so this asserts the named
+    # systems rather than counting files.
+    control_plane = (
+        ("state-system.md", "State Management"),
+        ("budget-system.md", "Budget Manager"),
+        ("evidence-system.md", "Evidence / Provenance"),
+        ("provenance-system.md", "Evidence / Provenance (provenance half)"),
+        ("security-and-trust.md", "Security / Trust"),
+        ("observability.md", "Observability"),
+        ("caching-and-reuse.md", "Cache / Reuse"),
+        ("policy-constraints.md", "Policy / Constraints"),
+        ("recovery-system.md", "Error / Recovery State"),
+    )
+    for filename, spec_name in control_plane:
+        path = SKILL_ROOT / "references" / filename
+        if not path.is_file():
+            errors.append(
+                f"{path}: new-arch.md's control plane requires a home for "
+                f"{spec_name}, and this file does not exist. A control-plane "
+                f"system with no reference is a rule nothing loads."
+            )
+    present = sum(1 for f, _ in control_plane
+                  if (SKILL_ROOT / "references" / f).is_file())
+    if present == len(control_plane):
+        notes.append(f"all {present} named control-plane systems have a reference")
 
     # Every delegated agent role must be a real role, not a stub, and the kernel
     # must know it exists.

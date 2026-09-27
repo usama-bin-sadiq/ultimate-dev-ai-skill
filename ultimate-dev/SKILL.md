@@ -478,9 +478,11 @@ governs and which situation loads it. The groups:
 
 **Learning** — `references/learning-system.md` · `references/memory-system.md` · `references/learning-safety.md` · `references/caching-and-reuse.md`
 
-**Control and safety** — `references/security-and-trust.md` · `references/human-control.md` · `references/deterministic-vs-agentic.md` · `references/delegation.md` · `references/parallelism.md` · `references/runtime-portability.md`
+**Control and safety** — `references/policy-constraints.md` · `references/security-and-trust.md` · `references/human-control.md` · `references/deterministic-vs-agentic.md` · `references/delegation.md` · `references/parallelism.md` · `references/runtime-portability.md`
 
 **Breadth** — `references/multi-domain.md` · `references/unknown-domain.md` · `references/insufficient-capability.md` · `references/insufficient-evidence.md` · `references/anti-patterns.md`
+
+**Standing claim** `references/maturity.md` records which prd.md §24 level this kernel claims, on what evidence, and what is missing to reach the next.
 
 **Elsewhere** `skills/skill-creator/SKILL.md` owns capability creation,
 validation, security review, promotion, and deprecation. `agents/` holds the

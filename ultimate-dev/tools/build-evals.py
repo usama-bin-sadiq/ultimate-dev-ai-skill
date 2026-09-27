@@ -65,6 +65,38 @@ CLASS_MAP = {
     "RG": (True, "regression"),
 }
 
+# prd.md section 23 names ten task classes. They are a different axis from the
+# corpus families above, and conflating them is what made the specification
+# untraceable to cases: `class` said "benchmark" where the spec says
+# "long-context", so there was no way to ask "show me the high-assurance cases".
+#
+# Both are kept. `family` is where the case file lives and how it is graded;
+# `task_class` is the specification's taxonomy. A case can be a security family
+# and a high-assurance task class at once, and collapsing them loses that.
+SPEC_CLASS_MAP = {
+    "SIMPLE": "simple",
+    "MEDIUM": "medium",
+    "COMPLEX": "complex",
+    "AMBIGUOUS": "ambiguous",
+    "LCTX": "long-context",
+    "MSTEP": "multi-step",
+    "XDOM": "cross-domain",
+    "HA": "high-assurance",
+    "NOVEL": "novel-domain",
+}
+
+# Families that have no section 23 equivalent, mapped deliberately rather than
+# left blank. An unmapped class is information: it says the corpus covers
+# something the specification did not ask for.
+EXTRA_CLASS_MAP = {
+    "TN": "trigger-negative",
+    "NM": "near-miss",
+    "DM": "cross-domain",
+    "SC": "security",
+    "FC": "failure-prone",
+    "RG": "regression",
+}
+
 # The identifier group is greedy on purpose. A reluctant group stops at the first
 # hyphen, which turns "BM-AMBIGUOUS-02" into the id "BM-AMBIGUOUS" and silently
 # collides every case in the file. A greedy group takes the whole identifier and
@@ -185,7 +217,14 @@ def collect_cases() -> tuple[list[dict], list[dict]]:
                 continue
 
             prefix = match.group(1)
+            segment = match.group(2)
             should_trigger, class_label = CLASS_MAP.get(prefix, (True, "uncategorised"))
+            # The identifier group is greedy, so for "BM-SIMPLE-01" it captures
+            # "SIMPLE-01". The class is its first token.
+            variant = segment.split("-")[0].upper()
+            task_class = (SPEC_CLASS_MAP.get(variant)
+                          or EXTRA_CLASS_MAP.get(prefix)
+                          or "unclassified")
             if prefix not in CLASS_MAP:
                 problems.append({
                     "id": case_id, "file": str(path.relative_to(SKILL_ROOT)),
@@ -206,6 +245,8 @@ def collect_cases() -> tuple[list[dict], list[dict]]:
                 "expected_output": expected or "See the case file for full criteria.",
                 "should_trigger": should_trigger,
                 "class": class_label,
+                "family": prefix,
+                "task_class": task_class,
                 "domain": fields.get("domain", "").strip(),
                 "pass_criteria": fields.get("pass criteria", "").strip(),
                 "fail_criteria": fields.get("fail criteria", "").strip(),

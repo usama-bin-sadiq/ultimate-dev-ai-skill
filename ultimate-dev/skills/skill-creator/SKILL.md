@@ -86,6 +86,55 @@ PROMOTED → ACTIVE
 DEPRECATED   when superseded, when it drifts, or when it was wrong
 ```
 
+## Step 0 — analyse the gap
+
+The four questions above decide **whether** to build. They do not say **what** the
+gap is, and those are different questions with different answers.
+
+Most gaps are not missing capability. A run that cannot find a skill that exists
+has a discovery problem; a run that finds one and it does the wrong thing has a
+quality problem; a run that invokes it correctly and still fails has an
+environment or an objective problem. Only the first is closed by writing
+something.
+
+| The gap is really | Symptom | Correct fix | Creation warranted? |
+|---|---|---|---|
+| **Absent** | No capability covers this and nothing close exists | Build one | **Yes** |
+| **Undiscovered** | It exists; the kernel never found it | Fix discovery, indexing, or the trigger | No |
+| **Mis-selected** | A capability was chosen and did not fit | Re-resolve; sharpen the selection boundary | No |
+| **Malformed** | It fires but produces the wrong thing | Fix or replace it | No |
+| **Environmental** | It would work, but the tool, permission, or data is missing | Acquire the environment | No |
+| **Not a capability** | The need is specific to this objective | Do the work; record it as a plan step | No |
+
+Four of the six are closed without writing a skill, and three of those four are
+mistakes the kernel can make *while believing it is resolving a gap correctly*.
+This is why the analysis is a step and not a formality: the expensive failure is
+not building too few skills, it is building a fourth skill to paper over a
+discovery bug.
+
+**Write the gap down before resolving it.** One paragraph, in this shape:
+
+```text
+GAP      what cannot be done that the objective needs
+CAUSE    absent | undiscovered | mis-selected | malformed | environmental | not-a-capability
+EVIDENCE what was tried, and what was observed when it failed
+FIX      the cheapest action that closes it
+REUSABLE whether the fix is a capability or a step in this plan
+```
+
+`EVIDENCE` follows the same rule as a decision record: it points at observations,
+not at recollection. "The skill does not exist" is a claim; a search that returned
+nothing is an observation, and the difference is the difference between a
+diagnosed gap and an assumed one.
+
+If `FIX` is anything other than *build a capability*, this engine records the
+finding and returns. Recording is the deliverable. A gap analysis that concludes
+"no skill needed, and here is what was actually wrong" has done its job, and it
+is the outcome most often skipped.
+
+See `references/compose-or-create.md` for the undiscovered and mis-selected cases,
+which are composition and selection problems rather than creation problems.
+
 ## Step 1 — specify before writing
 
 A skill written before it is specified inherits whatever the author happened to
