@@ -356,18 +356,27 @@ def runtime_payload() -> tuple[int, int] | None:
     because the documented numbers drifted from the real ones.
     """
     import importlib.util
+    import sys
 
-    bundler = SKILL_ROOT / "tools" / "bundle-skill.py"
-    if not bundler.is_file():
-        return None
+    # Importing the bundler must not leave a __pycache__ inside the skill tree:
+    # validate-skills.py --strict fails the build on a build artefact, so an
+    # auditor that creates one makes the two tools contradict each other.
+    previous = sys.dont_write_bytecode
+    sys.dont_write_bytecode = True
     try:
-        spec = importlib.util.spec_from_file_location("bundle_skill", bundler)
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-        files = list(module.iter_runtime_files())
-    except Exception:
-        return None
-    return len(files), sum(f.stat().st_size for f in files)
+        bundler = SKILL_ROOT / "tools" / "bundle-skill.py"
+        if not bundler.is_file():
+            return None
+        try:
+            spec = importlib.util.spec_from_file_location("bundle_skill", bundler)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            files = list(module.iter_runtime_files())
+        except Exception:
+            return None
+        return len(files), sum(f.stat().st_size for f in files)
+    finally:
+        sys.dont_write_bytecode = previous
 
 
 def skill_dir_size() -> int:

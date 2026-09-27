@@ -307,9 +307,8 @@ loses the most informative signal the suite produces.
 
 ## Inventory
 
-101 cases across 82 case files, plus four top-level documents and one trigger-negative
-file holding ten cases. The counts are recorded here so a drift between the prose
-and the directories is detectable.
+121 cases across 83 case files, plus five top-level documents. The counts are
+recorded here so a drift between the prose and the directories is detectable.
 
 | Group | Files | Cases | Count rule |
 |---|---|---|---|
@@ -322,11 +321,12 @@ and the directories is detectable.
 | `benchmark/cross-domain/` | 3 | 3 | rate, `n`=10 |
 | `benchmark/high-assurance/` | 3 | 3 | invariant, `n`=10 |
 | `benchmark/TRIGGER-NEGATIVES.md` | 1 | 10 | guard: false-trigger rate, `n`=20 |
+| `benchmark/TRIGGER-NEAR-MISS.md` | 1 | 20 | guard: false-trigger rate, `n`=20 |
 | `domains/` (13 directories) | 26 | 26 | rate, `n`=10 |
 | `failure-cases/` (7 categories) | 17 | 17 | rate, `n`=10 |
 | `security-cases/` (6 categories) | 13 | 13 | invariant, `n`=10 |
 | `regression/regression-suite.md` | 1 | 11 | invariant, `n`=5 |
-| **Total** | **85 files** | **101 cases** | |
+| **Total** | **83 files** | **121 cases** | |
 
 ## Running a case
 

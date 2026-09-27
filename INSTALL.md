@@ -6,21 +6,22 @@ runtime component.
 ```text
 ultimate-dev/
 ├── SKILL.md              required — the kernel
-├── references/           47 files, loaded on demand
+├── references/           50 files, loaded on demand
 ├── skills/skill-creator/ the capability-expansion sub-skill
-├── agents/               6 delegated roles
-└── tools/                the structure validator
+├── agents/               7 delegated roles
+└── tools/                the validator, the bundler, the doc auditor,
+                          and the evaluation harnesses
 ```
 
-Only `SKILL.md`, `references/`, `skills/`, and `agents/` are read at runtime.
-`docs/`, `examples/`, `evaluation/`, `research/`, and `knowledge/` are supporting
-material and are pruned by default.
+Only `SKILL.md`, `references/`, `skills/`, `agents/`, and `tools/` are read at
+runtime. `ARCHITECTURE.md`, `docs/`, `evals/`, `examples/`, `evaluation/`,
+`research/`, and `knowledge/` are supporting material and are pruned by default.
 
 ## Automatic
 
 ```bash
-git clone https://github.com/<you>/ultimate-dev.git
-cd ultimate-dev
+git clone https://github.com/usama-bin-sadiq/ultimate-dev-ai-skill.git
+cd ultimate-dev-ai-skill
 ./install.sh
 ```
 
@@ -37,13 +38,13 @@ an existing skill directory without confirmation.
 
 ## Two ways to install, for two different reasons
 
-The repository is more than the skill. Alongside the 75 runtime files it carries
+The repository is more than the skill. Alongside the 76 runtime files it carries
 the evaluation corpus, 27 worked examples, architecture documentation, and
-research notes — about 2.1 MB against a 395 KB runtime.
+research notes. The bundler reports the split.
 
 | | Use when | Result |
 |---|---|---|
-| `./install.sh` | You are installing to run the skill | Pruned in place: 75 files, 395 KB |
+| `./install.sh` | You are installing to run the skill | Pruned in place: 76 files |
 | `./install.sh --bundle` | You are **distributing** it — a marketplace, a PR, another runtime | A standalone `dist/ultimate-dev/` plus a verified size report |
 
 ```bash
@@ -53,9 +54,13 @@ research notes — about 2.1 MB against a 395 KB runtime.
 ```
 
 The bundle contains only what a runtime loads: `SKILL.md`, `references/`,
-`skills/`, `agents/`, `tools/`. It is **84% smaller** than the skill directory and
-zips to about 184 KB, which is the difference between a 928 KB artefact and a
-reviewable one.
+`skills/`, `agents/`, `tools/` — the same 76 files as a pruned install.
+
+Its size, and the fraction it prunes, are computed and printed by the bundler
+rather than fixed here, along with the files it kept and the ones it dropped.
+Run `./install.sh --check-bundle` to reproduce the current figures without
+writing anything, so you can confirm what shipped rather than trust this
+paragraph.
 
 Three things the bundler refuses to do:
 

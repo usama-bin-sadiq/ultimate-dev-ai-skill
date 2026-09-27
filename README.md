@@ -15,8 +15,15 @@ installation and repository mechanics.
 ├── CHANGELOG.md           version history
 ├── CONTRIBUTING.md        how to contribute
 ├── SECURITY.md            threat model summary and disclosure
+├── new-arch.md            source specification (historical input)
+├── prd.md                 source requirements (historical input)
+├── LICENSE                MIT
 └── .github/               CI
 ```
+
+`new-arch.md` and `prd.md` are the specifications this architecture was built
+from. They are historical inputs, not maintained documents; where they disagree
+with `ultimate-dev/docs/`, the latter reflects what was actually built.
 
 ## What the skill does
 
@@ -40,30 +47,35 @@ path. It contains the machinery for working out what a domain needs.
 ## Install
 
 ```bash
-git clone https://github.com/<you>/ultimate-dev.git
-cd ultimate-dev
-./install.sh                      # install to run it: 75 files, 395 KB
-./install.sh --bundle             # build a distributable copy: 84% smaller
+git clone https://github.com/usama-bin-sadiq/ultimate-dev-ai-skill.git
+cd ultimate-dev-ai-skill
+./install.sh                      # install to run it: 76 files
+./install.sh --bundle             # build a distributable copy, pruned and zipped
 ```
+
+The file count and the size are reported by the installer, not fixed here. Run
+`./install.sh --check-bundle` to print the current figures without writing
+anything.
 
 Or read [`INSTALL.md`](INSTALL.md) for the manual procedure, the two install
 paths, and how to verify the install.
 
 ## What is in the skill
 
-| | |
+| Path | What it is |
 |---|---|
 | `SKILL.md` | the kernel: the effort gate, the decision fabric, verification, recovery, delivery |
-| `references/` | 47 references, loaded on demand |
+| `references/` | 50 references, loaded on demand |
 | `skills/skill-creator/` | the sub-skill that creates, validates, and retires other skills |
-| `agents/` | six delegated roles: verifier, investigator, critic, grader, comparator, author |
-| `tools/` | the structure validator |
+| `agents/` | seven delegated roles: verifier, investigator, critic, grader, comparator, security-reviewer, author |
+| `tools/` | the structure validator, the bundler, the doc auditor, and the evaluation harnesses |
 | `knowledge/` | data contracts and the policies governing them |
-| `evaluation/` | 101 benchmark, domain, failure, and security cases |
+| `evaluation/` | 121 benchmark, domain, failure, security, and regression cases |
+| `evals/` | the generated case file those harnesses read |
 | `examples/` | 27 worked kernel runs across 13 domains |
 | `docs/` | architecture, concepts, decision records, operations, security |
 | `research/` | what the architecture borrows, and what it does not resolve |
-| `new-arch.md`, `prd.md` | the source specifications |
+| `ARCHITECTURE.md` | how the layers fit, and what breaks if one is absent |
 
 ## The one rule it serves
 

@@ -3,13 +3,13 @@
 
 The repository is deliberately more than the skill. Alongside the runtime it
 carries the evaluation corpus, worked examples, architecture documentation,
-research notes, and the source specifications — 175 files and roughly 2.1 MB of
+research notes, and the source specifications — 178 files and roughly 2.1 MB of
 material that a reader of the skill never loads.
 
 Standard packaging tools do not know that. They exclude build artefacts and a
 directory literally named ``evals``, so a bundle built by one includes
 ``evaluation/``, ``docs/``, ``examples/``, ``knowledge/``, and ``research/`` in
-full. The result is a 928 KB artefact of which 74 files are the skill.
+full. The result is a 2.5 MB artefact of which 76 files are the skill.
 
 This tool produces the part that is actually the skill, and refuses to produce a
 bundle with dangling references. A trimmed bundle that points at files it no

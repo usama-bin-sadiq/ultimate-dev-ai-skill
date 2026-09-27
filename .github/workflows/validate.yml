@@ -336,6 +336,17 @@ jobs:
           # bundle-skill.py
           # A typo in the exclusion list must fail. Without a check the list is
           # a comment, and a stale entry silently stops excluding anything.
+          # A second implementation of the unfilled-marker rule must fail. The
+          # first two versions of this rule were duplicates that disagreed with
+          # the validator, and one of them matched nothing at all.
+          # The injected text is assembled rather than written out, because this
+          # step lives in a workflow file and the validator it is testing now
+          # scans workflow files for a second implementation of the rule. Writing
+          # the word literally here made the clean tree fail its own control.
+          case("workflow reimplements the marker rule", VALIDATE, ["--strict"],
+               edit(".github/workflows/validate.yml", "      - name:",
+                    "      # grep for T" + "ODO markers in docs\n      - name:"))
+
           case("stale tool exclusion", BUNDLE, ["--check"],
                edit(f"{S}/tools/bundle-skill.py",
                     '"tools/run-pilot.py",', '"tools/run-pilot.pyy",'))
@@ -476,32 +487,17 @@ jobs:
         with:
           persist-credentials: false
 
-      # The placeholder rule is enforced by validate-skills.py, which does it
-      # case-insensitively, path-aware, and with the per-tree exclusions the
-      # generated fixtures need.
-      #
-      # This used to be a second, shell implementation using `git grep -E` with
-      # `\b` word boundaries. `\b` is not supported by every git build's regex
-      # engine, so on some machines the check silently matched nothing and
-      # reported success -- and on others, where it did work, it flagged a line
-      # of CONTRIBUTING.md that says "Never write TODO, TBD, placeholder" because
-      # its exclusion filter was case-sensitive. One rule, one implementation,
-      # tested: two implementations of the same rule meant one of them was
-      # quietly not running.
-      - name: Placeholder rule is enforced by the validator, not duplicated here
+      # The unfilled-marker rule is enforced by validate-skills.py and by nothing
+      # else. It used to have a second, shell implementation here, and the two
+      # implementations disagreed: the shell one used `git grep -E` with `\b`,
+      # which not every git build's regex engine supports, so it matched nothing
+      # on some machines and reported success. That validator also now fails if a
+      # second implementation reappears, which makes a duplicate here a build
+      # failure rather than a quiet drift.
+      - name: The marker rule has exactly one implementation
         run: |
           set -euo pipefail
-          python ultimate-dev/tools/validate-skills.py --strict >/dev/null
-          echo 'placeholder hygiene is covered by the structure job'
-
-          # Guard against the duplication returning. If a second implementation
-          # of this rule reappears, it will drift, and a drifted hygiene check is
-          # a check nobody reads.
-          if grep -qE 'unfilled placeholder' .github/workflows/validate.yml; then
-            echo 'a shell duplicate of the placeholder rule has returned; the rule' >&2
-            echo 'belongs to validate-skills.py alone' >&2
-            exit 1
-          fi
+          echo 'enforced by the structure job via tools/validate-skills.py'
 
       - name: No emoji in specification documents
         run: |

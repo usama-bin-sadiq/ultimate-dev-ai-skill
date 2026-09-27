@@ -9,26 +9,28 @@ an agent reads to decide how to work. Write accordingly.
 ```text
 ultimate-dev/                        the skill — everything below is inside it
   SKILL.md                           the kernel
-  references/                        47 kernel references
+  ARCHITECTURE.md                    how the layers fit together
+  references/                        50 kernel references
   skills/skill-creator/              the capability-expansion sub-skill
-  agents/                            delegated roles
+  agents/                            seven delegated roles
   tools/                             deterministic utilities
   knowledge/                         schemas and policies
   evaluation/                        benchmarks, failure cases, security cases
+  evals/                             the generated case file the harnesses read
   examples/                          worked examples per domain
   docs/                              architecture, concepts, decisions,
                                      operations, security, evaluation
   research/                          what the architecture borrows, and what
                                      it does not resolve
-  new-arch.md, prd.md                the architecture and the requirements
 
 install.sh, INSTALL.md               installation
+new-arch.md, prd.md                  source specifications (historical inputs)
 VERSION, CHANGELOG.md               release mechanics
 SECURITY.md                          threat summary and disclosure
 ```
 
-The repository root holds installation and release mechanics only. Anything an
-agent reads at runtime belongs under `ultimate-dev/`.
+The repository root holds installation, release mechanics, and the two source
+specifications. Anything an agent reads at runtime belongs under `ultimate-dev/`.
 
 Read `ultimate-dev/docs/architecture/README.md` before changing `SKILL.md` or
 anything under `references/`. The layers are interdependent, and a change to one

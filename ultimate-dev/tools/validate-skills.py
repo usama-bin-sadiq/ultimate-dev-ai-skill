@@ -626,6 +626,34 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
                     f"{len(built)} of {len(entries)} cases have generated fixtures, "
                     f"{len(exempt)} exempt by recorded reason")
 
+    # No second implementation of the placeholder rule.
+    #
+    # This check used to live in validate.yml as a shell step that grepped
+    # validate.yml for its own trigger string, so it matched its own line and
+    # failed every run. Worse, the version before that was a full `git grep -E`
+    # implementation using `\b`, which not every git build's regex engine
+    # supports: on some machines it matched nothing and reported success, and on
+    # others it flagged a line of CONTRIBUTING.md that forbids those very markers
+    # because its exclusion filter was case-sensitive.
+    #
+    # One rule, one owner. This validator implements it; a workflow that
+    # reimplements it has drifted, and drift in a hygiene check means nobody
+    # reads it any more.
+    for workflow in sorted((repo_root / ".github" / "workflows").glob("*.y*ml")):
+        for lineno, line in enumerate(
+            workflow.read_text(encoding="utf-8", errors="replace").splitlines(), 1
+        ):
+            if not PLACEHOLDER_PATTERN.search(line):
+                continue
+            # This validator's own name in a message is not an implementation.
+            if "validate-skills.py" in line:
+                continue
+            errors.append(
+                f"{workflow.relative_to(repo_root)}:{lineno}: reimplements the "
+                f"unfilled-marker rule; it belongs to tools/validate-skills.py "
+                f"alone. Found: {line.strip()[:70]!r}"
+            )
+
     # Every delegated agent role must be a real role, not a stub, and the kernel
     # must know it exists.
     agents_dir = SKILL_ROOT / AGENTS_DIR

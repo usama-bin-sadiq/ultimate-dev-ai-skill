@@ -6,6 +6,11 @@ definition and a discriminating note: what the term is *not*. The notes exist
 because most of these words are looser in ordinary use, and the loose meaning is
 where the defects live.
 
+Two terms here — **evidence** and **provenance** — carry a longer treatment in
+[verification-and-evidence.md](verification-and-evidence.md), which sets out the
+chain connecting a claim to its source and the checks that decide whether the
+claim survives. Read the entries below first; that document assumes them.
+
 ## JEv
 
 The decision fabric: the decision procedure applied at every boundary that

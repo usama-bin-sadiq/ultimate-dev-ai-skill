@@ -30,7 +30,7 @@ reached when a specific stage or decision needs it. Total: 50 files.
 | Choosing how much effort this deserves | `triage.md`, then `budget-system.md` |
 | Recording a decision, or unsure what a field means | `decision-fabric.md` |
 | Deciding what context to hold | `context-system.md`, then `context-compiler.md` |
-| Resolving a missing capability | `capability-system.md`, then `skill-creator/SKILL.md` |
+| Resolving a missing capability | `capability-system.md`, then `../skills/skill-creator/SKILL.md` |
 | Writing or defending a plan | `planning-system.md` |
 | Something went wrong | `recovery-system.md`, then `retry-policy.md` |
 | About to report a result | `verification-system.md`, `evidence-system.md`, `output-contract.md` |

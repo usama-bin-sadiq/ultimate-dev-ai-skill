@@ -26,6 +26,7 @@ it and has to reconstruct it.
 | [critic](critic.md) | Work is expensive to reverse, or a plan is defending itself against evidence | Fatal / serious / cosmetic defects, ranked |
 | [grader](grader.md) | An output needs scoring against criteria written in advance | Per-criterion verdicts, undecidable ones as `null` |
 | [comparator](comparator.md) | A pass rate cannot explain why one version is better | Blind A/B verdict and the differences that decide it |
+| [security-reviewer](security-reviewer.md) | Content crosses a trust boundary, or a capability is being promoted | A concrete attack, and the control that would actually stop it |
 | [author](author.md) | `skill-creator` has decided a new capability is warranted | A **candidate** skill, never an installed one |
 
 ## The rules that apply to all of them
