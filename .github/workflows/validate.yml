@@ -182,9 +182,11 @@ jobs:
           print("bundle contents are correct")
           PY
 
-      # The installer is the documented entry point. If it cannot copy a skill
-      # into an empty directory, the README is wrong.
-      - name: Installer round-trip
+      # The installer is the documented entry point, and it has two modes: an
+      # interactive one for a person and a flag-driven one for a script. Both are
+      # here because the interactive path is the one a user actually meets, and
+      # nothing else exercises it.
+      - name: Installer round-trip, flag-driven
         run: |
           set -euo pipefail
           sandbox="$(mktemp -d)"
@@ -200,7 +202,96 @@ jobs:
             echo 'installer overwrote a differing install without confirmation' >&2
             exit 1
           fi
-          echo 'installer round-trip, idempotence, and clobber guard all pass'
+          # --all keeps the documentation the default prunes.
+          ./install.sh --all --target "$sandbox/full" --yes
+          test -d "$sandbox/full/ultimate-dev/docs"
+          echo 'installer round-trip, idempotence, clobber guard, and --all pass'
+
+      - name: Installer refuses to guess without a terminal
+        run: |
+          set -euo pipefail
+          # -i with no tty must fail with an instruction, not hang waiting for
+          # input that will never arrive. A hang in CI is worse than a failure:
+          # it burns the job timeout and says nothing about why.
+          if timeout 20 ./install.sh -i </dev/null >/dev/null 2>&1; then
+            echo 'interactive installer ran without a terminal' >&2
+            exit 1
+          fi
+          echo 'interactive installer refuses to run without a terminal'
+
+      - name: Installer interactive path, driven through a pty
+        run: |
+          set -euo pipefail
+          sandbox="$(mktemp -d)"
+          trap 'rm -rf "$sandbox"' EXIT
+          # A pty, because the interactive path is gated on a terminal and a pipe
+          # is not one. Driving it for real is the only way to know the prompts
+          # work, the defaults are right, and the plan is printed before the
+          # write. Answers: custom path, keep everything, proceed.
+          python3 - "$sandbox" <<'PY'
+          import os, pty, re, subprocess, sys
+          sandbox = sys.argv[1]
+          master, slave = pty.openpty()
+          proc = subprocess.Popen(["./install.sh", "-i"],
+                                  stdin=slave, stdout=slave, stderr=slave,
+                                  close_fds=True)
+          os.close(slave)
+          os.write(master, f"3\n{sandbox}/tty\n2\ny\n".encode())
+          out = b""
+          try:
+              while True:
+                  chunk = os.read(master, 4096)
+                  if not chunk:
+                      break
+                  out += chunk
+          except OSError:
+              pass
+          proc.wait(timeout=120)
+          text = re.sub(r"\x1b\[[0-9;?]*[A-Za-z]|\r", "", out.decode(errors="replace"))
+          if proc.returncode != 0:
+              print(text[-2000:], file=sys.stderr)
+              raise SystemExit(f"interactive installer exited {proc.returncode}")
+          for needle in ("Where should the skill go?", "What should be installed?",
+                         "Plan", "Proceed?"):
+              if needle not in text:
+                  print(text[-2000:], file=sys.stderr)
+                  raise SystemExit(f"interactive installer never asked: {needle}")
+          PY
+          test -f "$sandbox/tty/ultimate-dev/SKILL.md"
+          # Answer 2 was "everything", so the documentation must be present.
+          test -d "$sandbox/tty/ultimate-dev/docs"
+          echo 'interactive installer prompts, prints a plan, and honours "everything"'
+
+      - name: A destination flag survives the interactive path
+        run: |
+          set -euo pipefail
+          sandbox="$(mktemp -d)"
+          trap 'rm -rf "$sandbox"' EXIT
+          # Regression: `--target X -i` used to discard X and install to the
+          # user-global directory instead. The command line said one thing and
+          # the machine did another, which is the worst outcome an installer can
+          # produce.
+          python3 - "$sandbox" <<'PY'
+          import os, pty, re, subprocess, sys
+          sandbox = sys.argv[1]
+          master, slave = pty.openpty()
+          proc = subprocess.Popen(["./install.sh", "-i", "--target", f"{sandbox}/kept"],
+                                  stdin=slave, stdout=slave, stderr=slave,
+                                  close_fds=True)
+          os.close(slave)
+          os.write(master, b"\n\n")   # accept the stated destination and the default contents
+          try:
+              while os.read(master, 4096):
+                  pass
+          except OSError:
+              pass
+          proc.wait(timeout=120)
+          if proc.returncode != 0:
+              raise SystemExit(f"exited {proc.returncode}")
+          PY
+          test -f "$sandbox/kept/ultimate-dev/SKILL.md"
+          test ! -e "$sandbox/installed-elsewhere"
+          echo 'a destination flag is kept by the interactive path'
 
       - name: No build artifacts committed
         run: |

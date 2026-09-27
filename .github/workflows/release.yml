@@ -145,11 +145,17 @@ jobs:
           # event above. Looking up the PRs for this commit prevents the same
           # merge being released twice while leaving unlabelled merges and direct
           # commits to the push path.
+          # A label lookup is an optimisation, not a precondition. If the API is
+          # unreachable, rate-limited, or rejects the request, the release must
+          # still be decidable from the commit subject alone -- which is the
+          # deterministic path below. Failing the step here would block every
+          # release over a read-only lookup that has a working fallback.
           pr_payload=$(curl --fail --silent --show-error \
             --header 'Accept: application/vnd.github+json' \
             --header 'X-GitHub-Api-Version: 2022-11-22' \
             --header "Authorization: Bearer $GITHUB_TOKEN" \
-            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/commits/$PUSH_SHA/pulls")
+            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/commits/$PUSH_SHA/pulls" \
+            2>/dev/null) || pr_payload=''
           release_label=$(printf '%s' "$pr_payload" | jq -r '
             map(select(.merged_at != null) | .labels[]?.name) |
             map(select(. == "release:major" or . == "release:minor" or . == "release:patch")) |

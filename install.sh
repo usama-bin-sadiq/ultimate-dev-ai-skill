@@ -31,13 +31,18 @@ PROJECT_CANDIDATES=(
   ".claude/skills"
 )
 
-MODE="global"
+MODE=""
 TARGET=""
 YES=0
 PRUNE=1
 DRY_RUN=0
 BUNDLE_OUT="dist"
 BUNDLE_ZIP=0
+FORCE_INTERACTIVE=0
+# Set when the caller names a destination or a bundle operation. It is what makes
+# the script non-interactive: a flag is a statement of intent, and a script that
+# stops to ask about an intent that was already stated is a script that hangs CI.
+EXPLICIT=0
 
 usage() {
   cat <<'USAGE'
@@ -52,7 +57,13 @@ usage: install.sh [options]
   --check-bundle        verify the bundle would be sound, write nothing
   --yes                 do not prompt
   --dry-run             print what would happen, change nothing
+  -i, --interactive     ask where to install and what to include, even on a tty
   -h, --help            this message
+
+With no options on a terminal, this runs an interactive installer that asks two
+questions -- where to install, and whether to keep the documentation -- and shows
+the plan before writing anything. Supply any option and it runs unattended, so
+the same script serves a person and a CI job.
 
 The repository is more than the skill: alongside the runtime it carries the
 evaluation corpus, worked examples, documentation, and research, which together
@@ -76,26 +87,168 @@ PRUNABLE_FILES=(ARCHITECTURE.md new-arch.md prd.md)
 
 while [ $# -gt 0 ]; do
   case "$1" in
-    --global)   MODE="global"; shift ;;
-    --project)  MODE="project"; shift
+    --global)   MODE="global"; EXPLICIT=1; shift ;;
+    --project)  MODE="project"; EXPLICIT=1; shift
                 TARGET="${1:-.}"; [ $# -gt 0 ] && shift || true ;;
-    --target)   MODE="target"; shift
+    --target)   MODE="target"; EXPLICIT=1; shift
                 [ $# -gt 0 ] || die "--target needs a directory"
                 TARGET="$1"; shift ;;
-    --all)      PRUNE=0; shift ;;
-    --bundle)   MODE="bundle"; shift
+    --all)      PRUNE=0; EXPLICIT=1; shift ;;
+    --bundle)   MODE="bundle"; EXPLICIT=1; shift
                 BUNDLE_OUT="${1:-dist}"; [ $# -gt 0 ] && shift || true ;;
-    --bundle-zip) MODE="bundle"; BUNDLE_ZIP=1
+    --bundle-zip) MODE="bundle"; BUNDLE_ZIP=1; EXPLICIT=1
                 BUNDLE_OUT="${BUNDLE_OUT:-dist}"; shift ;;
-    --check-bundle) MODE="bundle-check"; shift ;;
+    --check-bundle) MODE="bundle-check"; EXPLICIT=1; shift ;;
     --yes|-y)   YES=1; shift ;;
     --dry-run)  DRY_RUN=1; shift ;;
+    -i|--interactive) FORCE_INTERACTIVE=1; shift ;;
     -h|--help)  usage; exit 0 ;;
     *)          die "unknown option: $1 (try --help)" ;;
   esac
 done
 
 [ -d "$SOURCE_DIR" ] || die "cannot find ${SOURCE_DIR}; run install.sh from the repository root"
+
+# ---------------------------------------------------------------------------
+# Interactive installer
+#
+# Runs when there is a terminal and the caller named no destination. Two
+# questions, both with a default, and the plan is printed before anything is
+# written. The point is not politeness: the two choices here are the two a user
+# gets wrong most often, and both are irreversible enough to be worth one
+# question. Which skill directory a runtime reads is runtime-specific, and
+# guessing wrong produces an install that silently never loads.
+#
+# Everything here is skipped the moment a flag appears, so `install.sh --target X`
+# in a pipeline behaves exactly as it always did.
+# ---------------------------------------------------------------------------
+
+have_tty() { [ -t 0 ] && [ -t 1 ]; }
+
+# ask <variable-name> <prompt> <default> -- reads into the named variable.
+ask() {
+  local __var="$1" __prompt="$2" __default="$3" __reply=""
+  printf '%s' "$__prompt" >&2
+  if [ -n "$__default" ]; then
+    printf ' [%s] ' "$__default" >&2
+  else
+    printf ' ' >&2
+  fi
+  if ! IFS= read -r __reply; then
+    # EOF: a closed stdin is not consent. Take the default and say so.
+    printf '\n' >&2
+    warn "no input available; using the default for: ${__prompt}"
+    printf -v "$__var" '%s' "$__default"
+    return 0
+  fi
+  [ -n "$__reply" ] || __reply="$__default"
+  printf -v "$__var" '%s' "$__reply"
+}
+
+existing_global() {
+  local candidate
+  for candidate in "${GLOBAL_CANDIDATES[@]}"; do
+    [ -d "$candidate" ] && { printf '%s' "$candidate"; return 0; }
+  done
+  return 1
+}
+
+existing_project() {
+  local candidate
+  for candidate in "${PROJECT_CANDIDATES[@]}"; do
+    [ -d "$candidate" ] && { printf '%s' "$candidate"; return 0; }
+  done
+  return 1
+}
+
+wizard() {
+  log ""
+  log "ultimate-dev installer"
+  log "====================="
+  log ""
+  log "The repository is about five times the size of the skill. A runtime"
+  log "install keeps the kernel and drops the documentation, examples, and"
+  log "evaluation corpus. Two questions, then the plan."
+  log ""
+
+  local choice default_global default_project
+  default_global="$(existing_global || printf '%s' "${GLOBAL_CANDIDATES[0]}")"
+  default_project="$(existing_project || printf '%s' "${PROJECT_CANDIDATES[0]}")"
+
+  # A destination flag is a stated intent, so it becomes the wizard's default
+  # rather than being overwritten by it. `install.sh --target X -i` used to throw
+  # X away and install to the user-global directory, which is the worst possible
+  # outcome: the command line said one thing and the machine did another.
+  if [ -n "$MODE" ]; then
+    log "  destination: given on the command line, kept as-is"
+    log ""
+  else
+    log "  1) This user      ${default_global}"
+    log "  2) This project   ${default_project}/   (in $(pwd))"
+    log "  3) Somewhere else (type a path)"
+    log ""
+    ask choice "Where should the skill go?" "1"
+
+    case "$choice" in
+      1) MODE="global" ;;
+      2) MODE="project"; TARGET="$(pwd)/${default_project}" ;;
+      3) ask TARGET "Path to install into:" ""
+          [ -n "$TARGET" ] || die "no path given; nothing was changed"
+          MODE="target" ;;
+      *) MODE="global" ;;
+    esac
+  fi
+
+  log ""
+  log "  1) Runtime only  - kernel, references, roles. Smallest."
+  log "  2) Everything    - adds docs, examples, evaluation, research."
+  log ""
+  local contents
+  ask contents "What should be installed?" "1"
+  case "$contents" in
+    2) PRUNE=0 ;;
+    *) PRUNE=1 ;;
+  esac
+
+  # Show the plan. A confirmation that does not state what will happen is a
+  # confirmation of nothing.
+  local planned_root planned_dest size_note
+  case "$MODE" in
+    global) planned_root="$(existing_global || printf '%s' "${GLOBAL_CANDIDATES[0]}")" ;;
+    *)      planned_root="$TARGET" ;;
+  esac
+  planned_dest="${planned_root%/}/${SKILL_NAME}"
+  size_note="runtime only, about 400 KB"
+  [ "$PRUNE" -eq 0 ] && size_note="everything, about 2.1 MB"
+
+  log ""
+  log "Plan"
+  log "  from      ${SOURCE_DIR}"
+  log "  to        ${planned_dest}"
+  log "  contents  ${size_note}"
+  log ""
+
+  local go
+  ask go "Proceed?" "y"
+  case "$go" in
+    y|Y|yes|YES) ;;
+    *) die "aborted; nothing was changed" ;;
+  esac
+  log ""
+}
+
+if [ "$MODE" != "bundle" ] && [ "$MODE" != "bundle-check" ]; then
+  if [ "$FORCE_INTERACTIVE" -eq 1 ] || { [ "$EXPLICIT" -eq 0 ] && have_tty; }; then
+    if ! have_tty; then
+      die "no terminal for the interactive installer; pass --global, --project DIR, or --target DIR"
+    fi
+    wizard
+  fi
+  # No destination chosen and no terminal: the old default, stated rather than
+  # assumed, because a silent default is how an install lands somewhere the user
+  # did not expect.
+  [ -n "$MODE" ] || { MODE="global"; [ "$EXPLICIT" -eq 0 ] && warn "no terminal and no destination given; defaulting to --global"; }
+fi
 
 # Bundle mode short-circuits: it is a different operation with a different
 # contract, so it does not share the destination logic below.
@@ -130,6 +283,7 @@ detect_target() {
       # path, so the result is somewhere a runtime actually looks.
       printf '%s' "${GLOBAL_CANDIDATES[0]}"
       ;;
+    *) return 1 ;;
   esac
 }
 
