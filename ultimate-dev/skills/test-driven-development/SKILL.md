@@ -26,7 +26,7 @@ Write a failing test before writing the code that makes it pass. For bug fixes, 
 The TDD cycle is universal; the commands are not. Before writing the first test, discover how *this* repository tests, and use its commands for every RED, GREEN, and verification step:
 
 - **Language and build system** — `package.json`, `pom.xml`/`build.gradle`, `pyproject.toml`, `go.mod`, `Cargo.toml`, `Gemfile`, a `Makefile`
-- **Checked-in wrappers** — prefer `./gradlew`, `./mvnw`, `make test`, or a repo script over globally installed tools
+- **Checked-in wrappers** — prefer `make test`, or a repo script over globally installed tools
 - **Test framework and configuration** — and how it runs a single focused test vs the full suite
 - **Existing conventions** — where tests live, how files are named, what patterns neighboring tests follow
 - **Documented commands** — README, CONTRIBUTING, and CI workflows show the commands that actually gate merges
@@ -389,7 +389,7 @@ For JavaScript/TypeScript testing patterns illustrating these principles — Jes
 After completing any implementation:
 
 - [ ] Every new behavior has a corresponding test
-- [ ] The full suite passes, run with the repository's own test command (`npm test`, `./gradlew test`, `pytest`, `go test ./...`, ...)
+- [ ] The full suite passes, run with the repository's own test command (`npm test`, `pytest`, `go test ./...`, ...)
 - [ ] Bug fixes include a reproduction test that failed before the fix
 - [ ] Test names describe the behavior being verified
 - [ ] No tests were skipped or disabled

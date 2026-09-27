@@ -1,6 +1,6 @@
 ---
 name: agent-launcher-orchestrator
-description: Use when a user wants to build, launch, grade, or schedule a Claude Managed Agent (CMA) in their own Anthropic account — "build me an agent", "launch this as a managed agent", "run this on a schedule", "grade my agent against a rubric", "set up a nightly worker". Reads the per-session goal (./my-agent/goal.json), routes deterministically to one of five phase sub-skills (interview → stage-launch → grade-iterate → run-without-you → wrap-up) via goal_router.py, and compiles the goal+phase into an execution shape (single-pass workflow / bounded grade→iterate loop / recurring cron deployment loop) via loop_compiler.py. Forks context so heavy intake (build sheets, payloads, eval cases) stays out of the parent thread. All launches are emitted as BYOK curl the user runs with their own key; no tool makes API calls. Inspired by anthropics/launch-your-agent (Apache-2.0). Distinct from engineering/agent-harness (generic domain loop) and engineering/write-a-skill (authors Claude Code skills, not CMAs).
+description: Use when a user wants to build, launch, grade, or schedule a Claude Managed Agent (CMA) in their own Anthropic account — "build me an agent", "launch this as a managed agent", "run this on a schedule", "grade my agent against a rubric", "set up a nightly worker". Reads the per-session goal, routes deterministically to one of five phase sub-skills (interview → stage-launch → grade-iterate → run-without-you → wrap-up) via goal_router.py, and compiles the goal+phase into an execution shape (single-pass workflow / bounded grade→iterate loop / recurring cron deployment loop) via loop_compiler.py. Forks context so heavy intake (build sheets, payloads, eval cases) stays out of the parent thread. All launches are emitted as BYOK curl the user runs with their own key; no tool makes API calls. Inspired by anthropics/launch-your-agent (Apache-2.0). Distinct from engineering/agent-harness (generic domain loop) and engineering/write-a-skill (authors Claude Code skills, not CMAs).
 context: fork
 version: 2.11.2
 author: Alireza Rezvani
@@ -69,7 +69,7 @@ outcome per firing). See [`../../references/loops-and-workflows.md`](../../refer
 ## Hand-off contract
 
 After routing, fork to the sub-skill with: the goal string, `agent_name`,
-`out_dir` (`./my-agent`), and the compiled `plan.v1`. When the sub-skill returns,
+`out_dir`, and the compiled `plan.v1`. When the sub-skill returns,
 `goal_state.py advance` moves the phase and the parent gets a ≤100-word digest
 (phase done, artifact paths, loop shape, one next step).
 

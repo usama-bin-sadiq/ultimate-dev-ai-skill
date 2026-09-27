@@ -201,7 +201,7 @@ console.log("Loaded native window:", await page.title());
 
 ## Start or Reuse Electron Session
 
-Set `ELECTRON_ENTRY` to `.` when the current workspace is the Electron app and `package.json` points `main` to the right entry file. If you need to target a specific main-process file directly, use a path such as `./main.js` instead.
+Set `ELECTRON_ENTRY` to `.` when the current workspace is the Electron app and `package.json` points `main` to the right entry file.
 
 ```javascript
 var ELECTRON_ENTRY = ".";

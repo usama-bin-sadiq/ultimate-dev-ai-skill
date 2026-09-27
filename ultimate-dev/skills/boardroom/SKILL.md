@@ -31,15 +31,16 @@ Runs the `board-meeting` skill protocol across the C-suite for a single strategy
 ### Phase 3 — Cross-Examination
 - Positions revealed simultaneously.
 - Each advisor critiques the others' positions on the dimensions they own:
-  - cs-cfo-advisor critiques the math
-  - cs-ciso-advisor critiques the risk
-  - cs-cpo-advisor critiques the JTBD
-  - cs-cmo-advisor critiques the positioning
-  - cs-cro-advisor critiques the revenue math
-  - etc.
+  - [`cs-ceo-advisor`](../cs-ceo-advisor/SKILL.md) and [`cs-cto-advisor`](../cs-cto-advisor/SKILL.md) hold the two seats that ship as skills
+  - the finance seat critiques the math — see [`cs-financial-analyst`](../cs-financial-analyst/SKILL.md)
+  - the product seat critiques the job-to-be-done — see [`cs-product-strategist`](../cs-product-strategist/SKILL.md)
+  - the go-to-market seat critiques the positioning and the revenue model — see [`cs-growth-strategist`](../cs-growth-strategist/SKILL.md)
+  - the risk seat critiques the downside — no dedicated skill ships; the CTO advisor takes it
+  - add seats as the decision needs them, not as a fixed roster
 
 ### Phase 4 — Devil's Advocate Pass
-- `executive-mentor/devils-advocate` agent runs `/em:challenge` on the leading option.
+- The [`executive-mentor`](../executive-mentor/SKILL.md) skill runs its challenge
+  pass on the leading option.
 - Surfaces three concerns with severity ratings.
 
 ### Phase 5 — Synthesis
@@ -126,8 +127,8 @@ If advisors see each other's positions before forming their own, they anchor. Ph
 
 ## Related
 
-- Agent: [`cs-chief-of-staff`](../../agents/cs-chief-of-staff.md)
-- Skills: [`board-meeting`](../../../c-level-advisor/skills/board-meeting/SKILL.md), [`executive-mentor`](../../../c-level-advisor/executive-mentor/)
+- Agent: [`chief-of-staff`](../../agents/chief-of-staff.md)
+- Skills: [`board-meeting`](../board-meeting/SKILL.md), [`executive-mentor`](../executive-mentor/SKILL.md)
 
 ---
 

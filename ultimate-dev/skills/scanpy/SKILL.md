@@ -51,7 +51,7 @@ This skill should be used when:
 
 This skill bundles ready-to-run CLI scripts in `scripts/` for every common step. **Run these instead of hand-writing scanpy code** — they handle file loading by extension, figure setup, sensible defaults, raw-count preservation, and progress logging. Each reads and writes `.h5ad`, so they chain together, and each has its own `--help`. Only drop down to writing scanpy code when a task isn't covered by a script or needs unusual customization.
 
-All scripts use a shared `scripts/_common.py` helper (loading, saving, figure config) — keep it alongside the others. Run from the skill directory or pass full paths; figures default to `./figures/`.
+All scripts use a shared `scripts/_common.py` helper (loading, saving, figure config) — keep it alongside the others. Run from the skill directory or pass full paths.
 
 | Script | Purpose | Typical call |
 |--------|---------|--------------|

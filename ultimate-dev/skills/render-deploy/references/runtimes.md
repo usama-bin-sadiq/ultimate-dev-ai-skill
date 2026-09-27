@@ -288,7 +288,7 @@ startCommand: mix phx.server
 Build your application from a Dockerfile in your repository.
 
 **Additional Configuration:**
-- `dockerfilePath`: Path to Dockerfile (default: `./Dockerfile`)
+- `dockerfilePath`: Path to Dockerfile
 - `dockerContext`: Build context directory (default: `.`)
 
 **Example Configuration:**
@@ -370,7 +370,7 @@ registryCredential:
 Serve pre-built static files without a backend runtime. Files are served via CDN.
 
 **Additional Configuration:**
-- `staticPublishPath`: Directory containing built files (e.g., `./dist`, `./build`)
+- `staticPublishPath`: Directory containing built files
 
 **Common Build Commands by Framework:**
 

@@ -112,8 +112,13 @@ This file was adapted to be tool-neutral: it claimed a general scope and was
 bound to one tool. The procedure is unchanged; what changed is that a reader on a
 different runtime is told what to substitute.
 
-- **npm** — means. One tool's way of doing a step a different runtime may do another way.
+- **`pnpm ai-hero-cli internal lint`** — the course-authoring toolchain's own
+  linter, reached through one package manager. The property it gates — exercise
+  stubs that pass lint — is tool-agnostic; a reader on another toolchain runs that
+  toolchain's linter over the same generated files and keeps the section, problem,
+  solution, and explainer structure unchanged.
 Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+

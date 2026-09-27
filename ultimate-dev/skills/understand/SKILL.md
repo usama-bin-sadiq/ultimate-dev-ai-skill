@@ -471,9 +471,6 @@ Run this phase for full analysis and for incremental plans where `rerunArchitect
 Report to the user: `[Phase 4/7] Identifying architectural layers...`
 
 **Build the combined prompt template:**
-  1.
- 3. **Framework addendum injection:** For each framework detected in Phase 1 (e.g., `Django`), read the file at `./frameworks/<framework-id-lowercase>.md` (e.g., `./frameworks/django.md`) and append its full content after the language context. If the file does not exist for a detected framework, skip it silently and continue. These files are in the `frameworks/` subdirectory next to this SKILL.md file.
- 4. **Output locale injection:** If `$OUTPUT_LANGUAGE` is NOT `en` (English), read the locale guidance file at `./locales/<language-code>.md` (e.g., `./locales/zh.md`, `./locales/ja.md`, `./locales/ko.md`) and append its content after the framework addendums under a `## Output Language Guidelines` header. This provides language-specific guidance for tag naming conventions, summary style, and layer name translations. If the locale file does not exist for the specified language, skip silently — the `$LANGUAGE_DIRECTIVE` still applies. These files are in the `locales/` subdirectory next to this SKILL.md file.
 
 Append the language/framework context and the following additional context to the agent's prompt:
 
@@ -930,12 +927,13 @@ This file was adapted to be tool-neutral: it claimed a general scope and was
 bound to one tool. The procedure is unchanged; what changed is that a reader on a
 different runtime is told what to substitute.
 
-- `<project-root>` — the repository root. 2 machine-specific path(s) replaced.
-- `<agent-config-dir>` — wherever this runtime keeps its configuration. Not a fixed location.
-- `<agent-instructions>` — the file this runtime reads for standing instructions. Names differ per runtime and none is assumed.
-- **npm** — means. One tool's way of doing a step a different runtime may do another way.
-- **claude-cli** — means. One tool's way of doing a step a different runtime may do another way.
+- **`pnpm install --frozen-lockfile` in a plugin workspace, then
+  `pnpm --filter … build`** — the analysis code is a bundled Node workspace that
+  has to be built before it runs. That is the toolkit's own build step, not a
+  property of the knowledge-graph method: a reader who already has a code-analysis
+  tool substitutes it and keeps the graph output contract.
 Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+

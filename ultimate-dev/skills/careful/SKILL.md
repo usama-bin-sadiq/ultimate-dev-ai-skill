@@ -1,7 +1,7 @@
 ---
 name: careful
 version: 0.1.0
-description: Safety guardrails for destructive commands. (gstack)
+description: Safety guardrails for destructive commands.
 triggers:
   - be careful
   - warn before destructive
@@ -93,9 +93,23 @@ This file was adapted to be tool-neutral: it claimed a general scope and was
 bound to one tool. The procedure is unchanged; what changed is that a reader on a
 different runtime is told what to substitute.
 
-- **claude-cli** — means. One tool's way of doing a step a different runtime may do another way.
-- **container** — means. One tool's way of doing a step a different runtime may do another way.
+- **the `PreToolUse` hook, and the `hookSpecificOutput` payload it returns** —
+  the guardrail is not an instruction this file asks you to follow; it is a hook
+  the host calls before every `Bash` invocation, and its `permissionDecision`
+  must be nested under `hookSpecificOutput` because **Claude Code** ignores a
+  top-level one. A runtime that enforces permissions by prompting the user has
+  no such payload; apply the same pattern table above yourself at the moment you
+  are about to run the command, and say that you did.
+- **`$HOME/<agent-config-dir>/gstack/careful/bin/check-careful.sh`** — the hook's
+  command, inside the toolkit's install tree. It is one install location among
+  several, and the hook payload it produces is the part another runtime would
+  need to reproduce.
+- **`kubectl delete`, `docker rm -f`** — two tools' destructive commands appear
+  in the pattern table. The table is matched literally, so those two rows fire
+  only for those two CLIs; the `rm`, `git`, and SQL rows are tool-agnostic and
+  are the part that transfers.
 Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+

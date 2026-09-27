@@ -43,7 +43,7 @@ hf_jobs("uv", {
 })
 ```
 
-Local file paths (`./train.py`, `/path/to/train.py`) **do not work**. Jobs run in isolated containers without access to your filesystem.
+Local file paths (`/path/to/train.py`) **do not work**. Jobs run in isolated containers without access to your filesystem.
 
 ### 3. CLI
 

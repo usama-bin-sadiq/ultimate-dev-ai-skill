@@ -29,7 +29,7 @@ Template candidates, in order:
 - One `*.md` file under `.github/pull_request_template/`
 - One `*.md` file under `.github/PULL_REQUEST_TEMPLATE/`
 
-Use paths as emitted from the repository root, such as `.github/pull_request_template.md`, not `./.github/pull_request_template.md`.
+Use paths as emitted from the repository root, such as `.github/pull_request_template.md`.
 
 If exactly one template is found, read it before composing the final PR body and pass it to `gh pr create` with `--template "$template"`.
 

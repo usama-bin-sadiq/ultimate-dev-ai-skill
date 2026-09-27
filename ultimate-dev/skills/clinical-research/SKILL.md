@@ -61,7 +61,7 @@ python3 scripts/onboard.py            # interactive (also: --defaults, --set key
 python3 scripts/onboard.py --show     # see the questions + current effective config
 ```
 
-Answers are saved to `<agent-config-dir>/research-ops/clinical-research.json` (global) or `./.research-ops/clinical-research.json` (`--scope project`) and are read automatically by `config_loader.py`. They set the default development-area **profile**, default **alpha / power / dropout**, and the named **biostatistician / medical monitor / regulatory owner** printed on outputs. CLI flags always override saved config; `RESEARCH_OPS_NO_CONFIG=1` ignores it entirely.
+Answers are saved to `<agent-config-dir>/research-ops/clinical-research.json` (global) and are read automatically by `config_loader.py`. They set the default development-area **profile**, default **alpha / power / dropout**, and the named **biostatistician / medical monitor / regulatory owner** printed on outputs. CLI flags always override saved config; `RESEARCH_OPS_NO_CONFIG=1` ignores it entirely.
 
 **The seven questions:** development area · alpha · power · dropout · biostatistician · medical monitor · regulatory owner.
 

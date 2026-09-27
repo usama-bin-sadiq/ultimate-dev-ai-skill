@@ -61,7 +61,7 @@ python3 scripts/onboard.py            # interactive (also: --defaults, --set key
 python3 scripts/onboard.py --show     # see the questions + current effective config
 ```
 
-Answers are saved to `<agent-config-dir>/research-ops/product-research.json` (global) or `./.research-ops/product-research.json` (`--scope project`) and are read automatically by `config_loader.py`. They set the default product **profile**, the **insight source-threshold** (how many independent participants make a finding an insight, not an anecdote), the default **saturation method**, and the **high-stakes** flag. CLI flags always override saved config; `RESEARCH_OPS_NO_CONFIG=1` ignores it.
+Answers are saved to `<agent-config-dir>/research-ops/product-research.json` (global) and are read automatically by `config_loader.py`. They set the default product **profile**, the **insight source-threshold** (how many independent participants make a finding an insight, not an anecdote), the default **saturation method**, and the **high-stakes** flag. CLI flags always override saved config; `RESEARCH_OPS_NO_CONFIG=1` ignores it.
 
 **The four questions:** product profile · insight source-threshold · saturation method · high-stakes flag.
 

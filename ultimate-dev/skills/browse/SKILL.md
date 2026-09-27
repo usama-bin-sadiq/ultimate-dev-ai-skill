@@ -2,7 +2,7 @@
 name: browse
 preamble-tier: 1
 version: 2.0.0
-description: "Drive a real browser through Aside: open a page, read it, click through a flow, take screenshots, check console errors. (gstack)"
+description: "Drive a real browser through Aside: open a page, read it, click through a flow, take screenshots, check console errors. Requires the bundled agent runtime."
 triggers:
   - browse a page
   - open this url
@@ -44,7 +44,7 @@ below. **Degraded mode:** if `SKILL_START_PROTO: 1` is missing from the output
 defaults: treat `SESSION_KIND` as `interactive`, do NOT assume Conductor,
 skip onboarding/telemetry steps (their gates are marker-based, so consent and
 onboarding prompts are DEFERRED to the next healthy run — never lost), tell
-the user to run `./setup` or `/runtime-upgrade`, and proceed with their task.
+the user to run `/runtime-upgrade`, and proceed with their task.
 Note `SESSION_ID` and `TEL_START` from the output — the Telemetry step needs
 them at skill end.
 
@@ -221,7 +221,7 @@ B=""
 [ -x "$B" ] && echo "READY: $B" || echo "NEEDS_SETUP"
 ```
 
-If `NEEDS_SETUP`: tell the user "gstack's own browser needs a one-time build (~10 seconds). OK to proceed?", STOP for the answer, then run `cd <SKILL_DIR> && ./setup` (it installs bun when missing). If neither Aside nor `$B` is available after that, stop and say so — never substitute unit tests or curl for the browser step.
+If `NEEDS_SETUP`: tell the user "gstack's own browser needs a one-time build (~10 seconds). OK to proceed?", STOP for the answer. If neither Aside nor `$B` is available after that, stop and say so — never substitute unit tests or curl for the browser step.
 
 ### Translate the Aside scripts step by step
 

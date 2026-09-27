@@ -1,7 +1,7 @@
 ---
 name: deslop-shared-libs
 version: 1.0.0
-description: Find worthwhile shared-code extractions in recent work. (gstack)
+description: Find worthwhile shared-code extractions in recent work. Requires the bundled agent runtime.
 allowed-tools:
   - Bash
   - Read

@@ -2,10 +2,10 @@
 
 ## 🔬 Rig Selection
 
-| Rig Type          | Import From            | Architecture                                                         | Use When                                                                                              |
-| :---------------- | :--------------------- | :------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
-| **`evalTest`**    | `./test-helper.js`     | **Subprocess**. Runs the CLI in a separate process + waits for exit. | Standard workspace tests. **Do not use `setBreakpoint`**; auditing history (`readToolLogs`) is safer. |
-| **`appEvalTest`** | `./app-test-helper.js` | **In-Process**. Runs directly inside the runner loop.                | UI/Ink rendering. Safe for `setBreakpoint` triggers.                                                  |
+| Rig Type          | Architecture                                                         | Use When                                                                                              |
+| :---------------- | :------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
+| **`evalTest`**    | **Subprocess**. Runs the CLI in a separate process + waits for exit. | Standard workspace tests. **Do not use `setBreakpoint`**; auditing history (`readToolLogs`) is safer. |
+| **`appEvalTest`** | **In-Process**. Runs directly inside the runner loop.                | UI/Ink rendering. Safe for `setBreakpoint` triggers.                                                  |
 
 ---
 

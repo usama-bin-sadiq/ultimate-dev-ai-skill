@@ -1,7 +1,7 @@
 ---
 name: guard
 version: 0.1.0
-description: "Full safety mode: destructive command warnings + directory-scoped edits. (gstack)"
+description: "Full safety mode: destructive command warnings + directory-scoped edits. Requires the bundled agent runtime."
 triggers:
   - full safety mode
   - guard against mistakes

@@ -2,7 +2,7 @@
 name: design-html
 preamble-tier: 2
 version: 1.0.0
-description: "Design finalization: generates production-quality Pretext-native HTML/CSS. (gstack)"
+description: "Design finalization: generates production-quality Pretext-native HTML/CSS. Requires the bundled agent runtime."
 triggers:
   - build the design
   - code the mockup
@@ -53,7 +53,7 @@ below. **Degraded mode:** if `SKILL_START_PROTO: 1` is missing from the output
 defaults: treat `SESSION_KIND` as `interactive`, do NOT assume Conductor,
 skip onboarding/telemetry steps (their gates are marker-based, so consent and
 onboarding prompts are DEFERRED to the next healthy run — never lost), tell
-the user to run `./setup` or `/runtime-upgrade`, and proceed with their task.
+the user to run `/runtime-upgrade`, and proceed with their task.
 Note `SESSION_ID` and `TEL_START` from the output — the Telemetry step needs
 them at skill end.
 
@@ -761,8 +761,7 @@ If issues are found, note them and fix before presenting to the user.
 
 Only if `gstack-render` prints `NEEDS_ASIDE` or `ASIDE_NOT_RUNNING` followed by
 `ERROR: no browser available` (Aside is not open AND gstack's own browser is not
-built), skip verification and note: "No browser available (open the Aside app,
-or run ./setup in the gstack repo to build gstack's browser). Skipping automated
+built), skip verification and note: "No browser available (open the Aside app). Skipping automated
 viewport verification." Never install either for the user.
 
 ### Refinement Loop

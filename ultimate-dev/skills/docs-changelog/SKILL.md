@@ -174,10 +174,11 @@ This file was adapted to be tool-neutral: it claimed a general scope and was
 bound to one tool. The procedure is unchanged; what changed is that a reader on a
 different runtime is told what to substitute.
 
-- `<project-root>` — the repository root. 4 machine-specific path(s) replaced.
-- `<agent-config-dir>` — wherever this runtime keeps its configuration. Not a fixed location.
-- `<agent-instructions>` — the file this runtime reads for standing instructions. Names differ per runtime and none is assumed.
-- **npm** — means. One tool's way of doing a step a different runtime may do another way.
+- **`npm run format`, `npm install`** — the repository's own format script,
+  invoked through one package manager. The step is *run the project's formatter*;
+  a project that uses another package manager runs the same script through it,
+  and a project with no such script formats by whatever means it already uses.
+  The dependency install is only needed when that first run fails.
 Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader

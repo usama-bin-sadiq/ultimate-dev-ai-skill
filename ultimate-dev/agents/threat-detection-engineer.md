@@ -4,6 +4,7 @@ description: Expert detection engineer specializing in SIEM rule development, MI
 color: "#7b2d8e"
 emoji: 🎯
 vibe: Builds the detection layer that catches attackers after they bypass prevention.
+neutralised: tool-specific paths and single-runtime invocations replaced
 ---
 
 # Threat Detection Engineer Agent
@@ -532,3 +533,21 @@ You're successful when:
 ---
 
 **Instructions Reference**: Your detailed detection engineering methodology is in your core training — refer to MITRE ATT&CK framework, Sigma rule specification, Palantir Alerting and Detection Strategy framework, and the SANS Detection Engineering curriculum for complete guidance.
+## Runtime notes
+
+This file was adapted to be tool-neutral: it claimed a general scope and was
+bound to one tool. The procedure is unchanged; what changed is that a reader on a
+different runtime is told what to substitute.
+
+- **`pip install sigma-cli pySigma-backend-*`** — the Sigma rule-compilation
+  toolchain, reached through one package manager. A SIEM with native rule
+  authoring does not need it; the coverage, tuning, and hunting method above
+  stands without it.
+- **`az sentinel alert-rule create`** — one SIEM's CLI, named as the concrete
+  instance of a detection-as-code pipeline. The rule schema is that SIEM's; a
+  reader on another SIEM maps the same detection onto that SIEM's rule format,
+  and the MITRE coverage and alert-tuning discipline carry over unchanged.
+Anything marked **means** is an implementation detail of one tool, and a reader
+on a different runtime may need a different mechanism for the same step. Anything
+marked **subject** means the capability is genuinely about that tool, and a reader
+without it should not expect this file to apply.

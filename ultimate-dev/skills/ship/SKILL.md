@@ -2,7 +2,7 @@
 name: ship
 preamble-tier: 4
 version: 1.0.0
-description: "Ship workflow: detect + merge base branch, run tests, review diff, bump VERSION, update CHANGELOG, commit, push, create PR. (gstack)"
+description: "Ship workflow: detect + merge base branch, run tests, review diff, bump VERSION, update CHANGELOG, commit, push, create PR. Requires the bundled agent runtime."
 allowed-tools:
   - Bash
   - Read
@@ -50,7 +50,7 @@ below. **Degraded mode:** if `SKILL_START_PROTO: 1` is missing from the output
 defaults: treat `SESSION_KIND` as `interactive`, do NOT assume Conductor,
 skip onboarding/telemetry steps (their gates are marker-based, so consent and
 onboarding prompts are DEFERRED to the next healthy run — never lost), tell
-the user to run `./setup` or `/runtime-upgrade`, and proceed with their task.
+the user to run `/runtime-upgrade`, and proceed with their task.
 Note `SESSION_ID` and `TEL_START` from the output — the Telemetry step needs
 them at skill end.
 
@@ -737,7 +737,7 @@ for slot selection. Bump level and queue collisions remain agent decisions.
    ```bash
    bun run ~/.claude/skills/gstack/bin/gstack-version-bump write --version "$NEW_VERSION" --regen-digest
    ```
-   The CLI validates 4-digit `MAJOR.MINOR.PATCH.MICRO` (or 3-digit pinned semver), then writes VERSION, the manifest, and existing `package-lock.json` / `npm-shrinkwrap.json` files; it never creates lockfiles. Manifest resolution: `--package-json-path` → `.gstack/package-json-path` → `./package.json` (supports subdirectory packages). npm manifests/locks use the 3-digit translation (`1.67.0.0` → `1.67.0`); VERSION remains authoritative. Exit 3 means a half-write: reclassify and use `repair` for DRIFT_STALE_PKG.
+   The CLI validates 4-digit `MAJOR.MINOR.PATCH.MICRO` (or 3-digit pinned semver), then writes VERSION, the manifest, and existing `package-lock.json` / `npm-shrinkwrap.json` files; it never creates lockfiles. Manifest resolution: `--package-json-path` → `.gstack/package-json-path` (supports subdirectory packages). npm manifests/locks use the 3-digit translation (`1.67.0.0` → `1.67.0`); VERSION remains authoritative. Exit 3 means a half-write: reclassify and use `repair` for DRIFT_STALE_PKG.
 
    `--regen-digest` executes repo code with the same privileges as Step 5: `scripts/gen-agents-digest.ts`, only when it and committed `agents-digest/gstack-AGENTS.md` both exist. Check `agentsDigest`: if false, run `bun scripts/gen-agents-digest.ts` and stage the digest with the bump before continuing. Its VERSION stamp is freshness-gated.
 

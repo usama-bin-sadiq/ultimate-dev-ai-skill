@@ -1,5 +1,5 @@
 ---
-name: claude-security
+name: "codebase-security-review"
 description: "Claude Security: scan the codebase (the whole repository or a scoped part of it), scan changes (this branch's or a pull request's diff, or one commit), or suggest patches (findings turned into targeted patch files, each verified by a panel of agents, that you apply when you choose). Use when the user asks to scan, audit or check code with Claude Security, to scan their changes with Claude Security, or to fix or patch Claude Security findings."
 allowed-tools:
   - Read

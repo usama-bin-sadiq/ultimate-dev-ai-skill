@@ -2,7 +2,7 @@
 name: ios-qa
 preamble-tier: 3
 version: 1.0.0
-description: Live-device iOS QA for SwiftUI apps. (gstack)
+description: Live-device iOS QA for SwiftUI apps. Requires the bundled agent runtime.
 allowed-tools:
   - Bash
   - Read
@@ -56,7 +56,7 @@ below. **Degraded mode:** if `SKILL_START_PROTO: 1` is missing from the output
 defaults: treat `SESSION_KIND` as `interactive`, do NOT assume Conductor,
 skip onboarding/telemetry steps (their gates are marker-based, so consent and
 onboarding prompts are DEFERRED to the next healthy run — never lost), tell
-the user to run `./setup` or `/runtime-upgrade`, and proceed with their task.
+the user to run `/runtime-upgrade`, and proceed with their task.
 Note `SESSION_ID` and `TEL_START` from the output — the Telemetry step needs
 them at skill end.
 

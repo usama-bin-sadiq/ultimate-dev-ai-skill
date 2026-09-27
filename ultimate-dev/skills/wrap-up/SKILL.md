@@ -11,8 +11,7 @@ compatible_tools: [claude-code, codex-cli, cursor, antigravity, opencode, gemini
 # Wrap-up — close it out
 
 The explicit close-out. Confirm what's live, regenerate the shareable overview,
-and name the next 1–2 upgrades so the founder leaves with a clear roadmap. The
-`./my-agent/` folder keeps working after the session ends.
+and name the next 1–2 upgrades so the founder leaves with a clear roadmap.
 
 ## Workflow
 

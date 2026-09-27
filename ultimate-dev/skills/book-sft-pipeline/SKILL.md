@@ -367,7 +367,6 @@ Related skills from Agent Skills for Context Engineering:
 External resources:
 - [Research Paper](https://arxiv.org/pdf/2510.13939) - Chakrabarty et al. 2025
 - [Dataset on Hugging Face](https://huggingface.co/datasets/MuratcanKoylan/gertrude-stein-style-sft)
-- [Gertrude Stein Case Study](./examples/gertrude-stein/) - Complete working example
 
 ---
 

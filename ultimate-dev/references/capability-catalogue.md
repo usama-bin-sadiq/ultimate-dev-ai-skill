@@ -98,35 +98,35 @@ python3 tools/index-tree.py --search <term>
 
 ### verification — 334 installed, 7 routed, 327 not
 
-  `a11y-audit`, `academy-guide`, `access`, `adversarial-reviewer`, `aeo`, `agent-decision-receipts`, `agent-harness`, `agentic-search-optimizer`, `ahrefs-automation`, `ai-citation-strategist`, `ai-generated-code-auditor`, `ai-readiness`, ... (327 total)
+  `a11y-audit`, `academy-guide`, `access`, `adversarial-reviewer`, `aeo`, `agent-decision-receipts`, `agent-harness`, `agent-md-improver`, `agentic-search-optimizer`, `ahrefs-automation`, `ai-citation-strategist`, `ai-generated-code-auditor`, ... (327 total)
 
 ### planning — 144 installed, 1 routed, 143 not
 
-  `accrual-schedule`, `agent-memory`, `agile-product-owner`, `business-growth-skills`, `capa-officer`, `capability-diagnosis`, `capsule-crm-automation`, `capture`, `ceo-advisor`, `cfo-advisor`, `challenge`, `chatgpt-apps`, ... (143 total)
+  `accrual-schedule`, `agent-memory`, `agile-product-owner`, `automation-recommender`, `business-growth-skills`, `capa-officer`, `capability-diagnosis`, `capsule-crm-automation`, `capture`, `ceo-advisor`, `cfo-advisor`, `challenge`, ... (143 total)
 
 ### design — 127 installed, 0 routed, 127 not
 
   `adaptyv`, `agent-designer`, `agent-workflow-designer`, `alphagenome`, `anthropic-brand-kit`, `api-and-interface-design`, `application-design-center-design-deploy`, `architect`, `artifacts-builder`, `aws-solution-architect`, `azure-cloud-architect`, `banner-design`, ... (127 total)
 
-### general — 90 installed, 0 routed, 90 not
-
-  `algorithmic-art`, `anthropologist`, `ar-status`, `arena`, `braintree-automation`, `bro`, `buyer-list`, `cardputer-buddy`, `careful`, `caveman`, `change-management`, `chief-of-staff`, ... (90 total)
-
 ### documentation — 88 installed, 1 routed, 87 not
 
   `adrapid-automation`, `agent-development`, `antigravity-support`, `arquiteto-de-empresa`, `bigquery-ai-ml`, `board`, `cim-builder`, `clinical-decision-support`, `cloud-monitoring-promql-query`, `cold-email`, `command-development`, `content-research-writer`, ... (87 total)
+
+### general — 82 installed, 0 routed, 82 not
+
+  `algorithmic-art`, `anthropologist`, `ar-status`, `arena`, `braintree-automation`, `bro`, `buyer-list`, `cardputer-buddy`, `careful`, `caveman`, `change-management`, `chief-of-staff`, ... (82 total)
 
 ### security — 64 installed, 0 routed, 64 not
 
   `agent-launcher-orchestrator`, `agent-platform-alert-configuration`, `agent-platform-endpoint-management`, `agent-platform-troubleshooting`, `ai-security`, `api-platform-engineer`, `auth0-automation`, `behuman`, `book-co-author`, `book-sft-pipeline`, `book-to-skill`, `ciso-advisor`, ... (64 total)
 
+### agent — 59 installed, 1 routed, 58 not
+
+  `agent-handoff`, `agent-platform-skill-registry`, `aging-parent-care-companion`, `anti-overengineering-help`, `ask-matt`, `bdi-mental-states`, `c-level-skills`, `capability-selection`, `codebase-pattern-finder`, `codex`, `context-restore`, `context-save`, ... (58 total)
+
 ### devops — 51 installed, 0 routed, 51 not
 
   `aeo-foundations`, `agent-platform-model-registry`, `agent-platform-prompt-management`, `agent-platform-tuning`, `agent-platform-tuning-management`, `ai-act-readiness`, `biopython`, `brief`, `c-level-agents`, `canary`, `cloud-build-basics`, `cloud-run-alert-configuration`, ... (51 total)
-
-### agent — 51 installed, 1 routed, 50 not
-
-  `agent-platform-skill-registry`, `aging-parent-care-companion`, `anti-overengineering-help`, `ask-matt`, `bdi-mental-states`, `c-level-skills`, `capability-selection`, `claude-handoff`, `codebase-pattern-finder`, `context-restore`, `context-save`, `cs-onboard`, ... (50 total)
 
 ### research — 42 installed, 0 routed, 42 not
 

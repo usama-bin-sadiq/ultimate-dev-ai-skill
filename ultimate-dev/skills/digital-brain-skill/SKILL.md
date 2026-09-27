@@ -182,10 +182,6 @@ This skill integrates context engineering principles:
 ## References
 
 Internal references:
-- [Identity Module](./identity/IDENTITY.md) - Voice and brand details
-- [Content Module](./content/CONTENT.md) - Content pipeline docs
-- [Network Module](./network/NETWORK.md) - CRM documentation
-- [Operations Module](./operations/OPERATIONS.md) - Productivity system
 - [Agent Scripts](./agents/<agent-instructions>) - Automation documentation
 
 External resources:

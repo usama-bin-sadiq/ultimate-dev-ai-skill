@@ -24,8 +24,6 @@
 
 ## Finding Scale-down Blockers
 
-- **Asset:** `./assets/find-scale-down-blockers.sh` (Scan cluster for blockers).
-
 ### Common Causes
 - **Bare Pods:** No controller (Deployment/Job); autoscaler won't evict.
 - **Local Storage:** `emptyDir` on local SSD or `hostPath`.

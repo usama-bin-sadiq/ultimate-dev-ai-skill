@@ -85,7 +85,7 @@
 - `composerIcon` (`string`): Path to icon asset.
 - `logo` (`string`): Path to logo asset.
 - `screenshots` (`array` of `string`): List of screenshot asset paths.
-  - Screenshot entries must be PNG filenames and stored under `./assets/`.
+  - Screenshot entries must be PNG filenames.
   - Keep file paths relative to plugin root.
 
 ### Path conventions and defaults

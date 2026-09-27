@@ -6,11 +6,9 @@ This document provides comprehensive details on all DiffDock configuration param
 
 ### Model Paths
 - **`--model_dir`**: Directory containing the score model checkpoint
-  - Default: `./workdir/v1.1/score_model`
   - DiffDock-L model (current default)
 
 - **`--confidence_model_dir`**: Directory containing the confidence model checkpoint
-  - Default: `./workdir/v1.1/confidence_model`
 
 - **`--ckpt`**: Name of the score model checkpoint file
   - Default: `best_ema_inference_epoch_model.pt`

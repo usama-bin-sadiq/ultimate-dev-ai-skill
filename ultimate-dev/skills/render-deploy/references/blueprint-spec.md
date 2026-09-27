@@ -141,7 +141,7 @@ Serve static HTML/CSS/JS files via CDN.
 - `type`: `web`
 - `runtime`: `static`
 - `buildCommand`: Command to build static assets
-- `staticPublishPath`: Path to built files (e.g., `./build`, `./dist`)
+- `staticPublishPath`: Path to built files
 
 **Optional configuration:**
 - `routes`: Routing rules for SPAs
@@ -231,7 +231,7 @@ services:
 Build from a Dockerfile in your repository.
 
 **Additional fields:**
-- `dockerfilePath`: Path to Dockerfile (default: `./Dockerfile`)
+- `dockerfilePath`: Path to Dockerfile
 - `dockerContext`: Build context directory (default: `.`)
 
 **Example:**

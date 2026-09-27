@@ -33,8 +33,8 @@ prs.save("./out/pitch-<target>.pptx")
 ## Conventions (mirror the live-Office `pitch-deck` skill)
 
 - **One idea per slide.** Title states the takeaway; body supports it.
-- **Every number traces to the model.** If a figure comes from `./out/model.xlsx`, footnote the sheet and cell.
-- **Use the firm template** when one is mounted at `./templates/`; otherwise default layouts.
+- **Every number traces to the model.** Footnote the sheet and cell.
+- **Use the firm template** when one is mounted; otherwise default layouts.
 - **Charts**: prefer embedding a PNG rendered from the model over native pptx charts when fidelity matters.
 - **No external sends.** This skill writes a file; it never emails or uploads.
 

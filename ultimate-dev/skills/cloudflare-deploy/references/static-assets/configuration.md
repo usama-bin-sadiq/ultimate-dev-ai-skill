@@ -33,7 +33,7 @@ Minimal configuration requires only `assets.directory`:
 
 **Configuration keys:**
 
-- `directory` (string, required): Path to assets folder (e.g. `./dist`, `./public`, `./build`)
+- `directory` (string, required): Path to assets folder
 - `binding` (string, optional): Name to access assets in Worker code (e.g. `env.ASSETS`). Default: `"ASSETS"`
 - `not_found_handling` (string, optional): Behavior when asset not found
   - `"single-page-application"`: Serve `/index.html` for non-asset paths (default for SPAs)

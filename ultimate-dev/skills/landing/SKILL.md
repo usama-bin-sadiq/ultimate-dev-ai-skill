@@ -281,7 +281,6 @@ See [`references/single_file_html_discipline.md`](references/single_file_html_di
 ## Output Spec
 
 - **Path:** `${OUTPUT_DIR}/<product-name-kebab>.html`
-- **Default `${OUTPUT_DIR}`:** `./landing-pages/`
 - **Filename:** lowercase kebab-case from product name ("Quill AI" → `quill-ai.html`). Use `scripts/kebab_slug_generator.py` for deterministic slug generation + duplicate detection.
 - **Self-contained:** all CSS in `<style>`, all JS in `<script>`, only Google Fonts + GSAP CDN external.
 

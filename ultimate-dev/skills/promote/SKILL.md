@@ -38,7 +38,6 @@ Show the matching entries and confirm they're what the user means.
 
 | Pattern scope | Target | Example |
 |---|---|---|
-| Applies to entire project | `./CLAUDE.md` | "Use pnpm, not npm" |
 | Applies to specific file types | `.claude/rules/<topic>.md` | "API handlers need validation" |
 | Applies to all your projects | `~/.claude/CLAUDE.md` | "Prefer explicit error handling" |
 

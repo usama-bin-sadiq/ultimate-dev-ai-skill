@@ -83,8 +83,17 @@ This file was adapted to be tool-neutral: it claimed a general scope and was
 bound to one tool. The procedure is unchanged; what changed is that a reader on a
 different runtime is told what to substitute.
 
-- **container** — means. One tool's way of doing a step a different runtime may do another way.
+- **`/ar:setup`** — a slash command the host dispatches to this file. **Claude
+  Code** provides that dispatch. Any runtime can run the same work directly:
+  `python {skill_path}/scripts/setup_experiment.py` with the same flags is the
+  whole of what the command does.
+- **`{skill_path}`** — a stand-in the host substitutes with this skill's own
+  directory. A runtime that does not expand it should resolve it from the
+  location of this file.
+- **`python`** — the bundled scripts are Python 3. Any runtime with a shell can
+  run them; nothing else in this file depends on the host.
 Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+

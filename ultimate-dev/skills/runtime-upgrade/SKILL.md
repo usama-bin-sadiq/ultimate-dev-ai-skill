@@ -255,10 +255,6 @@ Only on `LOCAL_SYNC_OK`, tell user: "Also updated vendored copy at `$LOCAL_GSTAC
 
 ### Step 4.75: Run version migrations
 
-After `./setup` completes, run any migration scripts for versions between the old
-and new version. Migrations handle state fixes that `./setup` alone can't cover
-(stale config, orphaned files, directory structure changes).
-
 ```bash
 MIGRATIONS_DIR="$INSTALL_DIR/runtime-upgrade/migrations"
 if [ -d "$MIGRATIONS_DIR" ]; then
@@ -285,7 +281,7 @@ for how to add new migrations.
 ### Step 4.8: Stop any stale daemon (unconditional)
 
 A browse daemon started before the upgrade keeps serving the OLD binary's code
-until it is stopped — it survives `git reset --hard` and `./setup` because the
+until it is stopped — it survives `git reset --hard` because the
 running process holds the old executable (#2551). Always run this step, using
 the install directory detected in Step 2.
 

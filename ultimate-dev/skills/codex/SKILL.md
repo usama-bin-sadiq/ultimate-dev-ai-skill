@@ -2,7 +2,7 @@
 name: codex
 preamble-tier: 3
 version: 1.0.0
-description: OpenAI Codex CLI wrapper — three modes. (gstack)
+description: OpenAI Codex CLI wrapper — three modes. Requires the bundled agent runtime.
 triggers:
   - codex review
   - second opinion
@@ -49,7 +49,7 @@ below. **Degraded mode:** if `SKILL_START_PROTO: 1` is missing from the output
 defaults: treat `SESSION_KIND` as `interactive`, do NOT assume Conductor,
 skip onboarding/telemetry steps (their gates are marker-based, so consent and
 onboarding prompts are DEFERRED to the next healthy run — never lost), tell
-the user to run `./setup` or `/runtime-upgrade`, and proceed with their task.
+the user to run `/runtime-upgrade`, and proceed with their task.
 Note `SESSION_ID` and `TEL_START` from the output — the Telemetry step needs
 them at skill end.
 
@@ -522,7 +522,7 @@ fi
 _gstack_codex_version_check   # warns if known-bad, non-blocking
 ```
 
-If the runtime guard reports a harness mismatch, stop. Outside coverage is unavailable. Repair with `./setup --host codex`; do not silently substitute another provider or force a same-harness invocation.
+If the runtime guard reports a harness mismatch, stop. Outside coverage is unavailable. Do not silently substitute another provider or force a same-harness invocation.
 
 If the output contains `AUTH_FAILED`, stop and tell the user:
 "No Codex authentication found. Run `codex login` or set `$CODEX_API_KEY` / `$OPENAI_API_KEY`, then re-run this skill."

@@ -2,7 +2,7 @@
 name: make-pdf
 preamble-tier: 1
 version: 1.0.0
-description: Turn any markdown file into a publication-quality PDF. (gstack)
+description: Turn any markdown file into a publication-quality PDF.
 triggers:
   - markdown to pdf
   - generate pdf
@@ -48,7 +48,7 @@ below. **Degraded mode:** if `SKILL_START_PROTO: 1` is missing from the output
 defaults: treat `SESSION_KIND` as `interactive`, do NOT assume Conductor,
 skip onboarding/telemetry steps (their gates are marker-based, so consent and
 onboarding prompts are DEFERRED to the next healthy run — never lost), tell
-the user to run `./setup` or `/runtime-upgrade`, and proceed with their task.
+the user to run `/runtime-upgrade`, and proceed with their task.
 Note `SESSION_ID` and `TEL_START` from the output — the Telemetry step needs
 them at skill end.
 
@@ -79,7 +79,7 @@ fi
 ```
 
 If `MAKE_PDF_NOT_AVAILABLE` is printed: tell the user the binary is not
-built. Have them run `./setup` from the gstack repo, then retry.
+built.
 
 If `MAKE_PDF_READY` is printed: `$P` is the binary path for the rest of
 the skill. Use `$P` (not an explicit path) so the skill body stays portable.
@@ -95,7 +95,7 @@ Core commands:
 Output contract:
 - `stdout`: ONLY the output path on success. One line.
 - `stderr`: progress (`Rendering HTML... Generating PDF...`) unless `--quiet`.
-- Exit 0 success / 1 bad args / 2 render error / 3 Paged.js timeout / 4 no browser available (open the Aside app, or run `./setup` to build gstack's own browser).
+- Exit 0 success / 1 bad args / 2 render error / 3 Paged.js timeout / 4 no browser available (open the Aside app).
 
 PDFs print through Aside when it is running and through gstack's own headless browser otherwise; the stderr progress line says which (`Rendering PDF through Aside` / `through gstack's browser`).
 
@@ -212,15 +212,13 @@ fallback. CI and Docker builds install it automatically via Dockerfile.ci.
 
 Emoji need a color-emoji font. macOS (Apple Color Emoji) and Windows (Segoe UI
 Emoji) ship one; most Linux distros and containers ship none, so emoji render as
-empty boxes (▯). `./setup` auto-installs `fonts-noto-color-emoji` on Linux
-(apt/dnf/pacman/apk, best-effort) and the print CSS falls back through Apple /
-Segoe / Noto emoji families. Set `GSTACK_SKIP_FONTS=1` to skip the install (CI
-without sudo, managed or offline machines). These matter on the gstack-browser
+empty boxes (▯). The print CSS falls back through Apple /
+Segoe / Noto emoji families. These matter on the gstack-browser
 fallback; Aside renders with the fonts already on the Mac.
 
 PDF output prints through the Aside browser (macOS 15+, aside.com) when it is
-running, and falls back to gstack's own headless browser (built by `./setup`;
-`GSTACK_BROWSE_BIN` / `BROWSE_BIN` point at a different build) everywhere
+running, and falls back to gstack's own headless browser
+(`GSTACK_BROWSE_BIN` / `BROWSE_BIN` point at a different build) everywhere
 else — Linux, Windows, or a closed Aside app. Exit 4 means neither browser is
 available. `--to html` and `--to docx` need no browser at all (diagrams in
 DOCX need one to rasterize; without it they embed as source text).
@@ -400,8 +398,7 @@ If the user has a `.md` file open and says "make it look nice", propose
 ## Debugging
 
 - Exit 4 / "no browser available" → neither the Aside browser (macOS 15+,
-  aside.com) nor gstack's own headless browser is usable. Open Aside, or run
-  `./setup` in the gstack repo to build the fallback, re-run. `$P setup` checks
+  aside.com) nor gstack's own headless browser is usable. Open Aside, re-run. `$P setup` checks
   the whole chain and says which browser it found.
 - Diagram shows a red "failed to render" block → the parse error is printed in
   the block. If EVERY diagram fails with "diagram renderer:", the browser went
@@ -435,11 +432,37 @@ This file was adapted to be tool-neutral: it claimed a general scope and was
 bound to one tool. The procedure is unchanged; what changed is that a reader on a
 different runtime is told what to substitute.
 
-- `<project-root>` — the repository root. 8 machine-specific path(s) replaced.
-- `<agent-config-dir>` — wherever this runtime keeps its configuration. Not a fixed location.
-- `<agent-instructions>` — the file this runtime reads for standing instructions. Names differ per runtime and none is assumed.
-- **codex-cli** — means. One tool's way of doing a step a different runtime may do another way.
+- **`gstack-skill-start`** — the preamble script gstack installs alongside the
+  skill. It prints the `KEY: value` STATUS lines (`SKILL_START`, `SESSION_ID`,
+  `SESSION_KIND`, `CONDUCTOR_SESSION`, `TEL_START`) and any
+  `GSTACK_INSTRUCTION_BEGIN`/`_END` block that the phases above branch on.
+  **Claude Code** and **Codex** both install it. A runtime with no gstack
+  dispatcher produces no STATUS lines at all, so take each branch's own stated
+  default and skip the onboarding and telemetry steps, which are marker-gated
+  and therefore lose nothing.
+- **slash-command dispatch** (`/review`, `/qa`, and so on) — how the phases are
+  entered. **Claude Code** exposes them as slash commands; **Codex** exposes the
+  same skills as `@name` invocations. A runtime with neither still has the
+  procedure: the numbered phases in this file, run in order, in one context.
+- **`AskUserQuestion`, `Agent`, `ExitPlanMode`** — host tool names, not concepts.
+  **Claude Code** provides all three natively; **Codex** provides its own
+  equivalents, and this file already treats the `mcp__*__AskUserQuestion`
+  variant as a third path. Where a runtime has no question tool, use the
+  **prose fallback** this file already specifies and stop for a typed answer.
+  Where it has no subagent tool, run the isolated-reviewer step sequentially and
+  record that you did.
+- **`codex exec`, `claude -p`** — how a phase is handed a fresh context. Two
+  different CLIs for one purpose, so this binding is not single-vendor; a runtime
+  that ships neither can only approximate isolation, by ending and
+restarting the session.
+- **`~/.gstack/`** — gstack's own per-user state: session id, plan file,
+  skill-usage log. It is where this toolkit puts its state, not a location any
+  other runtime reads.
+- **`bun run gen:skill-docs`** — this file is generated from a template by the
+  toolkit's own build step. Edits made here are overwritten on the next
+  regeneration; the template is the place a change has to be made to survive.
 Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+

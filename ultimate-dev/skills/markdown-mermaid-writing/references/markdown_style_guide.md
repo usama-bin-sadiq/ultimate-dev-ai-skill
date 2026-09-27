@@ -195,7 +195,7 @@ See the [Mermaid Style Guide](mermaid_style_guide.md) for diagram conventions.
 ```
 
 - **Meaningful link text** — `[Mermaid Style Guide]` not `[click here]` or `[link]`
-- **Relative paths** for internal links — `[Guide](./README.md)` not absolute URLs
+- **Relative paths** for internal links — not absolute URLs
 - **Full URLs** for external links — always `https://`
 
 ### Footnote citations

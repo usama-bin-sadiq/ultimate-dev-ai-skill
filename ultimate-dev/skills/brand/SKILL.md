@@ -114,8 +114,18 @@ This file was adapted to be tool-neutral: it claimed a general scope and was
 bound to one tool. The procedure is unchanged; what changed is that a reader on a
 different runtime is told what to substitute.
 
-- **claude-cli** — means. One tool's way of doing a step a different runtime may do another way.
+- **the skill's base directory, as reported when the skill loads** — every script
+  path here is relative to the skill's own directory, not the project, and the
+  file says so because the two must not be confused. **Claude Code** reports that
+  base directory at load time. A runtime that does not should resolve it from the
+  path of this file, or locate it by searching upward for the `SKILL.md` that
+  owns these scripts.
+- **`node scripts/*.cjs`** — the bundled scripts are CommonJS and are run with
+  Node. That is the interpreter, not the capability; the scripts read and write
+  project files relative to the project root, which the file keeps deliberately
+  separate from the skill directory.
 Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+

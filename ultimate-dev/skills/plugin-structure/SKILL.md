@@ -278,7 +278,7 @@ Use `${CLAUDE_PLUGIN_ROOT}` environment variable for all intra-plugin path refer
 
 **Never use**:
 - Hardcoded absolute paths (`/Users/name/plugins/...`)
-- Relative paths from working directory (`./scripts/...` in commands)
+- Relative paths from working directory
 - Home directory shortcuts (`~/plugins/...`)
 
 ### Path Resolution Rules

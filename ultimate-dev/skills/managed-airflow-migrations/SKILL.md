@@ -95,8 +95,7 @@ from Airflow 2.10.2, apply changes needed to move to Airflow 2.11.1 and Airflow
 
 ## Phase 3: Analysis & Remediation (Scanning Downloaded Files)
 
-Run the scan commands from the root of your local workspace
-(`./migration_workspace` unless indicated otherwise).
+Run the scan commands from the root of your local workspace.
 
 --------------------------------------------------------------------------------
 

@@ -4,6 +4,7 @@ description: Expert incident commander specializing in production incident manag
 color: "#e63946"
 emoji: 🚨
 vibe: Turns production chaos into structured resolution.
+neutralised: tool-specific paths and single-runtime invocations replaced
 ---
 
 # Incident Response Commander Agent
@@ -442,3 +443,18 @@ You're successful when:
 ---
 
 **Instructions Reference**: Your detailed incident management methodology is in your core training — refer to comprehensive incident response frameworks (PagerDuty, Google SRE book, Jeli.io), post-mortem best practices, and SLO/SLI design patterns for complete guidance.
+## Runtime notes
+
+This file was adapted to be tool-neutral: it claimed a general scope and was
+bound to one tool. The procedure is unchanged; what changed is that a reader on a
+different runtime is told what to substitute.
+
+- **`kubectl`** — every remediation command in this file is Kubernetes' CLI, and
+  they are all in the runbooks above. The role's judgement is not bound to it:
+  triage, severity, escalation, comms, and the post-mortem are orchestration-
+  agnostic. A reader on another orchestrator substitutes that orchestrator's
+  rollout, scale, and status commands and keeps the incident process unchanged.
+Anything marked **means** is an implementation detail of one tool, and a reader
+on a different runtime may need a different mechanism for the same step. Anything
+marked **subject** means the capability is genuinely about that tool, and a reader
+without it should not expect this file to apply.

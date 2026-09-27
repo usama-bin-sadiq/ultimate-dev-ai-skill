@@ -36,7 +36,7 @@ All three are stdlib-only and contain no LLM calls (deterministic per Path-B dis
 
 | # | Key | Choices / Validator | Default |
 |---|---|---|---|
-| 1 | `default_output_dir` | path; `os.access(parent, os.W_OK)` | `./markdown-html-out/` |
+| 1 | `default_output_dir` | path; `os.access(parent, os.W_OK)` |  |
 | 2 | `brand.primary` | HEX `^#?[0-9a-fA-F]{6}$` | `#0A1628` |
 | 3 | `brand.accent` | HEX or blank (auto-derive) | derive from primary |
 | 4 | `typography.heading_font` | Google Font name (12 safe defaults) | `Inter` |
@@ -136,7 +136,7 @@ python3 .../brand_palette_validator.py --primary "#FF6B35" --accent "#00D4AA"
 
 ## Output artifact
 
-`~/.config/markdown-html/design-system.json` (global) or `./.markdown-html/design-system.json` (project). JSON schema lives at `assets/design_system_schema.json`.
+`~/.config/markdown-html/design-system.json` (global). JSON schema lives at `assets/design_system_schema.json`.
 
 ## Anti-patterns (do not)
 

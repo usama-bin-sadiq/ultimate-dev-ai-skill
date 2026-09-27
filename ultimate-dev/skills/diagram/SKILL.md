@@ -2,7 +2,7 @@
 name: diagram
 preamble-tier: 1
 version: 1.0.0
-description: "Turn an English description (or mermaid source) into a diagram triplet: the source, an editable .excalidraw file you can open on excalidraw.com, and rendered SVG + PNG. (gstack)"
+description: "Turn an English description (or mermaid source) into a diagram triplet: the source, an editable .excalidraw file you can open on excalidraw.com, and rendered SVG + PNG. Requires the bundled agent runtime."
 allowed-tools:
   - Bash
   - Read
@@ -47,7 +47,7 @@ below. **Degraded mode:** if `SKILL_START_PROTO: 1` is missing from the output
 defaults: treat `SESSION_KIND` as `interactive`, do NOT assume Conductor,
 skip onboarding/telemetry steps (their gates are marker-based, so consent and
 onboarding prompts are DEFERRED to the next healthy run — never lost), tell
-the user to run `./setup` or `/runtime-upgrade`, and proceed with their task.
+the user to run `/runtime-upgrade`, and proceed with their task.
 Note `SESSION_ID` and `TEL_START` from the output — the Telemetry step needs
 them at skill end.
 
@@ -265,8 +265,7 @@ Note: `atob()` yields Latin-1; for sources with non-ASCII labels use
 gstack's own headless browser. Only when it prints `NEEDS_ASIDE` or
 `ASIDE_NOT_RUNNING` followed by `ERROR: no browser available` is there nothing
 to render with — Aside (macOS 15+, aside.com) is not open and gstack's browser
-is not built. Tell the user to open Aside, or to run `./setup` in the gstack
-repo to build the fallback, and stop. Never install Aside for them, and never
+is not built. Tell the user to open Aside, and stop. Never install Aside for them, and never
 substitute a CDN or another renderer.
 
 ## Step 4 — Show and deliver
@@ -306,5 +305,5 @@ falls back from a worker to the main thread inside the single-file bundle
 
 - DONE — triplet delivered and shown (with the image-only note for
   non-flowchart, non-sequence types).
-- BLOCKED — bundle missing or no browser available; the build command, "open
-  Aside", or "run ./setup" surfaced.
+- BLOCKED — bundle missing or no browser available; the build command or "open
+  Aside" surfaced.

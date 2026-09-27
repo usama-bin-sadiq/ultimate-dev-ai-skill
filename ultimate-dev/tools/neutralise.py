@@ -100,6 +100,11 @@ SUBS: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"mcp__[a-z]+__([a-z_]+)"), r"\1 (via the host's MCP layer)"),
 ]
 
+# Everything from this heading to the end of the file is the reader's
+# substitution table, and is exempt from the substitutions below. See the
+# substitution loop for why that exemption is load-bearing rather than cosmetic.
+RUNTIME_NOTES_HEADING = "\n## Runtime notes\n"
+
 RUNTIME_NOTE = """
 ## Runtime notes
 
@@ -242,8 +247,20 @@ def main() -> int:
         body = text[span[1]:] if span else text
         before = body
         before_text = text
+        # Substitute everywhere EXCEPT the Runtime notes section.
+        #
+        # The notes exist to name the real files -- "Claude Code reads CLAUDE.md,
+        # other runtimes read AGENTS.md" -- because a reader who cannot resolve
+        # <agent-instructions> to an actual filename cannot act on it. The
+        # substitution was applied to the whole file, so a second run of this
+        # tool rewrote the notes back to the placeholder and destroyed the one
+        # part of the file that made it usable. That also meant the tool could
+        # never converge: each pass stripped the specific rows and restored the
+        # boilerplate.
+        head, sep, notes = text.partition(RUNTIME_NOTES_HEADING)
         for pat, rep in SUBS:
-            text = pat.sub(rep, text)
+            head = pat.sub(rep, head)
+        text = head + sep + notes
         if span and text.startswith("---\n"):
             end = text.find("\n---\n", 4)
             body = text[end + 5:] if end > 0 else text

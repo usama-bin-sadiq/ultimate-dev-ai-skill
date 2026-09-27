@@ -65,8 +65,7 @@ drd2, gsk3b, jnk3, cyp3a4_veith, fpscores,
 drd2_current, gsk3b_current, jnk3_current
 ```
 
-Constructing one can call Harvard Dataverse and write a model file beneath
-`./oracle`. For DRD2/GSK3B/JNK3, PyTDC may normalize the request to a `_current`
+Constructing one can call Harvard Dataverse and write a model file. For DRD2/GSK3B/JNK3, PyTDC may normalize the request to a `_current`
 checkpoint according to the installed scikit-learn version.
 
 Checkpoint files are serialized model artifacts. Review source, origin, local path,
@@ -176,7 +175,7 @@ The helper:
 - keeps output in input order;
 - truncates long strings;
 - never ranks candidates or assumes score direction;
-- changes into the safe runtime directory so upstream `./oracle` writes remain
+- changes into the safe runtime directory so upstream writes remain
   contained;
 - refuses remote services, docking, distribution metrics, and composite objectives.
 

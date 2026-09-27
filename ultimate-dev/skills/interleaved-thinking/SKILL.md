@@ -227,8 +227,13 @@ This file was adapted to be tool-neutral: it claimed a general scope and was
 bound to one tool. The procedure is unchanged; what changed is that a reader on a
 different runtime is told what to substitute.
 
-- **claude-cli** — means. One tool's way of doing a step a different runtime may do another way.
+- **the section headed "Integration with Claude Code"** — reading the current
+  session's thinking blocks is a **Claude Code** feature, and it is the only part
+  of this file that needs one. On a runtime that exposes the live reasoning trace,
+  use it; on one that does not, run the same checklist against the visible
+  transcript and say which of the two you did.
 Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+

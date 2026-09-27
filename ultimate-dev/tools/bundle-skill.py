@@ -59,6 +59,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -363,6 +364,59 @@ def check_orphans() -> list[str]:
     return problems
 
 
+def check_relative_links() -> list[str]:
+    """Every parent-relative or dot-relative link must resolve on disk.
+
+    PATH_PATTERN only matches a path that *starts* with a known top-level
+    directory, so a link written the way a person actually writes one --
+    ``../../agents/cs-chief-of-staff.md``, ``../board-meeting/SKILL.md`` -- was
+    invisible to every check here. That is not a theoretical gap: boardroom
+    linked three such paths, all of them broken, and the bundler reported zero
+    dangling references while they were broken.
+
+    Resolution is relative to the file carrying the link, which is how a reader
+    follows it. Three outcomes are reported:
+
+      escapes the repository   the link points outside this skill tree
+      does not resolve         the target is not on disk
+      points into an omitted   the target exists but the bundle drops that tree
+
+    Fenced code and declared output paths are exempt for the same reasons as in
+    check_references: a sample is not a claim, and a path the skill tells the
+    agent to write is not a path it expects to find.
+    """
+    problems: list[str] = []
+    link = re.compile(
+        r"\]\(\s*(\.{1,2}/[A-Za-z0-9_.\-/]+?)\s*(?:#[^)]*)?\)|"
+        r"`(\.{1,2}/[A-Za-z0-9_.\-/]+?)`"
+    )
+    for path in iter_runtime_files():
+        if path.suffix != ".md":
+            continue
+        text = path.read_text(encoding="utf-8", errors="replace")
+        outputs = declared_output_paths(text)
+        for match in link.finditer(strip_fenced_code(text)):
+            target = match.group(1) or match.group(2)
+            if target in outputs:
+                continue
+            resolved = Path(os.path.normpath(path.parent / target))
+            rel = path.relative_to(SKILL_ROOT)
+            if not resolved.exists():
+                problems.append(f"{rel}: {target} does not resolve")
+                continue
+            try:
+                inside = resolved.resolve().relative_to(SKILL_ROOT.resolve())
+            except ValueError:
+                problems.append(f"{rel}: {target} points outside the skill tree")
+                continue
+            top = str(inside).split("/")[0]
+            if top in EXCLUDED_DIRS or top == "evals":
+                problems.append(
+                    f"{rel}: {target} points into {top}/, which the bundle omits"
+                )
+    return problems
+
+
 def check_escapes() -> list[str]:
     """No skill may point at a path outside itself and outside this repository.
 
@@ -457,7 +511,8 @@ def build(out_dir: Path, make_zip: bool) -> dict:
         )
 
     problems = (check_references() + check_orphans()
-                + check_tool_exclusions() + check_escapes())
+                + check_tool_exclusions() + check_escapes()
+                + check_relative_links())
     if problems:
         raise SystemExit(
             "error: the bundle would contain dangling references:\n  "
@@ -552,7 +607,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.check:
         problems = (check_references() + check_orphans()
-                + check_tool_exclusions() + check_escapes())
+                + check_tool_exclusions() + check_escapes()
+                + check_relative_links())
         report["problems"] = problems
         if unknown:
             report["problems"] = report["problems"] + [

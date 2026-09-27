@@ -91,8 +91,13 @@ This file was adapted to be tool-neutral: it claimed a general scope and was
 bound to one tool. The procedure is unchanged; what changed is that a reader on a
 different runtime is told what to substitute.
 
-- **npm** — means. One tool's way of doing a step a different runtime may do another way.
+- **`npm install -g firecrawl-cli`** — a global install of one vendor's CLI, and
+  the last of three escalation rungs (defuddle → crawl4ai → firecrawl). The skill
+  needs *one* fetcher that returns clean markdown and degrades rung by rung; it
+  does not require the last rung, and a reader who already has a working fetcher
+  substitutes it and keeps the per-domain handler behaviour.
 Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+

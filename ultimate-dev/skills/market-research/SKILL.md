@@ -60,7 +60,7 @@ python3 scripts/onboard.py            # interactive (also: --defaults, --set key
 python3 scripts/onboard.py --show     # see the questions + current effective config
 ```
 
-Answers are saved to `~/.config/research-ops/market-research.json` (global) or `./.research-ops/market-research.json` (`--scope project`) and are read automatically by `config_loader.py`. They set the default market **profile**, the default survey **confidence** and **margin of error**, and the default **sizing method**. CLI flags always override saved config; `RESEARCH_OPS_NO_CONFIG=1` ignores it.
+Answers are saved to `~/.config/research-ops/market-research.json` (global) and are read automatically by `config_loader.py`. They set the default market **profile**, the default survey **confidence** and **margin of error**, and the default **sizing method**. CLI flags always override saved config; `RESEARCH_OPS_NO_CONFIG=1` ignores it.
 
 **The four questions:** market profile · survey confidence · margin of error · sizing method.
 

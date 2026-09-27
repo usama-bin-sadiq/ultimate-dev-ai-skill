@@ -354,11 +354,6 @@ All paths in component fields must follow these rules:
 When Claude Code loads components:
 
 1. **Default directories**: Scans standard locations first
-   - `./commands/`
-   - `./agents/`
-   - `./skills/`
-   - `./hooks/hooks.json`
-   - `./.mcp.json`
 
 2. **Custom paths**: Scans paths specified in manifest
    - Paths from `commands` field

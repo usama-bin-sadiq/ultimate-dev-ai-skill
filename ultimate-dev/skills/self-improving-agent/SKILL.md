@@ -64,7 +64,6 @@ clawhub install self-improving-agent
 
 | File | Who writes | Scope | Loaded |
 |------|-----------|-------|--------|
-| `./CLAUDE.md` | You (+ `/si:promote`) | Project rules | Full file, every session |
 | `~/.claude/CLAUDE.md` | You | Global preferences | Full file, every session |
 | `~/.claude/projects/<path>/memory/MEMORY.md` | Claude (auto) | Project learnings | First 200 lines |
 | `~/.claude/projects/<path>/memory/*.md` | Claude (overflow) | Topic-specific notes | On demand |

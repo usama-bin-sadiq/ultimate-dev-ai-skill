@@ -43,7 +43,7 @@ Use this reference for framework-specific detection and build/start command sele
 
 ## Key Information to Extract
 - Build command (e.g., `npm ci`, `pip install -r requirements.txt`, `go build`)
-- Start command (e.g., `npm start`, `gunicorn app:app`, `./bin/app`)
+- Start command (e.g., `npm start`, `gunicorn app:app`)
 - Environment variables used in code (API keys, database URLs, secrets)
 - Database requirements (PostgreSQL, Redis, MongoDB)
 - Port binding (check if app uses an environment variable for port to run on)

@@ -95,7 +95,7 @@ lit screenshot [OPTIONS] <file>
 
 | Option | Description |
 |--------|-------------|
-| `-o, --output-dir <dir>` | Output directory (default: `./screenshots`) |
+| `-o, --output-dir <dir>` | Output directory |
 | `--target-pages <pages>` | Pages to render (e.g. `1,3,5` or `1-5`) |
 | `--dpi <dpi>` | Rendering DPI (default: 150) |
 | `--password <password>` | Encrypted document password |

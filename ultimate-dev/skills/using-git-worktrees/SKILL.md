@@ -173,9 +173,14 @@ This file was adapted to be tool-neutral: it claimed a general scope and was
 bound to one tool. The procedure is unchanged; what changed is that a reader on a
 different runtime is told what to substitute.
 
-- **npm** — means. One tool's way of doing a step a different runtime may do another way.
-- **pip** — means. One tool's way of doing a step a different runtime may do another way.
+- **`npm install`, `pip install -r requirements.txt`** — the bootstrap installs
+  whatever the isolated worktree's own manifests declare, and both lines are
+  guarded by a file test. That guard is the portable part: the install command is
+  the reader's own package manager's, run for whichever manifests the project
+  actually has. The worktree itself, and the native-tool path that avoids a shell
+  entirely, are unaffected.
 Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+

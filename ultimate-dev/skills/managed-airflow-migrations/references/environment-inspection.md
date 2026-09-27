@@ -72,7 +72,7 @@ starting versions of your source environment (`<SOURCE_ENV>`) in region
 
 *Perform this step only if explicitly requested to do so.* Download DAG files
 and any other dependency files/folders from the source environment GCS bucket to
-a local workspace directory (`./migration_workspace`).
+a local workspace directory.
 
 1.  **Download DAGs:**
 

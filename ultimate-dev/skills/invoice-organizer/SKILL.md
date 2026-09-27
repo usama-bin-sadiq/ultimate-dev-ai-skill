@@ -451,8 +451,12 @@ This file was adapted to be tool-neutral: it claimed a general scope and was
 bound to one tool. The procedure is unchanged; what changed is that a reader on a
 different runtime is told what to substitute.
 
-- **claude-cli** — means. One tool's way of doing a step a different runtime may do another way.
+- **"Then ask Claude Code"** — the step is *hand a folder of documents to your
+  agent*. **Claude Code** is named as one way to do that. Any runtime with
+  filesystem access does the same thing, and the extraction, renaming, and sorting
+  workflow is unchanged.
 Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+

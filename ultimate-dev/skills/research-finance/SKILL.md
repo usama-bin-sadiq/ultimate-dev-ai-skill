@@ -61,7 +61,7 @@ python3 scripts/onboard.py            # interactive (also: --defaults, --set key
 python3 scripts/onboard.py --show     # see the questions + current effective config
 ```
 
-Answers are saved to `<agent-config-dir>/research-ops/research-finance.json` (global) or `./.research-ops/research-finance.json` (`--scope project`) and are read automatically by `config_loader.py`. They set the default R&D-area **profile**, the default **F&A rate**, the **runway alert threshold**, the **accounting standard**, and the named **finance owner** printed on capitalize-vs-expense routing. CLI flags always override saved config; `RESEARCH_OPS_NO_CONFIG=1` ignores it.
+Answers are saved to `<agent-config-dir>/research-ops/research-finance.json` (global) and are read automatically by `config_loader.py`. They set the default R&D-area **profile**, the default **F&A rate**, the **runway alert threshold**, the **accounting standard**, and the named **finance owner** printed on capitalize-vs-expense routing. CLI flags always override saved config; `RESEARCH_OPS_NO_CONFIG=1` ignores it.
 
 **The five questions:** R&D area · F&A rate · runway threshold · accounting standard · finance owner.
 
