@@ -131,7 +131,7 @@ Systematically check for problems. Run ALL of these checks:
 - [ ] No circular dependencies within the feature
 - [ ] Types are consistent across boundaries (no `any` at interfaces)
 - [ ] Error handling exists for all async operations
-- [ ] No TODO/FIXME/HACK comments indicating known issues
+- [ ] No leftover work-marker comments (unfinished-work or quick-fix notes) indicating known issues
 
 **RUNTIME:**
 - [ ] All required environment variables are set (check .env)

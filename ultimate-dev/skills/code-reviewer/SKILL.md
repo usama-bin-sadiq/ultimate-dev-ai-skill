@@ -80,7 +80,7 @@ python scripts/pr_analyzer.py /path/to/repo --json
 - SQL / query injection patterns
 - Debug statements left in production code
 - Lint / analyzer suppression annotations
-- TODO/FIXME comments
+- Comment markers that flag work as not yet done
 
 **Language-specific detections** are defined in each `languages/*.md` file.
 

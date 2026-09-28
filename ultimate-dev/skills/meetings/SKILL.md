@@ -37,10 +37,16 @@ the stop condition is exit 0 (or the meeting goes async). Output includes a pre-
 **3. Run.** The user runs the meeting from the printed agenda. Hold the timeboxes; use the closing
 slot to read every action aloud with its owner and date.
 
-**4. Extract.** Feed the raw notes to the extractor: checkboxes, `ACTION:`/`TODO:` lines,
-"@name will …" and "Name will … by date" patterns become a checklist grouped by owner, with
-ORPHAN (no owner) and NO-DUE flags plus summary counts. Assign every orphan before posting — the
-meeting is done when every action has an owner and a date; that completion check closes the loop.
+**4. Extract.** Feed the raw notes to the extractor: checkboxes, lines carrying either of the
+two literal action prefixes below, "@name will …" and "Name will … by date" patterns become a
+checklist grouped by owner, with ORPHAN (no owner) and NO-DUE flags plus summary counts. Assign
+every orphan before posting — the meeting is done when every action has an owner and a date; that
+completion check closes the loop.
+
+```text
+ACTION:
+TODO:
+```
 
 ```bash
 # 1. Gate: should this meeting exist?

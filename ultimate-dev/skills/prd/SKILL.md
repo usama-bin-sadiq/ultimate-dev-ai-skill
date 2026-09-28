@@ -1,6 +1,6 @@
 ---
 name: prd
-description: "Gated PRD generation — interrogates problem, user, and metric before drafting; refuses to draft on unknowns. Usage: /prd <feature-or-problem>"
+description: "Gated PRD generation — interrogates problem, user, and metric before drafting; refuses to draft on unknowns. Usage: /prd [feature-or-problem]"
 argument-hint: <feature-or-problem>
 ---
 

@@ -1012,8 +1012,8 @@ Before replying to any comment, run the **Escalation Detection** algorithm from 
 
 Read `TODOS.md` in the repository root (if it exists). Cross-reference the PR against open TODOs:
 
-- **Does this PR close any open TODOs?** If yes, note which items in your output: "This PR addresses TODO: <title>"
-- **Does this PR create work that should become a TODO?** If yes, flag it as an informational finding.
+- **Does this PR close any open work items?** If yes, note which items in your output: "This PR addresses: <title>"
+- **Does this PR create work that should become a new work item?** If yes, flag it as an informational finding.
 - **Are there related TODOs that provide context for this review?** If yes, reference them when discussing related findings.
 
 If TODOS.md doesn't exist, skip this step silently.

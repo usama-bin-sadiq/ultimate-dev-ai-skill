@@ -184,7 +184,7 @@ type = page AND label = "template-*" ORDER BY created DESC
 - [ ] Links to other Confluence pages resolve (no 404s)
 - [ ] Template renders correctly in both desktop and mobile preview
 
-**FAIL examples:** Template says "Update the JIRA board" but team uses Linear. Template has a "QA Sign-Off" section but team has no QA role. Placeholder text says "TODO: add content here" with no guidance on what content.
+**FAIL examples:** Template says "Update the JIRA board" but team uses Linear. Template has a "QA Sign-Off" section but team has no QA role. Placeholder text is a bare "add content here" instruction with no guidance on what belongs in the section.
 
 ### Structural Checklist
 - [ ] Metadata header: owner name, version (semver), status (`active`/`deprecated`/`draft`), last-reviewed date

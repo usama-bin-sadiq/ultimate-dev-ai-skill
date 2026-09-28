@@ -156,7 +156,7 @@ of step carries what makes it unambiguous and nothing more:
 
 A plan is the set of decisions the implementer cannot make alone. A plan
 longer than the code it describes has written the code instead. Lines that
-decide nothing ("TBD", "handle edge cases", "add appropriate validation",
+decide nothing (leaving a value for later, "handle edge cases", "add appropriate validation",
 "write tests for the above", a type or function no task defines) are the
 opposite failure, and the self-review catches both.
 

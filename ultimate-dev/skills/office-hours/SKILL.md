@@ -1055,7 +1055,7 @@ Generate a single-page HTML file with these constraints:
   hand-drawn-style elements. This is a sketch, not a polished mockup.
 - Self-contained — no external dependencies, no CDN links, inline CSS only
 - Show the core interaction flow (1-3 screens/states max)
-- Include realistic placeholder content (not "Lorem ipsum" — use content that
+- Include realistic sample content (never filler text — use content that
   matches the actual use case)
 - Add HTML comments explaining design decisions
 

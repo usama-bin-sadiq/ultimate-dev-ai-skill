@@ -100,3 +100,5 @@ aws iam get-role --role-name <role-name> --query "Role.[RoleLastUsed.LastUsedDat
 ```
 
 Pick the most-recently-used role whose trust policy contains `sagemaker.amazonaws.com`. Use the resulting ARN exactly as if `check_role.py` had returned it. Bash/macOS/Linux use the same commands.
+
+Asset details: hf-cloud-sagemaker-iam-preflight/references/ -- see `references/README.md` for what is here and when it loads.

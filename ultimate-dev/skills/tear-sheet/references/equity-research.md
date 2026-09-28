@@ -89,11 +89,11 @@ What the Street expects — a key differentiator for this tear sheet type.
 
 Use normalized/adjusted EPS where available — GAAP EPS can be distorted by one-time items and is less useful for forward estimates.
 
-Below the main estimates table, include a compact analyst consensus block (if data is available from the tools):
+Below the main estimates table, include a compact analyst consensus block (if data is available from the tools). The `XX` entries are slots for the figures the tool returns, not values to keep:
 
 | Analyst Consensus | |
 |---|---|
-| Mean Price Target | $XXX |
+| Mean Price Target | $XX |
 | # of Estimates | XX |
 | Buy / Hold / Sell | XX / XX / XX |
 

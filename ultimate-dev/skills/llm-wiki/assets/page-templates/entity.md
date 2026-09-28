@@ -16,16 +16,16 @@ One-paragraph definition. What kind of entity (person, org, place, product), fou
 Why this entity shows up across sources. What role does it play in the narrative of this wiki?
 
 ## Key facts
-- Fact 1 — cited from [[sources/xxx]]
-- Fact 2 — cited from [[sources/yyy]]
+- Fact 1 — cited from [[sources/<first-source>]]
+- Fact 2 — cited from [[sources/<second-source>]]
 
 ## Related
 - Related [[entities/other]]
-- Related [[concepts/xxx]]
+- Related [[concepts/<slug>]]
 
 ## Appears in
-- [[sources/xxx]] — short note on the connection
-- [[sources/yyy]] — short note
+- [[sources/<first-source>]] — short note on the connection
+- [[sources/<second-source>]] — short note
 
 ## Open questions
 - Things the sources don't answer. Good prompts for new source hunts.

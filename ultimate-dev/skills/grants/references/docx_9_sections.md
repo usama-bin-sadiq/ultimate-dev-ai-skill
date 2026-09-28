@@ -82,7 +82,7 @@ Bold amber box:
 
 | FOA | Mechanism | Institute | Deadline | Budget | Hyperlink |
 |---|---|---|---|---|---|
-| PAR-25-XXX | R01 | NHLBI | Feb 5 | $499k × 5 yr | [link to PA] |
+| [FOA number] | R01 | NHLBI | Feb 5 | $499k × 5 yr | [link to PA] |
 | PA-25-YYY | R21 | NHLBI | Jun 16 | $275k × 2 yr | [link] |
 | RFA-HL-25-ZZZ | U01 | NHLBI | Oct 5 | varies | [link] |
 

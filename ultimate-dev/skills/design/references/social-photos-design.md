@@ -24,7 +24,7 @@ Design social media images via HTML/CSS rendering + screenshot export. Orchestra
 
 ### Step 1: Plan the Work
 
-Create TODO tasks with the runtime's native task list. Break down into:
+Create tasks with the runtime's native task list. Break down into:
 - Requirement analysis task
 - Idea generation task(s)
 - HTML design task(s) — can parallelize per size/variant

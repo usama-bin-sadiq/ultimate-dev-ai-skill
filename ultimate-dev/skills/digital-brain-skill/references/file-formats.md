@@ -325,13 +325,13 @@ Content...
 
 ### Placeholder Convention
 
-Use `[PLACEHOLDER: description]` for user-fillable fields:
+User-fillable fields are written as a bracketed keyword, a colon, and a
+description of what belongs there. The keyword is a single capitalised word:
 
 ```markdown
 ### Your Story
-```
+
 [PLACEHOLDER: Write your founder journey here]
-```
 ```
 
 ---

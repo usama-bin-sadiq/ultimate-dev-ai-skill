@@ -155,8 +155,8 @@ generation until an author approves the new hash.
 The bundled template intentionally contains replacement tokens, false confirmations,
 and draft approval. It must fail validation.
 
-The validator rejects common placeholder forms such as TODO, TBD, Lorem ipsum,
-REPLACE_ME, generic bracketed fields, and unresolved template labels. Do not weaken
+The validator never accepts unfilled-slot forms — `TODO`, `TBD`, `Lorem ipsum`,
+`REPLACE_ME`, generic bracketed fields, unresolved template labels. Do not weaken
 this policy to make a draft generate. Replace every field with reviewed content or
 stop.
 

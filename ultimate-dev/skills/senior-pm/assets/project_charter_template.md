@@ -151,7 +151,7 @@
 ### Resource Requirements
 | Role | FTE Required | Duration | Skills Required | Availability |
 |------|--------------|----------|----------------|--------------|
-| [Role] | [FTE] | [Months] | [Key Skills] | [Confirmed/TBD] |
+| [Role] | [FTE] | [Months] | [Key Skills] | [Confirmed or unconfirmed] |
 
 ### Funding & Financial Management
 - **Funding Source:** [Department/Budget code]

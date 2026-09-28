@@ -42,7 +42,7 @@ Focus on finding:
 - **Trade-offs analyzed**: "X vs Y because..."
 - **Constraints identified**: "We must..." "We cannot..."
 - **Lessons learned**: "We discovered that..."
-- **Action items**: "Next steps..." "TODO..."
+- **Action items**: "Next steps..." and any line that parks work with an explicit marker
 - **Technical specifications**: Specific values, configs, approaches
 
 ### Step 3: Filter Ruthlessly

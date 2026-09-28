@@ -17,7 +17,15 @@ description: Create and scaffold plugin directories for Codex with a required `.
 python3 .agents/skills/plugin-creator/scripts/create_basic_plugin.py <plugin-name>
 ```
 
-2. Open `<plugin-path>/.codex-plugin/plugin.json` and replace `[TODO: ...]` placeholders.
+2. Open `<plugin-path>/.codex-plugin/plugin.json` and replace every square-bracket
+   slot the scaffold left behind. Each is an open bracket, a capitalised work
+   marker, a colon, and the value that belongs there:
+
+   ```text
+   [TODO: 1.2.0]
+   [TODO: Brief plugin description]
+   [TODO: MIT]
+   ```
 
 3. Generate or update the repo marketplace entry when the plugin should appear in Codex UI ordering:
 

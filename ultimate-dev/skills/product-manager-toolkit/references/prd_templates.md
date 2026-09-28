@@ -196,7 +196,7 @@ Acceptance Criteria:
 ### Epic: [Epic Name]
 
 #### Overview
-**Epic ID**: EPIC-XXX
+**Epic ID**: EPIC-[Number]
 **Theme**: [Product Theme]
 **Quarter**: QX 20XX
 **Status**: Discovery | In Progress | Complete

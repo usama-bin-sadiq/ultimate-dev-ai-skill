@@ -144,3 +144,55 @@ Parameters:
 
 ---
 *Powered by [Composio](https://composio.dev)*
+
+## Tool Discovery
+
+<!-- Carried from the underscore-named google_admin-automation skill,
+     which this one replaces. Generic Composio working knowledge,
+     product-independent. -->
+
+Always discover available tools before executing workflows:
+
+```
+RUBE_SEARCH_TOOLS: queries=[{"use_case": "user management, org units, groups, and domain administration", "known_fields": ""}]
+```
+
+This returns:
+- Available tool slugs for Google Admin
+- Recommended execution plan steps
+- Known pitfalls and edge cases
+- Input schemas for each tool
+
+## Search Before Action
+
+<!-- Carried from the underscore-named google_admin-automation skill,
+     which this one replaces. Generic Composio working knowledge,
+     product-independent. -->
+
+Always search for existing resources before creating new ones to avoid duplicates.
+
+## Pagination
+
+<!-- Carried from the underscore-named google_admin-automation skill,
+     which this one replaces. Generic Composio working knowledge,
+     product-independent. -->
+
+Many list operations support pagination. Check responses for `next_cursor` or `page_token` and continue fetching until exhausted.
+
+## Error Handling
+
+<!-- Carried from the underscore-named google_admin-automation skill,
+     which this one replaces. Generic Composio working knowledge,
+     product-independent. -->
+
+- Check tool responses for errors before proceeding
+- If a tool fails, verify the connection is still ACTIVE
+- Re-authenticate via `RUBE_MANAGE_CONNECTIONS` if connection expired
+
+## Batch Operations
+
+<!-- Carried from the underscore-named google_admin-automation skill,
+     which this one replaces. Generic Composio working knowledge,
+     product-independent. -->
+
+For bulk operations, use `RUBE_REMOTE_WORKBENCH` with `run_composio_tool()` in a loop with `ThreadPoolExecutor` for parallel execution.

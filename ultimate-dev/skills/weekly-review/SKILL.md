@@ -65,7 +65,7 @@ issues HEALTHY / DRIFTING / OVERCOMMITTED. End the review with one named next ac
 
 | Script | Role |
 |---|---|
-| `scripts/open_loop_scanner.py` | Inventories unchecked checkboxes, TODO/FIXME markers, and stale files across a directory; grouped counts + per-file locations; `--json`. |
+| `scripts/open_loop_scanner.py` | Inventories unchecked checkboxes, unresolved work markers in comments, and stale files across a directory; grouped counts + per-file locations; `--json`. |
 | `scripts/weekly_review_gate.py` | The ten-step three-phase checklist; `--done`/`--skip`/`--list`; completion % + named gaps → COMPLETE (exit 0) / INCOMPLETE (exit 2). |
 | `scripts/commitment_auditor.py` | Flags stalled and actionless commitments, computes the 0-100 health score with the formula shown → HEALTHY / DRIFTING / OVERCOMMITTED. |
 

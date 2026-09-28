@@ -58,7 +58,7 @@ useEffect(() => {
 |------|-------|-----|
 | GA4 | Events not in real-time | Wait 5-10 min, use DebugView |
 | Facebook | Invalid Pixel ID | Use numeric only (no `fbpx_` prefix) |
-| Google Ads | Conversions not attributed | Include `send_to: 'AW-XXX/LABEL'` |
+| Google Ads | Conversions not attributed | Add a `send_to` of `AW-` + your numeric conversion ID, then `/LABEL` |
 
 ## Data Layer
 

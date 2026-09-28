@@ -51,7 +51,7 @@ Flag this to the user — stale index means lint time.
 Format:
 - **Direct answer** — 1-3 sentences
 - **Supporting detail** — organized thematically
-- **Inline citations** — `[[sources/xxx]]` wikilinks throughout; every claim links to its source
+- **Inline citations** — `[[sources/<page-slug>]]` wikilinks throughout; every claim links to its source
 - **Related pages** — 3-5 wikilinks at the end
 
 ### 6. Offer to file the answer back

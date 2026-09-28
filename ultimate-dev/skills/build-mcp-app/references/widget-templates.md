@@ -8,7 +8,7 @@ All templates inline the `App` class from `@modelcontextprotocol/ext-apps` at bu
 
 ## Serving widget HTML
 
-Widgets are static HTML with one placeholder: `/*__EXT_APPS_BUNDLE__*/` gets replaced at server startup with the `ext-apps/app-with-deps` bundle (rewritten to expose `globalThis.ExtApps`).
+Widgets are static HTML with one substitution token: `/*__EXT_APPS_BUNDLE__*/` is replaced at server startup with the `ext-apps/app-with-deps` bundle (rewritten to expose `globalThis.ExtApps`).
 
 ```typescript
 import { readFileSync } from "node:fs";

@@ -1,6 +1,6 @@
 ---
 name: rice
-description: "RICE feature prioritization with scoring and capacity planning. Usage: /rice prioritize <features.csv> [options]"
+description: "RICE feature prioritization with scoring and capacity planning. Usage: /rice prioritize [features.csv] [options]"
 ---
 
 # /rice

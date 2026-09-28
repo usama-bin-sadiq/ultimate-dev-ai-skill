@@ -5,7 +5,7 @@ metadata:
   category: Containers
 description: >-
   Diagnoses GKE HorizontalPodAutoscaler (HPA) failures — metrics showing as
-  <unknown>, FailedGetResourceMetric / FailedGetScale / FailedComputeMetricsReplicas
+  unknown, FailedGetResourceMetric / FailedGetScale / FailedComputeMetricsReplicas
   events, missing Pod resource requests, custom/external metrics-pipeline breakage
   (FailedGetExternalMetric / FailedGetCustomMetric, unavailable metrics adapter,
   control-plane firewall blocking the adapter), HPA that won't scale up or down

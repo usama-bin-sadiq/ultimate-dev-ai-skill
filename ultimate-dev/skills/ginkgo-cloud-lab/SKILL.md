@@ -72,7 +72,7 @@ The catalog is organized into **Expression & Purification** (in vitro / cell-fre
 |---|---|---|---|---|
 | [Generate fluorescent pixel art](references/fluorescent-pixel-art-generation.md) | UV photo, 7-color E. coli palette | $25/plate | up to 7 days | Beta |
 
-**Coming soon:** Protein Expression and Binding Affinity Characterization (express + purify, then screen binding affinity against a target).
+**Not yet offered:** Protein Expression and Binding Affinity Characterization (express + purify, then screen binding affinity against a target).
 
 ## Choosing a Protocol
 

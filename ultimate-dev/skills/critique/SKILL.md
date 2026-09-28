@@ -125,7 +125,7 @@ impact of the modified scripts.
 
 - **Update Structured Memory**: You MUST record your decision and reasoning in
 - **Update Task Ledger**: Update the status of the task you are critiquing
-  (e.g., from `TODO` to `SUBMITTED` if approved, or `FAILED` if rejected).
+  (e.g., from `PENDING REVIEW` to `SUBMITTED` if approved, or `FAILED` if rejected).
 - **Append to Decision Log**: Add a brief entry describing your technical
   evaluation and any critical fixes you applied.
 - **Reject if unsure:** If you are even slightly unsure the solution is good

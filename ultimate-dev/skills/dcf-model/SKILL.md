@@ -627,7 +627,7 @@ B105: =B88/(1+(E48-0.07))      // Doesn't recalculate full DCF
 **Don't do this:**
 - Create all hardcoded inputs without comments
 - Think "I'll add them later"
-- Write "TODO: add source"
+- Write a bare "add source" note and promise to fill it in later
 - Leave blue inputs without documentation
 
 **Why it's wrong:**

@@ -1,6 +1,6 @@
 ---
 name: changelog
-description: "Generate changelogs from git history and validate conventional commits. Usage: /changelog <generate|lint> [options]"
+description: "Generate changelogs from git history and validate conventional commits. Usage: /changelog [generate|lint] [options]"
 argument-hint: "<generate|lint> [options]"
 ---
 

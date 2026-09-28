@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: "Run a red-green-refactor TDD workflow — generate failing tests first, implement to green, then check coverage gaps. Usage: /tdd <generate|coverage|validate> [target]"
+description: "Run a red-green-refactor TDD workflow — generate failing tests first, implement to green, then check coverage gaps. Usage: /tdd [generate|coverage|validate] [target]"
 argument-hint: <generate|coverage|validate> [file-or-dir]
 ---
 

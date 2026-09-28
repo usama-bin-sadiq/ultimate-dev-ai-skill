@@ -394,19 +394,22 @@ Indirect cost rate is based on our institution's federally negotiated rate agree
 
 ## Summary Budget Table
 
+Every figure below is a slot: replace it with the amount from your own budget, and
+use `$[0]` where a category genuinely has no cost in that year.
+
 | Category | Year 1 | Year 2 | Year 3 | Year 4 | Year 5 | Total |
 |----------|--------|--------|--------|--------|--------|-------|
-| Personnel | $XXX | $XXX | $XXX | $XXX | $XXX | $XXX |
-| Fringe Benefits | $XXX | $XXX | $XXX | $XXX | $XXX | $XXX |
-| Equipment | $XXX | $0 | $0 | $0 | $0 | $XXX |
-| Travel | $XXX | $XXX | $XXX | $XXX | $XXX | $XXX |
-| Materials & Supplies | $XXX | $XXX | $XXX | $XXX | $XXX | $XXX |
-| Other Direct Costs | $XXX | $XXX | $XXX | $XXX | $XXX | $XXX |
-| Participant Support | $XXX | $XXX | $XXX | $XXX | $XXX | $XXX |
-| Consortium/Subawards | $XXX | $XXX | $XXX | $XXX | $XXX | $XXX |
-| **Total Direct Costs** | $XXX | $XXX | $XXX | $XXX | $XXX | $XXX |
-| Indirect Costs (F&A) | $XXX | $XXX | $XXX | $XXX | $XXX | $XXX |
-| **TOTAL COSTS** | $XXX | $XXX | $XXX | $XXX | $XXX | $XXX |
+| Personnel | $[amount] | $[amount] | $[amount] | $[amount] | $[amount] | $[amount] |
+| Fringe Benefits | $[amount] | $[amount] | $[amount] | $[amount] | $[amount] | $[amount] |
+| Equipment | $[amount] | $[0] | $[0] | $[0] | $[0] | $[amount] |
+| Travel | $[amount] | $[amount] | $[amount] | $[amount] | $[amount] | $[amount] |
+| Materials & Supplies | $[amount] | $[amount] | $[amount] | $[amount] | $[amount] | $[amount] |
+| Other Direct Costs | $[amount] | $[amount] | $[amount] | $[amount] | $[amount] | $[amount] |
+| Participant Support | $[amount] | $[amount] | $[amount] | $[amount] | $[amount] | $[amount] |
+| Consortium/Subawards | $[amount] | $[amount] | $[amount] | $[amount] | $[amount] | $[amount] |
+| **Total Direct Costs** | $[amount] | $[amount] | $[amount] | $[amount] | $[amount] | $[amount] |
+| Indirect Costs (F&A) | $[amount] | $[amount] | $[amount] | $[amount] | $[amount] | $[amount] |
+| **TOTAL COSTS** | $[amount] | $[amount] | $[amount] | $[amount] | $[amount] | $[amount] |
 
 ---
 

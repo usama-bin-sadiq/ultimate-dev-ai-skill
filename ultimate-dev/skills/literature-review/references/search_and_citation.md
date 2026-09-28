@@ -102,7 +102,7 @@ Detailed formatting guidelines are in `references/citation_styles.md`. Quick ref
 
 ### APA (7th Edition)
 - In-text: (Smith et al., 2023)
-- Reference: Smith, J. D., Johnson, M. L., & Williams, K. R. (2023). Title. *Journal*, *22*(4), 301-318. https://doi.org/10.xxx/yyy
+- Reference: Smith, J. D., Johnson, M. L., & Williams, K. R. (2023). Title. *Journal*, *22*(4), 301-318. https://doi.org/10.NNNN/SUFFIX
 
 ### Nature
 - In-text: Superscript numbers^1,2^

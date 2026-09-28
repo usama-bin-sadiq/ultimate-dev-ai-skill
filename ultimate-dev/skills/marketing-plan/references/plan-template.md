@@ -425,7 +425,7 @@ Use `references/idea-cross-reference.md` as the source-of-truth mapping. Apply c
 
 ## Section 13 — Measurement, RACI, open decisions, appendix
 
-**Purpose:** Operational close. Define how the plan gets measured, who owns what, what's still TBD, and where to find the deeper docs.
+**Purpose:** Operational close. Define how the plan gets measured, who owns what, what's still undecided, and where to find the deeper docs.
 
 **Structure:**
 

@@ -54,3 +54,5 @@ Return:
 - an **Attention** section containing the decisions a reviewer should inspect first.
 
 Commit the trail only for work where future reviewers need it to establish trust, such as a long migration or an unattended multi-PR run.
+
+Asset details: show-me-your-work/references/ -- see `references/README.md` for what is here and when it loads.

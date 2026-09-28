@@ -301,8 +301,17 @@ or rethrow.
 
 ### CODE-07: No TODO-auth/security patterns
 
-Search for `TODO.*auth`, `TODO.*security`, `TODO.*permission`,
-`FIXME.*auth`, `HACK.*auth`, `// auth`, `# TODO: add auth`.
+Search for a work marker or an auth comment that was left in place:
+
+```regex
+TODO.*auth
+TODO.*security
+TODO.*permission
+FIXME.*auth
+HACK.*auth
+// auth
+# TODO: add auth
+```
 
 These indicate security features that were deferred and forgotten.
 

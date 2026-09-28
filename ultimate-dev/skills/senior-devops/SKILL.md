@@ -278,7 +278,7 @@ Use these companion skills for cloud-specific deep dives:
 |-------|-------|----------|
 | **aws-solution-architect** | AWS | ECS/EKS, Lambda, VPC design, cost optimization |
 | **azure-cloud-architect** | Azure | AKS, App Service, Virtual Networks, Azure DevOps |
-| **gcp-cloud-architect** | GCP | GKE, Cloud Run, VPC, Cloud Build *(coming soon)* |
+| **gcp-cloud-architect** | GCP | GKE, Cloud Run, VPC, Cloud Build *(not yet published)* |
 
 **Multi-cloud vs single-cloud decision:**
 - **Single-cloud** (default) — lower operational complexity, deeper managed-service integration, better cost leverage with committed-use discounts

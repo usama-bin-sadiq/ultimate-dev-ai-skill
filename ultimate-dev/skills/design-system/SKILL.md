@@ -1,6 +1,6 @@
 ---
 name: design-system
-description: Captures the user's brand identity once via a 10-question onboarding wizard (primary/accent HEX + heading + body Google Fonts + design style editorial/technical/minimal/playful + default output directory + syntax theme + TOC behavior + optional logo/company), validates body-text and link contrast against WCAG 2.2 AA, derives 12 CSS custom properties in HSL space, and stores the result for every markdown-html converter to consume. Use before any markdown-html conversion. Triggers on first-run onboarding ("set up the brand", "configure markdown-html", "run onboarding"), on explicit reset ("reset the design system", "re-onboard"), and is checked by every converter via config_loader.py before rendering. Refuses to save if body-text contrast fails AA 4.5:1 or the output dir isn't writable. Precedence is project (./.markdown-html/) > global (~/.config/markdown-html/) > built-in defaults; MARKDOWN_HTML_NO_CONFIG=1 bypasses.
+description: Captures the user's brand identity once via a 10-question onboarding wizard (primary/accent HEX + heading + body Google Fonts + design style editorial/technical/minimal/playful + default output directory + syntax theme + TOC behavior + optional logo/company), validates body-text and link contrast against WCAG 2.2 AA, derives 12 CSS custom properties in HSL space, and stores the result for every markdown-html converter to consume. Use before any markdown-html conversion. Triggers on first-run onboarding ("set up the brand", "configure markdown-html", "run onboarding"), on explicit reset ("reset the design system", "re-onboard"), and is checked by every converter via config_loader.py before rendering. Refuses to save if body-text contrast fails AA 4.5:1 or the output dir isn't writable. Precedence is project (./.markdown-html/), then global (~/.config/markdown-html/), then built-in defaults; MARKDOWN_HTML_NO_CONFIG=1 bypasses.
 version: 2.10.0
 author: Alireza Rezvani
 license: MIT
@@ -72,7 +72,7 @@ Once the user's brand is captured, `brand_palette_validator.derive_palette()` pr
 | `--md-link` | Hyperlinks | Iteratively walked to reach 4.5:1 contrast on bg |
 | `--md-link-hover` | Hover state | Link ± 6-8% luminance |
 | `--md-success` | OK / approved / passed | Green anchored, luminance-matched |
-| `--md-warn` | Caution / nit / TODO | Amber anchored, luminance-matched |
+| `--md-warn` | Caution / nit / deferred-work marker | Amber anchored, luminance-matched |
 
 ## Forcing-question library (Matt Pocock grill-with-docs pattern)
 

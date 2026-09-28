@@ -492,7 +492,7 @@ Generate in this order: Primitives first (it has no dependencies), then Spacing 
 After generating all QML files, run a validation pass — do not skip any of these checks:
 
 **QML validation:**
-- Check for any `// TODO:` placeholders — flag these to the user and ask how to resolve them
+- Check for any unresolved token markers the generator left behind — flag these to the user and ask how to resolve them
 - Verify every property type matches the `references/token-mapping.md` rules
 - Confirm `pragma Singleton` and `import QtQuick` are present in every file
 - Check that no values are hardcoded that should come from the token file
@@ -570,7 +570,7 @@ Give the user a brief summary and ask them to review the output:
 
 - Total tokens extracted per category (colors, spacing, typography, radii)
 - Modes and themes captured
-- Any unresolved aliases or `// TODO:` placeholders that need attention
+- Any unresolved aliases or unresolved token markers that need attention
 - Files produced: `design-tokens.json`, `Primitives.qml`, `Theme.qml`, `Spacing.qml`, `FontInterface.qml`
 - Reminder that `set_source_files_properties(... QT_QML_SINGLETON_TYPE TRUE)` must be set in CMakeLists.txt for each singleton file
 - Use the **Token Categories Checklist** at the end of this file to verify nothing was missed

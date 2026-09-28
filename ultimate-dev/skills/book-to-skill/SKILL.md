@@ -126,9 +126,10 @@ python3 "$SKILL_ROOT/scripts/skill_plugin_emitter.py" --skill-dir "$SKILLS_HOME/
     --dest ./engineering --source-note "<Title> by <Author>" --dry-run
 ```
 
-Every path above is a real variable, not a placeholder: run the block as written (with
-`<paths>` and `$SLUG` filled in) and it works end to end. Without `--workdir` the extractor
-creates a private temp directory and prints it — capture that instead.
+Every path above is a variable you set yourself, not a value to leave standing: run the
+block as written (with `<paths>` and `$SLUG` filled in) and it works end to end. Without
+`--workdir` the extractor creates a private temp directory and prints it — capture that
+instead.
 
 `extract_document.py --check` reports which extractors are installed and prints the install
 command for what is missing. Every tool supports `--help`, `--sample` and `--output json`.

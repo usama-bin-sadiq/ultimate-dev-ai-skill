@@ -7,7 +7,7 @@ description: >-
   analysis agents covering bindings, layout, loaders, delegates,
   states, and performance. Optionally invokes system qmllint
   for type-level checks. Reports only high-confidence issues
-  (>80/100) with structured mitigations. Read-only -- never
+  (over 80/100) with structured mitigations. Read-only -- never
   modifies code.
 license: LicenseRef-Qt-Commercial OR BSD-3-Clause
 compatibility: Designed for Claude Code, GitHub Copilot, and similar agents.

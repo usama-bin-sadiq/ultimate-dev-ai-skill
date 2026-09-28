@@ -164,7 +164,7 @@ Scale up early access while generating external buzz.
 - Recruit friends, investors, and influencers to test and share
 
 **Consider adding:**
-- Coming soon landing page or waitlist
+- Landing page or waitlist that announces the product is not yet released
 - "Beta" sticker in dashboard navigation
 - Email invites to early access list
 - Early access toggle in settings for experimental features

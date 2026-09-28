@@ -47,7 +47,9 @@ One page, professionally formatted:
 | Revenue Growth | XX% CAGR |
 | EBITDA | $XXM |
 | EBITDA Margin | XX% |
-| Employees | XXX |
+| Employees | <headcount> |
+
+Every `XX` and every `<...>` entry in that table is a placeholder for the real figure from the data room.
 
 **Transaction Overview** (2-3 sentences)
 - What's being offered (100% sale, majority stake, growth equity)

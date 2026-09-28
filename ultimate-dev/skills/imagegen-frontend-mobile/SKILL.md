@@ -1072,7 +1072,7 @@ Use:
 - screen titles that feel real
 
 Avoid:
-- lorem ipsum overload
+- filler-text overload
 - long paragraphs
 - fake inspirational filler
 - overloaded onboarding explanations

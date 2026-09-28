@@ -1244,7 +1244,7 @@ Apply these at each page. Each finding gets an impact rating (high/medium/polish
 - Empty states designed with warmth (message + action + illustration/icon)
 - Error messages specific: what happened + why + what to do next
 - Button labels specific ("Save API Key" not "Continue" or "Submit")
-- No placeholder/lorem ipsum text visible in production
+- No filler or sample copy visible in production — the stand-in text a word processor inserts
 - Truncation handled (`text-overflow: ellipsis`, `line-clamp`, or `break-words`)
 - Active voice ("Install the CLI" not "The CLI will be installed")
 - Loading states end with `…` ("Saving…" not "Saving...")

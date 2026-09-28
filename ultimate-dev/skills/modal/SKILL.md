@@ -205,7 +205,7 @@ def call_api():
     # Use the key
 ```
 
-Create secrets via CLI: `modal secret create my-api-keys API_KEY=sk-xxx`
+Create secrets via CLI: `modal secret create my-api-keys API_KEY=<your-key>`
 
 Or from a `.env` file: `modal.Secret.from_dotenv()`
 

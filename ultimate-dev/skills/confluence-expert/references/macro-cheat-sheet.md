@@ -72,7 +72,7 @@ Quick reference for the most commonly used Confluence macros. Each entry include
 - **Syntax:** `<ac:structured-macro ac:name="status"><ac:parameter ac:name="colour">Green</ac:parameter><ac:parameter ac:name="title">DONE</ac:parameter></ac:structured-macro>`
 - **Colors:** Grey, Red, Yellow, Green, Blue
 - **Use case:** Task status, review state, approval status
-- **Tip:** Standardize status values across your team (e.g., TODO, IN PROGRESS, DONE)
+- **Tip:** Standardize status values across your team (e.g., NOT STARTED, IN PROGRESS, DONE)
 
 ## Integration Macros
 

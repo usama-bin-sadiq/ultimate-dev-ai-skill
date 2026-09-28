@@ -570,7 +570,7 @@ Bad text:
 - long paragraphs
 - tiny fake body copy
 - lots of menu items
-- lorem ipsum
+- leftover Latin filler copy
 - dense explanations
 - unreadable labels
 

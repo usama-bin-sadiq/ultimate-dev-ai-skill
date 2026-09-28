@@ -148,3 +148,72 @@ Example prompt: *"Show Clarity engagement data for the last 3 days by Campaign, 
 ---
 
 *Powered by [Composio](https://composio.dev)*
+
+## Prerequisites
+
+<!-- Carried from the underscore-named microsoft_clarity-automation skill,
+     which this one replaces. Generic Composio working knowledge,
+     product-independent. -->
+
+- Rube MCP must be connected (RUBE_SEARCH_TOOLS available)
+- Active Microsoft Clarity connection via `RUBE_MANAGE_CONNECTIONS` with toolkit `microsoft_clarity`
+- Always call `RUBE_SEARCH_TOOLS` first to get current tool schemas
+
+## Tool Discovery
+
+<!-- Carried from the underscore-named microsoft_clarity-automation skill,
+     which this one replaces. Generic Composio working knowledge,
+     product-independent. -->
+
+Always discover available tools before executing workflows:
+
+```
+RUBE_SEARCH_TOOLS: queries=[{"use_case": "session recordings, heatmaps, and user behavior analytics", "known_fields": ""}]
+```
+
+This returns:
+- Available tool slugs for Microsoft Clarity
+- Recommended execution plan steps
+- Known pitfalls and edge cases
+- Input schemas for each tool
+
+## Search Before Action
+
+<!-- Carried from the underscore-named microsoft_clarity-automation skill,
+     which this one replaces. Generic Composio working knowledge,
+     product-independent. -->
+
+Always search for existing resources before creating new ones to avoid duplicates.
+
+## Pagination
+
+<!-- Carried from the underscore-named microsoft_clarity-automation skill,
+     which this one replaces. Generic Composio working knowledge,
+     product-independent. -->
+
+Many list operations support pagination. Check responses for `next_cursor` or `page_token` and continue fetching until exhausted.
+
+## Error Handling
+
+<!-- Carried from the underscore-named microsoft_clarity-automation skill,
+     which this one replaces. Generic Composio working knowledge,
+     product-independent. -->
+
+- Check tool responses for errors before proceeding
+- If a tool fails, verify the connection is still ACTIVE
+- Re-authenticate via `RUBE_MANAGE_CONNECTIONS` if connection expired
+
+## Batch Operations
+
+<!-- Carried from the underscore-named microsoft_clarity-automation skill,
+     which this one replaces. Generic Composio working knowledge,
+     product-independent. -->
+
+For bulk operations, use `RUBE_REMOTE_WORKBENCH` with `run_composio_tool()` in a loop with `ThreadPoolExecutor` for parallel execution.
+
+## Common Patterns
+
+<!-- Carried from the underscore-named microsoft_clarity-automation skill,
+     which this one replaces. Generic Composio working knowledge,
+     product-independent. -->
+

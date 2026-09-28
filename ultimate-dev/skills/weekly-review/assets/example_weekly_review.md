@@ -14,7 +14,7 @@ live in `~/notes` as markdown. Timebox: 90 minutes, started 15:00.
 python scripts/open_loop_scanner.py --dir ~/notes --stale-days 14
 ```
 
-Result: **19 open loops** — 11 unchecked checkboxes across 5 files, 3 TODO markers in scripts,
+Result: **19 open loops** — 11 unchecked checkboxes across 5 files, 3 work markers in scripts,
 5 stale files (worst: `someday/write-a-novel.md`, 63 days untouched).
 
 ## Phase 1 — GET CLEAR (25 min)

@@ -6,7 +6,7 @@ description: >-
   deterministic linting (60+ rules) then six parallel deep-
   analysis agents covering model contracts, ownership, threading,
   API correctness, error handling, and performance. Reports only
-  high-confidence issues (>80/100) with structured mitigations.
+  high-confidence issues (over 80/100) with structured mitigations.
   Read-only — never modifies code.
 license: LicenseRef-Qt-Commercial OR BSD-3-Clause
 compatibility: Designed for Claude Code, GitHub Copilot, and similar agents.

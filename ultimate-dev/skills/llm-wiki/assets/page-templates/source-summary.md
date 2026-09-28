@@ -28,14 +28,14 @@ How the work was done. Data, model, training, evaluation. For non-research sourc
 - Quote: "..." (p. NN)
 
 ## Surprises / contradictions
-- Where this source conflicts with [[sources/other]] or [[concepts/xxx]]
+- Where this source conflicts with [[sources/other]] or [[concepts/<slug>]]
 
 ## Connections
-- Extends [[concepts/xxx]]
-- Builds on [[entities/yyy]]'s prior work
-- Related: [[sources/zzz]]
+- Extends [[concepts/<slug>]]
+- Builds on [[entities/<slug>]]'s prior work
+- Related: [[sources/<slug>]]
 
 ## Where it's cited in this wiki
-- [[concepts/xxx]]
-- [[entities/yyy]]
-- [[synthesis/zzz]]
+- [[concepts/<slug>]]
+- [[entities/<slug>]]
+- [[synthesis/<slug>]]

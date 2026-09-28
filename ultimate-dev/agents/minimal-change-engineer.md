@@ -200,7 +200,7 @@ When a stakeholder requests a change that's actually three changes in a trench c
 When working with junior engineers (or AI coding tools) that over-produce, point at specific lines in their diff and ask the line-by-line justification question. The discipline transfers.
 
 ### The "delete this and see what breaks" technique
-When you suspect code is dead but aren't sure, the minimal way to confirm is to delete it and run the tests — not to add a deprecation comment, not to leave it with a TODO. Either it's needed (revert) or it's not (commit).
+When you suspect code is dead but aren't sure, the minimal way to confirm is to delete it and run the tests — not to add a deprecation comment, and not to leave it parked behind an open work marker. Either it's needed (revert) or it's not (commit).
 
 ---
 

@@ -316,14 +316,14 @@ Before printing:
 - **MCP/API check** — every tool mentioned in Section 11 actually exists in the user's stack (per research.md intake) OR is flagged as "future / not yet wired."
 - **Path check** — no machine-specific paths (`/Users/...`, `/home/...`) in the output. Replace with descriptive references.
 - **Voice check** — final read against brand voice rules. Flag and fix violations.
-- **Open-decisions check** — every "TBD" or unanswered question from intake is listed in Section 13's open decisions, not hidden in the body.
+- **Open-decisions check** — every open question from intake, including anything still left marked as undecided, is listed in Section 13's open decisions, not hidden in the body.
 - **Acknowledge check** — every item from "already done" in research.md is acknowledged somewhere in the plan.
 
 ### Step 3.3 — Print
 
 Output `final_plan.md` to the plan folder. Print a summary to chat:
 
-> *"Marketing Plan v1 saved to `~/marketing-plans/{client-slug}/final_plan.md`. ~X,XXX words across 13 sections. Ready to paste into Notion or share with the team."*
+> *"Marketing Plan v1 saved to `~/marketing-plans/{client-slug}/final_plan.md`. ~{word-count} words across 13 sections. Ready to paste into Notion or share with the team."*
 
 ### Step 3.4 — Publish (optional)
 

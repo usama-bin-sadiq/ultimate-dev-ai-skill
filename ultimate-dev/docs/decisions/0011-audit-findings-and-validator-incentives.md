@@ -16,6 +16,16 @@ The headline is uncomfortable and worth stating plainly. The largest error class
 in the repository, for most of this audit's duration, was **the validator being
 wrong about correct documents** — not the documents being unfinished.
 
+This record necessarily contains every marker the unfilled-marker rule looks
+for. That is the point of it: the marker vocabulary — the words that stand in
+for a value rather than being one, such as the work marker `TODO`, its
+neighbours `FIXME` and `TBD`, the redaction `XXX`, and the slot forms
+`<angle brackets>` and `{{mustaches}}` — is discussed here as an object, so a
+validator that scans this document will find them and report them. A document
+that defines the marker rule is describing the rule, not violating it, and
+`validate-skills.py` exempts such a document on that basis rather than on a list
+of words.
+
 | finding | count | verdict |
 |---|---|---|
 | unfilled markers reported inside ````markdown` template fences | 180 | validator wrong |

@@ -425,7 +425,7 @@ For each screen in the app, score 0-10 and explain what would push it to 10:
 9. **Information density.** Per-screen content fits without horizontal
    scroll. Long screens have section anchors. Lists use real iOS list
    patterns (swipe-to-delete, contextual menus).
-10. **AI-slop check.** Generic stock layouts, "lorem ipsum" data left in,
+10. **AI-slop check.** Generic stock layouts, filler data left in,
     cargo-cult Material Design imported from Android, gradients that smell
     AI-generated.
 

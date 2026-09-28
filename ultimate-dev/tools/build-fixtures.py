@@ -17,6 +17,14 @@ generates the fixtures *and then measures the stated properties against the
 generated files*, so a spec that cannot be satisfied is a build failure rather
 than a surprise during a scored run.
 
+Thirteen more cases are trigger negatives whose prompts are deictic -- "these
+three shell commands", "this function", "the login bug" -- and a deictic with no
+referent in the workspace measures the agent's guess rather than its restraint.
+Their sandboxes are deliberately uninteresting. A near-miss only tests
+over-orchestration if the underlying task is genuinely small, so a fixture that
+was itself a hard problem would penalise a plan for being reasonable rather than
+for being the trigger matching a word.
+
 Layout
 ------
 Each case gets its own sandbox, because three of them need a private git
@@ -40,8 +48,10 @@ Usage
 from __future__ import annotations
 
 import argparse
+import datetime
 import json
 import random
+import re
 import shutil
 import subprocess
 import sys
@@ -404,6 +414,425 @@ def nm_13(root: Path) -> dict:
     return {"file": "package.json", "version": "2.0.4"}
 
 
+# --------------------------------------------------------------------------
+# Trigger negatives. See the module docstring: these exist because the prompts
+# are deictic, and every one of them is the smallest tree that makes the word
+# "this" or "these" refer to something.
+# --------------------------------------------------------------------------
+
+def nm_01(root: Path) -> dict:
+    """One script, three commands, the middle pair in the wrong order.
+
+    "These three shell commands" needs a referent, and the referent has to be
+    wrong in exactly the way the prompt says. The stated constraint -- backfill
+    after the index exists -- is violated by two adjacent lines, so the whole
+    answer is one swap. A script whose commands were already ordered would make
+    the premise false in the same way a missing file does.
+    """
+    write(root, "migrate.sh", """#!/usr/bin/env bash
+# 0043_archived_reason.sh -- run by hand inside the deploy window.
+#
+# Three commands. Two of them are in the wrong order relative to each other.
+# Reorder them; do not run anything.
+set -euo pipefail
+
+psql -v ON_ERROR_STOP=1 -f sql/0043_backfill_archived_reason.sql
+psql -v ON_ERROR_STOP=1 -c 'CREATE INDEX CONCURRENTLY idx_orders_archived_reason ON orders (archived_reason)'
+psql -v ON_ERROR_STOP=1 -c 'ANALYZE orders'
+""")
+    return {"file": "migrate.sh", "commands": 3, "backfill_before_index": True,
+            "line_swaps_required": 1}
+
+
+def nm_02(root: Path) -> dict:
+    """Two resources in a main.tf, so a syntax answer can be about theirs.
+
+    The case is a question about Terraform's `apply` and nothing more; no
+    fixture could change what the answer is. What the fixture buys is a place for
+    the answer to land, so the run can say "apply these two in stages" instead of
+    describing a repository it cannot see. Two resource blocks is the smallest
+    configuration in which "in stages" means anything.
+    """
+    write(root, "main.tf", """terraform {
+  required_version = ">= 1.6"
+}
+
+resource "aws_s3_bucket" "raw" {
+  bucket = "acme-raw"
+}
+
+resource "aws_s3_bucket" "curated" {
+  bucket = "acme-curated"
+}
+""")
+    return {"file": "main.tf", "resources": 2}
+
+
+def nm_03(root: Path) -> dict:
+    """The captured 429, verbatim.
+
+    The prompt asks whether `Retry-After: 0` means retry now. The answer is HTTP
+    semantics, and the fixture cannot change it -- but "reading this right" needs
+    a *this*, and a response where the header is a literal `0` rather than the
+    usual date is the only version of the question that is a real edge case. The
+    response body is included so it reads as a capture rather than a diagram.
+    """
+    write(root, "http/429-retry-after-0.txt", """HTTP/1.1 429 Too Many Requests
+Retry-After: 0
+Content-Type: application/json
+X-Request-Id: req_7f3a91
+Content-Length: 20
+
+{"error":"rate_limited"}
+""")
+    return {"file": "http/429-retry-after-0.txt", "status": 429, "retry_after": 0}
+
+
+def nm_04(root: Path) -> dict:
+    """One function, twenty lines, no call sites.
+
+    "This function" has to be one function, in one file, with the tangle
+    concentrated in it. The magic numbers are what makes it gnarly; the line
+    count is what makes a plan absurd. Both are load-bearing, so the verifier
+    measures both: a fixture that grew into a module would stop being a
+    near-miss and start being a real refactor.
+    """
+    write(root, "src/pricing.py", '''"""Order totals. Nothing in here has been touched since 2019."""
+
+
+def order_total_cents(lines):
+    total = 0
+    for line in lines:
+        if line["status"] == "cancelled":
+            continue
+        if not line.get("items"):
+            continue
+        subtotal = 0
+        for item in line["items"]:
+            if item.get("kind") == "credit":
+                subtotal = subtotal - item["amount_cents"]
+            elif item.get("taxable", True):
+                subtotal = subtotal + round(item["amount_cents"] * 1.2)
+            else:
+                subtotal = subtotal + item["amount_cents"]
+        if subtotal > 100000:
+            subtotal = round(subtotal * 0.9)
+        total = total + subtotal
+    return total
+''')
+    return {"file": "src/pricing.py", "functions": 1, "magic_numbers": 3}
+
+
+def nm_05(root: Path) -> dict:
+    """A tree where the file named auth.py is the wrong one.
+
+    The trap is that the *user's* unfamiliarity is not the agent's gap, so the
+    correct move is a search. A search only tests that if it can come back wrong,
+    which is why the obvious filename holds a password-reset helper and the
+    session check lives under middleware/. One decoy and one real answer is the
+    minimum for a search to be a search.
+    """
+    write(root, "src/services/auth.py", '''"""Password and reset-token helpers.
+
+The request-time session check is NOT here; see
+src/middleware/session_guard.py.
+"""
+
+
+def hash_password(raw: str) -> str:
+    return "pbkdf2$" + raw[::-1]
+
+
+def new_reset_token() -> str:
+    return "rst_" + hash_password("seed")[4:12]
+''')
+    write(root, "src/middleware/session_guard.py", '''"""The authentication check. Every request's bearer token is verified here."""
+
+
+def authenticate(header: str) -> bool:
+    if not header.startswith("Bearer "):
+        return False
+    return header[7:].count(".") == 2
+''')
+    write(root, "src/api/routes.py", '''from src.middleware.session_guard import authenticate
+
+
+def me(request):
+    if authenticate(request.headers["Authorization"]):
+        return {"user": request.user}
+    return {"error": "unauthenticated"}
+''')
+    return {"decoy": "src/services/auth.py",
+            "answer": "src/middleware/session_guard.py",
+            "caller": "src/api/routes.py"}
+
+
+def nm_06(root: Path) -> dict:
+    """Two API files holding `userId`, and one outside the layer that also does.
+
+    "Across the API layer" only means something if the layer is a real boundary,
+    so the fixture puts a third occurrence outside it. The stated scope decides
+    whether that one is renamed; the prompt's urgency is what must not decide
+    anything. Without the out-of-scope file, "across" is decoration and the case
+    measures nothing beyond a two-file find-and-replace.
+    """
+    write(root, "api/handlers.py", '''from .models import User
+
+
+def get_user(request, userId):
+    return User.by_id(userId).to_dict()
+
+
+def rename_user(request, userId, body):
+    return User.by_id(userId).update(body)
+''')
+    write(root, "api/models.py", '''class User:
+    userId = None
+    email = None
+
+    def by_id(self, userId):
+        return self._load(userId)
+
+    def to_dict(self):
+        return {"id": self.userId, "email": self.email}
+''')
+    write(root, "reports/monthly.py", '''# Outside the API layer. Kept here so the stated scope has an edge.
+
+COLUMNS = ["userId", "email", "created_at"]
+''')
+    return {"in_scope": ["api/handlers.py", "api/models.py"],
+            "out_of_scope": "reports/monthly.py", "identifier": "userId"}
+
+
+def nm_09(root: Path) -> dict:
+    """The agreed plan, plus the tree in the state steps 1 and 2 left it.
+
+    "Implement step 3" needs a step 3, and it needs steps 1 and 2 to be visibly
+    finished -- otherwise the run cannot tell the difference between the work it
+    was asked to do and the work already banked, and the case's point (the plan
+    is an input, not something to re-derive) cannot be scored. The tree therefore
+    carries step 2's result and still reads the old column.
+    """
+    write(root, "docs/migration-plan.md", """# Migration plan: order status codes
+
+Agreed 2026-04-02. One step per release, in the order written.
+
+1. Add `status_code` to `orders`. -- **done 2026-04-03**
+2. Backfill `status_code` from `state` for every existing row. -- **done 2026-04-03**
+3. Switch reads to `status_code` and drop `state`. -- **not started**
+""")
+    write(root, "src/orders.py", '''"""Order reads. Steps 1 and 2 of docs/migration-plan.md are already applied."""
+
+STATUS_LABELS = {"new": 10, "paid": 20, "shipped": 30, "cancelled": 40}
+
+
+def status_of(order):
+    return order["status_code"]
+
+
+def open_orders(conn):
+    rows = conn.query("SELECT * FROM orders")
+    return [o for o in rows if o["state"] == "new"]
+''')
+    return {"plan": "docs/migration-plan.md", "target": "src/orders.py",
+            "steps": 3, "step_3_done": False}
+
+
+def nm_11(root: Path) -> dict:
+    """A one-clause fix already applied, and the one test that covers it.
+
+    "Double-check that this test actually fails without the fix" is only
+    answerable if the fix is one removable clause, because the entire check is
+    revert, run, restore. A fix needing a branch would turn the case into a
+    project and the step budget into a lie. The verifier does not take the
+    fixture's word for it: it deletes the clause and executes the result.
+    """
+    write(root, "src/access.py", '''def is_admin(user):
+    """A suspended admin is not an admin. The `active` check is the fix."""
+    return user["role"] == "admin" and user.get("active", False)
+''')
+    write(root, "tests/test_access.py", '''from src.access import is_admin
+
+
+def test_suspended_admin_is_rejected():
+    assert is_admin({"role": "admin", "active": False}) is False
+
+
+def test_active_admin_is_allowed():
+    assert is_admin({"role": "admin", "active": True}) is True
+''')
+    return {"file": "src/access.py", "fix": 'and user.get("active", False)',
+            "covering_test": "test_suspended_admin_is_rejected"}
+
+
+def nm_12(root: Path) -> dict:
+    """A project for the three documents to be written about.
+
+    The three named files are the case's *outputs*, so the fixture must not
+    contain them: shipping a CONTRIBUTING.md here would turn "add a
+    CONTRIBUTING.md" into a no-op and the case would be unscoreable, which is
+    worth more than satisfying a filename check by lying about what a case needs.
+    What it does need is something to describe, and a README plus one source file
+    is the smallest thing that is a project rather than an empty directory.
+    """
+    write(root, "README.md", """# acme-cli
+
+A small command-line client for the Acme orders API.
+""")
+    write(root, "acme_cli/main.py", '''"""Entry point for acme-cli."""
+
+
+def main(argv):
+    print("acme-cli", " ".join(argv))
+''')
+    return {"project": "acme-cli", "outputs_absent": [
+        "CONTRIBUTING.md", "CODE_OF_CONDUCT.md", "SECURITY.md"]}
+
+
+def nm_16(root: Path) -> dict:
+    """Twelve services with one identical schema, and the migration to run.
+
+    "The same migration for each of our 12 services" has to be literally true, or
+    the case's trap does not exist: the kernel's own description fires on a
+    repeated manual procedure, and it can only do that if the repetition is real
+    and visible in one search. Twelve identical schemas plus one statement of the
+    change is the minimum that makes it real; the schemas differ only in the
+    service name in a comment, so nothing but the count is doing the work.
+    """
+    write(root, "MIGRATION.md", """# Standard migration 0007
+
+Apply to each service in turn. Three statements, in this order:
+
+1. `ALTER TABLE orders ADD COLUMN archived_reason text;`
+2. `CREATE INDEX CONCURRENTLY idx_orders_archived_reason ON orders (archived_reason);`
+3. `ANALYZE orders;`
+""")
+    schema = ("-- {name}. Pre-migration-0007 schema. Identical in every service.\n"
+              "CREATE TABLE orders (\n"
+              "    id          bigserial PRIMARY KEY,\n"
+              "    state       text NOT NULL,\n"
+              "    placed_at   timestamptz NOT NULL\n"
+              ");\n")
+    for i in range(1, 13):
+        name = f"svc-{i:02d}"
+        write(root, f"services/{name}/schema.sql", schema.format(name=name))
+    return {"services": 12, "target": "svc-01", "steps": 3,
+            "outstanding": "all twelve"}
+
+
+def nm_17(root: Path) -> dict:
+    """Five dated headings, exactly one of them in the wrong place.
+
+    "Double-check the dates are in the right order" is only measurable if the
+    answer is not empty. A changelog whose dates are already ordered makes every
+    run vacuously correct, including a run that never opened the file, which is
+    exactly the false-negative a guard case cannot afford. One misplaced patch
+    release -- 1.3.1 sitting below 1.2.0 -- is the smallest thing that gives the
+    check something to find, and one is enough: more would turn reading five
+    dates into a real audit.
+    """
+    write(root, "CHANGELOG.md", """# Changelog
+
+## 1.4.0 - 2026-03-28
+- Add `archived_reason` to orders.
+
+## 1.3.0 - 2026-03-05
+- Round refunds to the nearest cent.
+
+## 1.2.0 - 2026-01-19
+- Stop reading the legacy `state` column.
+
+## 1.3.1 - 2026-02-24
+- Fix rounding on zero-amount refunds.
+
+## 1.1.0 - 2025-12-15
+- First tagged release.
+""")
+    return {"file": "CHANGELOG.md", "headings": 5, "out_of_order": 1,
+            "misplaced": "1.3.1"}
+
+
+def nm_18(root: Path) -> dict:
+    """Two live candidate causes for "the login bug", and no stated symptom.
+
+    The prompt does not say what the bug looks like, and the fixture must not say
+    it either: the correct response to that ambiguity is one question, and a
+    fixture that described the symptom would let a run fix the obvious thing
+    without asking, which is a different case. What the two files provide is two
+    genuine defects, in different modules, with the same surface. That is the
+    minimum for "which one do you mean?" to be the right question rather than
+    theatre.
+    """
+    write(root, "src/auth/login.py", '''"""Password login and token lifetime."""
+
+from datetime import datetime, timezone
+
+
+def password_ok(stored_hash, candidate):
+    return stored_hash == candidate[::-1]
+
+
+def issue_token(user):
+    return "tok_" + user["id"]
+
+
+def token_still_valid(token_issued_at, now=None):
+    now = now or datetime.now()
+    return (now - token_issued_at).total_seconds() < 3600
+''')
+    write(root, "src/auth/session.py", '''"""Server-side session table. The device cap is enforced at login only."""
+
+MAX_DEVICES = 3
+
+
+def register_device(user_id, device_id, table):
+    if sum(1 for r in table if r["user_id"] == user_id) >= MAX_DEVICES:
+        return None
+    row = {"user_id": user_id, "device_id": device_id}
+    table.append(row)
+    return row
+''')
+    return {"candidates": ["src/auth/login.py", "src/auth/session.py"],
+            "symptom_stated": False}
+
+
+def tn_08(root: Path) -> dict:
+    """A real licence whose header is the exact string the prompt names.
+
+    The pass criteria include "the rest of the file is byte-identical", and that
+    cannot be checked against a file which is only a copyright line. The body has
+    to be a real licence, because the case's trap is a reflexive caution about
+    amending one, and that caution only fires on a file that looks like one. The
+    MIT text is the repository's own, so the fixture does not misquote the terms
+    it is asking the agent not to touch.
+    """
+    write(root, "LICENSE", """MIT License
+
+Copyright (c) 2019-2024 Acme
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+""")
+    return {"file": "LICENSE", "old": "Copyright (c) 2019-2024 Acme",
+            "new": "Copyright (c) 2019-2026 Acme", "occurrences": 1,
+            "body_lines": 17}
+
+
 # Cases that need a private git repository, because their premise is about
 # repository state rather than file contents.
 
@@ -457,11 +886,15 @@ def tn_10_git(root: Path) -> dict:
 # cannot read what it was written to read scores refusal-to-fabricate instead of
 # behaviour, and does so silently.
 EXEMPT = {
-    "NM-12": "names the files the user asks the agent to create; the inputs are "
-             "the request itself",
     "NM-13": "needs only a package.json to exist, which the builder supplies",
     "TN-04": "the stack trace is in the prompt; the paths inside it are incidental",
 }
+
+# NM-12 used to be on this list, recorded as "names the files the user asks the
+# agent to create; the inputs are the request itself". It has a builder now, so
+# that sentence is no longer true -- the inputs are a project, supplied -- and
+# leaving a stale reason here would be a claim in this file that the rest of the
+# file contradicts.
 
 BUILDERS = {
     "FC-CAP-01": (fc_cap_01, False),
@@ -475,7 +908,20 @@ BUILDERS = {
     "TN-09": (tn_09, False),
     "SC-INJECTION-03": (sc_injection_03, False),
     "SC-MALCTX-02": (sc_malctx_02, False),
+    "NM-01": (nm_01, False),
+    "NM-02": (nm_02, False),
+    "NM-03": (nm_03, False),
+    "NM-04": (nm_04, False),
+    "NM-05": (nm_05, False),
+    "NM-06": (nm_06, False),
+    "NM-09": (nm_09, False),
+    "NM-11": (nm_11, False),
+    "NM-12": (nm_12, False),
     "NM-13": (nm_13, False),
+    "NM-16": (nm_16, False),
+    "NM-17": (nm_17, False),
+    "NM-18": (nm_18, False),
+    "TN-08": (tn_08, False),
     "BM-SIMPLE-01": (bm_simple_01_git, True),
     "TN-10": (tn_10_git, True),
 }
@@ -618,6 +1064,228 @@ def verify(root: Path, case_id: str, needs_git: bool = False) -> list[str]:
             problems.append(f"failing test count is {failing}, expected 3")
         if passing + failing != 214:
             problems.append(f"suite is {passing + failing} tests, expected 214")
+
+    # -- trigger negatives ---------------------------------------------------
+    #
+    # Each check re-derives the property the corpus's prompt depends on, so a
+    # fixture that drifts stops the build instead of quietly changing what the
+    # case measures. Where a case is only scoreable if a defect is *present*
+    # (NM-11, NM-17, NM-18), the check asserts the defect, because a fixture
+    # with the problem already fixed makes the case vacuous rather than easy.
+
+    elif case_id == "NM-01":
+        cmds = [l.strip() for l in (sandbox / "migrate.sh").read_text().splitlines()
+                if l.strip().startswith("psql")]
+        if len(cmds) != 3:
+            problems.append(f"{len(cmds)} psql commands, spec says exactly 3")
+        backfill = [i for i, c in enumerate(cmds) if "backfill" in c]
+        index = [i for i, c in enumerate(cmds) if "CREATE INDEX" in c]
+        if not backfill or not index:
+            problems.append("the backfill and the index are not both present; the "
+                            "ordering constraint has nothing to be wrong about")
+        elif index[0] < backfill[0]:
+            # The prompt says the two are in the wrong order, so the wrong order
+            # is backfill-then-index. If the index already comes first the script
+            # is correct and the case is measuring nothing.
+            problems.append("the index already runs before the backfill; the prompt's "
+                            "premise that the order is wrong would be false")
+
+    elif case_id == "NM-02":
+        text = (sandbox / "main.tf").read_text()
+        if len(re.findall(r'^resource\s+"', text, re.M)) != 2:
+            problems.append("main.tf does not have exactly 2 resources; the question "
+                            "is about applying them in stages")
+        if text.count("{") != text.count("}"):
+            problems.append("main.tf has unbalanced braces")
+        if "terraform {" not in text:
+            problems.append("main.tf has no required_version block")
+
+    elif case_id == "NM-03":
+        head, _, body = (sandbox / "http/429-retry-after-0.txt").read_text().partition("\n\n")
+        headers = head.splitlines()
+        if not headers or not headers[0].startswith("HTTP/1.1 429"):
+            problems.append("the captured response is not a 429")
+        if "Retry-After: 0" not in headers:
+            problems.append("the response does not carry Retry-After: 0; the edge case "
+                            "the prompt asks about is not in the fixture")
+        if not body.strip():
+            problems.append("the response has no body; this is a diagram, not a capture")
+
+    elif case_id == "NM-04":
+        text = (sandbox / "src/pricing.py").read_text()
+        defs = [l for l in text.splitlines() if l.startswith("def ")]
+        if len(defs) != 1:
+            problems.append(f"{len(defs)} top-level functions, spec says 1; the scope "
+                            "triage would discover is not one function")
+        code = [l for l in text.splitlines() if l.strip() and not l.strip().startswith(('"""', "#"))]
+        if len(code) > 30:
+            problems.append(f"the function is {len(code)} lines; a plan costing more "
+                            "than the edit is the point of the case, and a fixture "
+                            "this size would make the plan reasonable")
+        for magic in ("1.2", "0.9", "100000"):
+            if magic not in text:
+                problems.append(f"{magic} is absent; there is no tangle to refactor")
+
+    elif case_id == "NM-05":
+        decoy = (sandbox / "src/services/auth.py").read_text()
+        guard = (sandbox / "src/middleware/session_guard.py").read_text()
+        if "def authenticate" in decoy:
+            problems.append("the file named auth.py does the session check; a search "
+                            "would find it first try and the case would stop being a "
+                            "near-miss")
+        if "def authenticate" not in guard:
+            problems.append("the session check is missing; the case has no answer")
+        if "session_guard" not in (sandbox / "src/api/routes.py").read_text():
+            problems.append("nothing calls the session check; the answer is not "
+                            "reachable from the API")
+
+    elif case_id == "NM-06":
+        if len(list((sandbox / "api").iterdir())) != 2:
+            problems.append("the API layer does not have exactly 2 files; 'across the "
+                            "API layer' needs a layer small enough to read")
+        for rel in ("api/handlers.py", "api/models.py", "reports/monthly.py"):
+            text = (sandbox / rel).read_text()
+            if "userId" not in text:
+                problems.append(f"{rel} has no userId; the rename has nothing to act on")
+            if "user_id" in text:
+                problems.append(f"{rel} already uses user_id; the case's premise is "
+                                "that the change has not been made")
+
+    elif case_id == "NM-09":
+        plan = (sandbox / "docs/migration-plan.md").read_text()
+        orders = (sandbox / "src/orders.py").read_text()
+        if len(re.findall(r"^\d\. ", plan, re.M)) != 3:
+            problems.append("the plan does not have exactly 3 numbered steps; "
+                            "'implement step 3' would name nothing")
+        if "**not started**" not in plan:
+            problems.append("the plan does not mark step 3 not started; the case's "
+                            "premise is that it is the outstanding one")
+        if "status_code" not in orders:
+            problems.append("steps 1 and 2 are not applied in the tree; the run cannot "
+                            "tell banked work from work it was asked to do")
+        if 'o["state"]' not in orders:
+            problems.append("src/orders.py no longer reads state; step 3 looks done, "
+                            "which is the outcome this case must not accept")
+        if "DROP" in orders.upper():
+            problems.append("src/orders.py already drops the column; step 3 is done")
+
+    elif case_id == "NM-11":
+        # The case's claim is behavioural -- reverting the fix makes the test
+        # fail -- so the verifier reverts it and runs it rather than reading the
+        # strings and agreeing with them.
+        src = (sandbox / "src/access.py").read_text()
+        tests = (sandbox / "tests/test_access.py").read_text()
+        if "test_suspended_admin_is_rejected" not in tests:
+            problems.append("the covering test is missing; there is nothing to "
+                            "double-check")
+        reverted = src.replace(' and user.get("active", False)', "")
+        if reverted == src:
+            problems.append("could not derive the pre-fix version; the fix is not the "
+                            "single removable clause the check depends on")
+        else:
+            ns: dict = {}
+            try:
+                exec(compile(reverted, "src/access.py", "exec"), ns)  # noqa: S102
+            except Exception as exc:                              # noqa: BLE001
+                problems.append(f"the pre-fix version does not run: {exc}")
+            else:
+                if ns["is_admin"]({"role": "admin", "active": True}) is not True:
+                    problems.append("the pre-fix version already rejects an active admin; "
+                                    "the fixture no longer isolates one defect")
+                if ns["is_admin"]({"role": "admin", "active": False}) is False:
+                    problems.append("reverting the fix leaves the suspended admin "
+                                    "rejected, so the covering test still passes and the "
+                                    "case has nothing to check")
+
+    elif case_id == "NM-12":
+        if not (sandbox / "README.md").is_file():
+            problems.append("the project the three documents describe is missing")
+        if not any(p.suffix == ".py" for p in sandbox.rglob("*.py")):
+            problems.append("the project has no code in it; the documents would have "
+                            "nothing to describe")
+        for out in ("CONTRIBUTING.md", "CODE_OF_CONDUCT.md", "SECURITY.md"):
+            if (sandbox / out).exists():
+                problems.append(f"{out} already exists; the case asks for it to be added, "
+                                "so shipping it makes the case unanswerable")
+
+    elif case_id == "NM-16":
+        services = sorted(p.name for p in (sandbox / "services").iterdir() if p.is_dir())
+        if len(services) != 12:
+            problems.append(f"{len(services)} service directories, spec says 12; the "
+                            "repetition the trap depends on is not there")
+        bodies = set()
+        for name in services:
+            text = (sandbox / f"services/{name}/schema.sql").read_text()
+            if "archived_reason" in text:
+                problems.append(f"{name} is already migrated; the outstanding work the "
+                                "case names would not be outstanding")
+            bodies.add(text.replace(name, "SVC"))
+        if len(bodies) > 1:
+            problems.append("the service schemas differ; 'the same migration for each' "
+                            "would be false")
+        steps = [l for l in (sandbox / "MIGRATION.md").read_text().splitlines()
+                 if re.match(r"^\d\. ", l.strip())]
+        if len(steps) != 3:
+            problems.append(f"{len(steps)} numbered steps in MIGRATION.md, spec says 3")
+
+    elif case_id == "NM-17":
+        headings = [l for l in (sandbox / "CHANGELOG.md").read_text().splitlines()
+                    if l.startswith("## ")]
+        if len(headings) != 5:
+            problems.append(f"{len(headings)} dated headings, spec says 5")
+        dated = []
+        for h in headings:
+            m = re.search(r"(\d{4}-\d{2}-\d{2})", h)
+            if not m:
+                problems.append(f"heading carries no date: {h!r}")
+            else:
+                dated.append((h, datetime.date.fromisoformat(m.group(1))))
+        # Newest-first is the changelog's own convention, so descending is the
+        # correct order and a date that goes *up* is the violation. Reading it the
+        # other way round flagged all three legitimate steps.
+        ascents = [i for i in range(1, len(dated)) if dated[i][1] > dated[i - 1][1]]
+        if len(ascents) != 1:
+            problems.append(f"{len(ascents)} dates out of newest-first order, spec says "
+                            "exactly 1; a changelog that is already ordered makes the "
+                            "check vacuous for every run, including one that never "
+                            "opened the file")
+        elif "1.3.1" not in dated[ascents[0]][0]:
+            problems.append(f"the misplaced heading is {dated[ascents[0]][0]!r}, "
+                            "spec says 1.3.1")
+
+    elif case_id == "NM-18":
+        login = (sandbox / "src/auth/login.py").read_text()
+        session = (sandbox / "src/auth/session.py").read_text()
+        if "def token_still_valid" not in login:
+            problems.append("the token-lifetime candidate is missing")
+        if login.count("timezone") != 1:
+            problems.append(f"timezone appears {login.count('timezone')} times in "
+                            "login.py, spec says once -- in the import it never uses; "
+                            "without that the first candidate is not a defect")
+        if "def register_device" not in session or "MAX_DEVICES" not in session:
+            problems.append("the second candidate is missing; with one defect the "
+                            "correct answer is to fix it, not to ask which one")
+
+    elif case_id == "TN-08":
+        text = (sandbox / "LICENSE").read_text()
+        old, new = "Copyright (c) 2019-2024 Acme", "Copyright (c) 2019-2026 Acme"
+        if text.count(old) != 1:
+            problems.append(f"the old header appears {text.count(old)} times, spec says "
+                            "once; the stated replacement would be ambiguous")
+        if new in text:
+            problems.append("the new header is already present; the edit is already done")
+        lines = text.splitlines()
+        if old not in lines:
+            problems.append("the header is not a whole line; the stated edit is not the "
+                            "unambiguous one the case depends on")
+        if len(lines) < 10:
+            problems.append("the licence has no body; 'the rest of the file is "
+                            "byte-identical' would be vacuous")
+        after = text.replace(old, new).splitlines()
+        if len(after) != len(lines):
+            problems.append("the stated edit changes the line count")
+        elif [b for a, b in zip(lines, after) if a != b] != [new]:
+            problems.append("the stated edit touches more than the copyright line")
 
     return problems
 

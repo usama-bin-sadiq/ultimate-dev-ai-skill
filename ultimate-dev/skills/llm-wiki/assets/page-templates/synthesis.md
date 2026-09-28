@@ -18,20 +18,20 @@ Two or three sentences capturing the current synthesis across all sources read s
 - Sub-area C — ...
 
 ## Key concepts
-- [[concepts/xxx]] — short note on role
-- [[concepts/yyy]] — short note
-- [[concepts/zzz]] — short note
+- [[concepts/<slug-a>]] — short note on role
+- [[concepts/<slug-b>]] — short note
+- [[concepts/<slug-c>]] — short note
 
 ## Key sources
-- [[sources/xxx]] — why it matters
-- [[sources/yyy]] — why it matters
+- [[sources/<slug-a>]] — why it matters
+- [[sources/<slug-b>]] — why it matters
 
 ## Current open problems
 Short list with [[concepts]] and [[sources]] pointers.
 
 ## How this synthesis has changed
 - **<YYYY-MM-DD>** — initial synthesis after first N sources.
-- **<YYYY-MM-DD>** — added [[sources/xxx]]; shifted emphasis toward ...
+- **<YYYY-MM-DD>** — added [[sources/<slug>]]; shifted emphasis toward ...
 
 ## Related
 - [[synthesis/other-overview]]

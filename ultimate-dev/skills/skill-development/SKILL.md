@@ -68,7 +68,12 @@ Documentation and reference material intended to be loaded as needed into contex
 Files not intended to be loaded into context, but rather used within the output Claude produces.
 
 - **When to include**: When the skill needs files that will be used in the final output
-- **Examples**: `assets/logo.png` for brand assets, `assets/slides.pptx` for PowerPoint templates, `assets/frontend-template/` for HTML/React boilerplate, `assets/font.ttf` for typography
+- **Examples**: the generated skill's own `assets/frontend-template/` and
+  `assets/hello-world/` ship here as HTML/React boilerplate. Its
+  `logo.png`, `slides.pptx` and `font.ttf` are the organisation's own brand
+  assets and are not in this repository — a skill that shipped a placeholder
+  logo would teach the reader to delete it. Output directory: whatever the
+  organisation supplies.
 - **Use cases**: Templates, images, icons, boilerplate code, fonts, sample documents that get copied or modified
 - **Benefits**: Separates output resources from documentation, enables Claude to use files without loading them into context
 
@@ -195,6 +200,7 @@ To complete SKILL.md body, answer the following questions:
 For detailed patterns and techniques, consult:
 - **`references/patterns.md`** - Common patterns
 - **`references/advanced.md`** - Advanced use cases
+- **`references/schema.md`** - frontmatter schema, in the worked example below
 
 ### Example Files
 
@@ -595,6 +601,10 @@ Good for: Complex domains with validation utilities
 - Skip validation
 
 ## Additional Resources
+This skill ships `references/patterns.md`, `references/advanced.md` and
+`references/schema.md`. The worked example below shows how a generated
+skill should point at its own reference files.
+
 
 ### Study These Skills
 

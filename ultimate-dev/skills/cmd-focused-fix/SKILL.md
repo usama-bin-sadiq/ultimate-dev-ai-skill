@@ -1,6 +1,6 @@
 ---
 name: cmd-focused-fix
-description: "Deep-dive feature repair — systematically fix an entire feature/module across all its files and dependencies. Usage: /focused-fix <feature-path>"
+description: "Deep-dive feature repair — systematically fix an entire feature/module across all its files and dependencies. Usage: /focused-fix [feature-path]"
 ---
 
 # /focused-fix
@@ -41,7 +41,7 @@ Output a dependency map with inbound, outbound, env vars, and config files.
 
 Run ALL diagnostic checks:
 
-- **Code**: imports resolve, no circular deps, types consistent, error handling, TODO/FIXME
+- **Code**: imports resolve, no circular deps, types consistent, error handling, and no unresolved work markers left in the source
 - **Runtime**: env vars set, migrations current, API shapes correct
 - **Tests**: run ALL related tests, record failures, check coverage
 - **Logs**: check git log for recent changes, search error logs

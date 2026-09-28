@@ -12,7 +12,7 @@ Transforms a digital image into a living, fluorescent bacterial artwork printed 
 ## Input
 
 - **Design:** Created in the Design Tool (upload an image or paint from scratch); the tool maps the artwork to the 7-color palette automatically
-- **Plate format:** Echo 1536 (32x48 wells, 1,536 dots). Echo 6144 format (64x96 wells, 6,144 dots) coming soon
+- **Plate format:** Echo 1536 (32x48 wells, 1,536 dots). Echo 6144 format (64x96 wells, 6,144 dots) is not supported yet
 - **Mapping controls:** Adjust brightness, contrast, and saturation, or use the Enhance slider to optimize color mapping in one step
 
 ## Available Fluorescent E. coli Strains (7-color palette)

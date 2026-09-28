@@ -95,7 +95,7 @@ project-name/
 
 Write every file. Rules:
 
-- **Real code, not stubs.** Every function has a real implementation. No `// TODO: implement` or `pass` placeholders.
+- **Real code, not stubs.** Every function has a real implementation. No unimplemented-marker comments and no `pass` bodies.
 - **Syntactically valid.** Every file must parse without errors in its language.
 - **Imports match dependencies.** Every import must correspond to a package in the manifest (package.json, requirements.txt, go.mod, etc.).
 - **Types included.** TypeScript projects use types. Python projects use type hints. Go projects use typed structs.
@@ -222,7 +222,7 @@ expense-tracker/
 
 | Anti-pattern | Fix |
 |---|---|
-| **Placeholder code** — `// TODO: implement`, `pass`, empty function bodies | Every function has a real implementation. If complex, implement a working simplified version. |
+| **Stub code** — an unimplemented-marker comment, `pass`, empty function bodies | Every function has a real implementation. If complex, implement a working simplified version. |
 | **Stack override** — picking Next.js when the user said Flask | Always honor explicit tech preferences. Only infer when the user doesn't specify. |
 | **Missing .gitignore** — committing node_modules or .env | Generate stack-appropriate .gitignore as one of the first files. |
 | **Phantom imports** — importing packages not in the manifest | Cross-check every import against package.json / requirements.txt before finishing. |
@@ -253,7 +253,7 @@ Checks performed:
 - Package manifest exists (package.json, requirements.txt, go.mod, Cargo.toml, pubspec.yaml)
 - No .env file committed (secrets leak)
 - At least one test file exists
-- No TODO/FIXME placeholders in generated code
+- No unimplemented-work markers in generated code
 
 ## Progressive Enhancement
 

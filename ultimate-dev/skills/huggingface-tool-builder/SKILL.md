@@ -118,3 +118,5 @@ Commands:
 ```
 
 The `hf` CLI command has replaced the now deprecated `huggingface-cli` command.
+
+Asset details: huggingface-tool-builder/references/ -- see `references/README.md` for what is here and when it loads.

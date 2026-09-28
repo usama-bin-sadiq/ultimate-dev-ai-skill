@@ -8,7 +8,9 @@ description: Creates self-contained PPT template SKILLS (not presentations) from
 **This skill creates SKILLS, not presentations.** Use this when a user wants to turn their PowerPoint template into a reusable skill that can generate presentations later. If the user just wants to create a presentation, use the `pptx` skill instead.
 
 The generated skill includes:
-- `assets/template.pptx` - the template file
+- the template file. Output directory: `assets/template.pptx`, written by step 4
+  below from the user's own .pptx or .potx — nothing is shipped here, so the path
+  is absent until that step runs
 - `SKILL.md` - complete instructions (no reference to this meta skill needed)
 
 **For general skill-building best practices**, refer to the `skill-creator` skill. This skill focuses on PPT-specific patterns.
@@ -18,7 +20,7 @@ The generated skill includes:
 1. **User provides template** (.pptx or .potx)
 2. **Analyze template** - extract layouts, placeholders, dimensions
 3. **Initialize skill** - use the `skill-creator` skill to set up the skill structure
-4. **Add template** - copy .pptx to `assets/template.pptx`
+4. **Add template** — copy the user's own .pptx or .potx in. Output directory: the file is written to `assets/template.pptx`, which is why the path does not exist until this step runs.
 5. **Write SKILL.md** - follow template below with PPT-specific details
 6. **Create example** - generate sample presentation to validate
 7. **Package** - use the `skill-creator` skill to package into a .skill file

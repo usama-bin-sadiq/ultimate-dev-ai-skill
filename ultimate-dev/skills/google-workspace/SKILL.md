@@ -1,6 +1,6 @@
 ---
 name: google-workspace
-description: "Google Workspace CLI operations: setup diagnostics, security audit, recipe discovery, and output analysis. Usage: /google-workspace <setup|audit|recipe|analyze> [options]"
+description: "Google Workspace CLI operations: setup diagnostics, security audit, recipe discovery, and output analysis. Usage: /google-workspace [setup|audit|recipe|analyze] [options]"
 argument-hint: "<setup|audit|recipe|analyze> [options]"
 ---
 

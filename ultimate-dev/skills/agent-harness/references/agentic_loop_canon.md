@@ -35,9 +35,10 @@ these sources.
    assume conversational carryover between iterations.
 5. **Geoffrey Huntley, "Ralph Wiggum as a 'software engineer'", Jul 2025** —
    https://ghuntley.com/ralph/ (now an official Claude Code plugin). A `while true` loop
-   feeding the same prompt to a fresh-context agent, with the filesystem + TODO file + git as
-   memory. Load-bearing insight: **fresh context each iteration is the point** — quality
-   degrades as the window fills, so restart against durable state instead of continuing.
+   feeding the same prompt to a fresh-context agent, with the filesystem + a work-list
+   file + git as memory. Load-bearing insight: **fresh context each iteration is the
+   point** — quality degrades as the window fills, so restart against durable state
+   instead of continuing.
    Community practice adds iteration caps and completion criteria. Rule inherited:
    `max_loop_iterations` is mandatory and enforced by the controller, not the agent.
 6. **Walden Yan (Cognition), "Don't Build Multi-Agents", Jun 2025** —

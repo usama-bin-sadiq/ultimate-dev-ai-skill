@@ -383,7 +383,7 @@ This is one of the strongest leading indicators in the business: 5 unaffiliated 
 ### The plan
 
 **Move 1 — Launch the ambassador program with the 5 inbound.**
-Tier 1 of the program. Per-ambassador landing pages (e.g., `quietude.app/with/sarah`). Dub.co tracks attribution. Commission structure to determine (per kickoff, $/sub or rev-share TBD). Soft-launch with the 5 — treat as pilot cohort, gather feedback, refine before opening applications.
+Tier 1 of the program. Per-ambassador landing pages (e.g., `quietude.app/with/sarah`). Dub.co tracks attribution. Commission structure to determine (per kickoff, $/sub or rev-share not yet decided). Soft-launch with the 5 — treat as pilot cohort, gather feedback, refine before opening applications.
 
 **Move 2 — Build the share-after-shift moment.**
 The Mira post-session reflection (see Retention) is the natural moment to surface a share prompt. After a user reports a felt shift, offer: *"Want to share Quietude with someone who needs this?"* Single-line, never pushy. Most powerful WOM mechanism: gift-a-month flow where the recipient gets a discounted or free intro.
@@ -932,7 +932,7 @@ If a single metric is preferred for team-level focus, fall back to: **monthly ne
 | B2B sales | Alex | Alex | Casey (case studies) | Team |
 | Pricing | Alex | Alex | Casey | Sam |
 | Investor narrative | Alex | Alex | Casey, Sam | Team |
-| Quietude Guides program (Q3+) | TBD (likely future hire) | Alex + Sam | Casey | Team |
+| Quietude Guides program (Q3+) | Unassigned (likely a future hire) | Alex + Sam | Casey | Team |
 | Future marketing hire (Q3) | Casey | Alex | Sam | Team |
 
 ### Open decisions blocking the plan

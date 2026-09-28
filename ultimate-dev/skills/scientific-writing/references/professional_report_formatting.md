@@ -23,8 +23,14 @@ For an institutional report or thesis, use the institution's controlled template
 
 ## Fail-closed placeholder policy
 
-Permitted draft markers are intentionally conspicuous, such as `[[TODO:...]]`. The
-language linter treats them as errors. Never replace an unresolved marker with generic
+Permitted draft markers are intentionally conspicuous: two square brackets, the
+capitalised work marker, a colon, and the outstanding instruction, for example
+
+```text
+[[TODO: ...]]
+```
+
+The language linter treats them as errors. Never replace an unresolved marker with generic
 boilerplate, a guessed number, a fabricated statement, or an invented citation.
 
 Keep:

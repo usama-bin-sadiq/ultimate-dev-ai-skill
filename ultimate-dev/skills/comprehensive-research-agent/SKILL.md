@@ -88,3 +88,5 @@ Complex research tasks with multiple tools (6+) and multi-step reasoning chains 
 **Best Score Achieved**: 72/100 (iteration 4)
 **Final Score**: 70.0/100
 **Score Improvement**: 67.6 → 70.0 (+3.6%)
+
+Asset details: comprehensive-research-agent/references/ -- see `references/README.md` for what is here and when it loads.

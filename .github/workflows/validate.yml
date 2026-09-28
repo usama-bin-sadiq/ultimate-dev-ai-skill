@@ -561,6 +561,48 @@ jobs:
           case("non-role file sitting in agents/", VALIDATE, ["--strict"],
                lambda s: (s / S / "agents" / "NOT-A-ROLE.md").write_text("# doc\n"))
 
+          # Fenced code and the reference-existence check, both directions.
+          #
+          # The second case exists because this exact bug shipped once. The
+          # helper was defined inside one function and called from another, so
+          # every skill raised NameError, the exception propagated, and the
+          # corpus validated as clean -- the error count went to zero and that
+          # read as success. Only a deliberately broken tree revealed it.
+          def add_missing_prose_ref(s):
+              p = s / S / "skills" / "bro" / "SKILL.md"
+              p.write_text(p.read_text() + "\nSee `references/nope-xyz.md`.\n")
+
+          case("missing reference in prose", VALIDATE, ["--strict"],
+               add_missing_prose_ref)
+
+          def add_missing_fenced_ref(s):
+              p = s / S / "skills" / "bro" / "SKILL.md"
+              p.write_text(p.read_text() + "\n```\nSee `references/fenced.md`.\n```\n")
+
+          with tempfile.TemporaryDirectory() as tmp:
+              clean = Path(tmp) / "fencedref"
+              shutil.copytree(ROOT, clean, symlinks=True,
+                              ignore=shutil.ignore_patterns(".git", "__pycache__",
+                                                           "dist", "runs", ".eval-fixtures"))
+              add_missing_fenced_ref(clean)
+              proc = subprocess.run(
+                  [sys.executable, str(clean / VALIDATE), "--strict"],
+                  capture_output=True, text=True, cwd=clean)
+              if "fenced.md" in proc.stdout + proc.stderr:
+                  failures.append("fenced reference: reported, but a fence is a sample")
+              else:
+                  print("  caught  fenced reference correctly ignored")
+              shutil.rmtree(clean, ignore_errors=True)
+
+          # A validator that raises is not a validator that failed; it is one
+          # that stopped, and the count it prints when it stops can look like
+          # the best result in the run. Any traceback is a hard failure here,
+          # whatever the exit code says.
+          proc = run(VALIDATE, "--strict")
+          if "Traceback" in proc.stderr or "NameError" in proc.stderr:
+              failures.append("validate-skills.py raised; a stopped check "
+                              "reports zero errors and reads as success")
+
           case("unindexed tree", VALIDATE, ["--strict"],
                lambda s: (s / S / "research" / "README.md").unlink())
           case("empty eval set", VALIDATE, ["--strict"],

@@ -225,6 +225,11 @@ cp "$SOURCE" "$RUN_DIR/$OUTPUT_REL"
 
 ```bash
 if [ "$JOB_ID" = "base" ]; then mkdir -p "$RUN_DIR/references"; cp "$RUN_DIR/$OUTPUT_REL" "$RUN_DIR/references/canonical-base.png"; fi
+
+The PNG is **output, not input**: the block above writes it, so it does not
+exist until a run has produced it. Nothing needs to be supplied, and no
+reference sprite ships with the skill — the base frame is whatever the render
+produced. The step that creates it is listed under **Base frame** below.
 ```
 
 ```bash
@@ -388,7 +393,9 @@ Parent responsibilities:
 - prepare the run and inspect `imagegen-jobs.json`
 - assign the base job, row jobs, and final contact-sheet QA to lightweight workers
 - copy selected worker outputs into their decoded paths and mark jobs complete in `imagegen-jobs.json`
-- create `references/canonical-base.png` from the selected base output
+- create the base frame, written to `references/canonical-base.png`, from the
+  selected base output — this is the output directory, and the file is absent
+  until the step above has run
 - run the approved `running-left` mirror derivation when appropriate
 - run deterministic image processing, packaging, repair regeneration, and cleanup
 

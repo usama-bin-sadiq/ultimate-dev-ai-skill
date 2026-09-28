@@ -161,7 +161,7 @@ lists cuFFT. However:
 
 - FluidFFT 0.4.5 `pyproject.toml` declares no CUDA dependency/extra or cuFFT
   plugin entry point.
-- The current supported-library page's CUDA section is an unfinished TODO.
+- The current supported-library page's CUDA section is itself an unfinished to-do note.
 - FluidSim 0.9.0 declares no GPU extra.
 
 Therefore there is no supported one-line GPU installation in this skill. Do not

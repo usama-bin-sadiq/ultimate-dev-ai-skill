@@ -1,6 +1,6 @@
 ---
 name: sprint-plan
-description: "Capacity-gated sprint planning — runs capacity math, carry-over check, and a definition-of-ready gate before committing scope. Usage: /sprint-plan <goal> [capacity]"
+description: "Capacity-gated sprint planning — runs capacity math, carry-over check, and a definition-of-ready gate before committing scope. Usage: /sprint-plan [goal] [capacity]"
 argument-hint: <goal> [capacity-in-points-or-person-days]
 ---
 

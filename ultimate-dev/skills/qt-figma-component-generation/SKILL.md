@@ -217,7 +217,7 @@ contentItem: RowLayout {
 
 ### Sizing — tokens first, literals as fallback
 
-Check `Spacing.qml` and `FontInterface.qml` first. Only use a literal value when no token covers the dimension, and add a `// TODO: add to Spacing.qml` comment.
+Check `Spacing.qml` and `FontInterface.qml` first. Only use a literal value when no token covers the dimension, and add a comment naming the token that belongs in `Spacing.qml` — the commented QML example below shows the exact shape.
 
 ### Focus ring pattern
 
@@ -305,7 +305,7 @@ readonly property color _bg: ...
 readonly property int _iconGap: _isSmall ? 0 : Spacing.x4
 ```
 
-After generating all components, summarise the full TODO list for the user.
+After generating all components, summarise the full list of tokens you flagged for the user.
 
 ---
 
@@ -323,7 +323,7 @@ After all components are written, run a consistency pass:
 Present a brief summary to the user:
 - Components generated (count and names)
 - Components skipped or blocked (with reason)
-- Full TODO list: tokens that need to be added to the design-system singletons
+- Deferred-token list: tokens that need to be added to the design-system singletons
 - Recommended next step: add components to `qt_add_qml_module QML_FILES` in CMakeLists.txt and smoke-test in a gallery
 
 ---
@@ -345,3 +345,5 @@ Present a brief summary to the user:
 **Popup z-ordering.** `Popup` items need `parent: Overlay.overlay` if clipped by a parent container.
 
 **Mixing Pattern A strings and Pattern B enums.** Choose one variant approach and use it consistently across all components.
+
+Asset details: qt-figma-component-generation/references/ -- see `references/README.md` for what is here and when it loads.

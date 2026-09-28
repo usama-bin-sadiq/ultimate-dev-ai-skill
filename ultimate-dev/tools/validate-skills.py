@@ -55,7 +55,7 @@ import argparse
 import json
 import re
 import sys
-from pathlib import Path
+from pathlib import Path, PurePath
 from typing import Any
 
 SKILL_ROOT = Path(__file__).resolve().parent.parent
@@ -103,6 +103,77 @@ REFERENCED_DIRS = ("scripts", "references", "assets", "agents", "evals", "eval-v
 REF_PATTERN = re.compile(
     r"`((?:" + "|".join(REFERENCED_DIRS) + r")/[A-Za-z0-9_./-]+)`"
 )
+
+
+def _load_text_rules():
+    """Import tools/text_rules.py by path, since CI runs this file as a script.
+
+    The two validators must agree about what a line declares. They used to carry
+    separate copies of the emphasis-stripping helper and the output-declaration
+    pattern, and separate copies is how the marker rule came to have two
+    disagreeing implementations. One implementation, imported, is the structural
+    version of that guarantee.
+    """
+    import importlib.util as _ilu
+    import sys as _sys
+
+    # Importing writes a .pyc next to the source, and this validator fails the
+    # build for a committed build artefact -- so its own import of its own helper
+    # made it fail. The first version of this loader triggered exactly that.
+    previous, _sys.dont_write_bytecode = _sys.dont_write_bytecode, True
+    try:
+        spec = _ilu.spec_from_file_location(
+            "_text_rules", Path(__file__).resolve().parent / "text_rules.py"
+        )
+        module = _ilu.module_from_spec(spec)
+        spec.loader.exec_module(module)
+    finally:
+        _sys.dont_write_bytecode = previous
+    return module
+
+
+_TEXT = _load_text_rules()
+OUTPUT_DECLARATION = _TEXT.OUTPUT_DECLARATION
+without_emphasis = _TEXT.without_emphasis
+
+
+def in_fenced_code(md_path: Path, upto_line: int) -> bool:
+    """Is line `upto_line` (1-based) inside a fenced code block?
+
+    A fence closes on a run of the same character at least as long as the one
+    that opened it, carrying no info string. Treating any fence marker as a
+    closer gets a document with a ```bash block inside a ```markdown block
+    wrong, and gets it wrong silently, in whichever direction flips content into
+    prose.
+
+    Module level, not nested. It was defined inside validate_repository() and
+    called from validate_skill(), which is a NameError at call time -- and
+    because validate_skill() has no try/except around that call, the exception
+    propagated and every skill in the corpus validated as clean. The error count
+    went to zero and that looked like success.
+
+    It is worth recording what that looked like from the outside: a green
+    validator, a plausible commit, and a corpus that had stopped being checked.
+    The only reason it was caught is that a planted reference
+    (`references/nope-xyz.md`) was not reported -- the same way the three
+    earlier bugs were caught, by a test that deliberately broke something.
+    """
+    fence_char = ""
+    fence_len = 0
+    try:
+        text = md_path.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return False
+    for line in text.split("\n")[:upto_line]:
+        m = re.match(r"^(\s*)(`{3,}|~{3,})(.*)$", line)
+        if not m:
+            continue
+        token, info = m.group(2), m.group(3).strip()
+        if not fence_char:
+            fence_char, fence_len = token[0], len(token)
+        elif token[0] == fence_char and len(token) >= fence_len and not info:
+            fence_char, fence_len = "", 0
+    return bool(fence_char)
 
 KEBAB_CASE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 YAML_KEY = re.compile(r"^([A-Za-z0-9_.-]+)\s*:(.*)$")
@@ -552,23 +623,109 @@ def validate_skill(skill_dir: Path, repo_root: Path) -> dict[str, Any]:
         )
 
     # referenced paths
-    for ref in sorted(set(REF_PATTERN.findall(content))):
-        if not (skill_dir / ref).exists():
+    #
+    # Fenced code is skipped, because a fenced block is a sample rather than a
+    # claim. hatch-pet contains a shell snippet that writes
+    # `$RUN_DIR/references/canonical-base.png` -- a path that only exists after a
+    # run, inside a directory the snippet itself creates -- so it can never be
+    # present in the repository, and reporting it sent the reader looking for a
+    # file that was never supposed to ship.
+    #
+    # Only the fence. An earlier attempt also exempted any path named in a
+    # paragraph containing "create" or "write", to catch the same file named
+    # again in prose. It took the count to zero and it was wrong: "create" and
+    # "write" occur in nearly every paragraph of a skill, so the set covered
+    # almost every reference in the document and a genuinely missing file in
+    # running prose passed unnoticed. Verified by planting
+    # `references/nope-xyz.md`, which the loose version did not report.
+    #
+    # A prose declaration DOES exempt the path -- but only on the same line as
+    # the path, tested with the bundler's rule rather than a set of verbs. A
+    # path the document says it creates is not a path it expects to find:
+    # hatch-pet writes its own base frame, ppt-template-creator copies the
+    # user's .pptx in, and both are absent from the repository by design.
+    #
+    # Same line, not paragraph, because Markdown hard-wraps a sentence and
+    # paragraph scope was rejected in the bundler for exempting 35 real links.
+    # Same reason the three sentences in those skills read the way they do.
+    for line_no, line in enumerate(content.split("\n"), 1):
+        if in_fenced_code(skill_md, line_no):
+            continue
+        produces = bool(OUTPUT_DECLARATION.search(without_emphasis(line)))
+        for ref in sorted(set(REF_PATTERN.findall(line))):
+            if produces:
+                continue
+            if (skill_dir / ref).exists():
+                continue
             errors.append(f"{skill_md}: references {ref}, which does not exist")
 
     # orphaned reference files
+    #
+    # `declared` must be filtered to references/ specifically. REF_PATTERN spans
+    # every directory a SKILL.md may point at -- scripts, assets, agents, evals --
+    # because the "references a path which does not exist" check needs all of
+    # them. Using that same set here meant a skill declaring `scripts/x.py` and
+    # shipping no references/ was reported as "declares reference files but has
+    # no references/ directory", which is not a defect: a skill with scripts and
+    # no references is a skill whose instructions fit in SKILL.md. That was 33
+    # findings, every one of them a correct tree.
+    #
+    # The filter is on the directory component rather than a substring test,
+    # because "references" is a prefix of nothing else here but the failure mode
+    # of a loose test is a silent regression the next time a directory is added.
     refs_dir = skill_dir / "references"
-    declared = set(REF_PATTERN.findall(content))
+    # From the *unfenced* text only, for the same reason the existence check
+    # above skips fences: a path that appears only inside a code block is not a
+    # declaration that the skill ships a references/ directory, and treating it
+    # as one reported a fenced example as a missing directory. The filter to
+    # references/ is on the directory component rather than a substring test,
+    # because the failure mode of a loose test is a silent regression the next
+    # time a directory is added.
+    declared_refs = set()
+    for line_no, line in enumerate(content.split("\n"), 1):
+        if in_fenced_code(skill_md, line_no):
+            continue
+        # A path the line declares as output is not a claim that the skill ships
+        # a references/ directory. hatch-pet writes its base frame to
+        # `references/canonical-base.png`; the directory does not exist because
+        # the run creates it, and demanding a references/ tree for it sent the
+        # reader looking for prose that is not there.
+        if OUTPUT_DECLARATION.search(without_emphasis(line)):
+            continue
+        declared_refs.update(
+            ref for ref in REF_PATTERN.findall(line) if ref.startswith("references/")
+        )
     if refs_dir.is_dir():
-        present = {f"references/{p.name}" for p in sorted(refs_dir.glob("*.md"))}
-        for orphan in sorted(present - declared):
+        # Recursive, because a reference tree can be organised into
+        # subdirectories. cloudflare-deploy/references holds 307 markdown files
+        # under secrets-store/, workers-for-platforms/, wrangler/ and more, and
+        # a top-level glob found none of them, so a skill with a large and
+        # well-organised reference tree was reported as having an empty one.
+        # rglob finds them; the orphan warning keys on the path relative to the
+        # skill so a nested file is named the way SKILL.md must refer to it.
+        present = {
+            f"references/{p.relative_to(refs_dir).as_posix()}"
+            for p in sorted(refs_dir.rglob("*.md"))
+        }
+        for orphan in sorted(present - declared_refs):
             warnings.append(
                 f"{skill_md}: {orphan} exists but is not reachable from SKILL.md"
             )
         if not present:
-            errors.append(f"{refs_dir}: contains no reference files")
-    elif declared:
-        errors.append(f"{skill_md}: declares reference files but has no references/ directory")
+            # A references/ holding only non-markdown assets is a real shape --
+            # show-me-your-work ships a .tsv template -- so this reports the
+            # directory as empty of documentation rather than as wrong.
+            non_md = sorted(p.name for p in refs_dir.rglob("*") if p.is_file())
+            errors.append(
+                f"{refs_dir}: contains no reference files"
+                + (f" (holds only: {', '.join(non_md[:4])})" if non_md else "")
+            )
+    elif declared_refs:
+        missing = sorted(declared_refs)
+        errors.append(
+            f"{skill_md}: declares reference files but has no references/ "
+            f"directory: {', '.join(missing)}"
+        )
 
     # size guidance
     line_count = len(content.splitlines())
@@ -637,6 +794,81 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
             elif path.is_file() and (path.suffix == ".pyc" or path.name == ".DS_Store"):
                 errors.append(f"{rel}: build artefact present; add it to .gitignore")
 
+    # A document that DEFINES the rule is exempt from the rule.
+    #
+    # Not a word list. The previous exemption list grew one word at a time --
+    # "never", "no TODO in production", "grep", "pattern" -- and still missed
+    # ADR 0011, which is a decision record *about* the marker rule and therefore
+    # necessarily contains every marker the rule looks for. Adding words to that
+    # list is the whack-a-mole pattern this repository has been auditing out of
+    # its own validators.
+    #
+    # The structural test: a document that states the rule's own definition --
+    # that these words are markers -- is describing the rule, not violating it.
+    # Detected by the same vocabulary the rule itself is written in, so adding a
+    # marker to PLACEHOLDER_PATTERN also makes this test cover it.
+    MARKDOC = re.compile(
+        r"(?i)(marker|placeholder)\s+(?:syntax|vocabulary|word|list|rule|form|token)s?"
+        r"|(?:is|are)\s+(?:a|an|the)\s+(?:work\s+)?marker"
+        r"|\bthe rule\b.{0,40}\b(?:marker|placeholder)\b"
+    )
+
+    def _is_about_the_rule(text: str) -> bool:
+        return bool(MARKDOC.search(text[:2000]))
+
+    def _consumed_by_script(root: Path) -> set[str]:
+        """Stems of .md assets a Python script in this repository OPENS.
+
+        Computed once for the whole run, because the first version did this per
+        markdown file: 5,500 markdown files times a scan of every script turned a
+        40-second validation into one that did not finish in fifteen minutes.
+
+        Being *named* in a script is not enough, and an earlier version got that
+        wrong: `triage.md` appears in audit-docs.py's list of documents to audit,
+        which made the kernel's own triage document exempt from the marker check.
+        A reference to a file and a read of its contents are different things, and
+        only the second means the file's text becomes output somewhere.
+
+        Detection has two parts, because the read can be written two ways:
+
+          1. a `.md` literal with a read nearby -- `read_text(HERE / "x.md")`
+          2. a name that appears in a dict literal inside a script, where the
+             dict's values are the files copied. scaffold_manuscript.py declares
+             `{"manuscript.md": "manuscript_scaffold.md", ...}` -- a rename map
+             from destination to source asset. That shape is unambiguous: a dict
+             whose values are all filenames is a manifest of files, not a
+             coincidence of vocabulary.
+
+        Neither part is a hard-coded list, so the exemption disappears when a
+        script stops reading the asset.
+        """
+        stems: set[str] = set()
+        for script in root.rglob("*.py"):
+            if "__pycache__" in script.parts:
+                continue
+            try:
+                src = script.read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                continue
+            for m in re.finditer(r"([A-Za-z0-9._-]+)\.md\b", src):
+                tail = src[m.end() : m.end() + 220]
+                if re.search(r"read_text|read_bytes|\bopen\s*\(", tail):
+                    stems.add(PurePath(m.group(1)).stem)
+            # A dict literal whose every value is a filename: a file manifest.
+            for block in re.finditer(r"\{([^{}]*?)\}", src, re.S):
+                body = block.group(1)
+                values = re.findall(r'"([^"\n]+\.[a-z0-9]{2,4})"', body)
+                if len(values) >= 2 and all(
+                    re.fullmatch(r"[\w./-]+\.[a-z0-9]{2,4}", v) for v in values
+                ):
+                    for v in values:
+                        if v.endswith(".md"):
+                            stems.add(PurePath(v).stem)
+        return stems
+
+    def _is_consumed_verbatim(root: Path, md: Path) -> bool:
+        return md.stem in consumed_stems
+
     # Unfilled placeholders in maintained documentation.
     #
     # Fenced code is exempt, and that is the single largest correction this check
@@ -670,31 +902,7 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
     # reimplement CommonMark's closing rule here, the fence state is computed by
     # the same helper -- imported, not copied -- and the reasoning lives in one
     # place.
-    #
-    # A fence closes on a run of the same character at least as long as the one
-    # that opened it, carrying no info string. Treating any fence marker as a
-    # closer gets documents with a ```bash inside a ```markdown block wrong, and
-    # gets them wrong silently, in whichever direction flips them into prose.
-    fence_chars = {"`": "`", "~": "~"}
-
-    def in_fenced_code(md_path: Path, upto_line: int) -> bool:
-        """Is line `upto_line` (1-based) inside a fenced block?"""
-        fence_char = ""
-        fence_len = 0
-        try:
-            text = md_path.read_text(encoding="utf-8", errors="replace")
-        except OSError:
-            return False
-        for line in text.split("\n")[:upto_line]:
-            m = re.match(r"^(\s*)(`{3,}|~{3,})(.*)$", line)
-            if not m:
-                continue
-            token, info = m.group(2), m.group(3).strip()
-            if not fence_char:
-                fence_char, fence_len = token[0], len(token)
-            elif token[0] == fence_char and len(token) >= fence_len and not info:
-                fence_char, fence_len = "", 0
-        return bool(fence_char)
+    consumed_stems = _consumed_by_script(repo_root)
     for path in sorted(repo_root.rglob("*.md")):
         rel = path.relative_to(repo_root)
         # .eval-fixtures/ is generated input data, not maintained documentation.
@@ -704,12 +912,27 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
         if rel.name in SOURCE_SPECS or rel.parts[0] in {".git", "vendor"} or \
                 ".eval-fixtures" in rel.parts or "runs" in rel.parts:
             continue
-        for lineno, line in enumerate(
-            path.read_text(encoding="utf-8", errors="replace").splitlines(), 1
-        ):
+        full_text = path.read_text(encoding="utf-8", errors="replace")
+        # An ASSET consumed verbatim by a script, not a document a person reads.
+        #
+        # scientific-writing/assets/manuscript_scaffold.md is copied
+        # byte-for-byte into the reader's workspace by scaffold_manuscript.py and
+        # is then checked by lint_manuscript.py, whose PLACEHOLDER_PATTERNS
+        # match `[[TODO` specifically. So the 13 findings are a contract working
+        # as designed: rename the token and the linter stops catching the draft,
+        # and add a fence -- the exemption every other document uses -- and the
+        # fence lands in every generated manuscript.
+        #
+        # The exemption is by ROLE, not by filename, and a file has to be
+        # consumed by a script to qualify. A document nobody copies has no such
+        # excuse: `// TODO: wire the retry` in a SKILL.md is unfinished work.
+        about_the_rule = (
+            _is_about_the_rule(full_text) or path.stem in consumed_stems
+        )
+        for lineno, line in enumerate(full_text.splitlines(), 1):
             if not looks_unfilled(line):
                 continue
-            if prohibition.search(line):
+            if about_the_rule or prohibition.search(line):
                 continue
             if in_fenced_code(path, lineno):
                 continue

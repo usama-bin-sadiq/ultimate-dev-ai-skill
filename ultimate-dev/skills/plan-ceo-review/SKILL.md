@@ -693,7 +693,7 @@ Note current Step 0A progress so you don't re-ask questions already answered.
 After completion, re-run the design doc check and resume the review.
 
 Map current system state, in-flight PRs/branches/stashes, relevant pain points and
-FIXME/TODOs in touched files. From TODOS.md, record related prior deferrals and
+work-marker comments in touched files. From TODOS.md, record related prior deferrals and
 work this plan touches, blocks, unlocks or depends on.
 
 ### Retrospective Check
@@ -832,7 +832,7 @@ Resolve a choice only when output would be wrong without it, a blocker would be
 hidden, or scope would change. Reuse prior answers only for the same scope.
 
 Plain terms:
-- **Required choice:** a mode, scope, deferral, TODO, spec, outside-review or
+- **Required choice:** a mode, scope, deferral, work item, spec, outside-review or
   finding decision needed before the next step.
 - **Pending:** recorded in the ledger and waiting for approval.
 - **Settled:** answered by the user, directly instructed, or auto-authorized by
@@ -1101,7 +1101,7 @@ the retained work and accepted additions; list deferred or rejected work as excl
 Save dispositions under the storage policy:
 - **Add / Keep:** accepted working-plan scope.
 - **Defer:** TODOS.md with context and NOT in scope with the deferral reason. This postpones work; it does not reject it.
-- **Skip / Cut:** NOT in scope with the rejection reason; no TODO.
+- **Skip / Cut:** NOT in scope with the rejection reason; no work item is recorded.
 
 Reuse answered scope decisions without another question or comparison. Inclusion
 does not settle pending implementation choices; keep those rows visible.

@@ -1,6 +1,6 @@
 ---
 name: zero-hallucination-coder
-description: "Runs a disciplined Discuss -> Map -> Decompose -> Execute -> Verify loop that grounds code in verified structure — no invented APIs, no assumed imports, no placeholder code — with a lazy-senior-dev YAGNI ladder that deletes unnecessary code before it is written. Use when a coding task is high-stakes, complex, or spans existing code (auth, databases, migrations, multi-file features), or when the user explicitly asks to plan carefully before coding, avoid hallucinated code, or work rigorously. Not for trivial edits, typos, or throwaway one-off scripts — those do not need the full loop."
+description: "Runs a disciplined Discuss → Map → Decompose → Execute → Verify loop that grounds code in verified structure — no invented APIs, no assumed imports, no placeholder code — with a lazy-senior-dev YAGNI ladder that deletes unnecessary code before it is written. Use when a coding task is high-stakes, complex, or spans existing code (auth, databases, migrations, multi-file features), or when the user explicitly asks to plan carefully before coding, avoid hallucinated code, or work rigorously. Not for trivial edits, typos, or throwaway one-off scripts — those do not need the full loop."
 ---
 
 # Zero-Hallucination Coder
@@ -167,7 +167,7 @@ Pre-check:
 If any UNKNOWN exists, stop and resolve it before writing code.
 
 **Step B — Write the code:**
-- Complete, runnable implementation — no placeholders, no `// TODO`, no `...rest of implementation`.
+- Complete, runnable implementation — no unimplemented markers, no `...rest of implementation`.
 - Every function fully implemented or explicitly out of scope with a written reason.
 - Imports must be real — never invent package names.
 - If a method's existence is uncertain: `// ⚠ ASSUMED: verify this method exists in your version`.

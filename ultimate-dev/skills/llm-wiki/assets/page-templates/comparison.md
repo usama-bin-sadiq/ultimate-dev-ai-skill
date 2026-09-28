@@ -20,9 +20,9 @@ Common ground. Same problem space? Same goals?
 | Dimension 3 | ... | ... |
 
 ## Which sources take which side
-- [[sources/xxx]] — pro-<A>
-- [[sources/yyy]] — pro-<B>
-- [[sources/zzz]] — neutral / both
+- [[sources/<slug-a>]] — pro-<A>
+- [[sources/<slug-b>]] — pro-<B>
+- [[sources/<slug-c>]] — neutral / both
 
 ## When to prefer <A>
 - Context where A wins
@@ -36,4 +36,4 @@ Common ground. Same problem space? Same goals?
 
 ## Related
 - [[concepts/a]] · [[concepts/b]]
-- [[synthesis/xxx]]
+- [[synthesis/<slug>]]

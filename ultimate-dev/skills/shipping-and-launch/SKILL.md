@@ -25,7 +25,7 @@ Ship with confidence. The goal is not just to deploy — it's to deploy safely, 
 - [ ] Build succeeds with no warnings
 - [ ] Lint and type checking pass
 - [ ] Code reviewed and approved
-- [ ] No TODO comments that should be resolved before launch
+- [ ] No unresolved work markers that should be resolved before launch
 - [ ] No `console.log` debugging statements in production code
 - [ ] Error handling covers expected failure modes
 

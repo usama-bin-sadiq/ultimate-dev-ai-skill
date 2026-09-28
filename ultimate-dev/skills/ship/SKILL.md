@@ -664,7 +664,7 @@ service with existing deployment — verify that a distribution pipeline exists.
    - "This PR adds a new binary/tool but there's no CI/CD pipeline to build and publish it.
      Users won't be able to download the artifact after merge."
    - A) Add a release workflow now (CI/CD release pipeline — GitHub Actions or GitLab CI depending on platform)
-   - B) Defer — add a P1 distribution TODO in Step 14
+   - B) Defer — add a P1 distribution follow-up to the TODOS list in Step 14
    - C) Not needed — this is internal/web-only, existing deployment covers it
 
 4. **If the user chooses A:** Add packaging and publish configuration using this repository's CI conventions. Ask for the intended distribution target if it is unknown; do not invent a registry or credentials. Include the new workflow in the tests and review below. Do not publish a release during `/ship`.
@@ -756,7 +756,7 @@ Persist approved follow-ups, then conservatively mark completed work.
 
 Read `~/.claude/skills/gstack/review/TODOS-format.md` for the canonical format reference (or `review/TODOS-format.md` in a gstack checkout).
 
-**1. Open or create:** Read root `TODOS.md`. An earlier explicit "add TODO" choice authorizes its creation with `# TODOS` and `## Completed`. Otherwise, if missing, ask: "Create a component/priority-organized TODOS.md?" Options: A) Create now, B) Skip. If B, continue to Step 15 with the outcome in the summary below.
+**1. Open or create:** Read root `TODOS.md`. An earlier explicit "add a follow-up" choice authorizes its creation with `# TODOS` and `## Completed`. Otherwise, if missing, ask: "Create a component/priority-organized TODOS.md?" Options: A) Create now, B) Skip. If B, continue to Step 15 with the outcome in the summary below.
 
 **2. Organization:** Expect component headings, `**Priority:**` P0–P4 fields, and `## Completed` at the bottom. If disorganized, ask: A) Reorganize (recommended), B) Leave as-is. A preserves all content; B continues without restructuring.
 
@@ -819,14 +819,14 @@ of inventing FRESH evidence. Build verification still applies.
 The allow-list covers release bookkeeping, including Step 12's package/digest
 version stamps. Behavioral package.json edits still require live tests despite
 the path exemption. Do not add `TODOS.md` or generated tests to the allow-list:
-Step 7 tests, review fixes, and Step 14 TODO edits intentionally make evidence STALE.
+Step 7 tests, review fixes, and Step 14 TODOS edits intentionally make evidence STALE.
 
 - **Every line FRESH (exit 0):** recorded runs passed on identical content except
   the listed release files. Cite label, exit, timestamp, and log path; continue.
 - **Any STALE/MISSING (exit non-zero):** inspect the reason before choosing recovery:
   - **Content, command or age mismatch, or no passing live evidence:** rerun the
     affected lanes on final content, wrapped as `~/.claude/skills/gstack/bin/gstack-evidence run --label <lane> -- '<command>'`.
-    Read results and recheck once. TODO edits and generated tests are content
+    Read results and recheck once. TODOS edits and generated tests are content
     changes, not ledger-only bookkeeping.
   - **Ledger read/write failure only:** if a successful live run already covers
     the unchanged final content, exact command and permitted age, cite its exit,

@@ -46,7 +46,7 @@ Complete reference checklist for service-area businesses. Use alongside the `loc
 ## 2. NAP Consistency — 10 Points
 
 - [ ] Name identical across Google, Yelp, BBB, Apple Maps, Bing
-- [ ] Phone format consistent (prefer: (XXX) XXX-XXXX)
+- [ ] Phone format consistent (prefer one national form: area code in parentheses, then the number with a single dash)
 - [ ] Address abbreviations consistent (St. or Street — pick one, use everywhere)
 - [ ] Website URL consistent (with or without trailing slash, www vs non-www)
 - [ ] Listed on all Tier 1 directories: Google, Apple Maps, Bing Places

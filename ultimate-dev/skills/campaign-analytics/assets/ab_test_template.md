@@ -54,7 +54,7 @@
 | Variant (B) | | | % | % |
 
 **Statistical Significance:** [Yes/No] at [X]% confidence
-**P-value:** [X.XXX]
+**P-value:** [0.000–1.000]
 
 ### Secondary Metrics
 

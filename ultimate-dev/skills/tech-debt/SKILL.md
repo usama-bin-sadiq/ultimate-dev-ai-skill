@@ -1,6 +1,6 @@
 ---
 name: tech-debt
-description: "Scan, prioritize, and report technical debt. Usage: /tech-debt <scan|prioritize|report> [options]"
+description: "Scan, prioritize, and report technical debt. Usage: /tech-debt [scan|prioritize|report] [options]"
 argument-hint: "<scan|prioritize|report> [options]"
 ---
 

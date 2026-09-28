@@ -197,7 +197,7 @@ Technical debt represents deferred investment in our technology platform. Our cu
 
 ### Architecture Decision Record (ADR) Template
 
-**Subject**: ADR-[XXX]: [Decision Title] - Technical Debt Consideration
+**Subject**: ADR-[Number]: [Decision Title] - Technical Debt Consideration
 
 ---
 

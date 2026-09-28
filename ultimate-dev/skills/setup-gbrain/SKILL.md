@@ -972,7 +972,7 @@ Run `/setup-gbrain` again any time gbrain feels off; it's safe and idempotent.
 If any row is YELLOW or RED, the verdict line says so and the failing rows
 surface a one-line "next action" (e.g.,
 `Engine .......... ERR  PGLite corrupt — run \`gbrain restore-from-sync\` (V1.5)`).
-For V1, restore-from-sync is a V1.5 P0 cross-repo TODO; until it ships,
+For V1, restore-from-sync is deferred to V1.5 as a P0 cross-repo work item; until it ships,
 the user's brain remote (with brain-sync enabled) holds curated artifacts
 as markdown + git, recoverable manually via `gbrain import` from a clone.
 

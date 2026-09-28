@@ -11,7 +11,7 @@
 
 - [ ] **1. Collect loose inputs** — papers, receipts, notes, screenshots, downloads → into an inbox
   - Scanner run? `python scripts/open_loop_scanner.py --dir ______ --stale-days 14`
-  - Loops found: checkboxes ____ · TODO/FIXME ____ · stale files ____
+  - Loops found: checkboxes ____ · work markers ____ · stale files ____
 - [ ] **2. Process inboxes to zero** — clarify, don't do (two-minute rule is the only exception)
   - Inboxes processed: ☐ email ☐ task inbox ☐ notes app ☐ desk/physical ☐ other: ______
 - [ ] **3. Empty your head** — mind sweep; capture every commitment still riding in memory

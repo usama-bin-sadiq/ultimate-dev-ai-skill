@@ -1,6 +1,6 @@
 ---
 name: tc
-description: "Track technical changes with structured records, a state machine, and session handoff. Usage: /tc <init|create|update|status|resume|close|export|dashboard> [args]"
+description: "Track technical changes with structured records, a state machine, and session handoff. Usage: /tc [init|create|update|status|resume|close|export|dashboard] [args]"
 ---
 
 # /tc — Technical Change Tracker

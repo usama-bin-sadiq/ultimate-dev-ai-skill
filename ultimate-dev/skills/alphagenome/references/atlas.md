@@ -180,7 +180,7 @@ From the report's Data Availability section and the AlphaGenome terms:
 | Splicing scores | non-commercial | static download (Tabix) and API |
 | All other raw Atlas track scores | non-commercial | **API only** |
 | Motif compendium and instances | browse on the portal; bulk download promised | portal |
-| Commercial API access | "coming soon" via Google Cloud Model Garden | - |
+| Commercial API access | not offered yet; Google Cloud Model Garden named as the promised route | - |
 
 Model and Atlas outputs are for research and theoretical modelling, may not be
 used to train other machine-learning models, and are not for diagnostic

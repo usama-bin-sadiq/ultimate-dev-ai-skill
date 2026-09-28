@@ -267,7 +267,7 @@ Open PDF at 100% zoom and check:
 - [ ] References included
 - [ ] Contact information visible
 - [ ] Acknowledgments (if applicable)
-- [ ] No placeholder text remaining (Lorem ipsum, TODO, etc.)
+- [ ] No placeholder text remaining (Latin filler copy, work markers, etc.)
 
 **Technical Quality**:
 - [ ] No LaTeX compilation warnings in important areas

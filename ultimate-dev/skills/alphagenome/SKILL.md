@@ -235,8 +235,8 @@ diploid dosage, developmental time, species other than human and mouse.
 - Access tiers (Atlas report): AVI scores are also a **permissively licensed**
   Tabix download at https://alphagenome.google/downloads; feature attributions
   and splicing scores are non-commercial downloads; all other raw track scores
-  are API-only and non-commercial. Commercial API access is "coming soon" via
-  Google Cloud Model Garden.
+  are API-only and non-commercial. Commercial API access is not offered yet; the
+  Atlas report names Google Cloud Model Garden as the promised route.
 - The `alphagenome` client is Apache-2.0; model weights and outputs carry
   DeepMind's terms. Cite Avsec et al., *Nature* 649:1206 (2026) and the Atlas
   report (Cheng, Taylor, Nicolaisen, Pan, Bycroft, Perino, Ward et al., 2026).
