@@ -23,7 +23,6 @@ This map is the routing table for the `cs-backend-engineer` agent and the `/cs:b
 | Chaos engineering / failure-injection experiments | **chaos-engineering** | After SLO is in place + stable | `../../chaos-engineering` |
 | Pre-commit Karpathy review | **cs-karpathy-reviewer** | Before EVERY commit | `../../karpathy-coder` |
 | Pre-flight architecture grill | **cs-grill-master** | Before locking pattern or DB choice | `../../grill-me` |
-| RA/QM compliance evidence (HIPAA, ISO 27001, SOC2) | **ra-qm-team** | After Q4 reveals regulated data | `../../../ra-qm-team/` |
 
 ## Composition rules
 

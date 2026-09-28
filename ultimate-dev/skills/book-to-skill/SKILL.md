@@ -225,5 +225,4 @@ Walk these one at a time, with a recommended answer, before running a conversion
 
 ---
 
-*Adapted from [virgiliojr94/book-to-skill](https://github.com/virgiliojr94/book-to-skill) (MIT).
-See `../../README.md` for the full list of deviations.*
+*Adapted from [virgiliojr94/book-to-skill](https://github.com/virgiliojr94/book-to-skill) (MIT).*

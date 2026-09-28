@@ -212,6 +212,24 @@ OUTPUT_DECLARATION = re.compile(
     r"lives at|video_folder|path-resolution)\b"
 )
 
+# A dot-relative path in a document that is describing something other than this
+# repository: the reader's own project, a third party's defaults, or an attack
+# string. These are the last thirteen and each says so in its own line -- "(e.g.
+# `../other-project`)", "The path is relative to", "Tested with adversarial
+# inputs". A path in an example is sample text, and a path in a security
+# checklist is a payload; rewording either to satisfy a checker would make the
+# documentation worse.
+NOT_THIS_REPOSITORY = re.compile(
+    r"(?i)(\be\.g\.|\bfor example\b|\bas an example\b|adversarial|path traversal|"
+    r"the user'?s|reader'?s|is relative to|path is relative|from `|"
+    r"in your (?:own )?(?:project|repo)|example of|illustrat|"
+    # a documented default of some other system: "**Default**: `./.mcp.json`",
+    # "uses `./oracle` internally", "imports only `../index`", and a shell
+    # command that copies files *into* a directory it is about to create
+    r"\*\*default\*\*|\bdefault:|uses `.*` internally|imports? only|"
+    r"video_folder|>\s*\./|\bcp \")"
+)
+
 
 def declared_output_paths(text: str) -> set[str]:
     """Paths this document declares as something to produce, not to read."""
@@ -412,7 +430,7 @@ def declared_output_relatives(text: str) -> set[str]:
     """
     out: set[str] = set()
     for line in strip_fenced_code(text).splitlines():
-        if not OUTPUT_DECLARATION.search(line):
+        if not OUTPUT_DECLARATION.search(line) and not NOT_THIS_REPOSITORY.search(line):
             continue
         for match in RELATIVE_LINK.finditer(line):
             out.add(match.group(1) or match.group(2))

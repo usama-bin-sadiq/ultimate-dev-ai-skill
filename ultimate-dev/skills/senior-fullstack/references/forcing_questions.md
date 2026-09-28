@@ -97,4 +97,4 @@ These seven questions are the Matt Pocock grill that gates every meaningful full
 3. **Recommend the answer.** Always cite the canon source for *why* this is the right shape.
 4. **Surface the kill criterion.** If the user's answer trips it, stop and surface that gap. Do not proceed.
 5. **Track the answers.** Write them to a working file (e.g., `/tmp/fullstack-grill-<date>.md`) so the conversation can resume.
-6. **After Q7, recommend the profile.** Match the seven answers against the profile JSON files in `../profiles/` and pick the closest fit. Surface ≥ 2 close matches with the tradeoff between them.
+6. **After Q7, recommend the profile.** Match the seven answers against the profile JSON files and pick the closest fit. Surface ≥ 2 close matches with the tradeoff between them.

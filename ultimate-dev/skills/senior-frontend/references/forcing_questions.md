@@ -99,4 +99,4 @@ These seven questions gate every meaningful frontend decision: framework pick, r
 3. **Recommend the answer.** Always cite the canon source for *why* this is the right shape.
 4. **Surface the kill criterion.** If the user's answer trips it, stop and surface that gap. Do not proceed.
 5. **Track the answers.** Write them to a working file (e.g., `/tmp/frontend-grill-<date>.md`).
-6. **After Q7, recommend the profile.** Match the seven answers against the profile JSON files in `../profiles/` and pick the closest fit.
+6. **After Q7, recommend the profile.** Match the seven answers against the profile JSON files and pick the closest fit.

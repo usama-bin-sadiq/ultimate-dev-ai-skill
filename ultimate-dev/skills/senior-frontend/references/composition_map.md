@@ -15,7 +15,6 @@ This map is the routing table for the `cs-frontend-engineer` agent and the `/cs:
 | Pre-flight architecture grill | **cs-grill-master** | Before locking framework or rendering model | `../../grill-me` |
 | Monorepo coordination (Turbo / Nx / pnpm) | **monorepo-navigator** | When frontend shares repo with backend / mobile / extension | `../../monorepo-navigator` |
 | Dependency vulnerability sweep | **dependency-auditor** | Before every major release | `../../dependency-auditor` |
-| Visual / accessibility regression in CI | **api-test-suite-builder** (extend for visual) + **playwright-pro** | After Q7 (WCAG target) is set | `../../../engineering-team/playwright-pro/` |
 | Apple HIG / iOS / macOS / visionOS app review | **apple-hig-expert** | When the surface is Apple-platform-native | `../../apple-hig-expert` |
 | AEO (Answer Engine Optimization) — visibility in LLM search | **aeo** | After Q5 (SEO-dependent surface) is confirmed | `../../aeo` |
 | SEO crawlability + meta + structured data | **seo-auditor** (if present) | After Q5 (SEO-dependent surface) | search `skills/` for the SEO auditor entry point |

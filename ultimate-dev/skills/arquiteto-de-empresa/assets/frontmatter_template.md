@@ -12,6 +12,6 @@ version: 0.1
 # <Concept title>
 
 <Body in markdown. Link to other concepts with relative links, e.g.:>
-Derives from the [Value Proposition](../01-estrategia/proposta-de-valor.md).
+Derives from the Value Proposition.
 
 <Mark assumptions with [ASSUMPTION] when the founder has not answered.>
