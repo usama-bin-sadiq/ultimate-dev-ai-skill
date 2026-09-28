@@ -98,3 +98,12 @@ Full hardening guidance: [references/production-hardening-guide.md](references/p
 - [references/typescript-server-template.md](references/typescript-server-template.md)
 - [references/validation-checklist.md](references/validation-checklist.md)
 - [README.md](README.md)
+
+Each file below is loaded on demand, not at triage. 5 file(s):
+
+- `references/openapi-extraction-guide.md` — OpenAPI Extraction Guide. Turn stable API operations into stable MCP tools with clear names and reliable schemas.
+- `references/production-hardening-guide.md` — Production Hardening Guide — Safety, Versioning, Quality Gates. The advisory layer behind the mcp-server-builder workflows: read this when
+- `references/python-server-template.md` — Python MCP Server Template. python
+- `references/typescript-server-template.md` — TypeScript MCP Server Template. ts
+- `references/validation-checklist.md` — MCP Validation Checklist
+

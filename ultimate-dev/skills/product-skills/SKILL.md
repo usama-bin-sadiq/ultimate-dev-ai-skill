@@ -178,3 +178,10 @@ until the lane-defining decision is locked:
 - [references/ai_product_evals.md](references/ai_product_evals.md) — evals-as-PRD, model
   cards, evaluator-optimizer loops
 - Loop engine: `engineering/agent-harness` · Loop vocabulary: `loop-library`
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/ai_product_evals.md` — AI Product Evals — the new PRD quality contract. The single most-demanded new PM competency of 2025–2026, and the biggest coverage gap
+- `references/continuous_discovery_canon.md` — Continuous Discovery Canon. The method layer behind discoverycadencetracker.py and ostlinter.py.
+- `references/product_operating_model.md` — Product Operating Model, Metrics & Prioritization Brackets. The strategy layer behind the orchestrator's STRATEGY/ANALYTICS/PRIORITIZE forcing
+

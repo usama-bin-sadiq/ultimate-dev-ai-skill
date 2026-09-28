@@ -212,3 +212,14 @@ for Ruby, read the setup guide:
     if __name__ == "__main__":
         sample_list_account_summaries()
     ```
+
+Each file below is loaded on demand, not at triage. 7 file(s):
+
+- `references/dotnet.md` — Google Analytics Admin API .NET Client Library Installation. This guide provides specific instructions for installing and setting up the
+- `references/go.md` — Google Analytics Admin API Go Client Library Installation. This guide provides specific instructions for installing and setting up the
+- `references/java.md` — Google Analytics Admin API Java Client Library Installation. This guide provides specific instructions for installing and setting up the
+- `references/nodejs.md` — Google Analytics Admin API Node.js Client Library Installation. This guide provides specific instructions for installing and setting up the
+- `references/php.md` — Google Analytics Admin API PHP Client Library Installation. This guide provides specific instructions for installing and setting up the
+- `references/python.md` — Google Analytics Admin API Python Client Library Installation. This guide provides specific instructions for installing and setting up the
+- `references/ruby.md` — Google Analytics Admin API Ruby Client Library Installation. This guide provides specific instructions for installing and setting up the
+

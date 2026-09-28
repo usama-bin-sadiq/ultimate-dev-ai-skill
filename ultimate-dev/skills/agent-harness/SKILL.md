@@ -128,3 +128,10 @@ python3 scripts/harness_manifest_builder.py --domain engineering-team \
 
 See [references/domain_harness_design.md](references/domain_harness_design.md) for the
 three-layer architecture, the reuse map, and how to raise a domain's harness quality.
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/agentic_loop_canon.md` — The Agentic Loop Canon. What the 2024–2026 practitioner literature agrees an agent loop is, and the design
+- `references/domain_harness_design.md` — Domain Harness Design. How a domain folder full of skills becomes an agent harness: a declarative manifest
+- `references/verification_discipline.md` — Verification Discipline. Why the harness adjudicates its own gates, and why an agent's claim of success is
+

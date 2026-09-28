@@ -394,3 +394,14 @@ Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+
+Each file below is loaded on demand, not at triage. 7 file(s):
+
+- `references/cli-usage.md` — Cloud Run CLI. Use the gcloud run command to manage your Cloud Run applications.
+- `references/client-library-usage.md` — Cloud Run Client Libraries. Google Cloud client libraries provide an idiomatic way to manage Cloud Run
+- `references/core-concepts.md` — Cloud Run core concepts. Cloud Run is a fully managed application platform for running your code,
+- `references/iac-usage.md` — Cloud Run Infrastructure as Code. Cloud Run resources can be provisioned and managed using Terraform and other IaC
+- `references/iam-security.md` — Cloud Run IAM & security. Cloud Run uses Identity and Access Management (IAM) to secure your resources
+- `references/mcp-usage.md` — Cloud Run MCP Usage. Cloud Run is supported by a remote Model Context Protocol (MCP) server that
+- `references/networking.md` — Cloud Run Networking best practices and cost optimization. When configuring networking options for Cloud Run services, apply these best
+

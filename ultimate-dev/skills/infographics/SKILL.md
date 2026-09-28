@@ -264,7 +264,13 @@ For detailed guidance, load these reference files:
 
 - **`references/infographic_types.md`**: Extended templates for all 10+ types
 - **`references/design_principles.md`**: Visual hierarchy, layout, typography
-- **`references/color_palettes.md`**: Full palette specifications
+- *
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/infographic_type_catalog.md` — Infographic Type Catalog. All ten types with their --type value, what each is for, the data shape it expects, and
+- `references/iterative_refinement.md` — prose
+
+*`references/color_palettes.md`**: Full palette specifications
 
 ---
 

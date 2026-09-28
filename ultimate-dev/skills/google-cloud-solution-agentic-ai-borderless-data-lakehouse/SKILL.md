@@ -184,3 +184,10 @@ phases:
 - [ ] **Step 6: Iterate**: If the user requests changes, then generate an
   updated validation plan and repeat steps 2-5 until the user approves the
   validation plan.
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/design_recommendations.md` — prose
+- `references/product_mapping.md` — Product Mapping Guidance. Explain to the user that the solution consists of two subsystems:
+- `references/product_renaming.md` — Product Renaming & Terminology. When generating solution designs, architecture diagrams, and documentation, use
+

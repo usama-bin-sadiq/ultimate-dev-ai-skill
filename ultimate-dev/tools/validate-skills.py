@@ -685,12 +685,21 @@ def validate_skill(skill_dir: Path, repo_root: Path) -> dict[str, Any]:
     for line_no, line in enumerate(content.split("\n"), 1):
         if in_fenced_code(skill_md, line_no):
             continue
-        # A path the line declares as output is not a claim that the skill ships
-        # a references/ directory. hatch-pet writes its base frame to
-        # `references/canonical-base.png`; the directory does not exist because
-        # the run creates it, and demanding a references/ tree for it sent the
-        # reader looking for prose that is not there.
-        if OUTPUT_DECLARATION.search(without_emphasis(line)):
+        # The declaration test runs on the line with its PATHS REMOVED.
+        #
+        # A filename is not a statement about what to produce, and
+        # references/update.md, references/create.md,
+        # references/generate-skill.md and references/versions.md each contain
+        # a word the declaration rule looks for. Matching the whole line read a
+        # perfectly good pointer as a production instruction and skipped it,
+        # and 21 files across 16 skills stayed unreachable because of their own
+        # names.
+        #
+        # A path the line does declare as output is still exempt: hatch-pet
+        # writes its base frame to `references/canonical-base.png`, and
+        # demanding a references/ tree for it sent the reader looking for prose
+        # that is not there.
+        if OUTPUT_DECLARATION.search(without_emphasis(REF_PATTERN.sub(" ", line))):
             continue
         declared_refs.update(
             ref for ref in REF_PATTERN.findall(line) if ref.startswith("references/")
@@ -707,9 +716,33 @@ def validate_skill(skill_dir: Path, repo_root: Path) -> dict[str, Any]:
             f"references/{p.relative_to(refs_dir).as_posix()}"
             for p in sorted(refs_dir.rglob("*.md"))
         }
-        for orphan in sorted(present - declared_refs):
+        # A kernel reference reachable through references/README.md IS
+        # reachable, and the bundler already says so -- it consults the index
+        # before reporting an orphan. This check did not, so 1,505 warnings
+        # fired for references the kernel genuinely reaches through its own
+        # annotated map, and `--strict` treats a warning as a failure, which
+        # made the flag unpassable on a clean tree and therefore meaningless.
+        #
+        # The index is the same file, read the same way, for the same reason:
+        # a reference the reader is told where to find is not an orphan.
+        via_index: set[str] = set()
+        index = refs_dir / "README.md"
+        if skill_dir == SKILL_ROOT and index.is_file():
+            index_text = index.read_text(encoding="utf-8", errors="replace")
+            # rglob, because the kernel's reference tree has subdirectories --
+            # references/quality-checklists/ holds seven files. A top-level glob
+            # did not see them and reported the tree as orphaned even though
+            # the index names the directory.
+            for p in sorted(refs_dir.rglob("*.md")):
+                if p.name == "README.md":
+                    continue
+                rel = p.relative_to(refs_dir).as_posix()
+                if p.name in index_text or rel in index_text:
+                    via_index.add(f"references/{rel}")
+        for orphan in sorted(present - declared_refs - via_index):
             warnings.append(
-                f"{skill_md}: {orphan} exists but is not reachable from SKILL.md"
+                f"{skill_md}: {orphan} exists but is not reachable from SKILL.md "
+                f"or references/README.md"
             )
         if not present:
             # A references/ holding only non-markdown assets is a real shape --
@@ -1056,13 +1089,51 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
                 {p.name for p in (fixture_root / "git").iterdir() if p.is_dir()}
                 if (fixture_root / "git").is_dir() else set()
             )
+            # Ask the BUILDER, not the output. The fixture tree is generated and
+            # gitignored, so on a fresh checkout it does not exist -- and the
+            # structure job runs before the fixture job, which made the
+            # validator report 17 errors on every clean clone, errors the next
+            # job in the same workflow then fixed. A check whose result depends
+            # on which job ran first is not measuring the tree.
+            #
+            # Whether build-fixtures.py knows how to produce a workspace for a
+            # case is a property of the repository, checkable on a fresh clone,
+            # and it is the question that matters: a case nobody can generate is
+            # unrunnable whether or not someone happened to run the generator.
+            generatable: set[str] = set()
+            builder = SKILL_ROOT / "tools" / "build-fixtures.py"
+            if builder.is_file():
+                try:
+                    src = builder.read_text(encoding="utf-8", errors="replace")
+                    # The builder names a case function after its id in
+                    # lower_snake: FC-CAP-01 -> fc_cap_01. The prefix is
+                    # everything except `write`, `git`, `init_repo` and
+                    # `commit_all`, which are helpers rather than cases, and none
+                    # of them end in a digit-and-letter pair that could be
+                    # mistaken for an id.
+                    # A case needing its own git repo is named tn_10_git, so
+                    # the id is a prefix of the function name rather than equal
+                    # to it. Matching the prefix handles `fc_cap_01` and
+                    # `tn_10_git` with one rule, and a helper that is not a
+                    # case -- write, git, commit_all -- cannot prefix-match a
+                    # real id.
+                    defs = re.findall(r"^def ([a-z][a-z0-9_]*)\(", src, re.M)
+                    generatable = {
+                        m.upper().replace("_", "-") for m in defs
+                    } | {
+                        m.upper().replace("_", "-")[:-4]
+                        for m in defs
+                        if m.endswith("_git")
+                    }
+                except OSError:
+                    generatable = set()
             for entry in entries:
                 if entry.get("should_trigger"):
                     continue
                 cid = entry.get("id", "?")
                 if str(entry.get("fixture_required", "yes")).lower() == "no":
                     continue
-                if cid not in built:
+                if cid not in built and cid not in generatable:
                     errors.append(
                         f"{evals_json}: trigger-negative case {cid} requires a "
                         f"fixture that does not exist, so it can never run and the "

@@ -402,3 +402,11 @@ timeline
 - **Hugging Face**: https://huggingface.co/collections/google/timesfm-release-66e4be5fdb56e960c1e482a6
 - **Google Blog**: https://research.google/blog/a-decoder-only-foundation-model-for-time-series-forecasting/
 - **BigQuery Integration**: https://cloud.google.com/bigquery/docs/timesfm-model
+
+Each file below is loaded on demand, not at triage. 4 file(s):
+
+- `references/examples_and_validation.md` — Examples, Checklists, and Validation. Runnable examples, the pre-delivery quality checklist, the mistakes that most often
+- `references/output_and_config.md` — Understanding the Output and ForecastConfig. How to read the point forecast and quantile bands, how to derive prediction intervals at
+- `references/performance_tuning.md` — Performance Tuning. GPU detection and TF32 settings, choosing percorebatchsize for the memory you have,
+- `references/workflows.md` — Common Workflows. End-to-end sequences: the standard single-series forecast, forecasting many series from a
+

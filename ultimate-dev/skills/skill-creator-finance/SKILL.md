@@ -364,4 +364,9 @@ These ship with the skill and are read on demand; none is needed to
 use it. Each answers one question the sections above do not.
 
 - [`references/output-patterns.md`](references/output-patterns.md)
-- [`references/workflows.md`](references/workflows.md)
+- [
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/schema.md` — Warehouse schema reference. SKILL.md names this file as the worked example of a references/ entry worth
+
+`references/workflows.md`](references/workflows.md)

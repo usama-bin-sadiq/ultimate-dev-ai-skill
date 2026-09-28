@@ -59,7 +59,18 @@ Gather this context (ask if not provided):
 These ship with the skill and are read on demand; none is needed to
 use it. Each answers one question the sections above do not.
 
-- [`references/listening-sources-template.md`](references/listening-sources-template.md)
+- [
+Each file below is loaded on demand, not at triage. 7 file(s):
+
+- `references/carousel-frameworks.md` — Carousel Frameworks. Five slide-by-slide narrative architectures for carousels — Instagram carousels and LinkedIn document posts.
+- `references/listening.md` — Social Listening & Engagement Triage. How to surface the right posts to engage with each day — instead of randomly scrolling.
+- `references/platform-limits.md` — Platform Limits Reference. Quick reference for hashtag limits, character counts, and visible text thresholds on each major social platform.
+- `references/platforms.md` — Platform-Specific Strategy Guide. Detailed strategies for each major social platform.
+- `references/post-templates.md` — Post Format Templates. Ready-to-use templates for different platforms and content types.
+- `references/reverse-engineering.md` — Reverse Engineering Viral Content. Instead of guessing what works, systematically analyze top-performing content in your niche and extract proven patterns.
+- `references/short-form-video.md` — prose
+
+`references/listening-sources-template.md`](references/listening-sources-template.md)
 
 ## Content Pillars Framework
 

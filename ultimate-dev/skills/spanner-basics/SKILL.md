@@ -62,3 +62,15 @@ Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+
+Each file below is loaded on demand, not at triage. 8 file(s):
+
+- `references/cli-usage.md` — CLI Usage. Common gcloud commands for interacting with Spanner.
+- `references/client-library-usage.md` — Client Library Usage. Instructions on how to install the Google Cloud SDK can be found at
+- `references/core-concepts.md` — Core Concepts. Cloud Spanner is a fully managed, mission-critical database service that
+- `references/iam-security.md` — IAM Security. Common IAM roles for Spanner and security best practices.
+- `references/mcp-usage.md` — MCP Usage. Spanner supports Model Context Protocol (MCP) to connect your database to LLM
+- `references/postgresql-dialect.md` — Spanner provides PostgreSQL dialect support by expressing Spanner database
+- `references/schema-design.md` — Best practices for schema design in Spanner to ensure performance and
+- `references/terraform-usage.md` — Terraform Usage. You can use Terraform to build, change, and version Spanner infrastructure.
+

@@ -273,3 +273,10 @@ They get [their reward] too.
 - **emails**: For referral nurture campaigns
 - **marketing-psychology**: For understanding referral motivation
 - **analytics**: For tracking referral attribution
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/affiliate-programs.md` — Affiliate Program Design. Detailed guidance for building and managing affiliate programs.
+- `references/program-examples.md` — Referral Program Examples. Real-world examples of successful referral programs.
+- `references/viral-mechanisms.md` — Viral Mechanisms. Virality can be engineered through product design, not just bought with reward programs.
+

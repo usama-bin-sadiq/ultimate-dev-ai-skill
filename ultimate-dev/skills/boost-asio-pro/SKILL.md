@@ -143,3 +143,12 @@ Three CI-verified implementations of the same full-duplex framed-protocol server
 - `engineering/docker-development` — the old-Boost verification lanes this skill's floors come from are containerised builds (Debian 9 / bookworm, Fedora).
 - `engineering/chaos-engineering` — for exercising the failure paths this skill tells you to handle: half-open sockets, idle timeouts, partial frames.
 - `engineering-team/playwright-pro` — the client-side counterpart when the server built here is driven from browser-based integration tests.
+
+Each file below is loaded on demand, not at triage. 5 file(s):
+
+- `references/build.md` — Build Configuration. cmake
+- `references/classic-boost.md` — Classic Boost (pre-1.66, the `io_service` era — verified to 1.62). To support Boost older than 1.66 (no iocontext, no makestrand, no anyioexecutor), drop to the classic API — verified building back to Boost 1.62...
+- `references/coroutines.md` — C++20 Coroutine Style (Boost ≥ 1.77). The preferred style when the toolchain allows it.
+- `references/pre-cpp20.md` — Pre-C++20 Styles (C++11–17, Boost ≥ 1.74). If you can't use C++20 coawait, the same Asio library (modern Boost or standalone) still works — only the async style changes.
+- `references/ssl.md` — SSL/TLS. Applies to every style — ssl::stream<> is a library feature, not a language one.
+

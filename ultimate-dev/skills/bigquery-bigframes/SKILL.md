@@ -100,3 +100,9 @@ package if the user explicitly requests BigFrames ML.
   instead.
 * **Model Persistence**: To persist a model, use `model.to_gbq()`. To load a
   persisted model, use `bpd.read_gbq_model()`.
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/linear_regression.md` — BigQuery DataFrame Linear Regression. This example trains a linear regression model to predict the weight of penguins.
+- `references/logistic_regression.md` — BigQuery DataFrame Logistic Regression. This example trains a logistic regression model to predict the species of
+

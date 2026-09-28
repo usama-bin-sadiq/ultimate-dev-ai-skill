@@ -121,3 +121,14 @@ access to Cloud SQL resources.
 
 *If you need product information not found in these references, use the
     Developer Knowledge MCP server `search_documents` tool.*
+
+Each file below is loaded on demand, not at triage. 7 file(s):
+
+- `references/cli-usage.md` — Cloud SQL CLI Usage. The gcloud sql command group is used to manage Cloud SQL instances and
+- `references/client-library-usage.md` — Cloud SQL Client Libraries. Google Cloud provides client libraries and connectors to simplify connecting to
+- `references/core-concepts.md` — Cloud SQL Core Concepts. Cloud SQL provides managed relational databases, abstracting the underlying
+- `references/dr-backups.md` — Cloud SQL Disaster Recovery & Backups. Cloud SQL provides multiple mechanisms for data protection, continuous replication, high availability, and disaster recovery (DR).
+- `references/iac-usage.md` — Cloud SQL Infrastructure as Code. Cloud SQL resources can be provisioned and managed using Terraform and other IaC
+- `references/iam-security.md` — Cloud SQL IAM & Security. Cloud SQL uses Identity and Access Management (IAM) to control access to
+- `references/mcp-usage.md` — Cloud SQL MCP Usage. Cloud SQL can be managed via the Model Context Protocol (MCP), which allows
+

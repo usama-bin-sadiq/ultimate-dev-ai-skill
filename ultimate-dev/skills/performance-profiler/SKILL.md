@@ -72,3 +72,9 @@ python3 scripts/performance_profiler.py /path/to/project --large-file-threshold-
 - [references/profiling-recipes.md](references/profiling-recipes.md) — Node.js/Python/Go profiling commands, flamegraph generation, heap snapshots
 - [references/optimization-playbook.md](references/optimization-playbook.md) — before/after measurement template, quick-win optimization checklist (DB/Node/bundle/API), common pitfalls, best practices
 
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/optimization-playbook.md` — Optimization Playbook — Template, Checklist, Pitfalls, Best Practices. The advisory layer behind the performance-profiler workflow: use this when
+- `references/profiling-recipes.md` — performance-profiler reference. bash
+

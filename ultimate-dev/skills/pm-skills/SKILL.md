@@ -171,3 +171,10 @@ until the lane-defining decision is locked:
   loops (sprint, health, retro-action, RAID-hygiene, comms) mapped to the loop contract
 - Canonical MCP tool list: `project-management/references/atlassian-mcp-tools.md`
 - Loop engine: `engineering/agent-harness` · Loop vocabulary: `loop-library`
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/agentic_delivery_governance.md` — Agentic Delivery Governance. The accountability layer behind deliveryloopgate.py.
+- `references/flow_forecasting_canon.md` — Flow Metrics & Probabilistic Forecasting Canon. The measurement layer behind jirasnapshotbridge.py --to flow.
+- `references/pm_loop_playbook.md` — The PM Loop Playbook — five reusable delivery loops. Concrete instantiations of the loop contract (Observe → Choose → Act → Verify → Record →
+

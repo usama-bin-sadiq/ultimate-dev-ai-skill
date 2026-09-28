@@ -169,3 +169,8 @@ For the complete threat model, detection patterns, and known attack vectors agai
 - Dependency vulnerability checks use local pattern matching, not live CVE databases
 
 When in doubt after an audit, **don't install**. Ask the skill author for clarification.
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/threat-model.md` — Threat Model: AI Agent Skills. Attack vectors, detection strategies, and mitigations for malicious AI agent skills.
+

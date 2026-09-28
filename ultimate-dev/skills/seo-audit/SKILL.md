@@ -170,3 +170,11 @@ Automatically surface seo-audit recommendations when:
 | On-Page SEO Findings | Structured table | Same format, focused on content and metadata |
 | Prioritized Action Plan | Numbered list | Ordered by impact × effort, grouped into Critical / High / Quick Wins |
 | Keyword Cannibalization Map | Table | Pages competing for same keyword with recommended canonical or redirect actions |
+
+Each file below is loaded on demand, not at triage. 4 file(s):
+
+- `references/cwv-thresholds.md` — Core Web Vitals Thresholds (2026). Reference for seohealthscorer.py and the Performance category.
+- `references/eeat-framework.md` — E-E-A-T Framework Reference. Experience, Expertise, Authoritativeness, Trustworthiness — Google's quality rater guidelines framework for evaluating content quality.
+- `references/schema-types.md` — Schema Markup Types Reference. JSON-LD structured data types, their status, and validation guidance.
+- `references/seo-audit-reference.md` — seo-audit reference. 1.
+

@@ -195,3 +195,8 @@ Dedicated creator-discovery/CRM platforms (e.g., Modash, GRIN, Aspire, Upfluence
 - **customer-research** — find existing advocates and ground the talking points
 - **ai-seo** — the branded-search/direct attribution blind spot that hides influencer impact
 - **social** — organic content strategy the partnerships plug into
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/ugc-creator-program.md` — Volume UGC Creator Programs ("Tech UGC"). A scaled version of the paid-influencer model where content volume, not any creator's audience, is the asset: an in-house network of creators posting...
+

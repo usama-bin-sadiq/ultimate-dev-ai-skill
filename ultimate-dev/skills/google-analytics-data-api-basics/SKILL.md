@@ -272,3 +272,14 @@ Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+
+Each file below is loaded on demand, not at triage. 7 file(s):
+
+- `references/dotnet.md` — Google Analytics Data API .NET Client Library Installation. This guide provides specific instructions for installing and setting up the
+- `references/go.md` — Google Analytics Data API Go Client Library Installation. This guide provides specific instructions for installing and setting up the
+- `references/java.md` — Google Analytics Data API Java Client Library Installation. This guide provides specific instructions for installing and setting up the
+- `references/nodejs.md` — Google Analytics Data API Node.js Client Library Installation. This guide provides specific instructions for installing and setting up the
+- `references/php.md` — Google Analytics Data API PHP Client Library Installation. This guide provides specific instructions for installing and setting up the
+- `references/python.md` — Google Analytics Data API Python Client Library Installation. This guide provides specific instructions for installing and setting up the
+- `references/ruby.md` — Google Analytics Data API Ruby Client Library Installation. This guide provides specific instructions for installing and setting up the
+

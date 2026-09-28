@@ -191,3 +191,9 @@ Use this quick selector before creating a new worktree:
 - If dependency install fails: keep worktree created, mark status and continue manual recovery.
 - If env copy fails: continue with warning and explicit missing file list.
 - If port allocation collides with external service: rerun with adjusted base ports.
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/docker-compose-patterns.md` — Docker Compose Patterns For Worktrees. Base compose file remains shared; each worktree has a local override.
+- `references/port-allocation-strategy.md` — Port Allocation Strategy. Allocate deterministic, non-overlapping local ports for each worktree to avoid collisions across concurrent development sessions.
+

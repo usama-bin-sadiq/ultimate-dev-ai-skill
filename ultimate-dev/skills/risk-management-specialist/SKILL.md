@@ -450,7 +450,13 @@ What is the risk level?
 These ship with the skill and are read on demand; none is needed to
 use it. Each answers one question the sections above do not.
 
-- [`references/risk-assessment-templates.md`](references/risk-assessment-templates.md)
+- [
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/iso14971-implementation-guide.md` — ISO 14971:2019 Implementation Guide. Complete implementation framework for medical device risk management per ISO 14971:2019.
+- `references/risk-analysis-methods.md` — Risk Analysis Methods. Systematic techniques for hazard identification and risk analysis in medical device development.
+
+`references/risk-assessment-templates.md`](references/risk-assessment-templates.md)
 
 ## Related Skills
 

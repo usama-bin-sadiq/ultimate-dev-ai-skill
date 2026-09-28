@@ -176,3 +176,9 @@ this skill.
 - [ARAXi operation documentation](https://github.com/RTXteam/RTX/blob/master/code/ARAX/Documentation/DSL_Documentation.md)
 - [Translator Reasoner API](https://github.com/NCATSTranslator/ReasonerAPI)
 - [Biolink Model](https://biolink.github.io/biolink-model/)
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/output-schema.md` — prose
+- `references/query-contract.md` — ARAX query contract. Use https://arax.transltr.io/api/arax/v1.4 by default.
+

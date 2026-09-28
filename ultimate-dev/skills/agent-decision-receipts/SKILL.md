@@ -100,3 +100,8 @@ This is the property that makes it evidence: a reviewer who distrusts the issuer
 - `ra-qm-team/skills/eu-ai-act-specialist/` — decide the AI system's risk tier and Article 12 obligations; this skill mints the per-action record those obligations require.
 - `ra-qm-team/skills/iso42001-specialist/` — the AI management-system controls; receipts are the per-decision evidence those controls call for.
 - OpenAgentOntology (Apache-2.0): the open receipt primitive this skill drives — `pip install "openagentontology[pq]"`.
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/receipt-fields.md` — Receipt fields + the post-quantum rationale. Detailed reference for the agent-decision-receipts skill.
+

@@ -150,3 +150,13 @@ Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+
+Each file below is loaded on demand, not at triage. 6 file(s):
+
+- `references/cloud-nat-analysis.md` — Cloud NAT Analysis Reference. Use Cloud NAT logs (compute.googleapis.com/natflows) to audit traffic going
+- `references/connectivity-tests.md` — Connectivity Tests Reference. Use Connectivity Tests to identify firewall or routing blocks along a network
+- `references/firewall-analysis.md` — Firewall Rule Logging Analysis Reference. Use firewall logs (compute.googleapis.com/firewall) to verify if traffic is
+- `references/mcp-usage.md` — MCP Server Usage Reference. This document describes the Model Context Protocol (MCP) servers used for GCP
+- `references/metrics-analysis.md` — Networking Metrics Reference. networking.googleapis.com/cloudnetslo/activeprobing/rtt
+- `references/threat-analysis.md` — Threat Log Analysis Reference. Use Firewall Threat Logs and Cloud IDS logs to identify, analyze, and
+

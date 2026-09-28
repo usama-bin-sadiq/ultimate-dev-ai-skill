@@ -293,3 +293,11 @@ The AI-readiness fixes are usually high-impact, low-effort (put prices in text, 
 - **ab-testing**: For testing pricing changes
 - **revops**: For deal desk processes and pipeline pricing
 - **sales-enablement**: For proposal templates and pricing presentations
+
+Each file below is loaded on demand, not at triage. 4 file(s):
+
+- `references/pricing-models.md` — Pricing Models. The eight core ways to structure how you charge.
+- `references/pricing-page-teardown.md` — Pricing Page Teardown. A structured way to score a live pricing page and return prioritized fixes.
+- `references/research-methods.md` — Pricing Research Methods. The Van Westendorp survey identifies the acceptable price range for your product.
+- `references/tier-structure.md` — Tier Structure and Packaging. 2 tiers: Simple, clear choice
+

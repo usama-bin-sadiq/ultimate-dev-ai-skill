@@ -437,3 +437,9 @@ Nonconforming Product Identified
 | [qms-audit-expert](../qms-audit-expert/) | Advanced audit techniques |
 | [quality-documentation-manager](../quality-documentation-manager/) | DHF, DMR, DHR management |
 | [risk-management-specialist](../risk-management-specialist/) | ISO 14971 integration |
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/iso13485-clause-requirements.md` — ISO 13485:2016 Clause Requirements. Detailed requirements for each ISO 13485:2016 clause with implementation guidance and audit criteria.
+- `references/qms-process-templates.md` — QMS Process Templates. Ready-to-use templates for ISO 13485 QMS processes including document control, internal audit, CAPA, and supplier management.
+

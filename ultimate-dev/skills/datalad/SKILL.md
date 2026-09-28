@@ -297,3 +297,10 @@ plugin (nineteen per-command slash-command skills). The text here is written
 independently and grounded in the upstream DataLad documentation; overlap is unavoidable
 because both cover DataLad, but the structure, style, and specific technical claims are
 different.
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/data-access.md` — Finding, retrieving, and releasing dataset content. The /// shortcut is a DataLad resource identifier that resolves to the superdataset on
+- `references/provenance.md` — Computational provenance with DataLad. Version control tells you that a file changed.
+- `references/publishing.md` — prose
+

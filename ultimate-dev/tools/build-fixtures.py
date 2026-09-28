@@ -796,6 +796,36 @@ def register_device(user_id, device_id, table):
             "symptom_stated": False}
 
 
+def tn_01(root: Path) -> dict:
+    """src/report.ts declares `tmpRes` five times, in one function.
+
+    The case's pass criteria state `aggregatedRows` appears 5 times, and that
+    number is only checkable if the fixture produces exactly five. A rename
+    inside a single function is the smallest edit that has a countable result and
+    a named target, which is what makes this a usable trigger-negative: the
+    answer is "do it, it is one identifier", and anything longer is over-serving.
+
+    Five occurrences: the declaration plus four uses, split so that the last one
+    is not a mechanical copy of the others. A run that renames three of five is
+    therefore a distinguishable wrong answer rather than an all-or-nothing one.
+    """
+    write(root, "src/report.ts", """import { rows } from "./rows";
+
+export function buildReport(period: string): string {
+  const tmpRes = rows.filter((r) => r.period === period);
+  const lines = tmpRes.map((r) => `${r.id}: ${r.total}`);
+  const count = tmpRes.length;
+  const total = tmpRes.reduce((sum, r) => sum + r.total, 0);
+  if (count === 0 || total === 0) {
+    return "no rows for " + period;
+  }
+  const widest = Math.max(...tmpRes.map((r) => r.total));
+  return lines.join("\n") + `\n(${count} rows, ${total} total, widest ${widest})`;
+}
+""")
+    return {"symbol": "tmpRes", "occurrences": 5, "renamed_to": "aggregatedRows"}
+
+
 def tn_08(root: Path) -> dict:
     """A real licence whose header is the exact string the prompt names.
 
@@ -921,6 +951,7 @@ BUILDERS = {
     "NM-16": (nm_16, False),
     "NM-17": (nm_17, False),
     "NM-18": (nm_18, False),
+    "TN-01": (tn_01, False),
     "TN-08": (tn_08, False),
     "BM-SIMPLE-01": (bm_simple_01_git, True),
     "TN-10": (tn_10_git, True),

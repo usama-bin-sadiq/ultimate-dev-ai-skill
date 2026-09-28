@@ -76,3 +76,10 @@ Workflows earn their cost when work is parallel or multi-stage, must be reproduc
 - `assets/templates/` — fan-out, pipeline, loop-until-budget starters. `assets/examples/` — a complete runnable workflow.
 
 All scripts run with `--sample` (no args) and `--help`.
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/api_reference.md` — Workflow API Reference. Complete surface for Claude Code's Workflow tool: every global, option, cap, and constant a workflow .js file can rely on.
+- `references/decision_and_intake_guide.md` — Decision & Intake Guide. The workflow-builder skill opens every session with intake.
+- `references/orchestration_patterns.md` — Orchestration Patterns. Copy-paste shapes for the common multi-agent topologies.
+

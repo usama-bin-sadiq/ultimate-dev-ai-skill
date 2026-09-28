@@ -78,3 +78,8 @@ I want you to build 5 landing pages for my free prompt pack, each one fundamenta
 ---
 
 *Derived from [duncan-buildroom/freeskills](https://github.com/duncan-buildroom/freeskills) `fable-goal` ("free to use and modify"). Substantially restructured: wrong-tool check, observable-done principle, six-slot extraction, per-medium verification defaults, six-point self-check, anti-pattern list, second worked example.*
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/goal_prompt_patterns.md` — Goal Prompt Patterns — why the anatomy works. Supporting rationale for the seven-part anatomy in SKILL.md, plus the failure-mode catalog in long form.
+

@@ -256,3 +256,15 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 8 file(s):
+
+- `references/core_concepts.md` — Core Concepts and Data Structures. This reference follows the
+- `references/datasets.md` — Datasets. Use the
+- `references/knowledge_graphs.md` — Knowledge Graph Reasoning. The official
+- `references/models_architectures.md` — Models and Architectures. This is a selection guide for the
+- `references/molecular_generation.md` — Molecular Generation. The official
+- `references/molecular_property_prediction.md` — Molecular Property Prediction and Pretraining. Follow the official
+- `references/protein_modeling.md` — Protein Modeling. TorchDrug 0.2.1 documents protein data structures, datasets, sequence encoders,
+- `references/retrosynthesis.md` — Retrosynthesis. The official
+

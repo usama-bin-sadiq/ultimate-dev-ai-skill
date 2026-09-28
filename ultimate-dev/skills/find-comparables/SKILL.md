@@ -83,3 +83,8 @@ Always include:
 - Book or standards-derived practices summarized in your own words
 - Recommended local architecture or implementation shape
 - Explicit caveats about mismatch, scale, and copying risk
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/report-template.md` — Find Comparables Report Template. Scoring criteria: domain fit, target stack fit, production maturity,
+

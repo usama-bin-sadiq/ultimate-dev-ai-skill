@@ -484,3 +484,10 @@ All output passes quality verification:
 - Self-verify: source attribution, assumption audit, confidence scoring
 - Output format: Bottom Line → What (with confidence) → Why → How to Act
 - Results only. Every finding tagged: 🟢 verified, 🟡 medium, 🔴 assumed.
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/aso-best-practices.md` — prose
+- `references/keyword-research-guide.md` — prose
+- `references/platform-requirements.md` — prose
+

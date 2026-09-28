@@ -306,3 +306,10 @@ dataLayer.push({
 - **seo-audit**: For organic traffic analysis
 - **cro**: For conversion optimization (uses this data)
 - **revops**: For pipeline metrics, CRM tracking, and revenue attribution
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/event-library.md` — Event Library Reference. Comprehensive list of events to track by business type and context.
+- `references/ga4-implementation.md` — GA4 Implementation Reference. Detailed implementation guide for Google Analytics 4.
+- `references/gtm-implementation.md` — Google Tag Manager Implementation Reference. Detailed guide for implementing tracking via Google Tag Manager.
+

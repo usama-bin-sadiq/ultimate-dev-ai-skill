@@ -60,4 +60,11 @@ Detailed procedural guides:
 These ship with the skill and are read on demand; none is needed to
 use it. Each answers one question the sections above do not.
 
-- [`references/running.md`](references/running.md)
+- [
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/creating.md` — prose
+- `references/fixing.md` — Fixing Behavioral Evals. Use this guide when asked to debug, troubleshoot, or fix a failing behavioral
+- `references/promoting.md` — Promoting Behavioral Evals. Use this guide when asked to analyze nightly results and promote incubated tests
+
+`references/running.md`](references/running.md)

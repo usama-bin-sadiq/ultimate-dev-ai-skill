@@ -271,3 +271,9 @@ for guidance on using the gcloud CLI in automation.
 -   [MCP Usage](references/mcp-usage.md): Using the Cloud CLI remote MCP
     server (`run_gcloud_command`), project parameter scoping, input files, and
     execution guidelines.
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/cli-usage.md` — gcloud CLI Usage. This document provides reference information for installing, authorizing, and
+- `references/mcp-usage.md` — Cloud CLI Remote MCP Server Usage. Google Cloud resources can be managed via the Model Context Protocol (MCP),
+

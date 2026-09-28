@@ -369,3 +369,8 @@ uv run scripts/onekgpd_api.py select-samples-hom-ref \
     AlphaMissense class, variant class).
 -   1000 Genomes Project / IGSR: https://www.internationalgenome.org/
 -   1000 Genomes Project dataset online: https://dnaerys.org/online/
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/annotation_vocabularies.md` — OneKGPd annotation vocabularies. Controlled-vocabulary terms accepted by the CSV annotation-filter flags of
+- `references/onekgpd_commands.md` — OneKGPd command reference. Full argument tables for every onekgpdapi.py subcommand and the schema of a
+

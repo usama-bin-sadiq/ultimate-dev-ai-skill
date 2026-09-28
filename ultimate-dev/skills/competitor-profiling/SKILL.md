@@ -413,3 +413,9 @@ Only ask if not answered by context or input:
 - **sales-enablement**: For turning profiles into battle cards and sales collateral
 - **ads**: For analyzing competitor ad strategies
 - **pricing**: For deeper pricing analysis informed by competitor profiles
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/templates.md` — Profile Templates. Ready-to-use templates for competitor profile sections and the summary document.
+- `references/tool-reference.md` — MCP Tool Reference for Competitor Profiling. Quick reference for the Firecrawl and DataForSEO MCP tools used in competitor profiling.
+

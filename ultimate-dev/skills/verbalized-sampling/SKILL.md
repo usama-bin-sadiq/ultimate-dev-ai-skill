@@ -78,3 +78,9 @@ For complex agentic workflows, execute VS in a "context fork":
 4. Return only the best candidate to the main conversation
 
 Use fork mode when the user wants a single polished answer but the task benefits from internal exploration. Do not show the fork process unless asked.
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/prompt-templates.md` — Verbalized Sampling Prompt Templates. System prompt addition:
+- `references/selection-strategies.md` — Selection Strategies. After generating k candidates with probabilities, select the final output using one of these strategies.
+

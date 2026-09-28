@@ -208,3 +208,9 @@ Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/basic_aggregations.md` — Cloud Monitoring to PromQL Basic Aggregations Reference. This document maps Cloud Monitoring metric concepts to their PromQL query
+- `references/promql_error_recovery.md` — PromQL Error Recovery Guide. When validatepromql.py or Cloud Monitoring query execution reports a syntax
+

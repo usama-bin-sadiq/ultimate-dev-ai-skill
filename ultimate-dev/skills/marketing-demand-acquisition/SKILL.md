@@ -310,3 +310,11 @@ Required:
 - **content-strategy**: For content-driven demand generation.
 - **email-sequence**: For nurture sequences in the demand funnel.
 - **campaign-analytics**: For measuring demand gen effectiveness.
+
+Each file below is loaded on demand, not at triage. 4 file(s):
+
+- `references/attribution-guide.md` — Attribution Guide. Multi-touch attribution setup, analysis, and reporting.
+- `references/campaign-templates.md` — Campaign Templates. Ready-to-use campaign briefs and structures for LinkedIn, Google, and Meta.
+- `references/hubspot-workflows.md` — HubSpot Workflow Templates. Pre-built workflow configurations for lead scoring, nurturing, and assignment.
+- `references/international-playbooks.md` — International Market Playbooks. Market-specific tactics for EU, US, and Canada expansion.
+

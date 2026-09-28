@@ -124,3 +124,10 @@ Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/checkpoint-safety.md` — prose
+- `references/gke-training-deployment.md` — GKE Training Deployment (Fit-Gated, Tuned Mount). Provision a performance-tuned gcsfuse mount for training workloads whose code is
+- `references/performance-diagnosis.md` — Performance & Cost Diagnosis. Telemetry-driven root-causing for "training through the mount is slow" and "the
+

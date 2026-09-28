@@ -128,3 +128,8 @@ Categorize findings:
 - **Dismissed.** Wrong, missing context, or style preference
 
 Present the explanation first (from Step 1), then the critique verdict below it. The explanation should stand on its own; someone who just wants to understand the system shouldn't wade through critique.
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/explainer-prompt.md` — Explainer Prompt Template. Build the explainer subagent's prompt from this template.
+

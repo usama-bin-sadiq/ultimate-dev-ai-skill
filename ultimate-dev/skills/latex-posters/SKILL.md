@@ -385,3 +385,15 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 8 file(s):
+
+- `references/ai_graphics_for_posters.md` — AI Graphics for Posters. Full rules, worked examples, and the mandatory review gates for generating poster
+- `references/compilation_and_quality_control.md` — Compilation and Quality Control. Compilation commands and engines, then the full pre-print QC procedure: page-size
+- `references/latex_poster_packages.md` — LaTeX Poster Packages: Comprehensive Comparison. Three major LaTeX packages dominate research poster creation: beamerposter, tikzposter, and baposter.
+- `references/latex_poster_reference.md` — LaTeX Poster Reference. Package selection, layout, design principles, standard sizes, templates, figures,
+- `references/poster_content_guide.md` — Research Poster Content Guide. Content is king in research posters.
+- `references/poster_design_principles.md` — Research Poster Design Principles. Effective poster design balances visual appeal, readability, and scientific content.
+- `references/poster_layout_design.md` — Poster Layout and Design Guide. Effective poster layout organizes content for maximum impact and comprehension.
+- `references/poster_patterns_and_presentation.md` — Poster Patterns, Accessibility, and Presentation. Reusable content patterns per poster section, accessibility and inclusive-design
+

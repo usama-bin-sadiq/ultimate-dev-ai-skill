@@ -302,3 +302,10 @@ Flag these without being asked:
 - **aeo** — Answer Engine Optimization. Local businesses appear in "near me" AI Overviews — optimize both.
 - **schema-markup** — Detailed schema implementation. Use when schema needs go beyond LocalBusiness.
 - **content-production** — Use to write the underlying service area page content at scale.
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/local-schema-types.md` — Local Business Schema Types. Complete schema.org reference for local service businesses.
+- `references/local-seo-checklist.md` — Local SEO Checklist — 80 Points. Complete reference checklist for service-area businesses.
+- `references/review-response-templates.md` — Review Response Templates — Local Service Businesses. Templates for responding to Google reviews.
+

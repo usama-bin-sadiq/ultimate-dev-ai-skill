@@ -109,3 +109,8 @@ Run the owning package's focused tests and typecheck while iterating. Before han
 **Complete when:** the changed path has one coherent failure contract, untrusted
 values are parsed at every trust or representation boundary, no invalid state or
 unchecked type claim was introduced, and the applicable checks pass.
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/patterns.md` — TypeScript patterns. Load the section that matches the problem.
+

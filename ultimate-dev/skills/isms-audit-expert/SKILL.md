@@ -229,7 +229,14 @@ python scripts/isms_audit_scheduler.py --controls controls.csv --format markdown
 These ship with the skill and are read on demand; none is needed to
 use it. Each answers one question the sections above do not.
 
-- [`references/iso27001_audit_playbook.md`](references/iso27001_audit_playbook.md)
+- [
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/cloud-security-audit.md` — Cloud Security Audit Guide. Assessment framework for cloud service security verification.
+- `references/iso27001-audit-methodology.md` — ISO 27001 ISMS Audit Methodology. Complete audit framework and procedures for Information Security Management System assessments.
+- `references/security-control-testing.md` — Security Control Testing Guide. Technical verification procedures for ISO 27002 control assessment.
+
+`references/iso27001_audit_playbook.md`](references/iso27001_audit_playbook.md)
 
 ## Audit Performance Metrics
 

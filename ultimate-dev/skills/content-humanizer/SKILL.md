@@ -267,3 +267,9 @@ When auditing: name the pattern → explain why it reads as AI → give the spec
 - **copywriting**: Use for conversion copy — landing pages, CTAs, headlines. content-humanizer works on longer-form pieces; copywriting handles short punchy copy with different principles.
 - **content-strategy**: Use when deciding what content to create. NOT for voice or draft execution.
 - **aeo**: Use after humanizing, to optimize for AI search citation. Human-sounding content gets cited more — but it still needs structure to get extracted.
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/ai-tells-checklist.md` — prose
+- `references/voice-techniques.md` — Voice Techniques Reference. Techniques for injecting authentic brand voice into content.
+

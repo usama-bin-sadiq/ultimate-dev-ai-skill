@@ -574,7 +574,17 @@ For comprehensive troubleshooting: see [references/reliability_principles.md](re
 - [references/finetune_sam2_trainer.md](references/finetune_sam2_trainer.md) — SAM2 fine-tuning walkthrough with MicroMat dataset, DiceCE loss, and Trainer integration
 - [references/timm_trainer.md](references/timm_trainer.md) — Using timm models with HF Trainer (TimmWrapper, transforms, full example)
 - [references/hub_saving.md](references/hub_saving.md) — Detailed Hub persistence guide and verification checklist
-- [references/reliability_principles.md](references/reliability_principles.md) — Failure prevention principles from production experience
+- [
+Each file below is loaded on demand, not at triage. 6 file(s):
+
+- `references/finetune_sam2_trainer.md` — Fine-tuning SAM2 with HF Trainer. Fine-tune SAM2.1 on a small part of the MicroMat dataset for image matting,
+- `references/hub_saving.md` — Saving Vision Models to Hugging Face Hub. ---
+- `references/image_classification_training_notebook.md` — Image classification. ---
+- `references/object_detection_training_notebook.md` — Object Detection Training Reference. ---
+- `references/reliability_principles.md` — Reliability Principles for Training Jobs. ---
+- `references/timm_trainer.md` — Using timm models with Hugging Face Trainer. Transformers has first-class support for timm models via the TimmWrapper classes.
+
+references/reliability_principles.md](references/reliability_principles.md) — Failure prevention principles from production experience
 
 ## External links
 

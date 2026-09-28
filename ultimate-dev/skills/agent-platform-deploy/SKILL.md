@@ -444,4 +444,9 @@ use it. Each answers one question the sections above do not.
 - [`references/region_availability.md`](references/region_availability.md)
 - [`references/troubleshooting.md`](references/troubleshooting.md)
 - [`references/undeploy_guide.md`](references/undeploy_guide.md)
-- [`references/usage.md`](references/usage.md)
+- [
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/copy_deploy_guide.md` — Agent Platform 1P Tuned model copy and deployment. > [!NOTE]
+
+`references/usage.md`](references/usage.md)

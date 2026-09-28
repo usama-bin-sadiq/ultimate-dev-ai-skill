@@ -180,3 +180,9 @@ Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/optimization_rules.md` — BigQuery query and architecture optimization heuristics. This reference catalog documents concrete optimization heuristics, architectural rules, and SQL rewrite patterns for Google Cloud BigQuery workloads.
+- `references/remediation_playbooks.md` — BigQuery concrete remediation playbooks. This reference document contains the mandatory diagnostic checklists, root-cause analysis, and SQL remediation playbooks for Rule SLOT-001, Rule...
+

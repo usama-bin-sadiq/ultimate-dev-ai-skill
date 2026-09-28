@@ -194,3 +194,10 @@ Reviewed in [[Meeting Notes 2024-01-10#Decisions]].
 - [Embed files](https://help.obsidian.md/embeds)
 - [Callouts](https://help.obsidian.md/callouts)
 - [Properties](https://help.obsidian.md/properties)
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/CALLOUTS.md` — Callouts Reference. markdown
+- `references/EMBEDS.md` — Embeds Reference. markdown
+- `references/PROPERTIES.md` — Properties (Frontmatter) Reference. Properties use YAML frontmatter at the start of a note:
+

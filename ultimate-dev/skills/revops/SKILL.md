@@ -341,3 +341,11 @@ Format each as a standalone document the user can implement directly. Include pl
 - **analytics**: For tracking pipeline metrics and attribution
 - **launch**: For go-to-market launch planning
 - **sales-enablement**: For sales collateral, decks, and objection handling
+
+Each file below is loaded on demand, not at triage. 4 file(s):
+
+- `references/automation-playbooks.md` — Automation Playbooks. Platform-specific workflow recipes for HubSpot, Salesforce, scheduling tools, and cross-tool automation.
+- `references/lifecycle-definitions.md` — Lifecycle Stage Definitions. Complete templates for lead lifecycle stages, MQL criteria by business type, SLAs, and rejection/recycling workflows.
+- `references/routing-rules.md` — Lead Routing Rules. Decision trees, platform-specific configurations, territory routing, ABM routing, and speed-to-lead benchmarks.
+- `references/scoring-models.md` — Lead Scoring Models. Detailed scoring templates, example models by business type, and calibration guidance.
+

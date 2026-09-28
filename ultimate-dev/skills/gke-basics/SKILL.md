@@ -69,3 +69,12 @@ Managed Kubernetes platform on Google Cloud. Defaults to Autopilot mode unless S
 -   [MCP Usage](references/mcp-usage.md): Connecting to and using the 23 structured GKE MCP tools for cluster management, K8s resources, and diagnostics.
 
 -   [Infrastructure as Code](references/iac-usage.md): Terraform examples for `google_container_cluster` (Autopilot), Kubernetes provider resources, and YAML samples.
+
+Each file below is loaded on demand, not at triage. 5 file(s):
+
+- `references/cli-reference.md` — CLI & Tool Reference for GKE. Default preference order:
+- `references/client-library-usage.md` — GKE Client Libraries. To interact with the GKE (Kubernetes) API programmatically, use the official
+- `references/core-concepts.md` — GKE Core Concepts. Google Kubernetes Engine (GKE) is a managed Kubernetes platform for deploying,
+- `references/iac-usage.md` — GKE Infrastructure as Code. GKE resources, including clusters and Kubernetes objects, can be provisioned and
+- `references/mcp-usage.md` — GKE MCP Server Usage. The GKE MCP server provides 23 structured tools for cluster management,
+

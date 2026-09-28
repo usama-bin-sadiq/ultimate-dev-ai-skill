@@ -421,5 +421,12 @@ python scripts/gap_analyzer.py --controls current_controls.json --type type2 --j
 These ship with the skill and are read on demand; none is needed to
 use it. Each answers one question the sections above do not.
 
-- [`references/soc2_audit_playbook.md`](references/soc2_audit_playbook.md)
+- [
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/evidence_collection_guide.md` — SOC 2 Evidence Collection Guide. Practical guide for collecting, organizing, and maintaining audit evidence for SOC 2 Type I and Type II engagements.
+- `references/trust_service_criteria.md` — SOC 2 Trust Service Criteria Reference. Comprehensive reference for all five AICPA Trust Service Criteria (TSC) categories.
+- `references/type1_vs_type2.md` — SOC 2 Type I vs Type II Comparison. Detailed guide for understanding the differences between SOC 2 Type I and Type II reports, selecting the right starting point, planning timelines...
+
+`references/soc2_audit_playbook.md`](references/soc2_audit_playbook.md)
 

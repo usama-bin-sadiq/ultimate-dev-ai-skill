@@ -158,3 +158,8 @@ Write the companion skill in the order a future Codex thread should use the CLI,
 - Three copy-pasteable command examples.
 
 Keep API reference details in the CLI docs or a skill reference file. Keep the skill focused on ordering, safety, and examples future Codex threads should actually run.
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/agent-cli-patterns.md` — Codex CLI Patterns. Use this reference when designing the command surface for a new CLI Codex should run.
+

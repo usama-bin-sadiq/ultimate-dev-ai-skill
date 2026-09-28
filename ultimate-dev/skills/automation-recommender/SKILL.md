@@ -287,3 +287,12 @@ Configure allowed tools in `.claude/settings.json`:
   }
 }
 ```
+
+Each file below is loaded on demand, not at triage. 5 file(s):
+
+- `references/hooks-patterns.md` — Hooks Recommendations. Hooks automatically run commands in response to Claude Code events.
+- `references/mcp-servers.md` — MCP Server Recommendations. MCP (Model Context Protocol) servers extend Claude's capabilities by connecting to external tools and services.
+- `references/plugins-reference.md` — Plugin Recommendations. Plugins are installable collections of skills, commands, agents, and hooks.
+- `references/skills-reference.md` — Skills Recommendations. Skills are packaged expertise with workflows, reference materials, and best practices.
+- `references/subagent-templates.md` — Subagent Recommendations. Subagents are specialized Claude instances that run in parallel, each with their own context window and tool access.
+

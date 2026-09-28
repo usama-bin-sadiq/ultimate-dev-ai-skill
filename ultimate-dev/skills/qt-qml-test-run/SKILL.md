@@ -430,3 +430,9 @@ framing).
   Steps 8, 9, and 10.
 - [scripts/parse-qmltestrunner-output.py](references/scripts/parse-qmltestrunner-output.py) —
   JUnit XML parser invoked at Step 8.
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/qt-quick-test-cmake.md` — prose
+- `references/qt-quick-test-report-format.md` — prose
+

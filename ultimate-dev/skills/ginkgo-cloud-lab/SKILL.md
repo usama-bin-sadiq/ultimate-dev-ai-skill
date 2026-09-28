@@ -122,3 +122,24 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 17 file(s):
+
+- `references/cell-free-protein-expression-hibit.md` — Cell Free Protein Expression with HiBiT Quantification. URL: https://cloud.ginkgo.bio/protocols/cell-free-protein-expression-hibit
+- `references/cell-free-protein-expression-optimization.md` — Cell Free Protein Expression Optimization. URL: https://cloud.ginkgo.bio/protocols/cell-free-protein-expression-optimization
+- `references/cell-free-protein-expression-validation.md` — Cell Free Protein Expression Validation. URL: https://cloud.ginkgo.bio/protocols/cell-free-protein-expression-validation
+- `references/cfps-expression-purification-quantification.md` — Cell Free Protein Expression, Purification, and Quantification. URL: https://cloud.ginkgo.bio/protocols/cfps-expression-purification-quantification
+- `references/cfps-strep-purification-thermal-shift.md` — Protein Expression and Thermal Shift Assay. URL: https://cloud.ginkgo.bio/protocols/cfps-strep-purification-thermal-shift
+- `references/cfps-strep-tag-purification-a280.md` — Cell Free Protein Expression with Strep-tag Purification and Yield via A280. URL: https://cloud.ginkgo.bio/protocols/cfps-strep-tag-purification-a280
+- `references/echo-ms-cfps-detection.md` — Echo-MS Detection of Molecules from an Enzymatic Reaction (Cell Free). URL: https://cloud.ginkgo.bio/protocols/echo-ms-cfps-detection
+- `references/echo-ms-method-onboarding.md` — Echo-MS Method Onboarding. URL: https://cloud.ginkgo.bio/protocols/echo-ms-method-onboarding
+- `references/ecoli-expression-purification-quantification.md` — E. coli Protein Expression, Purification, and Quantification. URL: https://cloud.ginkgo.bio/protocols/ecoli-expression-purification-quantification
+- `references/ecoli-minibinder-expression-histag-a280.md` — E. coli Minibinder Expression with His-tag Purification and Yield via A280. URL: https://cloud.ginkgo.bio/protocols/ecoli-minibinder-expression-histag-a280
+- `references/ecoli-protein-expression-hibit.md` — E. coli Protein Expression with HiBiT Quantification. URL: https://cloud.ginkgo.bio/protocols/ecoli-protein-expression-hibit
+- `references/ecoli-protein-expression-histag-a280.md` — E. coli Protein Expression with His-tag Purification and Yield via A280. URL: https://cloud.ginkgo.bio/protocols/ecoli-protein-expression-histag-a280
+- `references/fluorescent-pixel-art-generation.md` — Fluorescent Pixel Art Generation. URL: https://cloud.ginkgo.bio/protocols/fluorescent-pixel-art-generation
+- `references/ivt-rna-synthesis-qpcr.md` — IVT mRNA/circRNA Synthesis, SPRI Purification & qPCR Quantification. URL: https://cloud.ginkgo.bio/protocols/ivt-rna-synthesis-qpcr
+- `references/minibinder-strep-tag-a280.md` — Minibinder Expression with Strep-tag Purification and Yield via A280. URL: https://cloud.ginkgo.bio/protocols/minibinder-strep-tag-a280
+- `references/pichia-protein-expression-labchip.md` — Pichia Protein Expression Validation (LabChip). URL: https://cloud.ginkgo.bio/protocols/pichia-protein-expression-labchip
+- `references/spr-target-onboarding.md` — SPR Target Onboarding. URL: https://cloud.ginkgo.bio/protocols/spr-target-onboarding
+

@@ -508,3 +508,8 @@ standalone reports themselves. This skill does not compute deltas.
   fixes. Load this when mapping a hotspot to a root cause in Step 5.
 - [scripts/parse-qmlprofiler-trace.py](references/scripts/parse-qmlprofiler-trace.py) —
   `.qtd` trace parser that emits the JSON summary consumed in Step 4.
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/qml-performance-anti-patterns.md` — QML Performance Anti-Pattern Reference. Use this reference when analyzing hotspots from a qmlprofiler trace.
+

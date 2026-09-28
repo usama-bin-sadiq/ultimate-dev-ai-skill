@@ -192,3 +192,11 @@ evaluation — none of which the book treats. For production ML engineering use
 When a question lands outside the book, say the book does not cover it and cite the delta
 reference for what replaced its position. A companion that quietly extrapolates is worse than one
 that names its boundary.
+
+Each file below is loaded on demand, not at triage. 4 file(s):
+
+- `references/book_to_2026_delta.md` — The 2016 → 2026 Delta. The book was published in 2016.
+- `references/prerequisite_map.md` — Prerequisite Map. The book's part structure is not its dependency structure.
+- `references/rights_and_use.md` — Why This Is a Companion, Not a Compiled Copy. This repository ships engineering/book-to-skill, which compiles a document on disk into a
+- `references/study_method_canon.md` — Studying a Hard Technical Text. This book defeats more readers than it teaches, and the reason is rarely ability.
+

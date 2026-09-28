@@ -215,3 +215,10 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/core_workflows.md` — Datamol Core Workflows. The ten workflow areas in full, with worked code: basic molecule handling, reading and
+- `references/io_module.md` — Datamol I/O Module Reference. The datamol.io module provides comprehensive file handling for molecular data across multiple formats.
+- `references/workflow_patterns.md` — Common Workflow Patterns. Three end-to-end pipelines: data loading through filtering to analysis, structure-activity
+

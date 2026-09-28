@@ -289,3 +289,15 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 8 file(s):
+
+- `references/data-import-export.md` — Data Import, Tables, Timetables, and MAT Files. This reference targets MATLAB R2026a.
+- `references/executing-scripts.md` — Command-Line Execution, Products, and Migration. This reference explains reviewed execution plans.
+- `references/graphics-visualization.md` — Graphics and Export. This reference targets MATLAB R2026a.
+- `references/mathematics.md` — Numerical Methods, Tolerances, and Reproducibility. This reference targets MATLAB R2026a.
+- `references/matrices-arrays.md` — Arrays, Indexing, Data Types, and Performance. This reference targets MATLAB R2026a.
+- `references/octave-compatibility.md` — GNU Octave 11.3.0 Compatibility. GNU Octave 11.3.0 is the current stable release as of 2026-07-23 (released
+- `references/programming.md` — Programming, Projects, Analysis, and Tests. This reference targets MATLAB R2026a.
+- `references/python-integration.md` — MATLAB and Python Integration. This reference is pinned to MATLAB R2026a as reviewed on 2026-07-23.
+

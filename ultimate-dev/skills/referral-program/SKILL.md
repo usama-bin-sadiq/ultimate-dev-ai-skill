@@ -284,3 +284,9 @@ All output follows the structured communication standard:
 - **marketing-demand-acquisition**: Use for multi-channel paid and organic acquisition strategy. NOT for referral-specific mechanics.
 - **ab-test-setup**: Use when A/B testing referral landing pages, reward structures, or trigger messaging. NOT for the program design.
 - **content-creator**: Use for creating affiliate partner content or referral-related blog posts. NOT for program mechanics.
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/measurement-framework.md` — Measurement Framework — Referral Program Metrics, Benchmarks, and Optimization Playbook. The metrics that tell you if your referral program is working, what's broken, and what to fix first.
+- `references/program-mechanics.md` — Program Mechanics — Referral and Affiliate Design Patterns. Detailed design patterns with real-world examples.
+

@@ -313,4 +313,13 @@ use it. Each answers one question the sections above do not.
 
 - [`references/has_historical_traffic_data.md`](references/has_historical_traffic_data.md)
 - [`references/no_historical_traffic_data.md`](references/no_historical_traffic_data.md)
-- [`references/telemetry_enablement.md`](references/telemetry_enablement.md)
+- [
+Each file below is loaded on demand, not at triage. 5 file(s):
+
+- `references/cost_alert_policies.md` — Cost Alert Policies. These alert policies will help alert users when their agents are using an
+- `references/quality_alert_policies.md` — Quality Alert Policies. > [!IMPORTANT]
+- `references/reliability_alert_policies.md` — Reliability Alert Policies. These alert policies will help users pinpoint the root cause of ongoing
+- `references/safety_alert_policies.md` — Safety Alert Policies. These alert policies will help users detect high trigger rates of Model Armor
+- `references/security_alert_policies.md` — Security Alert Policies. These alert policies will help users detect unusually high rates of permission
+
+`references/telemetry_enablement.md`](references/telemetry_enablement.md)

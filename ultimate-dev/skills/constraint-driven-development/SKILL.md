@@ -309,3 +309,8 @@ The skill was applied correctly when:
 - `test-driven-development` — the suite that coverage and mutation constraints measure
 - `security-and-hardening` — what the security dimension should contain
 - `performance-optimization` — where the performance numbers come from
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/floor-guard.md` — Floor guard: reference implementation. Every numbered dimension in CONSTRAINTS.md maps to a de facto tool (Step 4).
+

@@ -141,3 +141,29 @@ To learn how to use schemantic, ensure you read [references/schemantic.md](refer
 - Always check that code cleanly compiles using `dart analyze` before generating the final response.
 - Always use the Genkit CLI for local development and debugging.
 - Verify with traces, not a blind run. Running the app directly (`dart run`) does not capture dev traces. See the [Genkit CLI](#genkit-cli-recommended) section for how to run your app and capture traces.
+
+Each file below is loaded on demand, not at triage. 22 file(s):
+
+- `references/a2ui.md` — A2UI (Agent-to-UI) generative UI. The genkita2ui package brings
+- `references/agents-artifacts.md` — Working with Artifacts. > The Artifact type is stable and comes from package:genkit/genkit.dart, but
+- `references/agents-background.md` — prose
+- `references/agents-branching.md` — prose
+- `references/agents-custom.md` — Advanced Custom Agents — `defineCustomAgent`. > ai.defineCustomAgent is experimental and comes from
+- `references/agents-deployment.md` — Deploying / Serving Agents over HTTP. > Uses shelfHandler from package:genkitshelf and the agent's companion
+- `references/agents-human-in-the-loop.md` — Agent Human-in-the-Loop / Interrupts. > Read [agents.md](agents.md) first.
+- `references/agents-multi-agent.md` — Multi-Agent Orchestration / Sub-Agents. > Sub-agent delegation uses the agents() middleware from
+- `references/agents-sessions.md` — Agent Sessions & Persistence. > Sessions are experimental.
+- `references/agents-state.md` — Working with Agent State. > Read [agents.md](agents.md) first.
+- `references/agents.md` — > Agents are experimental.
+- `references/dotprompt.md` — Dotprompt (.prompt files) — Genkit Dart. .prompt files combine YAML frontmatter (model, config, schemas, tools,
+- `references/genkit.md` — Genkit Core Framework. Genkit Dart is an AI SDK for Dart that provides a unified interface for text generation, structured output, tool calling, and agentic workflows.
+- `references/genkit_anthropic.md` — Genkit Anthropic Plugin (`genkit_anthropic`). The Anthropic plugin for Genkit Dart, used for interacting with the Claude models.
+- `references/genkit_chrome.md` — Genkit Chrome AI Plugin (`genkit_chrome`). Chrome Built-in AI (Gemini Nano) plugin for Genkit Dart, allowing local offline execution within a Chrome application.
+- `references/genkit_firebase_ai.md` — Genkit Firebase AI Plugin (`genkit_firebase_ai`). The Firebase AI plugin for Genkit Dart, used for interacting with Gemini APIs through Firebase AI Logic.
+- `references/genkit_google_genai.md` — Genkit Google GenAI Plugin (`genkit_google_genai`). The Google AI plugin provides an interface against the official Google AI Gemini API.
+- `references/genkit_mcp.md` — Genkit MCP (`genkit_mcp`). MCP (Model Context Protocol) integration for Genkit Dart, built on mcpdart.
+- `references/genkit_middleware.md` — Genkit Middleware (`genkit_middleware`). A collection of useful middleware for Genkit Dart to enhance your agent's capabilities.
+- `references/genkit_openai.md` — Genkit OpenAI Plugin (`genkit_openai`). OpenAI-compatible API plugin for Genkit Dart.
+- `references/genkit_shelf.md` — Genkit Shelf Plugin (`genkit_shelf`). Shelf integration for Genkit Dart, used to serve Genkit Flows.
+- `references/schemantic.md` — Schemantic is a general-purpose Dart library used for defining strongly typed data classes that automatically bind to reusable runtime JSON schemas.
+

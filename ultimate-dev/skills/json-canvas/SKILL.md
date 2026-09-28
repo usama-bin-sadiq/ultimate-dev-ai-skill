@@ -242,3 +242,8 @@ See [references/EXAMPLES.md](references/EXAMPLES.md) for full canvas examples in
 
 - [JSON Canvas Spec 1.0](https://jsoncanvas.org/spec/1.0/)
 - [JSON Canvas GitHub](https://github.com/obsidianmd/jsoncanvas)
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/EXAMPLES.md` — JSON Canvas Complete Examples. json
+

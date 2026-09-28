@@ -331,3 +331,10 @@ environment, you can use the Composer Local Development CLI tool
 (`composer-dev`). Use
 [references/local-development-environment.md](references/local-development-environment.md)
 as a reference for interactions with local development environments.
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/airflow-3.md` — Airflow 3 migration. Use these checks if migrating to Airflow 3.
+- `references/environment-inspection.md` — Environment inspection & downloading files. Perform this step only if explicitly requested to do so.
+- `references/local-development-environment.md` — Local Development Environment Verification. If you want to verify your changes locally before deploying to the target
+

@@ -168,3 +168,11 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 4 file(s):
+
+- `references/common_workflows.md` — Common gget Workflows. Multi-module pipelines for gene characterization, structural comparison, expression and
+- `references/module_catalog.md` — gget Module Catalog. Every module by category, with its parameters and both command-line and Python examples.
+- `references/module_reference.md` — gget Module Reference. Comprehensive parameter reference for all gget modules.
+- `references/workflows.md` — gget Workflow Examples. Extended workflow examples demonstrating how to combine multiple gget modules for common bioinformatics tasks.
+

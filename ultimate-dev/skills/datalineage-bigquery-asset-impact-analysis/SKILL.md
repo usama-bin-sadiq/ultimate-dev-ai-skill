@@ -135,3 +135,8 @@ Present your findings clearly to the user using the following structure:
 -   [Google Cloud Knowledge Catalog Data Lineage Documentation](https://cloud.google.com/dataplex/docs/about-data-lineage)
 -   [Use the Data Lineage MCP server](https://docs.cloud.google.com/dataplex/docs/use-lineage-mcp)
 -   [Knowledge Catalog Data Lineage API Reference](https://cloud.google.com/dataplex/docs/reference/data-lineage/rest)
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/mcp-usage.md` — Google Cloud Data Lineage MCP Usage. The Data Lineage service is supported by a remote Model Context Protocol (MCP)
+

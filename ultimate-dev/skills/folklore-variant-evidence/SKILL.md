@@ -220,3 +220,8 @@ without automatic candidate selection.
 - Technical guide: <https://folklore.helena.bio/docs/folklore-connector>
 - Public adapter and contract: <https://github.com/helena-bioinformatics/folklore-mcp>
 - Official MCP Registry identity: `io.github.helena-bioinformatics/folklore`
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/mcp-contract.md` — Folklore Clinical Variant Interpretation MCP public contract. Use this reference when constructing calls or interpreting public results.
+

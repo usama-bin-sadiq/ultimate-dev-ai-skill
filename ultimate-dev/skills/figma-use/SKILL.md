@@ -231,3 +231,26 @@ Load these as needed based on what your task involves:
 ## 10. Snippet examples
 
 You will see snippets throughout documentation here. These snippets contain useful plugin API code that can be repurposed. Use them as is, or as starter code as you go. If there are key concepts that are best documented as generic snippets, call them out and write to disk so you can reuse in the future.
+
+Each file below is loaded on demand, not at triage. 19 file(s):
+
+- `references/api-reference.md` — Figma Plugin API Reference. > Part of the [usefigma skill](../SKILL.md).
+- `references/common-patterns.md` — Common Patterns. > Part of the [usefigma skill](../SKILL.md).
+- `references/component-patterns.md` — Component & Variant API Patterns. > Part of the [usefigma skill](../SKILL.md).
+- `references/effect-style-patterns.md` — Effect Style API Patterns. > Part of the [usefigma skill](../SKILL.md).
+- `references/gotchas.md` — Gotchas & Common Mistakes. > Part of the [usefigma skill](../SKILL.md).
+- `references/plugin-api-patterns.md` — Plugin API Patterns. > Part of the [usefigma skill](../SKILL.md).
+- `references/plugin-api-standalone.index.md` — Plugin API Index. > Full typings: plugin-api-standalone.d.ts (11,292 lines)
+- `references/text-style-patterns.md` — Text Style API Patterns. > Part of the [usefigma skill](../SKILL.md).
+- `references/validation-and-recovery.md` — Validation Workflow & Error Recovery. > Part of the [usefigma skill](../SKILL.md).
+- `references/variable-patterns.md` — Variable & Token API Patterns. > Part of the [usefigma skill](../SKILL.md).
+- `references/working-with-design-systems/wwds-components--creating.md` — prose
+- `references/working-with-design-systems/wwds-components--using.md` — Working with design systems: Using Components. When using Figma components, you need to start by understanding the state of the source and the state of Figma.
+- `references/working-with-design-systems/wwds-components.md` — Components overlap a lot with the idea of components in a codebase, but with some gaps and other Figma-specific use cases.
+- `references/working-with-design-systems/wwds-effect-styles.md` — Working with design systems: Effect Styles. Effect styles in Figma are named, reusable definitions of one or more visual effects — drop shadows, inner shadows, and blurs.
+- `references/working-with-design-systems/wwds-text-styles.md` — Working with design systems: Text Styles. Text styles in Figma are named, reusable typography definitions.
+- `references/working-with-design-systems/wwds-variables--creating.md` — prose
+- `references/working-with-design-systems/wwds-variables--using.md` — Working with design systems: Using Variables. When using Figma variables, you need to start by understanding the state of the source and the state of Figma.
+- `references/working-with-design-systems/wwds-variables.md` — Working with design systems: Variables. Variables overlap a lot with the idea of tokens in a codebase, but with some gaps and other Figma-specific use cases.
+- `references/working-with-design-systems/wwds.md` — When working with design systems in Figma, there can be many nuances when deciding how to do the right thing.
+

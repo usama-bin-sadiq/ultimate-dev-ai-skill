@@ -129,3 +129,11 @@ Events produce your highest-proof content — capture it deliberately:
 - **cold-email** — pre-event meeting-booking outreach
 - **revops** — routing, scoring, and source-tagging event leads
 - **attribution** — measuring multi-touch event influence honestly
+
+Each file below is loaded on demand, not at triage. 4 file(s):
+
+- `references/event-portfolio-strategy.md` — Event Portfolio Strategy — Which Events, Why, and the Economics. The layer that sits above role and tactics.
+- `references/speaking.md` — Speaking — Get Booked, Design the Talk, Compound the Recording. Speaking is the highest-leverage event role per dollar: stage time confers borrowed authority no booth can buy, and the recording compounds for years...
+- `references/sponsorship-roi.md` — Sponsorship & Exhibiting — Evaluate, Negotiate, Work the Floor, Follow Up. Sponsorships are the most expensive way to do event marketing and the easiest to waste.
+- `references/webinar-funnel.md` — The Webinar Funnel — Registration → Show-Up → Live-to-Close → Nurture. The webinar is the flagship hosted format because it's the whole event arc in miniature, repeatable monthly, and every stage is measurable.
+

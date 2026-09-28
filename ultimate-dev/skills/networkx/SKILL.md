@@ -454,3 +454,8 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/graph-basics.md` — NetworkX Graph Basics. NetworkX supports four main graph classes:
+

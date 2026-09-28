@@ -331,3 +331,8 @@ python spec_validator.py --file specs/auth.md --strict
 # Extract test cases
 python test_extractor.py --file specs/auth.md --framework pytest --output tests/test_auth.py
 ```
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/acceptance_criteria_patterns.md` — prose
+

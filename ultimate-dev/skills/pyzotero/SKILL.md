@@ -101,6 +101,25 @@ all_items = zot.everything(zot.items())
 | [references/mcp.md](references/mcp.md) | MCP server for LLM clients (local Zotero 7) |
 | [references/error-handling.md](references/error-handling.md) | Errors and exception handling |
 
+Each file below is loaded on demand, not at triage. 14 file(s):
+
+- `references/authentication.md` — Authentication & Setup. > Security: Never hardcode API keys in source code or commit them to version control.
+- `references/cli.md` — Command-Line Interface. The pyzotero CLI connects to your local Zotero 7 installation (not the remote Web API).
+- `references/collections.md` — Collection Management. python
+- `references/error-handling.md` — Error Handling. Pyzotero raises ZoteroError subclasses for API errors.
+- `references/exports.md` — Export Formats. python
+- `references/files-attachments.md` — Files & Attachments. python
+- `references/full-text.md` — Full-Text Content. Pyzotero can retrieve and set full-text index content for attachment items.
+- `references/mcp.md` — MCP Server. Pyzotero 1.12+ ships an optional [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server that exposes your local Zotero library and...
+- `references/pagination.md` — Pagination: follow(), everything(), Generators. Pyzotero returns 100 items by default.
+- `references/read-api.md` — Read API Methods. python
+- `references/saved-searches.md` — Saved Searches. python
+- `references/search-params.md` — Search & Request Parameters. Parameters can be passed directly to any Read API call, or set globally with addparameters().
+- `references/tags.md` — Tag Management. python
+- `references/write-api.md` — prose
+
+
+
 ## Common Patterns
 
 ### Fetch and modify an item

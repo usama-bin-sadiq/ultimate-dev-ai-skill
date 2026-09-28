@@ -146,7 +146,29 @@ Adhere to these principles:
 These ship with the skill and are read on demand; none is needed to
 use it. Each answers one question the sections above do not.
 
-- [`references/flutter_setup.md`](references/flutter_setup.md)
+- [
+Each file below is loaded on demand, not at triage. 18 file(s):
+
+- `references/android_setup.md` — 🛠️ Firebase Android Setup Guide
+- `references/firebase-cli-guide.md` — Exploring Commands. The Firebase CLI documents itself.
+- `references/firebase-service-init.md` — Initialization. Before initializing, check if you are already in a Firebase project directory by
+- `references/ios_setup.md` — prose
+- `references/local-env-setup.md` — Firebase Local Environment Setup. This skill documents the bare minimum setup required for a full Firebase
+- `references/refresh/android_studio.md` — Refresh Android Studio Local Environment. Follow these steps to refresh Gemini in Android Studio's local environment,
+- `references/refresh/antigravity.md` — Refresh Antigravity Local Environment. Follow these steps to refresh Antigravity's local environment, ensuring that
+- `references/refresh/claude.md` — Refresh Claude Code Local Environment. Follow these steps to refresh Claude Code's local environment, ensuring that
+- `references/refresh/gemini-cli.md` — Refresh Gemini CLI Local Environment. Follow these steps to refresh Gemini CLI's local environment, ensuring that
+- `references/refresh/other-agents.md` — Refresh Other Local Environment. Follow these steps to refresh the local environment of other agents, ensuring
+- `references/setup/android_studio.md` — Android Studio Setup. This guide explains how to set up Firebase agent skills for Gemini in Android
+- `references/setup/antigravity.md` — Antigravity Setup. To get the most out of Firebase in Antigravity, follow these steps to install
+- `references/setup/claude_code.md` — Claude Code Setup. To get the most out of Firebase in Claude Code, follow these steps to install
+- `references/setup/cursor.md` — Cursor Setup. To get the most out of Firebase in Cursor, follow these steps to install the
+- `references/setup/gemini_cli.md` — Gemini CLI Setup. To get the most out of Firebase in the Gemini CLI, follow these steps to install
+- `references/setup/github_copilot.md` — GitHub Copilot Setup. To get the most out of Firebase with GitHub Copilot in VS Code, follow these
+- `references/setup/other_agents.md` — Other Agents Setup. If you use another agent (like Windsurf, Cline, or Claude Desktop), follow these
+- `references/web_setup.md` — Firebase Web Setup Guide. If you haven't already created a project:
+
+`references/flutter_setup.md`](references/flutter_setup.md)
 
 ## Common Issues
 

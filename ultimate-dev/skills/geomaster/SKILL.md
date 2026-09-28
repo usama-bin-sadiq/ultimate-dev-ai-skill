@@ -382,3 +382,20 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 13 file(s):
+
+- `references/advanced-gis.md` — Advanced GIS Topics. Advanced spatial analysis techniques: 3D GIS, spatiotemporal analysis, topology, and network analysis.
+- `references/big-data.md` — Big Data and Cloud Computing. Distributed processing, cloud platforms, and GPU acceleration for geospatial data.
+- `references/code-examples.md` — 500+ code examples organized by category and programming language.
+- `references/coordinate-systems.md` — Coordinate Reference Systems (CRS). Complete guide to coordinate systems, projections, and transformations for geospatial data.
+- `references/core-libraries.md` — Core Geospatial Libraries. This reference covers the fundamental Python libraries for geospatial data processing.
+- `references/data-sources.md` — Geospatial Data Sources. Comprehensive catalog of satellite imagery, vector data, and APIs for geospatial analysis.
+- `references/gis-software.md` — GIS Software Integration. Guide to integrating with major GIS platforms: QGIS, ArcGIS, GRASS GIS, and SAGA GIS.
+- `references/industry-applications.md` — Industry Applications. Real-world geospatial workflows across industries: urban planning, disaster management, utilities, and more.
+- `references/machine-learning.md` — Machine Learning for Geospatial Data. Guide to ML and deep learning applications for remote sensing and spatial analysis.
+- `references/programming-languages.md` — Multi-Language Geospatial Programming. Geospatial programming across 8 languages: R, Julia, JavaScript, C++, Java, Go, Rust, and Python.
+- `references/remote-sensing.md` — Remote Sensing Reference. Comprehensive guide to satellite data acquisition, processing, and analysis.
+- `references/scientific-domains.md` — Scientific Domain Applications. Geospatial applications across scientific disciplines: marine, atmospheric, hydrology, and more.
+- `references/troubleshooting.md` — GeoMaster Troubleshooting Guide. Solutions to common geospatial problems and debugging strategies.
+

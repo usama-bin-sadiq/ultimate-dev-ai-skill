@@ -484,3 +484,15 @@ For tactical guidance on SaaS product pages, blog content, comparison/alternativ
 - **competitors**: For building comparison pages that get cited
 - **programmatic-seo**: For building SEO pages at scale
 - **copywriting**: For writing content that's both human-readable and AI-extractable
+
+Each file below is loaded on demand, not at triage. 8 file(s):
+
+- `references/agent-readiness.md` — Agent Readiness — Can an Agent Reach, Navigate, and Parse Your Site?. AI visibility work splits into two layers: what your content says (the rest of this skill) and whether an agent can get to it at all.
+- `references/citations-vs-recommendations.md` — Citations vs. Recommendations: The AI Visibility Ladder. Being cited by an AI engine and being recommended by it are two different outcomes governed by two different systems.
+- `references/content-patterns.md` — AEO and GEO Content Patterns. Reusable content block patterns optimized for answer engines and AI citation.
+- `references/content-types.md` — AI SEO by Content Type. Tactical guidance for optimizing specific content types for AI search citation.
+- `references/format-volatility.md` — Format Volatility — Which Content Formats AI Cites (and How Fast That Changes). Citation-source volatility (Reddit wiped overnight, Gemini favoring owned sites) is covered in [agent-readiness.md](agent-readiness.md).
+- `references/okf.md` — Open Knowledge Format (OKF). Google's v0.1 markdown spec for representing site content as an agent-readable bundle.
+- `references/platform-ranking-factors.md` — How Each AI Platform Picks Sources. Each AI search platform has its own search index, ranking logic, and content preferences.
+- `references/youtube-ai-citations.md` — YouTube Videos That Get Cited by AI. YouTube is one of the most-cited third-party surfaces in AI answers — Google AI Overviews and Gemini cite it heavily, and ChatGPT/Perplexity lift...
+

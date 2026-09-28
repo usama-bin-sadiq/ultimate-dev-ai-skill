@@ -240,3 +240,11 @@ reference guides:
     shared memory boost, and startup probes.
 -   **[GKE Gateway API Routing](references/gateway-api.md)**: Exposing workloads
     using GKE L7 Gateway API (`Gateway` and `HTTPRoute` resources).
+
+Each file below is loaded on demand, not at triage. 4 file(s):
+
+- `references/ai-inference.md` — AI/LLM Inference Workload Example (vLLM & GCS FUSE). This reference example demonstrates deploying an AI/LLM model serving workload
+- `references/basic-workload.md` — Basic Hardened Nginx Deployment and Service Example. This reference example demonstrates a production-ready, security-hardened
+- `references/gateway-api.md` — GKE Gateway API Routing Example. This reference example demonstrates exposing workloads via the GKE Gateway API
+- `references/network-policy.md` — Network Policy Example. This reference example demonstrates configuring Kubernetes NetworkPolicy
+

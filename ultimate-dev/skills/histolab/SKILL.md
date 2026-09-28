@@ -258,3 +258,14 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 7 file(s):
+
+- `references/core_capabilities.md` — Histolab Core Capabilities. Slide management, tissue detection and masks, tile extraction, filters and preprocessing,
+- `references/filters_preprocessing.md` — Filters and Preprocessing. Histolab provides a comprehensive set of filters for preprocessing whole slide images and tiles.
+- `references/slide_management.md` — Slide Management. The Slide class is the primary interface for working with whole slide images (WSI) in histolab.
+- `references/tile_extraction.md` — Tile extraction is the process of cropping smaller, manageable regions from large whole slide images.
+- `references/tissue_masks.md` — Tissue masks are binary representations that identify tissue regions within whole slide images.
+- `references/typical_workflows.md` — Typical Workflows. Five end-to-end workflows: exploratory tile extraction, comprehensive grid extraction,
+- `references/visualization.md` — Histolab provides several built-in visualization methods to help inspect slides, preview tile locations, visualize masks, and assess extraction...
+

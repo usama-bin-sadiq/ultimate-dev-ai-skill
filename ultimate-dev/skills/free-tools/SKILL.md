@@ -188,3 +188,9 @@ Rate each factor 1-5:
 - **seo-audit**: For SEO-optimizing the tool
 - **analytics**: For measuring tool usage
 - **emails**: For nurturing leads from the tool
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/tool-benchmarks.md` — Free Tool Case Benchmarks. Real free tools and the numbers they produced.
+- `references/tool-types.md` — Free Tool Types Reference. Detailed guide to each type of marketing tool you can build.
+

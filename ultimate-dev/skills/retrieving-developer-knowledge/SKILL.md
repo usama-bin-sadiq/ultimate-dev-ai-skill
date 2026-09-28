@@ -102,3 +102,10 @@ use that form:
 - [MCP Usage & Tool Details](references/mcp-usage.md)
 - [REST API Fallback Guide](references/api-fallback.md)
 - [Supported Domains & Scoping](references/supported-domains.md)
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/api-fallback.md` — Developer Knowledge REST API Fallback Guide. When the Developer Knowledge MCP server tools (searchdocuments, getdocuments, answerquery) are not declared or available in your runtime environment...
+- `references/mcp-usage.md` — MCP Tool Usage & API Details. The Developer Knowledge skill integrates with the Developer Knowledge Remote MCP
+- `references/supported-domains.md` — Supported Developer Domains. The Developer Knowledge API and MCP server search, retrieve, and synthesize documentation from official public pages across the following domains:
+

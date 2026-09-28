@@ -180,3 +180,10 @@ Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/error-signatures.md` — Google Cloud Filestore Client Mount Error Signatures & Matrix. <!-- disableFinding(LINEOVER80) -->
+- `references/logging-and-audit-queries.md` — Cloud Logging & Audit Drift Queries for Google Cloud Filestore. <!-- disableFinding(LINEOVER80) -->
+- `references/network-firewall-spec.md` — Google Cloud Filestore VPC Network & Firewall Specification. <!-- disableFinding(LINEOVER80) -->
+

@@ -329,3 +329,8 @@ npx playwright codegen             # Generate tests
 npm test -- --coverage --coverageReporters=lcov,json
 python scripts/coverage_analyzer.py coverage/coverage-final.json
 ```
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/test_automation_patterns.md` — Test Automation Patterns for React and Next.js. Reusable patterns for structuring test code, mocking dependencies, and handling async operations.
+

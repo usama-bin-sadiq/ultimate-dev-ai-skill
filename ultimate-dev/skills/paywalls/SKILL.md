@@ -225,3 +225,8 @@ What you've accomplished:
 - **cro**: For public pricing page optimization
 - **onboarding**: For driving to aha moment before upgrade
 - **ab-testing**: For testing paywall variations
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/experiments.md` — Paywall Experiment Ideas. Comprehensive list of A/B tests and experiments for paywall optimization.
+

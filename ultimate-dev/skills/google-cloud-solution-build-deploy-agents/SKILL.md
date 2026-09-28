@@ -272,3 +272,8 @@ the four phases:
 *   For the complete list of Google Cloud architectural documentation, product
     manuals, development kits, and checklists used by this skill, see
     [related-guidance.md](references/related-guidance.md).
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/product-mappings.md` — Product mappings. Use the following list to identify the appropriate Google Cloud products and
+

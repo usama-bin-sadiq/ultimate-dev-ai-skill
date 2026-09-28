@@ -403,7 +403,13 @@ use it. Each answers one question the sections above do not.
 
 Aggregate all section statuses into a single master check:
 - If all sections pass → "✓ ALL CHECKS PASS"
-- If any section fails → "✗ ERRORS DETECTED - REVIEW BELOW"
+- I
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/formulas.md` — Formula Reference. IMPORTANT: Use the formulas outlined in this reference document unless otherwise specified by the user.
+- `references/sec-filings.md` — SEC Filings Data Extraction Reference. When to Use: Only reference this file when a model template specifically requires pulling data from SEC filings (10-K, 10-Q).
+
+f any section fails → "✗ ERRORS DETECTED - REVIEW BELOW"
 
 ### Quick Debug Workflow
 

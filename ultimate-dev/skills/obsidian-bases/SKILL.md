@@ -497,3 +497,8 @@ formulas:
 - [Views](https://help.obsidian.md/bases/views)
 - [Formulas](https://help.obsidian.md/formulas)
 - [Complete Functions Reference](references/FUNCTIONS_REFERENCE.md)
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/FUNCTIONS_REFERENCE.md` — Functions Reference. Fields: date.year, date.month, date.day, date.hour, date.minute, date.second, date.millisecond
+

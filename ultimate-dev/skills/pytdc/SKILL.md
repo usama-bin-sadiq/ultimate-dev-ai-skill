@@ -312,3 +312,11 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 4 file(s):
+
+- `references/datasets.md` — PyTDC datasets and data access. This reference targets the PyTDC 1.1.15 source distribution, verified
+- `references/oracles.md` — Molecular generation and PyTDC oracles. This reference targets PyTDC 1.1.15, verified 2026-07-23.
+- `references/sources.md` — Sources and verification record. Research performed 2026-07-23 with targeted Parallel search/extract, official
+- `references/utilities.md` — Splits, evaluators, and benchmark groups. This reference describes behavior verified in the PyTDC 1.1.15 source
+

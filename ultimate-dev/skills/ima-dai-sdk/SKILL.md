@@ -54,3 +54,12 @@ Review the platform-specific integration guides for the target platforms:
 4.  Set up timed metadata forwarding
 5.  Make a stream request
 6.  Clean up SDK resources when the stream fails or the user leaves the stream.
+
+Each file below is loaded on demand, not at triage. 5 file(s):
+
+- `references/android-ImaServerSideAdInsertionMediaSource-guide.md` — Google IMA DAI SDK Android - ExoPlayer IMA Extension Guide. Use the ImaServerSideAdInsertionMediaSource class of the ExoPlayer IMA
+- `references/cast-StreamManager-guide.md` — Google IMA DAI SDK Cast - StreamManager Guide. Use StreamManager to request and play a livestream or VOD stream from Google
+- `references/ios-IMAStreamRequest-guide.md` — Google IMA DAI SDK iOS/tvOS - IMAStreamRequest Guide. For Google full-service DAI, use IMALiveStreamRequest to request a livestream
+- `references/roku-StreamManager-guide.md` — Google IMA DAI SDK Roku - StreamManager Guide. For Google full-service DAI, use CreateLiveStreamRequest to request a
+- `references/web-StreamManager-guide.md` — Google IMA DAI SDK HTML5 (Web) integration guide. This guide covers the integration of the Google IMA DAI (Dynamic Ad Insertion)
+

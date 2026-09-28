@@ -306,3 +306,8 @@ Would you be open to a quick call to explore?
 - **launch** — For product launches with partners; covers co-marketing as a "borrowed channel"
 - **content-strategy** — For content planning including co-created content
 - **sales-enablement** — For partner-facing collateral and enablement materials
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/partnership-types.md` — Partnership Types. Adapted from Corey Haines's Founding Marketing, Ch.
+

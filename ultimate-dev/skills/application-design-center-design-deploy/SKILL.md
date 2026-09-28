@@ -391,4 +391,10 @@ use it. Each answers one question the sections above do not.
 - [`references/planner_instructions.md`](references/planner_instructions.md)
 - [`references/raw_terraform_troubleshooting.md`](references/raw_terraform_troubleshooting.md)
 - [`references/remediation_guide.md`](references/remediation_guide.md)
-- [`references/terraform_validator_instructions.md`](references/terraform_validator_instructions.md)
+- [
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/design_guide.md` — Simplified GCP Modular Terraform Architect Skill. ---
+- `references/troubleshooting_guide.md` — Deployment Troubleshooting Skill. ---
+
+`references/terraform_validator_instructions.md`](references/terraform_validator_instructions.md)

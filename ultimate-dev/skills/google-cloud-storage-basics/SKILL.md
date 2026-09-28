@@ -238,3 +238,17 @@ when no MCP server is available.
     buckets, file operations, POSIX semantics and limitations (locking, writes,
     renames, consistency), and caching. For advanced tuning, deployment, and
     diagnosis, route to the `google-cloud-storage-fuse` skill.
+
+Each file below is loaded on demand, not at triage. 10 file(s):
+
+- `references/cli-api-usage.md` — Cloud Storage CLI & API Usage. If Cloud Storage MCP tools are not available in your environment, prefer the
+- `references/client-library-usage.md` — Cloud Storage Client Libraries. Google Cloud client libraries are the recommended way to access Cloud Storage
+- `references/core-concepts.md` — prose
+- `references/data-management.md` — GCS Data Management, Security, & Cloud Audit Logs. This reference guide covers the core data management, security, and cost
+- `references/data-transfer.md` — GCS Data Transfer Operations. This reference guide provides detailed guidelines, a decision tree, and commands
+- `references/gcsfuse.md` — Cloud Storage FUSE (gcsfuse) is an open-source FUSE adapter that mounts Google
+- `references/high-performance-storage.md` — High-Performance Cloud Storage (AI/ML, Analytics, and More). Data-intensive and latency-sensitive workloads such as AI/ML training and
+- `references/iac-usage.md` — Cloud Storage Infrastructure as Code (Terraform). Terraform is an open-source Infrastructure as Code (IaC) tool created by
+- `references/mcp-usage.md` — Cloud Storage MCP Usage. The Cloud Storage Model Context Protocol (MCP) server lets an agent perform
+- `references/storage-intelligence.md` — Storage Intelligence is a subscription for analyzing and acting on Cloud Storage
+

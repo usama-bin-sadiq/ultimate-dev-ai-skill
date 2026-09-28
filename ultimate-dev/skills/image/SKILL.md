@@ -338,3 +338,8 @@ Generate OG images programmatically for pages with dynamic content (blog posts, 
 - **seo-audit**: For image SEO (alt text, file names, lazy loading)
 - **aso**: For app store screenshot specs and optimization
 - **directory-submissions**: For Product Hunt gallery images and directory listing visuals
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/ai-image-prompting.md` — prose
+

@@ -121,3 +121,8 @@ and defaults (30 days, `LIMIT 10`, `ORDER BY cost DESC`) are in
 
 Note: Checking that the `goog-k8s-cluster-name` label exists scopes the total
 billing data specifically to GKE costs.
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/billing-queries.md` — BigQuery Billing Query Templates (GKE). Use these queries as templates to answer GKE cost questions against the GCP
+

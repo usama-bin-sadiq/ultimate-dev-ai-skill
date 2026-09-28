@@ -308,3 +308,9 @@ When creating a lead magnet strategy, provide:
 - **analytics**: For measuring lead magnet performance
 - **ads**: For paid promotion of lead magnets
 - **social**: For social media promotion
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/benchmarks.md` — Lead Magnet Benchmarks. Reference data for planning and evaluating lead magnet performance.
+- `references/format-guide.md` — Lead Magnet Format Guide. Detailed creation guidance for each lead magnet format.
+

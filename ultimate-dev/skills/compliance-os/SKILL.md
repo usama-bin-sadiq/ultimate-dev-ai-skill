@@ -209,3 +209,13 @@ python scripts/evidence_pool_generator.py program.json
 
 **Version:** 1.2.0
 **Status:** Production Ready
+
+Each file below is loaded on demand, not at triage. 6 file(s):
+
+- `references/audit_simulation_methodology.md` — prose
+- `references/compliance_os_pattern.md` — Compliance OS — The Meta-Framework Pattern. This reference answers exactly one decision: when do we orchestrate frameworks vs run them separately, and what does the meta-framework architecture...
+- `references/cross_framework_overlap.md` — Cross-Framework Overlap — The 9-Framework × Control-Family Matrix. This reference answers exactly one decision: for each common control family, which of the 9 supported frameworks address it, and at what confidence?
+- `references/evidence_artifact_reuse_index.md` — Evidence Artefact Reuse Index — Which Evidence Type Satisfies Most Controls Across Frameworks. This reference answers exactly one decision: which evidence artefacts have the highest reuse leverage across the 12 supported frameworks, and what's...
+- `references/evidence_management.md` — Evidence Management — Unified Pool + Reuse Leverage. This reference answers exactly one decision: how do we collect compliance evidence once and satisfy multiple frameworks, without losing audit-grade...
+- `references/multi_framework_audit_playbook.md` — Multi-Framework Audit Playbook — Orchestrating Audits Across N Frameworks. This reference answers exactly one decision: when 2+ frameworks operate simultaneously, how do we run audits in coordinated cycles with minimal...
+

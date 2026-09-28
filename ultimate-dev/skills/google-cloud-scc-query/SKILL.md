@@ -266,3 +266,8 @@ Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/finding_schema.md` — Security Command Center Finding Schema Reference. This reference describes the common fields returned in the JSON payload of a
+

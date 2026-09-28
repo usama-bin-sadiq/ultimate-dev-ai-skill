@@ -141,3 +141,28 @@ above, write the LQL query based on your general knowledge.
 *   [Cloud Logging query language documentation](https://docs.cloud.google.com/logging/docs/view/logging-query-language)
 *   [Monitored resource types catalog](https://docs.cloud.google.com/logging/docs/api/v2/resource-list)
 *   [Cloud Logging query library](https://docs.cloud.google.com/logging/docs/view/query-library)
+
+Each file below is loaded on demand, not at triage. 21 file(s):
+
+- `references/query_app_engine.md` — App Engine LQL queries. App Engine logs are anchored to the gaeapp resource type.
+- `references/query_audit_logs.md` — Audit logs reference. GCP Audit logs are strictly categorized into 4 types.
+- `references/query_bigquery.md` — BigQuery LQL queries. BigQuery telemetry fundamentally operates through Google Cloud Audit Logs.
+- `references/query_cloud_functions.md` — Cloud Run Functions LQL queries. Cloud Functions logs differ significantly depending on whether you are targeting
+- `references/query_cloud_observability.md` — Cloud Observability and Monitoring LQL queries. Variables to replace: None
+- `references/query_cloud_run.md` — Cloud Run LQL queries. Cloud Run workloads are split into two primary paradigms: Services (which
+- `references/query_cloud_source_repositories.md` — Cloud Source Repositories LQL queries. Variables to replace: <REPOSITORYNAME>
+- `references/query_cloud_sql.md` — Cloud SQL LQL queries. Cloud SQL logs use a unified resource type across all database engines but
+- `references/query_cloud_storage.md` — Cloud Storage (GCS) LQL queries. Google Cloud Storage (GCS) telemetry is entirely driven by Cloud Audit Logs.
+- `references/query_cloud_tasks.md` — Cloud Tasks LQL queries. Variables to replace: <QUEUEID>
+- `references/query_compute_engine.md` — Compute Engine (GCE) LQL queries. Compute Engine logs are highly segmented depending on whether you are analyzing
+- `references/query_dataflow.md` — Dataflow LQL queries. Variables to replace: None
+- `references/query_dataproc.md` — Managed Service for Apache Spark LQL queries. Variables to replace: None
+- `references/query_deployment_manager.md` — Cloud Deployment Manager LQL queries. Cloud Deployment Manager uses the deployment resource type natively to record
+- `references/query_gke.md` — Kubernetes Engine (GKE) LQL queries. GKE logs are split across multiple resource.type values depending on what
+- `references/query_iam.md` — IAM and service accounts LQL queries. IAM operations span multiple resource types.
+- `references/query_networking.md` — Networking LQL queries. Google Cloud networking telemetry utilizes highly specialized, deeply nested log
+- `references/query_security.md` — Security (audit logging) LQL queries. Variables to replace: None
+- `references/query_service_usage.md` — API enable and disable LQL queries. Variables to replace: None
+- `references/query_spanner.md` — Spanner LQL queries. Variables to replace: <SPANNERINSTANCE>
+- `references/query_third_party.md` — Third-party application LQL queries. Variables to replace: None
+

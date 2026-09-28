@@ -109,3 +109,9 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/core_capabilities.md` — RDKit Core Capabilities. The twelve capability areas in full, with worked code: molecular I/O and creation,
+- `references/workflows_and_best_practices.md` — RDKit Workflows and Best Practices. Worked workflows (drug-likeness analysis, similarity screening, substructure filtering)
+

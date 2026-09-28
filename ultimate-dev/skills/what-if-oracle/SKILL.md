@@ -179,6 +179,12 @@ Analyze the same What-If from multiple stakeholder perspectives: "If we launch t
 | ---- | ------- |
 | [references/scenario-templates.md](references/scenario-templates.md) | Domain-specific templates (startup, tech, finance, crisis, etc.) and probability calibration |
 
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/scenario-templates.md` — What-If Oracle — Scenario Templates. Reference guide for domain-specific scenario analysis configurations.
+
+
+
 ## License
 
 © 2026 Ashraf Hussein Kahoush / AHK Strategies. Licensed under CC BY-NC-SA 4.0. Free for personal, educational, and research use. Commercial use requires a license from the author.

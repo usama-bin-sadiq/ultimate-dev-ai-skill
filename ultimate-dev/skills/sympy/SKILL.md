@@ -145,7 +145,17 @@ This skill uses modular reference files for different capabilities:
    - Load when: Advanced mathematical topics beyond basic algebra and calculus
 
 5. **`code-generation-printing.md`**: Lambdify, codegen, LaTeX output, printing
-   - Load when: Converting expressions to code or generating formatted output
+   - L
+Each file below is loaded on demand, not at triage. 6 file(s):
+
+- `references/advanced-topics.md` — SymPy Advanced Topics. This document covers SymPy's advanced mathematical capabilities including geometry, number theory, combinatorics, logic and sets, statistics...
+- `references/code-generation-printing.md` — SymPy Code Generation and Printing. This document covers SymPy's capabilities for generating executable code in various languages, converting expressions to different output formats...
+- `references/core-capabilities.md` — SymPy Core Capabilities. This document covers SymPy's fundamental operations: symbolic computation basics, algebra, calculus, simplification, and equation solving.
+- `references/core_capabilities.md` — Core Capabilities. Symbolic computation basics, calculus, equation solving, matrices and linear algebra,
+- `references/matrices-linear-algebra.md` — SymPy Matrices and Linear Algebra. This document covers SymPy's matrix operations, linear algebra capabilities, and solving systems of linear equations.
+- `references/physics-mechanics.md` — SymPy Physics and Mechanics. This document covers SymPy's physics modules including classical mechanics, quantum mechanics, vector analysis, units, optics, continuum mechanics...
+
+oad when: Converting expressions to code or generating formatted output
 
 ## Common Use Case Patterns
 

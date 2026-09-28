@@ -191,3 +191,26 @@ See [CLI Reference](references/docs-and-cli.md) for more commands, and `genkit -
 -   [Agents (Beta)](references/agents.md): Agent basics, serving, and client-managed state. Deeper topics: [sessions](references/agents-sessions.md), [human-in-the-loop](references/agents-human-in-the-loop.md), [branching](references/agents-branching.md), [background agents](references/agents-background.md), [state](references/agents-state.md), [artifacts](references/agents-artifacts.md), [multi-agent](references/agents-multi-agent.md), [custom agents](references/agents-custom.md), [deployment](references/agents-deployment.md).
 -   [Middleware](references/middleware.md): using middleware and the `@genkit-ai/middleware` package. See also [building custom middleware](references/middleware-custom.md).
 -   [A2UI (Generative UI)](references/a2ui.md): the `@genkit-ai/a2ui` plugin (the `a2ui()` middleware), options, client rendering, user actions/forms, custom catalogs, and security.
+
+Each file below is loaded on demand, not at triage. 19 file(s):
+
+- `references/a2ui.md` — A2UI (Agent-to-UI) generative UI. The @genkit-ai/a2ui plugin brings
+- `references/agents-artifacts.md` — Working with Artifacts (Beta). > Beta / preview API.
+- `references/agents-background.md` — Background Agents / Detaching (Beta). > Beta / preview API.
+- `references/agents-branching.md` — Agent Branching (Beta). > Beta / preview API.
+- `references/agents-custom.md` — Advanced Custom Agents — `defineCustomAgent` (Beta). > Beta / preview API.
+- `references/agents-deployment.md` — Deploying / Serving Agents over HTTP (Beta). > Beta / preview API.
+- `references/agents-human-in-the-loop.md` — Agent Human-in-the-Loop / Interrupts (Beta). > Beta / preview API.
+- `references/agents-multi-agent.md` — Multi-Agent Orchestration / Sub-Agents (Beta). > Beta / preview API.
+- `references/agents-sessions.md` — Agent Sessions & Persistence (Beta). > Beta / preview API.
+- `references/agents-state.md` — Working with Agent State (Beta). > Beta / preview API.
+- `references/agents.md` — Agents (Beta). > Beta / preview API.
+- `references/best-practices.md` — Genkit Best Practices. ts
+- `references/common-errors.md` — Common Errors & Pitfalls. Before searching source code or docs, check the sections below.
+- `references/docs-and-cli.md` — Genkit Documentation & CLI. This reference lists common tasks and workflows using the genkit CLI.
+- `references/dotprompt.md` — Dotprompt (.prompt files) — Genkit JS. .prompt files combine YAML frontmatter (model, config, schemas, tools,
+- `references/examples.md` — Genkit Examples. This reference contains minimal, reproducible examples (MREs) for common Genkit patterns.
+- `references/middleware-custom.md` — prose
+- `references/middleware.md` — prose
+- `references/setup.md` — Genkit JS Setup. Follow these instructions to set up Genkit in the current codebase.
+

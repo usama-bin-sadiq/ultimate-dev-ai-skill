@@ -115,3 +115,10 @@ Then poll from a separate terminal/process:
 ```bash
 trackio list alerts --project my-project --json --since "2025-01-01T00:00:00"
 ```
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/alerts.md` — Trackio Alerts. Alerts let you flag important training events directly from code.
+- `references/logging_metrics.md` — Logging Metrics with Trackio. Trackio is a lightweight, free experiment tracking library from Hugging Face.
+- `references/retrieving_metrics.md` — Retrieving Metrics with Trackio CLI. The trackio CLI provides direct terminal access to query Trackio experiment tracking data locally without needing to start the MCP server.
+

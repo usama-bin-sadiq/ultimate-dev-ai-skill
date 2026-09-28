@@ -74,4 +74,9 @@ These ship with the skill and are read on demand; none is needed to
 use it. Each answers one question the sections above do not.
 
 - [`references/compression_principles.md`](references/compression_principles.md)
-- [`references/when_caveman_backfires.md`](references/when_caveman_backfires.md)
+- [
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/companion_tooling.md` — Companion Tooling. Compression tools + cs- wrapper layered on top of Matt's caveman skill.
+
+`references/when_caveman_backfires.md`](references/when_caveman_backfires.md)

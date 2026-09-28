@@ -140,3 +140,13 @@ Go to [podcast-guest-prep.md](references/podcast-guest-prep.md): research the sh
 
 ### "Build my press page"
 Use the checklist above. Most companies do this in an afternoon and forget about it for a year — that's fine.
+
+Each file below is loaded on demand, not at triage. 6 file(s):
+
+- `references/journalist-pitching.md` — Journalist Pitching — Proactive PR Workflow. Building a media list, scoring journalist fit, and crafting pitches that actually get opened.
+- `references/media-outlets.md` — Media Outlets — Where to Pitch. A curated, opinionated list of where to pitch for software/SaaS PR.
+- `references/newsjacking.md` — Newsjacking — Reactive PR Workflow. Injecting your POV into a story that's already trending.
+- `references/podcast-guest-prep.md` — Podcast Guest Prep. Build a prep brief before the user appears on a podcast as a guest.
+- `references/press-platforms.md` — Press Request Platforms — Inbound PR. Journalists posting "I need a source for X" — you respond, sometimes you get quoted, sometimes you don't.
+- `references/story-angles.md` — Story Angles — What Earns Press. Distilled from Corey Haines's Founding Marketing, ch.
+

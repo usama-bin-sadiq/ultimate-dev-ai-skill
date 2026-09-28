@@ -253,3 +253,16 @@ Depending on the specific user request, refer to the following reference files f
 - **Advanced Features**: Content Caching, Batch Prediction, and Thinking/Reasoning. See [references/advanced_features.md](references/advanced_features.md)
 - **Safety**: Adjusting Responsible AI filters and thresholds. See [references/safety.md](references/safety.md)
 - **Model Tuning**: Supervised Fine-Tuning and Preference Tuning. See [references/model_tuning.md](references/model_tuning.md)
+
+Each file below is loaded on demand, not at triage. 9 file(s):
+
+- `references/advanced_features.md` — Advanced Features. Cache large documents or contexts to reduce cost and latency.
+- `references/bounding_box.md` — Bounding Box Detection. Detect and localize objects within images or videos using bounding boxes.
+- `references/embeddings.md` — prose
+- `references/live_api.md` — The Live API provides real-time, low-latency bidirectional streaming via WebSockets.
+- `references/media_generation.md` — prose
+- `references/model_tuning.md` — Model Tuning. Supervised Fine-Tuning using your own datasets.
+- `references/safety.md` — Safety Settings and Responsible AI. You can adjust safety settings to control the thresholds for harmful content generation.
+- `references/structured_and_tools.md` — Structured Output and Tools. Enforce a specific JSON schema using standard Python type hints or Pydantic models.
+- `references/text_and_multimodal.md` — Text and Multimodal Generation. python
+

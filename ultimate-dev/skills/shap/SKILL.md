@@ -297,3 +297,15 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 8 file(s):
+
+- `references/data-maskers.md` — Background Data and Maskers. SHAP values are defined relative to a cooperative game.
+- `references/explainers.md` — SHAP Explainers. This reference targets SHAP 0.52.0.
+- `references/migration.md` — SHAP Migration and Compatibility. This guide covers migration to SHAP 0.52.0 and the modern shap.Explanation API.
+- `references/modalities.md` — Text, Images, and Deep Models. Structured inputs require structured maskers.
+- `references/plots.md` — SHAP Plotting. This reference uses the SHAP 0.52 plotting API.
+- `references/theory.md` — SHAP Theory and Interpretation. SHAP applies Shapley-style credit allocation to model explanations.
+- `references/troubleshooting.md` — SHAP Troubleshooting. Diagnose SHAP problems from environment and semantics outward.
+- `references/workflows.md` — SHAP Workflows. These workflows target SHAP 0.52.0 and the shap.Explanation API.
+

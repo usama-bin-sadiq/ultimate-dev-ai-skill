@@ -363,3 +363,10 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/available_featurizers.md` — Available Featurizers in Molfeat. This document provides a comprehensive catalog of all featurizers available in molfeat, organized by category.
+- `references/choosing_a_featurizer.md` — Choosing the Right Featurizer. Which featurizer suits traditional machine learning, deep learning, similarity searching,
+- `references/examples.md` — Molfeat Usage Examples. This document provides practical examples for common molfeat use cases.
+

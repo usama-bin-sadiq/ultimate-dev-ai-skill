@@ -108,3 +108,8 @@ See [references/scene-design-system.md](references/scene-design-system.md) for t
 
 - Related: `engineering/browser-automation` — for playwright-based browser workflows
 - See also: [framecraft](https://github.com/vaddisrinivas/framecraft) — open-source scene rendering pipeline
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/scene-design-system.md` — Scene Design System. Reference material for demo video scene design — colors, typography, animation timing, voice options, and pacing.
+

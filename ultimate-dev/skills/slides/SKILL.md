@@ -42,3 +42,8 @@ Script paths in this skill and its `references/` are relative to the directory t
 1. Parse subcommand from `$ARGUMENTS` (first word)
 2. Load corresponding `references/{subcommand}.md`
 3. Execute with remaining arguments
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/create.md` — prose
+

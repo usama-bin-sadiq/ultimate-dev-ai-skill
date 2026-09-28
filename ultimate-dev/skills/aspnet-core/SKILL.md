@@ -59,3 +59,20 @@ Load the smallest set of references that fits the task. Do not load every refere
 - When generating new code, start from the correct `dotnet new` template and keep the generated structure recognizable.
 - When editing an existing solution, follow the solution's conventions first and use these references to avoid framework misuse or outdated patterns.
 - When a task mentions "latest", verify the feature on Microsoft Learn or the ASP.NET Core docs repo before relying on memory.
+
+Each file below is loaded on demand, not at triage. 13 file(s):
+
+- `references/_sections.md` — Reference Sections. Use this file as the routing table for the rest of the skill.
+- `references/apis-minimal-and-controllers.md` — APIs: Minimal And Controllers. Primary docs:
+- `references/data-state-and-services.md` — Data, State, And Services. Primary docs:
+- `references/program-and-pipeline.md` — Program And Pipeline. Primary docs:
+- `references/realtime-grpc-and-background-work.md` — Realtime, gRPC, And Background Work. Primary docs:
+- `references/security-and-identity.md` — Security And Identity. Primary docs:
+- `references/source-map.md` — ASP.NET Core Source Map. This skill is synthesized from the official ASP.NET Core documentation tree and overview pages.
+- `references/stack-selection.md` — Stack Selection. Primary docs:
+- `references/testing-performance-and-operations.md` — Testing, Performance, And Operations. Primary docs:
+- `references/ui-blazor.md` — Blazor. Primary docs:
+- `references/ui-mvc.md` — MVC. Primary docs:
+- `references/ui-razor-pages.md` — Razor Pages. Primary docs:
+- `references/versioning-and-upgrades.md` — Versioning And Upgrades. Primary docs:
+

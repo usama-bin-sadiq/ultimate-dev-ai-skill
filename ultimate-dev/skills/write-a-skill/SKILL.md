@@ -163,4 +163,9 @@ use it. Each answers one question the sections above do not.
 
 - [`references/description_design_patterns.md`](references/description_design_patterns.md)
 - [`references/progressive_disclosure_principles.md`](references/progressive_disclosure_principles.md)
-- [`references/quality_gates_for_skills.md`](references/quality_gates_for_skills.md)
+- [
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/companion_tooling.md` — prose
+
+`references/quality_gates_for_skills.md`](references/quality_gates_for_skills.md)

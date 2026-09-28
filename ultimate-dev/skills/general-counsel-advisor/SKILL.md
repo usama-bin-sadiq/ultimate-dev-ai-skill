@@ -159,3 +159,9 @@ See `references/ip_and_regulatory.md` for sequencing.
 **Version:** 1.0.0
 **Status:** Production Ready
 **Disclaimer:** Not legal advice. Always engage qualified counsel for binding decisions.
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/contracts_playbook.md` — Contracts Playbook — Standard Startup Agreements. Reference for the 7 contracts every startup signs in its first 5 years and the clause traps to avoid in each.
+- `references/term_sheet_decoder.md` — Term Sheet Decoder. Glossary + founder-friendly defaults + pushback strategies for every clause in a standard venture term sheet.
+

@@ -412,6 +412,17 @@ Codex, Cursor and Windsurf, auth precedence, and troubleshooting — is in
 | [references/repos-and-workspace.md](references/repos-and-workspace.md) | Repos, claims, branches, clipboard, upload, import, library, sharing |
 | [references/python-sdk.md](references/python-sdk.md) | The `gxl_paperclip` Python client |
 
+Each file below is loaded on demand, not at triage. 6 file(s):
+
+- `references/cli-reference.md` — Paperclip CLI reference. Every command and flag below is transcribed from paperclip --help and paperclip <cmd> --help, and
+- `references/installation.md` — Installing and authenticating Paperclip. Paperclip is distributed by GXL (https://paperclip.gxl.ai).
+- `references/map-reduce.md` — map, reduce, results, and figure analysis. map runs an LLM reader over each document in a result set, in parallel.
+- `references/python-sdk.md` — The `gxl_paperclip` Python SDK. A typed client over the same server the CLI talks to.
+- `references/repos-and-workspace.md` — prose
+- `references/search-and-retrieval.md` — Search, retrieval, and query craft. How to find the right documents, and how to avoid the three ways Paperclip queries commonly go wrong:
+
+
+
 ## Citing Scientific Agent Skills
 
 This skill is part of Scientific Agent Skills by K-Dense. If it materially contributed to a

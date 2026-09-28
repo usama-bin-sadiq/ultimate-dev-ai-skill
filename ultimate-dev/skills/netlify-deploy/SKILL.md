@@ -245,3 +245,10 @@ For secrets and configuration:
 - [CLI commands](references/cli-commands.md)
 - [Deployment patterns](references/deployment-patterns.md)
 - [netlify.toml guide](references/netlify-toml.md)
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/cli-commands.md` — Netlify CLI Commands Reference. Quick reference for common Netlify CLI commands used in deployments.
+- `references/deployment-patterns.md` — Netlify Deployment Patterns. Common deployment scenarios and best practices for the Netlify skill.
+- `references/netlify-toml.md` — netlify.toml Configuration Reference. Configuration file for Netlify builds and deployments.
+

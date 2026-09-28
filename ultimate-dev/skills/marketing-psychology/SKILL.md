@@ -121,3 +121,8 @@ All output passes quality verification:
 - **pricing-strategy**: For pricing decisions. Psychology provides the buyer behavior lens.
 - **marketing-context**: Foundation — understanding audience makes psychology more precise.
 - **ab-test-setup**: For testing which psychological approach works. Data beats theory.
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/mental-models-catalog.md` — Mental Models Catalog for Marketing. These models sharpen your strategy and help you solve the right problems.
+

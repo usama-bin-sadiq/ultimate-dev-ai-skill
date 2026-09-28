@@ -321,3 +321,9 @@ All output follows the structured communication standard:
 - **ab-test-setup**: Use to A/B test price points or pricing page layouts after initial design.
 - **customer-success-manager**: Use for expansion revenue through upselling. NOT for pricing design or packaging.
 - **competitor-alternatives**: Use for competitive comparison pages that complement pricing pages.
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/pricing-models.md` — Pricing Models — Deep Dive. Comprehensive reference for SaaS pricing models with real-world examples and when to use each.
+- `references/pricing-page-playbook.md` — Pricing Page Playbook. Design specs, copy frameworks, and conversion tactics for SaaS pricing pages.
+

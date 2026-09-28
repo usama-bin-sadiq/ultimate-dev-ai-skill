@@ -136,3 +136,10 @@ This enables deterministic grading across prompt variants.
 3. Run A/B suite against same cases.
 4. Promote only if winner improves average and keeps violation count at zero.
 5. Track post-release feedback and feed new failure cases back into test suite.
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/evaluation-rubric.md` — Evaluation Rubric for Marketing Prompts. How to score prompt outputs deterministically with scripts/prompttester.py, and how to extend the mechanical score with marketing-specific quality...
+- `references/prompt-templates.md` — Marketing Prompt Templates. Production-ready prompt templates for the marketing use cases this skill promises: ad copy, email campaigns, social media, landing pages, and SEO...
+- `references/technique-guide.md` — Technique Guide + LLM Governance for Marketing Teams. Two things in one reference: (1) which prompting technique to use for which marketing task, and (2) the governance layer — the rules a marketing team...
+

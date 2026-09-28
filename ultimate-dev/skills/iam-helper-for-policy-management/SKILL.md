@@ -124,3 +124,9 @@ Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/v1-allow-policies.md` — This reference guide details how to manage IAM v1 allow policies across Resource
+- `references/v2-deny-policies.md` — prose
+

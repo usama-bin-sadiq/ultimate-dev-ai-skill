@@ -339,3 +339,10 @@ Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/design-recommendations.md` — Design recommendations. Important: The recommendations below apply to the primary recommended products
+- `references/product-mapping.md` — Product Mapping Guidance for Hybrid Search Solutions. Use the guidance in this file to do the following:
+- `references/related-guidance.md` — Architecture and design guidance. Use these documents to help inform the creation of a Google Cloud hybrid search
+

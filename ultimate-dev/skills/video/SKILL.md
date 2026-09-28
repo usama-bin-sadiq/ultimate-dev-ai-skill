@@ -344,3 +344,9 @@ Output: Ready-to-publish video
 - **ad-creative**: For paid video ad creative and iteration
 - **copywriting**: For video scripts and messaging
 - **marketing-psychology**: For hooks and persuasion in video
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/ai-video-prompting.md` — prose
+- `references/edit-anatomy.md` — Reverse-Engineering an Edit (The Beat Sheet). A viral short-form video usually isn't winning on the footage — it's winning on the edit: the cut rhythm, the caption style, the punch-ins, the...
+

@@ -355,3 +355,11 @@ If context is missing, ask:
 - **revops**: For lead lifecycle, scoring, routing, and pipeline management
 - **pricing**: For pricing decisions and packaging
 - **product-marketing**: For foundational positioning and messaging
+
+Each file below is loaded on demand, not at triage. 4 file(s):
+
+- `references/deck-frameworks.md` — Sales Deck Frameworks. Detailed slide-by-slide guidance for building sales decks that tell a story and close deals.
+- `references/demo-scripts.md` — Demo Script Templates. Scene-by-scene templates for different call types, with timing, talk tracks, and interaction guidance.
+- `references/objection-library.md` — Objection Library. Common B2B SaaS objections with response frameworks.
+- `references/one-pager-templates.md` — One-Pager Templates. Templates for different one-pager use cases, with layout guidance and copy prompts.
+

@@ -209,3 +209,16 @@ Options:
 - [WAI-ARIA Authoring Practices 1.2](https://www.w3.org/WAI/ARIA/apg/)
 - [Deque axe-core Rules](https://github.com/dequelabs/axe-core/blob/develop/doc/rule-descriptions.md)
 - [eslint-plugin-jsx-a11y](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y)
+
+Each file below is loaded on demand, not at triage. 9 file(s):
+
+- `references/aria-patterns.md` — ARIA Patterns & Keyboard Interaction Reference. Every page should have these landmarks:
+- `references/audit-report-template.md` — prose
+- `references/ci-cd-integration.md` — CI/CD Integration for Accessibility Auditing. yaml
+- `references/color-contrast-guide.md` — Color Contrast Guide. The contrastchecker.py script validates color pairs against WCAG 2.2 contrast requirements.
+- `references/examples-by-framework.md` — Accessibility Audit Examples by Framework. vue
+- `references/framework-a11y-patterns.md` — Framework-Specific Accessibility Patterns. Image alt text:
+- `references/testing-checklist.md` — Accessibility Testing Checklist. Use this checklist after applying fixes to verify accessibility manually.
+- `references/wcag-22-new-criteria.md` — WCAG 2.2 New Success Criteria Reference. These criteria were added in WCAG 2.2 and are commonly missed.
+- `references/wcag-quick-ref.md` — WCAG 2.2 Quick Reference — Level A & AA
+

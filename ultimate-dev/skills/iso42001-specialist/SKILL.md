@@ -193,3 +193,8 @@ python scripts/aims_audit_scheduler.py audit_scope.json
 
 **Version:** 1.0.0
 **Status:** Production Ready
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/cross_framework_mapping_ai.md` — ISO/IEC 42001 ↔ EU AI Act ↔ NIST AI RMF ↔ ISO 23894 ↔ ISO 38507 ↔ ISO 27001 — Cross-Framework Mapping. This reference answers exactly one decision: for each ISO 42001 obligation, which other frameworks already cover it, and what evidence can I reuse?
+

@@ -311,3 +311,12 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 5 file(s):
+
+- `references/core_components.md` — Core Components of Research Proposals. Every standard proposal section in detail: purpose, expected structure, length, and
+- `references/proposal_types_and_resubmission.md` — Proposal Types and Resubmission Strategies. The common proposal types and their expectations, then how to approach a resubmission,
+- `references/review_criteria.md` — Review Criteria by Agency. How NIH, NSF, DOE, and DARPA evaluate proposals, criterion by criterion, and what each
+- `references/specific_aims_guide.md` — NIH Specific Aims Page: The Complete Guide. The Specific Aims page is the most important page of your entire NIH grant application.
+- `references/writing_principles.md` — prose
+

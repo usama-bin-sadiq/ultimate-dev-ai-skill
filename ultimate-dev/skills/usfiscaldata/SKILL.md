@@ -168,7 +168,19 @@ resp = requests.get(f"{BASE_URL}/v1/accounting/dts/deposits_withdrawals_operatin
 - **[datasets-interest-rates.md](references/datasets-interest-rates.md)** — Average interest rates, exchange rates, TIPS/CPI, certified interest rates
 - **[datasets-securities.md](references/datasets-securities.md)** — Treasury auctions, savings bonds, SLGS, buybacks
 - **[response-format.md](references/response-format.md)** — Response objects, error handling, pagination, response codes
-- **[examples.md](references/examples.md)** — Python, R, and pandas code examples for common use cases
+- *
+Each file below is loaded on demand, not at triage. 8 file(s):
+
+- `references/api-basics.md` — API Basics — U.S. Treasury Fiscal Data
+- `references/datasets-debt.md` — Debt Datasets — U.S. Treasury Fiscal Data. Endpoint: /v2/accounting/od/debttopenny
+- `references/datasets-fiscal.md` — Fiscal Statement Datasets — U.S. Treasury Fiscal Data. The DTS dataset has 9 data tables, all under /v1/accounting/dts/.
+- `references/datasets-interest-rates.md` — Interest Rates & Exchange Rate Datasets — U.S. Treasury Fiscal Data. Endpoint: /v2/accounting/od/avginterestrates
+- `references/datasets-securities.md` — Securities & Savings Bonds Datasets — U.S. Treasury Fiscal Data. Endpoint: /v1/accounting/od/auctionsquery
+- `references/examples.md` — Code Examples — U.S. Treasury Fiscal Data. python
+- `references/parameters.md` — Query Parameters — U.S. Treasury Fiscal Data API. All parameters are optional.
+- `references/response-format.md` — Response Format — U.S. Treasury Fiscal Data API. json
+
+*[examples.md](references/examples.md)** — Python, R, and pandas code examples for common use cases
 
 ## Citing Scientific Agent Skills
 

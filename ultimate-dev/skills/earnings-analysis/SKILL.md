@@ -226,3 +226,10 @@ Examples of good/bad headlines, tips for success, common mistakes to avoid, and 
 
 **Optional:**
 - XLS skill for model updates (not required for earnings updates)
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/best-practices.md` — Best Practices, Examples, and Quality Guidelines. This document provides examples, tips for success, common mistakes to avoid, and comprehensive quality checklists.
+- `references/report-structure.md` — prose
+- `references/workflow.md` — prose
+

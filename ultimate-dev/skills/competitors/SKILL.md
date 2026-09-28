@@ -256,3 +256,9 @@ Recommended pages to create with priority order based on search volume.
 - **seo-audit**: For optimizing competitor pages
 - **schema**: For FAQ and comparison schema
 - **sales-enablement**: For internal sales collateral, decks, and objection docs
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/content-architecture.md` — prose
+- `references/templates.md` — Section Templates for Competitor Pages. Ready-to-use templates for each section of competitor comparison pages.
+

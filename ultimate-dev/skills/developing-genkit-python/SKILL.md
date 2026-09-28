@@ -121,3 +121,23 @@ See [Dev Workflow](references/dev-workflow.md) for the full checklist and Dev UI
 - [Evals](references/evals.md): Evaluators and datasets.
 - [Dev Workflow](references/dev-workflow.md): `genkit start`, Dev UI, checklist.
 - [Agents (Beta)](references/agents.md): Multi-turn API.
+
+Each file below is loaded on demand, not at triage. 16 file(s):
+
+- `references/agents-artifacts.md` — Artifacts (Beta). > See [agents.md](agents.md).
+- `references/agents-background.md` — prose
+- `references/agents-branching.md` — Agent Branching (Beta). > Beta / preview API.
+- `references/agents-custom.md` — Advanced Custom Agents — `define_custom_agent` (Beta). > Beta / preview API.
+- `references/agents-http.md` — Agent HTTP (Beta). > See [agents.md](agents.md).
+- `references/agents-human-in-the-loop.md` — Agent Human-in-the-Loop / Interrupts (Beta). > Beta / preview API.
+- `references/agents-sessions.md` — Sessions & Persistence (Beta). > See [agents.md](agents.md).
+- `references/agents-state.md` — Agent State (Beta). > See [agents.md](agents.md) · [sessions](agents-sessions.md).
+- `references/agents.md` — Agents (Beta). > Preview API under genkit.agent.
+- `references/common-errors.md` — Common Errors. Quick fixes.
+- `references/dev-workflow.md` — Dev Workflow — Genkit Python. After generating code, always give the developer:
+- `references/dotprompt.md` — Dotprompt — Genkit Python. .prompt files combine YAML frontmatter (model config, schemas) with Handlebars
+- `references/evals.md` — Evals — Genkit Python. 1.
+- `references/examples.md` — Genkit Python Examples. Minimal patterns for common Genkit APIs.
+- `references/fastapi.md` — FastAPI — Genkit Python. bash
+- `references/setup.md` — Setup — Genkit Python. Always use a virtual environment — never install Genkit into the system interpreter.
+

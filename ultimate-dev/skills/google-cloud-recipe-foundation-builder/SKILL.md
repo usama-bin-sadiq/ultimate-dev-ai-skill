@@ -367,3 +367,10 @@ Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/admin-iam.md` — Google Cloud Administrative IAM & Permissions Reference. This reference document details the administrative IAM structure and remediation
+- `references/logging-monitoring.md` — Centralized Logging and Monitoring. This reference guide details the step-by-step commands to configure centralized
+- `references/org-policies.md` — Google Cloud Organization Policies Reference. This reference document details the baseline Organization Policies enforced by
+

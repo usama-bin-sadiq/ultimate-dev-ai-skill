@@ -218,4 +218,9 @@ Once the server runs:
 - `references/resources-and-prompts.md` — the two non-tool primitives
 - `references/elicitation.md` — spec-native user input mid-tool (capability check + fallback)
 - `references/server-capabilities.md` — instructions, sampling, roots, logging, progress, cancellation
-- `references/versions.md` — version-sensitive claims ledger (check when updating)
+- `
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/tool-design.md` — prose
+
+- `references/versions.md` — version-sensitive claims ledger; load when checking a claim that a version change would invalidate

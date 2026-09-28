@@ -290,3 +290,12 @@ Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+
+Each file below is loaded on demand, not at triage. 5 file(s):
+
+- `references/architecture.md` — Multi-Engine Execution Architecture. Filestore shares are exposed via private RFC1918 IPs inside VPCs.
+- `references/iap-jump-host.md` — GCE Jump Host via IAP SSH: Configuration & Troubleshooting. This guide explains how to use an existing Compute Engine VM inside the VPC as a
+- `references/nfs-bridge-setup.md` — Cloud Run Serverless NFS Bridge Setup & Architecture. This guide explains how to set up, configure, and operate the Serverless NFS
+- `references/token-safety-guardrails.md` — Context Window Safety, Chunking & LLM Guardrails. When inspecting remote filesystems, large files (e.g.
+- `references/troubleshooting.md` — Troubleshooting & Common Error Resolution. This runbook helps resolve common issues encountered while browsing Google Cloud
+

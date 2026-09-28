@@ -193,3 +193,23 @@ Creation fails with 409 or "already exists" error | The bucket name became taken
     Cloud Storage Java client library.
 *   [Python SDK Guide](references/sdk_python.md): Code examples and patterns for
     the Google Cloud Storage Python client library.
+
+Each file below is loaded on demand, not at triage. 16 file(s):
+
+- `references/archiving_compliance.md` — Long-Term Archive & Regulatory Compliance. This reference document outlines the secure-by-default, cost-effective
+- `references/backup_dr.md` — Backup and Disaster Recovery. This reference document outlines the secure-by-default, highly durable
+- `references/gcloud.md` — gcloud Command Generation Guide. > [!IMPORTANT]
+- `references/log_storage.md` — Log Storage. This reference document outlines the configuration mapping and architecture
+- `references/media_hosting.md` — Media Hosting & Content Delivery Network (CDN). This reference document outlines the secure-by-default, high-performance
+- `references/rest.md` — Cloud Storage JSON API Reference. > [!IMPORTANT]
+- `references/sdk.md` — Cloud Storage SDK Reference. > [!IMPORTANT]
+- `references/sdk_cpp.md` — C++ SDK Examples. This guide describes how to translate a Draft Bucket Creation Plan (from
+- `references/sdk_go.md` — Go SDK Examples. This guide describes how to translate a Draft Bucket Creation Plan (from
+- `references/sdk_java.md` — Java SDK Examples. This guide describes how to translate a Draft Bucket Creation Plan (from
+- `references/sdk_python.md` — Python SDK Examples. This guide describes how to translate a Draft Bucket Creation Plan (from
+- `references/sensitive_data.md` — Sensitive Data & Compliance (PII, HIPAA, Finance). This reference document outlines the secure-by-default configuration mapping and
+- `references/static_website.md` — Static Website Hosting. This reference document outlines the configuration mapping and architecture
+- `references/storage_for_ai.md` — AI & Machine Learning (Storage for AI). This reference document outlines the configuration mapping and architecture
+- `references/terraform.md` — Terraform Google Provider Cloud Storage Reference. > [!IMPORTANT]
+- `references/ugc_ingestion.md` — Direct User-Generated Content (UGC) Ingestion. This reference document outlines the secure-by-default configuration mapping and
+

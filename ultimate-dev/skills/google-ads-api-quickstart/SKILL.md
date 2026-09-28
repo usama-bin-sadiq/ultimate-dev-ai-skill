@@ -310,3 +310,14 @@ Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+
+Each file below is loaded on demand, not at triage. 7 file(s):
+
+- `references/dotnet.md` — prose
+- `references/java.md` — prose
+- `references/perl.md` — prose
+- `references/php.md` — prose
+- `references/python.md` — prose
+- `references/rest.md` — Google Ads API REST Setup Reference. This guide outlines how to authenticate, configure, and execute direct HTTP REST requests to retrieve campaigns from the Google Ads API without using...
+- `references/ruby.md` — prose
+

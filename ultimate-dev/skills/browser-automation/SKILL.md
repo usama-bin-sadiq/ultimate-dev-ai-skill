@@ -264,3 +264,10 @@ All scripts are stdlib-only. Run `python3 <script> --help` for full usage.
 - **api-test-suite-builder** — When the website has a public API, hit the API directly instead of scraping the rendered page. Faster, more reliable, less detectable.
 - **performance-profiler** — If your automation scripts are slow, profile the bottlenecks before adding concurrency.
 - **env-secrets-manager** — For securely managing credentials used in authenticated automation workflows.
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/anti_detection_patterns.md` — Anti-Detection Patterns for Browser Automation. This reference covers techniques to make Playwright automation less detectable by anti-bot services.
+- `references/data_extraction_recipes.md` — Data Extraction Recipes. Practical patterns for extracting structured data from web pages using Playwright.
+- `references/playwright_browser_api.md` — Playwright Browser API Reference (Automation Focus). This reference covers Playwright's Python async API for browser automation tasks — NOT testing.
+

@@ -403,3 +403,10 @@ configurations when working in a repository:
 *   [Google Cloud Monitoring Pricing](https://docs.cloud.google.com/monitoring/pricing.md.txt)
 *   [Google SRE Workbook: Alerting on SLOs](https://sre.google/workbook/alerting-on-slos/)
 *   [Awesome Prometheus Alerts Repository](https://github.com/samber/awesome-prometheus-alerts)
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/gke_configuration_prerequisites.md` — GKE Configuration & Telemetry Prerequisites for Alerting Policies. This document details the Google Kubernetes Engine (GKE) and Google Cloud
+- `references/metrics_and_alerts_catalog.md` — Comprehensive GKE Metrics & Kubernetes Alerting Catalog. This catalog compiles public Google Kubernetes Engine (GKE) telemetry metrics
+- `references/promql_queries.md` — PromQL Queries Reference for Kubernetes Alerting. This document provides best-practice PromQL queries for monitoring Kubernetes
+

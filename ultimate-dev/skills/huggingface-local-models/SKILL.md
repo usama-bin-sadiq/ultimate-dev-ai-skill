@@ -111,3 +111,10 @@ curl http://localhost:8080/v1/chat/completions \
 - Hugging Face Local Apps docs: `https://huggingface.co/docs/hub/main/local-apps`
 - Hugging Face Local Agents docs: `https://huggingface.co/docs/hub/agents-local`
 - GGUF converter Space: `https://huggingface.co/spaces/ggml-org/gguf-my-repo`
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/hardware.md` — Hardware Acceleration. bash
+- `references/hub-discovery.md` — Hugging Face URL Workflows for llama.cpp. Use URL-only workflows first.
+- `references/quantization.md` — GGUF Quantization Guide. Complete guide to GGUF quantization formats and model conversion.
+

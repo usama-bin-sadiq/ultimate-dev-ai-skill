@@ -427,3 +427,17 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 10 file(s):
+
+- `references/AI_CURATION.md` — AI-Assisted Curation Reference. Use vision-language models to analyze spike-sorting visualizations for borderline units,
+- `references/ANALYSIS.md` — Post-Processing & Analysis Reference. Comprehensive guide to quality metrics, visualization, and analysis of sorted Neuropixels data.
+- `references/AUTOMATED_CURATION.md` — Automated Curation Reference. Guide to automated spike sorting curation using Bombcell, UnitRefine, and other tools.
+- `references/MOTION_CORRECTION.md` — Motion/Drift Correction Reference. Mechanical drift during acute probe insertion is a major challenge for Neuropixels recordings.
+- `references/PREPROCESSING.md` — Neuropixels Preprocessing Reference. Comprehensive preprocessing techniques for Neuropixels neural recordings.
+- `references/QUALITY_METRICS.md` — Quality Metrics Reference. Comprehensive guide to unit quality assessment using SpikeInterface metrics and Allen/IBL standards.
+- `references/SPIKE_SORTING.md` — Spike Sorting Reference. Comprehensive guide to spike sorting Neuropixels data.
+- `references/api_reference.md` — API Reference (SpikeInterface). Quick reference for the SpikeInterface functions used throughout this skill.
+- `references/plotting_guide.md` — prose
+- `references/standard_workflow.md` — Standard Neuropixels Analysis Workflow. Complete step-by-step guide for analyzing Neuropixels recordings from raw data to curated
+

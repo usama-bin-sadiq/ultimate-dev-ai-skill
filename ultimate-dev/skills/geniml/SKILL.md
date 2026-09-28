@@ -325,3 +325,12 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 5 file(s):
+
+- `references/bedspace.md` — BEDspace. Verified against geniml==0.8.4 release source, the official BEDbase tutorial,
+- `references/consensus_peaks.md` — Consensus peaks and universe assessment. Verified against geniml==0.8.4 release source and official BEDbase
+- `references/region2vec.md` — Region2Vec. Verified against geniml==0.8.4 release source and the official BEDbase
+- `references/scembed.md` — scEmbed. Verified against geniml==0.8.4 release source, current Gtars
+- `references/utilities.md` — I/O, tokenization, caches, evaluation, and security. Research snapshot: 2026-07-23.
+

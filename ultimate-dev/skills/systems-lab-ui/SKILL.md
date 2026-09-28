@@ -61,3 +61,10 @@ Build an explorable explanation of a real system. Treat the canvas as executable
 
 The skill directory is the portable unit. Share or install it as `systems-lab-ui`.
 Read [the MCP packaging reference](references/mcp-packaging.md) only when a team needs centrally hosted templates or cross-tool distribution.
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/examples.md` — Systems Lab UI examples. Use this when explaining a complete interaction rather than starting at a normalized command.
+- `references/mcp-packaging.md` — Optional MCP packaging. The skill should remain the source of behavioral instructions.
+- `references/visual-reference.md` — Systems Lab UI visual reference. Translate domain facts into a consistent visual language.
+

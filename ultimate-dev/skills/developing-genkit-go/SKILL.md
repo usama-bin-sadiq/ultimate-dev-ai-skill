@@ -153,3 +153,25 @@ See [references/getting-started.md](references/getting-started.md) for full CLI 
 - **Use `.prompt` files for complex prompts.** They separate prompt content from Go code, support Handlebars templating, and can be iterated on without recompilation. Code-defined prompts are better for simple, single-line cases.
 - **Reach for built-in middleware before writing one.** `Retry`, `Fallback`, `ToolApproval`, `Filesystem`, and `Skills` cover the common cross-cutting needs and compose with each other via `ai.WithUse`. See [references/middleware.md](references/middleware.md). When you do write custom middleware, allocate per-call state in closures captured by `New`, and guard anything that `WrapTool` mutates because tools may run concurrently.
 - **Look up the latest model IDs.** Model names change frequently. Check provider documentation for current model IDs rather than relying on hardcoded names. See [references/providers.md](references/providers.md).
+
+Each file below is loaded on demand, not at triage. 18 file(s):
+
+- `references/a2ui.md` — A2UI (Agent-to-UI) generative UI. The A2UI plugin (github.com/genkit-ai/genkit/go/plugins/a2ui/exp, imported as
+- `references/agents-artifacts.md` — Working with Artifacts (Experimental). > Experimental / preview API.
+- `references/agents-background.md` — Background Agents / Detaching (Experimental). > Experimental / preview API.
+- `references/agents-branching.md` — Agent Branching (Experimental). > Experimental / preview API.
+- `references/agents-custom.md` — Advanced Custom Agents — `DefineCustomAgent` (Experimental). > Experimental / preview API.
+- `references/agents-deployment.md` — Deploying / Serving Agents over HTTP (Experimental). > Experimental / preview API.
+- `references/agents-human-in-the-loop.md` — Agent Human-in-the-Loop / Interrupts (Experimental). > Experimental / preview API.
+- `references/agents-multi-agent.md` — Multi-Agent Orchestration / Sub-Agents (Experimental). > Experimental / preview API.
+- `references/agents-sessions.md` — Agent Sessions & Persistence (Experimental). > Experimental / preview API.
+- `references/agents-state.md` — Working with Agent State (Experimental). > Experimental / preview API.
+- `references/agents.md` — Agents (Experimental). > Experimental / preview API.
+- `references/flows-and-http.md` — Flows & HTTP. Wrap AI logic in a flow for observability, tracing, and HTTP deployment.
+- `references/generation.md` — Generation. Simplest form.
+- `references/getting-started.md` — Getting Started. bash
+- `references/middleware.md` — prose
+- `references/prompts.md` — Prompts. Define a reusable prompt in code with a default model and template.
+- `references/providers.md` — Model Providers. go
+- `references/tools.md` — Tools. Define a tool the model can call during generation.
+

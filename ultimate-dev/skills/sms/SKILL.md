@@ -334,3 +334,10 @@ Keep recommendations specific. Don't say "send an SMS at the right time" — say
 - **analytics**: For attribution and RPS measurement.
 - **ab-testing**: For SMS-specific test design.
 - **lead-magnets**: For incentivizing opt-in (the "10% off for joining" offer).
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/compliance.md` — SMS Compliance Reference. Comprehensive compliance reference for SMS marketing across major jurisdictions, opt-in copy templates, and STOP/HELP response templates.
+- `references/platforms.md` — SMS Platform Reference. Deep-dive on the major SMS marketing platforms — features, pricing, A2P 10DLC support, and integration paths.
+- `references/sequence-templates.md` — SMS Sequence Templates. Full copy templates with character counts, timing, and segmentation logic for every major SMS flow.
+

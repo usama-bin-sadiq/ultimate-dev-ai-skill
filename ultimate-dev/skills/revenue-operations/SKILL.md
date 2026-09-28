@@ -271,3 +271,10 @@ Combine all three tools for a comprehensive QBR analysis.
 | [GTM Dashboard Template](assets/gtm_dashboard_template.md) | GTM efficiency dashboard for leadership review |
 | [Sample Pipeline Data](assets/sample_pipeline_data.json) | Example input for pipeline_analyzer.py |
 | [Expected Output](assets/expected_output.json) | Reference output from pipeline_analyzer.py |
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/gtm-efficiency-benchmarks.md` — GTM Efficiency Benchmarks. SaaS benchmarks by funding stage, industry standards, and strategies for improving go-to-market efficiency.
+- `references/pipeline-management-framework.md` — Pipeline Management Framework. Best practices for pipeline management including stage definitions, conversion benchmarks, velocity optimization, and inspection cadence.
+- `references/revops-metrics-guide.md` — RevOps Metrics Guide. Complete reference for Revenue Operations metrics hierarchy, definitions, formulas, interpretation guidelines, and common mistakes.
+

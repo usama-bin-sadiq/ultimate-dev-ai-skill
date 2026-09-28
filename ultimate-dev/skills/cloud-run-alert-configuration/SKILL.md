@@ -100,3 +100,10 @@ actionable user impact and scaling bounds.
 *   [Google Cloud Monitoring PromQL Documentation](https://docs.cloud.google.com/monitoring/promql/promql-in-monitoring.md.txt)
 *   [Google Cloud Alerting Policies in Terraform](https://docs.cloud.google.com/monitoring/alerts/terraform.md.txt)
 *   [Google SRE Workbook: Alerting on SLOs](https://sre.google/workbook/alerting-on-slos/)
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/jobs.md` — Cloud Run Jobs Alert Configuration. Best-practice observability for scheduled or ad-hoc Cloud Run Jobs.
+- `references/services.md` — Cloud Run Services Alert Configuration. Best-practice observability for HTTP-triggered Cloud Run Services.
+- `references/worker_pools.md` — Cloud Run Worker Pools Alert Configuration. Best-practice observability for Cloud Run Worker Pools.
+

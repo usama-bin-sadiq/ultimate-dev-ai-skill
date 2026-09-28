@@ -185,3 +185,9 @@ When recommending experiments, consider tests for:
 ## Form Optimization
 
 For detailed form CRO guidance — including field optimization, multi-step forms, error handling, and form-specific experiments — see [references/form.md](references/form.md).
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/experiments.md` — Page CRO Experiment Ideas. Comprehensive list of A/B tests and experiments organized by page type.
+- `references/form.md` — Form CRO. You are an expert in form optimization.
+

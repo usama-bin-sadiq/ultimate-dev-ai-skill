@@ -274,4 +274,10 @@ These ship with the skill and are read on demand; none is needed to
 use it. Each answers one question the sections above do not.
 
 - [`references/ai-citation-readiness.md`](references/ai-citation-readiness.md)
-- [`references/content-templates.md`](references/content-templates.md)
+- [
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/content-brief-guide.md` — prose
+- `references/optimization-checklist.md` — Pre-Publish Optimization Checklist. Run this before every piece goes live.
+
+`references/content-templates.md`](references/content-templates.md)

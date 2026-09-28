@@ -385,4 +385,10 @@ All output follows the structured communication standard:
 These ship with the skill and are read on demand; none is needed to
 use it. Each answers one question the sections above do not.
 
-- [`references/debugging-playbook.md`](references/debugging-playbook.md)
+- [
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/event-taxonomy-guide.md` — Event Taxonomy Guide. Complete reference for naming conventions, event structure, and parameter standards.
+- `references/gtm-patterns.md` — GTM Patterns for SaaS. Common Google Tag Manager configurations for SaaS applications.
+
+`references/debugging-playbook.md`](references/debugging-playbook.md)

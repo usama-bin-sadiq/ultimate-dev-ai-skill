@@ -265,3 +265,13 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 6 file(s):
+
+- `references/crs-management.md` — CRS, units, and reprojection. A CRS is part of the data model, not display metadata.
+- `references/data-io.md` — Vector I/O, GeoParquet, Arrow, and PostGIS. GeoPandas 1.x defaults to pyogrio for vector-file I/O.
+- `references/data-structures.md` — GeoPandas data structures. GeoPandas 1.1.4 extends pandas with a geometry extension dtype backed by
+- `references/geometric-operations.md` — Geometric operations, validity, and precision. GeoPandas delegates geometry work to Shapely/GEOS.
+- `references/spatial-analysis.md` — Spatial joins, overlay, clip, and dissolve. Spatial operations can multiply, split, or merge records.
+- `references/visualization.md` — Static and interactive visualization. A map is a derived analytical artifact.
+

@@ -49,3 +49,12 @@ below to support all platforms that your app can support:
 
 For detailed, platform-specific implementation details, always refer to the
 guides in the Prerequisites section.
+Each file below is loaded on demand, not at triage. 6 file(s):
+
+- `references/ima-sdk-android-guide.md` — Google IMA SDK Android quick-start guide. IMA SDK requires minSdk 23 (Android 6.0)+.
+- `references/ima-sdk-ios-guide.md` — Google IMA SDK iOS integration guide. This guide covers the integration of the Google IMA SDK for iOS (client-side)
+- `references/ima-sdk-tvos-guide.md` — Google IMA SDK tvOS integration guide. The Google IMA SDK for tvOS is highly consistent with the iOS SDK, sharing the
+- `references/ima-sdk-web-guide.md` — Google IMA SDK HTML5 (Web) integration guide. This guide covers the integration of the Google IMA SDK for HTML5 (client-side)
+- `references/ima-sdk-web-iframe-mode.md` — IMA SDK HTML5 iframe mode. This guide covers best practices when you can only use the Google IMA SDK for
+- `references/ima-sdk-web-mobile-safari.md` — Google IMA HTML5 SDK on Mobile Safari (iOS) guide. This guide covers best practices for the Google Interactive Media Ads (IMA)
+

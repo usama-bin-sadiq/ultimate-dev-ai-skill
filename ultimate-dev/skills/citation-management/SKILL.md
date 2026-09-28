@@ -165,7 +165,21 @@ literature-review and Zotero/pyzotero export paths — are in
 - [references/best_practices.md](references/best_practices.md): search, extraction, BibTeX quality, validation.
 - [references/example_workflows.md](references/example_workflows.md): four end-to-end worked examples.
 - [references/google_scholar_search.md](references/google_scholar_search.md), [references/pubmed_search.md](references/pubmed_search.md): advanced search syntax.
-- [references/metadata_extraction.md](references/metadata_extraction.md), [references/bibtex_formatting.md](references/bibtex_formatting.md), [references/citation_validation.md](references/citation_validation.md): per-topic detail.
+- [
+Each file below is loaded on demand, not at triage. 10 file(s):
+
+- `references/best_practices.md` — Best Practices. Search strategy, metadata extraction, BibTeX quality, and validation practices.
+- `references/bibtex_formatting.md` — BibTeX Formatting Guide. Comprehensive guide to BibTeX entry types, required fields, formatting conventions, and best practices.
+- `references/citation_validation.md` — Citation Validation Guide. Comprehensive guide to validating citation accuracy, completeness, and formatting in BibTeX files.
+- `references/core_workflow.md` — Core Workflow. The five phases in full: paper discovery, metadata extraction, the mandatory
+- `references/example_workflows.md` — Example Workflows. Four end-to-end worked examples: building a bibliography for a paper, converting a
+- `references/google_scholar_search.md` — Google Scholar Search Guide. Comprehensive guide to searching Google Scholar for academic papers, including advanced search operators, filtering strategies, and metadata...
+- `references/metadata_extraction.md` — Metadata Extraction Guide. Comprehensive guide to extracting accurate citation metadata from DOIs, PMIDs, arXiv IDs, and URLs using various APIs and services.
+- `references/pubmed_search.md` — PubMed Search Guide. Comprehensive guide to searching PubMed for biomedical and life sciences literature, including MeSH terms, field tags, advanced search strategies...
+- `references/script_reference.md` — Bundled Script Reference. Purpose, arguments, and usage examples for each script in scripts/:
+- `references/search_strategies.md` — Search Strategies. Google Scholar and PubMed query construction: operators, field tags, MeSH terms,
+
+references/metadata_extraction.md](references/metadata_extraction.md), [references/bibtex_formatting.md](references/bibtex_formatting.md), [references/citation_validation.md](references/citation_validation.md): per-topic detail.
 
 ## Common Pitfalls to Avoid
 

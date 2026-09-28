@@ -419,3 +419,12 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 5 file(s):
+
+- `references/analysis_modules.md` — Analysis: tolerances, computed entries, bands, DOS, and model limits. This reference targets pymatgen==2026.5.4 with
+- `references/core_classes.md` — Core classes: explicit chemistry, coordinates, and periodicity. This reference targets the verified pymatgen==2026.5.4 wrapper with
+- `references/io_formats.md` — I/O: parsers, writers, VASP, Q-Chem, and trust boundaries. This reference targets pymatgen-core==2026.7.16, which now owns core and
+- `references/materials_project_api.md` — Materials Project API: bounded queries, provenance, and computed-data limits. This reference targets mp-api==0.46.4 (released 2026-06-15) with
+- `references/transformations_workflows.md` — prose
+

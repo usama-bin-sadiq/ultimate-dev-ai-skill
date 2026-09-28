@@ -479,3 +479,11 @@ Submission Status Report — 2024-11-01
 | [fda-consultant-specialist](../fda-consultant-specialist/) | FDA submission deep expertise |
 | [quality-manager-qms-iso13485](../quality-manager-qms-iso13485/) | QMS for regulatory compliance |
 | [risk-management-specialist](../risk-management-specialist/) | ISO 14971 risk management |
+
+Each file below is loaded on demand, not at triage. 4 file(s):
+
+- `references/eu-mdr-submission-guide.md` — EU MDR 2017/745 Submission Guide. 1.
+- `references/fda-submission-guide.md` — FDA Submission Guide. Traditional 510(k)
+- `references/global-regulatory-pathways.md` — Global Regulatory Pathways. International regulatory requirements for medical devices beyond FDA and EU MDR markets.
+- `references/iso-regulatory-requirements.md` — ISO Regulatory Requirements for Medical Devices. Key ISO standards applicable to medical device development, quality management, and regulatory compliance.
+

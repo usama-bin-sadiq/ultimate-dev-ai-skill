@@ -259,3 +259,10 @@ When recommending experiments, consider tests for:
 - **emails**: For onboarding email series
 - **paywalls**: For converting to paid during/after onboarding
 - **ab-testing**: For testing onboarding changes
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/activation-models.md` — Activation Models. The activation model is how you let a user experience value before they pay.
+- `references/experiments.md` — Onboarding Experiment Ideas. Comprehensive list of A/B tests and experiments for user onboarding and activation.
+- `references/minimum-path-to-value.md` — Minimum Path to Value (MPTV) — the least number of steps to experience enough value to make a confident decision.
+

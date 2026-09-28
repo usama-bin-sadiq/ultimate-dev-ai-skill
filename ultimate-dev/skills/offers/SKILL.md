@@ -153,3 +153,15 @@ Use specific numbers, named customers, concrete outcomes, real timelines. Specif
 - **sales-enablement** — for the deck and one-pager that carry the offer into a sales conversation
 - **emails** — for the email sequence that warms up the offer
 - **marketing-psychology** — for the cognitive biases that make offers land or bounce
+
+Each file below is loaded on demand, not at triage. 8 file(s):
+
+- `references/bonus-stacking.md` — prose
+- `references/examples.md` — Worked Examples — Before/After Offers. Anonymized examples drawn from real engagements.
+- `references/guarantee-design.md` — Guarantee Design. A guarantee directly raises perceived likelihood of achievement (the buyer thinks: "they'll only offer this if they're confident") and lowers effort...
+- `references/offer-anatomy.md` — Offer Anatomy. A complete offer has six components.
+- `references/offer-formats.md` — Offer Formats by Business Type. The right offer format depends on what you sell.
+- `references/saas-offers.md` — SaaS Offers — the discount trap + worked examples. The rest of the offers library skews services, courses, and coaching.
+- `references/scarcity-urgency.md` — Scarcity & Urgency. The reason to buy now, not later.
+- `references/value-equation.md` — The Value Equation. The single most useful frame for offer design.
+

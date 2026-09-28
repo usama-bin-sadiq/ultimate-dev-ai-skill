@@ -202,3 +202,8 @@ python scripts/conformity_assessment_planner.py system.json
 
 **Version:** 1.0.0
 **Status:** Production Ready
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/cross_framework_mapping_ai_act.md` — EU AI Act ↔ ISO 42001 ↔ NIST AI RMF ↔ GDPR — Cross-Framework Mapping. This reference answers exactly one decision: for each EU AI Act obligation, what existing framework evidence can I reuse?
+

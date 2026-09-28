@@ -78,3 +78,28 @@ like `AI.FORECAST`, `AI.KEY_DRIVERS`, `AI.DETECT_ANOMALIES`, and `AI.GENERATE`.
 
 -   [BigQuery Basics Skill](../bigquery-basics): SKILL.md file for core BigQuery
     concepts, resource management, CLI, and client libraries.
+
+Each file below is loaded on demand, not at triage. 21 file(s):
+
+- `references/ai_agg.md` — BigQuery AI.AGG. AI.AGG uses a Vertex AI Gemini model to aggregate data based on natural
+- `references/ai_causal_effect.md` — BigQuery AI.CAUSAL_EFFECT. AI.CAUSALEFFECT quantifies the impact of specific interventions on time
+- `references/ai_classify.md` — BigQuery AI.Classify. AI.CLASSIFY categorizes unstructured data into a predefined set of labels.
+- `references/ai_detect_anomalies.md` — BigQuery AI.Detect_Anomalies. AI.DETECTANOMALIES uses the pre-trained TimesFM model to identify
+- `references/ai_evaluate.md` — AI.EVALUATE. Evaluates the accuracy of a forecasting model by comparing predicted values
+- `references/ai_forecast.md` — prose
+- `references/ai_generate.md` — prose
+- `references/ai_generate_embedding.md` — prose
+- `references/ai_generate_table.md` — AI.GENERATE_TABLE. Uses Gemini models to extract information into a predefined SQL schema.
+- `references/ai_if.md` — BigQuery AI.If. AI.IF is a semantic boolean function used to evaluate a condition described in
+- `references/ai_key_drivers.md` — BigQuery AI.Key_Drivers. AI.KEYDRIVERS automatically identifies the key dimensional segments most
+- `references/ai_score.md` — BigQuery AI.Score. The AI.SCORE function is commonly used with the ORDER BY clause and works well
+- `references/ai_search.md` — BigQuery AI.Search. AI.SEARCH is a table-valued function for semantic search on tables that have
+- `references/ai_similarity.md` — BigQuery AI.Similarity. AI.SIMILARITY computes the semantic similarity between two inputs.
+- `references/ml_contribution_analysis.md` — Contribution analysis, also called key driver analysis, is a method used to
+- `references/ml_correlation.md` — BigQuery ML.CORRELATION. ML.CORRELATION is a Table-Valued Function (TVF) that calculates the
+- `references/ml_detect_change_points.md` — BigQuery ML.Detect_Change_Points. ML.DETECTCHANGEPOINTS is a one-step Table-Valued Function (TVF) that
+- `references/ml_seasonality.md` — BigQuery ML.Seasonality. ML.SEASONALITY is a time-series decomposition function that extracts seasonal
+- `references/ml_trend.md` — BigQuery ML.Trend. ML.TREND is a time-series decomposition function that extracts the underlying
+- `references/remote_models.md` — prose
+- `references/vector_search.md` — VECTOR_SEARCH. BigQuery VECTORSEARCH is a table-valued function used to find semantically
+

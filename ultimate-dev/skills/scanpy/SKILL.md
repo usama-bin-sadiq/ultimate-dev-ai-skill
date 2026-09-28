@@ -318,3 +318,10 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/analysis_workflow.md` — Standard Analysis Workflow and Common Tasks. The seven workflow steps in full — quality control, normalization and preprocessing,
+- `references/plotting_guide.md` — prose
+- `references/standard_workflow.md` — Standard Scanpy Workflow for Single-Cell Analysis. This document outlines the standard workflow for analyzing single-cell RNA-seq data using scanpy.
+

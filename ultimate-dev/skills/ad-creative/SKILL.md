@@ -265,3 +265,9 @@ Notes: Benefit-first formula, tested format for consideration stage
 - **ab-test-setup**: Use when planning which ad variants to test and how to measure significance. NOT for generating the variants (use ad-creative for that).
 - **content-creator**: Use for organic social content and blog content. NOT for paid ad copy (different constraints, different voice).
 - **copy-editing**: Use when polishing existing copy. NOT for bulk generation or platform-specific formatting.
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/creative-frameworks.md` — Creative Frameworks — Headline and Copy Formulas by Platform and Funnel Stage. A working catalog of the copy frameworks that consistently outperform generic ads.
+- `references/platform-specs.md` — Platform Specs — Ad Copy Character Limits and Format Requirements. Full specifications for each major ad platform.
+

@@ -132,3 +132,12 @@ AlloyDB:
 -   [AlloyDB Java Connector GitHub Repository](https://github.com/GoogleCloudPlatform/alloydb-java-connector)
 -   [AlloyDB Python Connector GitHub Repository](https://github.com/GoogleCloudPlatform/alloydb-python-connector)
 -   [AlloyDB Go Connector GitHub Repository](https://github.com/GoogleCloudPlatform/alloydb-go-connector)
+
+Each file below is loaded on demand, not at triage. 5 file(s):
+
+- `references/cli-usage.md` — AlloyDB CLI Usage. Ensure you have the [Google Cloud SDK installed](https://cloud.google.com/sdk/docs/install) and authenticated (gcloud auth login) before running...
+- `references/core-concepts.md` — AlloyDB Core Concepts. AlloyDB for PostgreSQL separates compute from storage, allowing for efficient,
+- `references/iac-usage.md` — AlloyDB Infrastructure as Code Usage. Manage AlloyDB resources declaratively using Terraform or Kubernetes Config
+- `references/iam-security.md` — AlloyDB IAM & Security. AlloyDB uses Google Cloud Identity and Access Management (IAM) to enable
+- `references/mcp-usage.md` — AlloyDB MCP Usage. Configure the remote Model Context Protocol (MCP) server to allow AI
+

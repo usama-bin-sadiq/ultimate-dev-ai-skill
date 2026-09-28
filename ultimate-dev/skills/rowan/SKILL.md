@@ -396,3 +396,12 @@ Common errors with their fixes, and debugging tips, are in
 Use Rowan when your workflow requires cloud execution for molecular-design tasks, especially when you want one unified API and consistent result handling across small-molecule modeling, proteins, docking, ADME prediction, and ML structure generation.
 
 Rowan is a molecular-design workflow platform, not just a remote chemistry engine. It handles infrastructure scaling, result persistence, and multi-step pipeline orchestration so you can focus on science.
+
+Each file below is loaded on demand, not at triage. 5 file(s):
+
+- `references/access_and_pricing.md` — Access, Pricing, and Credits. Free-tier access, how credits are consumed per workflow, and typical cost estimates.
+- `references/batch_and_webhooks.md` — Batch Submission, Webhooks, and Asynchronous Workflows. Webhook secret management, batch submit/poll/retrieve, the non-blocking fire-and-check
+- `references/end_to_end_example.md` — End-to-End Example: Lead Optimization Campaign. A complete campaign: project and folder setup, tautomer selection, pKa and property
+- `references/troubleshooting.md` — Error Handling and Troubleshooting. Common errors — invalid SMILES, missing API keys, HTTP/API failures, failed
+- `references/workflow_catalog.md` — Rowan Workflow Catalog. Submission code, options, and result shapes for the common workflow categories, followed
+

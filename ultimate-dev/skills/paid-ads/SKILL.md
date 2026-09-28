@@ -361,4 +361,12 @@ Always confirm conversion tracking is in place before recommending creative or t
 These ship with the skill and are read on demand; none is needed to
 use it. Each answers one question the sections above do not.
 
-- [`references/copy-frameworks.md`](references/copy-frameworks.md)
+- [
+Each file below is loaded on demand, not at triage. 4 file(s):
+
+- `references/ad-copy-templates.md` — prose
+- `references/audience-targeting.md` — Audience Targeting Reference. Detailed targeting strategies for each major ad platform.
+- `references/platform-setup-checklists.md` — Platform Setup Checklists. Complete setup checklists for major ad platforms.
+- `references/scoring-system.md` — Ad Account Scoring System. Reference for adhealthscorer.py.
+
+`references/copy-frameworks.md`](references/copy-frameworks.md)

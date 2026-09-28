@@ -158,3 +158,15 @@ implementing.
 ## Additional Context
 
 -   [Mastering cloud posture management with Workload Manager](https://discuss.google.dev/t/mastering-cloud-posture-management-security-reliability-and-finops-with-workload-manager/318258)
+
+Each file below is loaded on demand, not at triage. 8 file(s):
+
+- `references/client-library-usage.md` — Workload Manager Client Libraries. Use client libraries when working with evaluation lifecycle resources.
+- `references/core-concepts.md` — Workload Manager Core Concepts. Workload Manager provides validation and automation tooling for enterprise
+- `references/general-best-practices.md` — Workload Manager General Best Practices. Use this reference when a user asks for Google Cloud general best-practice
+- `references/iam-security.md` — Workload Manager IAM and Security. Use least privilege and start read-only.
+- `references/public-cli-status.md` — Workload Manager Public CLI Status. Public documentation does not currently describe a dedicated gcloud
+- `references/public-mcp-status.md` — Workload Manager Public MCP Status. No public Workload Manager MCP server is currently documented.
+- `references/rest-usage.md` — Workload Manager REST Usage. Use REST when the client libraries do not cover a needed resource, when
+- `references/setup-prerequisites.md` — Workload Manager Setup Prerequisites. This file is not Workload Manager infrastructure-as-code support.
+

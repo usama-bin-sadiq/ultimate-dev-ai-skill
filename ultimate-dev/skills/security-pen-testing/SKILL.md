@@ -304,3 +304,10 @@ Automated security checks on every PR: secret scanning (TruffleHog), dependency 
 | [senior-security](../senior-security/SKILL.md) | Security policy and governance — frameworks, risk registers, compliance |
 | [dependency-auditor](engineering/skills/dependency-auditor/SKILL.md) | Deep supply chain security — SBOMs, license compliance, transitive risk |
 | [code-reviewer](../code-reviewer/SKILL.md) | Code review practices — includes security review checklist |
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/attack_patterns.md` — Attack Patterns Reference. Safe, non-destructive test payloads and detection patterns for authorized security testing.
+- `references/owasp_top_10_checklist.md` — OWASP Top 10 (2021) — Detailed Security Checklist. Comprehensive reference for each OWASP Top 10 category with descriptions, test procedures, code patterns to detect, remediation steps, and CVSS...
+- `references/responsible_disclosure.md` — Responsible Disclosure Guide. A complete guide for responsibly reporting security vulnerabilities found during authorized testing or independent security research.
+

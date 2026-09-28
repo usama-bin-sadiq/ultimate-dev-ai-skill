@@ -439,7 +439,12 @@ This iterative process ensures each edit doesn't create new problems while respe
 These ship with the skill and are read on demand; none is needed to
 use it. Each answers one question the sections above do not.
 
-- [`references/ai-detection-patterns.md`](references/ai-detection-patterns.md)
+- [
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/plain-english-alternatives.md` — Replace complex or pompous words with plain English alternatives.
+
+`references/ai-detection-patterns.md`](references/ai-detection-patterns.md)
 
 ## Task-Specific Questions
 

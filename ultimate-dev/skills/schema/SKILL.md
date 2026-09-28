@@ -177,3 +177,8 @@ You can combine multiple schema types on one page using `@graph`:
 - **ai-seo**: For AI search optimization (schema helps AI understand content)
 - **programmatic-seo**: For templated schema at scale
 - **site-architecture**: For breadcrumb structure and navigation schema planning
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/schema-examples.md` — Schema Markup Examples. Complete JSON-LD examples for common schema types.
+

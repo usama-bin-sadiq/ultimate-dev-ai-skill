@@ -225,3 +225,9 @@ Use this as a compression guide, not a required script:
 Use the user's own terms. Apply the grounding rules above to both the
 explanation and prompt. If an unknown detail is essential, ask before
 delivering instead of adding an assumptions section.
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/audit.md` — Loop Doctor. Use this workflow only when the user asks to audit, diagnose, strengthen, or
+- `references/discover.md` — Loop Discovery. Use this workflow when the user asks to mine a codebase, coding-thread history,
+

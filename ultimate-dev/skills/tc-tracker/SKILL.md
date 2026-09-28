@@ -205,3 +205,10 @@ For onboarding an existing project with undocumented history, build a `retro_cha
 - [references/tc-schema.md](references/tc-schema.md) — Full JSON schema for TC records and the registry.
 - [references/lifecycle.md](references/lifecycle.md) — State machine, valid transitions, and recovery flows.
 - [references/handoff-format.md](references/handoff-format.md) — Session handoff structure and best practices.
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/handoff-format.md` — Session Handoff Format. The handoff block is the most important part of a TC for AI continuity.
+- `references/lifecycle.md` — TC Lifecycle and State Machine. A TC moves through six implementation states.
+- `references/tc-schema.md` — TC Record Schema. A TC record is a JSON object stored at docs/TC/records/<TC-ID>/tcrecord.json.
+

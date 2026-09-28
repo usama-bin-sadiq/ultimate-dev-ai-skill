@@ -231,3 +231,13 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 6 file(s):
+
+- `references/analytical-equipment.md` — Analytical equipment. Verified against PyLabRobot 0.2.1 on 2026-07-23.
+- `references/hardware-backends.md` — Hardware backends and supported robots. Verified against PyLabRobot 0.2.1 on 2026-07-23.
+- `references/liquid-handling.md` — Liquid handling. Verified against PyLabRobot 0.2.1 on 2026-07-23.
+- `references/material-handling.md` — Material handling, pumps, and environmental devices. Verified against PyLabRobot 0.2.1 on 2026-07-23.
+- `references/resources.md` — Resources, decks, state, and serialization. Verified against PyLabRobot 0.2.1 on 2026-07-23.
+- `references/visualization.md` — Visualization and software-only simulation. Verified against PyLabRobot 0.2.1 on 2026-07-23.
+

@@ -312,3 +312,14 @@ Reusable Plugin API helper functions. Embed in `use_figma` calls:
 | [validateCreation.js](scripts/validateCreation.js) | Verify created nodes match expected counts, names, structure |
 | [cleanupOrphans.js](scripts/cleanupOrphans.js) | Remove orphaned nodes by name convention or state ledger IDs |
 | [rehydrateState.js](scripts/rehydrateState.js) | Scan file for all pages, components, variables by name; returns full `{key → nodeId}` map for state reconstruction |
+
+Each file below is loaded on demand, not at triage. 7 file(s):
+
+- `references/code-connect-setup.md` — prose
+- `references/component-creation.md` — prose
+- `references/discovery-phase.md` — prose
+- `references/documentation-creation.md` — prose
+- `references/error-recovery.md` — prose
+- `references/naming-conventions.md` — prose
+- `references/token-creation.md` — prose
+

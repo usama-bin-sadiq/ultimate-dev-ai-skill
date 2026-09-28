@@ -175,6 +175,16 @@ Before writing any GPU optimization code, read the relevant reference file(s):
 
 Read the specific reference before writing code — they contain detailed API patterns, optimization techniques, and pitfalls specific to each library.
 
+Each file below is loaded on demand, not at triage. 5 file(s):
+
+- `references/code_transformation_patterns.md` — Code Transformation Patterns. Before/after conversions: NumPy to CuPy, pandas to cuDF, a custom loop to a Numba CUDA
+- `references/cuspatial.md` — cuSpatial Reference. cuSpatial is a GPU-accelerated GIS library that provides spatial indexing, spatial joins, distance calculations, trajectory analysis, and...
+- `references/cuxfilter.md` — cuxfilter Reference. cuxfilter is a GPU-accelerated cross-filtering dashboard library from the NVIDIA RAPIDS ecosystem.
+- `references/decision_framework.md` — Decision Framework: Which Library to Use. Each RAPIDS/GPU library, the CPU library it replaces, what it is good at, and when it is
+- `references/installation.md` — Installation. Per-library install commands, CUDA version selection, and environment setup.
+
+
+
 ## Citing Scientific Agent Skills
 
 This skill is part of Scientific Agent Skills by K-Dense. If it materially contributed to a

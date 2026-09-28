@@ -274,3 +274,18 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 11 file(s):
+
+- `references/algorithms.md` — Algorithms, Addons, and Application Packages. The core qiskit distribution provides circuits, operators, primitives, synthesis, transpilation, and quantum-information tools.
+- `references/backends.md` — Backends, Runtime Modes, Simulation, and Noise Management. Qiskit 2.x providers expose hardware and simulators through BackendV2.
+- `references/circuits.md` — prose
+- `references/migration.md` — Migration to Qiskit 2.5 and Runtime 0.48. Use this guide when adapting code written for Qiskit 0.x, Qiskit 1.x, or early Qiskit Runtime releases.
+- `references/patterns.md` — End-to-End Qiskit Patterns. Use a four-stage workflow:
+- `references/primitives.md` — V2 Primitives and PUBs. Qiskit primitives standardize two core tasks:
+- `references/setup.md` — Setup, Versions, and Authentication. Checked against PyPI and official release notes on 2026-07-23:
+- `references/sources.md` — Upstream Sources and Version Provenance. Research completed 2026-07-23 using official IBM Quantum documentation, Qiskit repositories and releases, PyPI metadata, Context7's Qiskit indexes...
+- `references/testing.md` — Testing, Reproducibility, and Troubleshooting. Quantum workflows combine deterministic program transformations, stochastic sampling, changing hardware, and classical post-processing.
+- `references/transpilation.md` — Target-Aware Transpilation. Transpilation rewrites an abstract circuit into an instruction set architecture (ISA) circuit that satisfies a specific backend Target:
+- `references/visualization.md` — Visualization. Qiskit visualizes circuits, sampled counts, ideal states, and backend layouts.
+

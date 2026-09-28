@@ -244,3 +244,12 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 5 file(s):
+
+- `references/api_endpoints.md` — Benchling REST API Endpoints Reference. All API requests use the base URL format:
+- `references/authentication.md` — Benchling Authentication Reference. Benchling supports three authentication methods, each suited for different use cases.
+- `references/core_capabilities.md` — Core Capabilities. The seven capability areas in full, with code: authentication and setup, registry and
+- `references/eventbridge.md` — prose
+- `references/sdk_reference.md` — Benchling Python SDK Reference. bash
+

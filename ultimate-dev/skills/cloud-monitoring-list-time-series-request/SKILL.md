@@ -227,3 +227,8 @@ Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/basic_aggregations.md` — Cloud Monitoring ListTimeSeries Basic Aggregations Reference. This document maps Cloud Monitoring Aligner and Reducer concepts to structured
+

@@ -325,7 +325,16 @@ Always add the reduced motion CSS from [references/css-recipes.md](references/cs
 - **[references/patterns.md](references/patterns.md)** — Patterns, animation timing, and events API.
 - **[references/troubleshooting.md](references/troubleshooting.md)** — Symptom-driven debugging and runtime limitations.
 - **[references/css-recipes.md](references/css-recipes.md)** — Ready-to-use CSS animation recipes.
-- **[references/nextjs.md](references/nextjs.md)** — Next.js App Router patterns and Server Component details.
+- *
+Each file below is loaded on demand, not at triage. 5 file(s):
+
+- `references/css-recipes.md` — CSS Animation Recipes. Ready-to-use CSS for <ViewTransition> props.
+- `references/implementation.md` — Implementation Workflow. Follow these steps in order when adding view transitions to an app.
+- `references/nextjs.md` — View Transitions in Next.js. <ViewTransition> works in the App Router with no configuration.
+- `references/patterns.md` — Patterns and Guidelines. Use the official [React <ViewTransition> reference](https://react.dev/reference/react/ViewTransition) for API mechanics.
+- `references/troubleshooting.md` — prose
+
+*[references/nextjs.md](references/nextjs.md)** — Next.js App Router patterns and Server Component details.
 
 ## Full Compiled Document
 

@@ -384,3 +384,13 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 6 file(s):
+
+- `references/building.md` — Building Quantum Circuits. This guide covers circuit construction in Cirq, including qubits, gates, operations, and circuit patterns.
+- `references/experiments.md` — Running Quantum Experiments. This guide covers designing and executing quantum experiments, including parameter sweeps, data collection, and using the ReCirq framework.
+- `references/hardware.md` — Hardware Integration. This guide covers running quantum circuits on real quantum hardware through Cirq's device interfaces and service providers.
+- `references/noise.md` — Noise Modeling and Mitigation. This guide covers noise models, noisy simulation, characterization, and error mitigation in Cirq.
+- `references/simulation.md` — Simulation in Cirq. This guide covers quantum circuit simulation, including exact and noisy simulations, parameter sweeps, and the Quantum Virtual Machine (QVM).
+- `references/transformation.md` — Circuit Transformations. This guide covers circuit optimization, compilation, and manipulation using Cirq's transformation framework.
+

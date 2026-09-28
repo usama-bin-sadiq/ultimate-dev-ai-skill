@@ -214,3 +214,8 @@ After implementing security-relevant code:
 - [ ] LLM/model output validated and encoded before use (if AI features present)
 - [ ] Personal data is classified, minimized to a stated purpose, and has a retention limit
 - [ ] Deletion and export requests work end-to-end (including backups, caches, and analytics copies)
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/hardening-patterns.md` — Hardening Patterns. Code patterns and decision aids for the security-and-hardening skill.
+

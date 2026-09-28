@@ -253,3 +253,15 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 8 file(s):
+
+- `references/discrete_choice.md` — Discrete Choice Models Reference. This document provides comprehensive guidance on discrete choice models in statsmodels, including binary, multinomial, count, and ordinal models.
+- `references/glm.md` — Generalized Linear Models (GLM) Reference. This document provides comprehensive guidance on generalized linear models in statsmodels, including families, link functions, and applications.
+- `references/linear_models.md` — Linear Regression Models Reference. This document provides detailed guidance on linear regression models in statsmodels, including OLS, GLS, WLS, quantile regression, and specialized...
+- `references/model_selection.md` — Formula API and Model Selection. The R-style formula API, then model selection and comparison: information criteria,
+- `references/modeling_capabilities.md` — Core Statistical Modeling Capabilities. Linear models, generalized linear models, discrete choice models, time series analysis,
+- `references/quick_start_guide.md` — Quick Start Guide. Worked minimal examples for OLS, logistic regression, ARIMA, and GLM, including how to
+- `references/stats_diagnostics.md` — Statistical Tests and Diagnostics Reference. This document provides comprehensive guidance on statistical tests, diagnostics, and tools available in statsmodels.
+- `references/time_series.md` — Time Series Analysis Reference. This document provides comprehensive guidance on time series models in statsmodels, including ARIMA, state space models, VAR, exponential smoothing...
+

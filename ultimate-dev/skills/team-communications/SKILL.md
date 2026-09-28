@@ -65,3 +65,9 @@ If the user hasn't connected Slack, Gmail, Drive, or Calendar, don't stall. Ask 
 | `project-management/meeting-analyzer` | Meeting insights can feed into 3P updates and status reports |
 | `project-management/confluence-expert` | Publish comms as Confluence pages for permanent record |
 | `marketing-skill/content-production` | External comms — use for public-facing content, not internal |
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/3p-updates.md` — prose
+- `references/company-newsletter.md` — prose
+

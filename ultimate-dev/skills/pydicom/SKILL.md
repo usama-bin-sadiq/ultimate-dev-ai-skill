@@ -396,3 +396,9 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/common_tags.md` — DICOM data elements, tags, and privacy review. This is a working guide, not a complete DICOM dictionary or an attribute
+- `references/transfer_syntaxes.md` — Transfer syntaxes, pixel plugins, and encapsulation. Transfer Syntax UID (0002,0010) identifies the encoding rules for the
+

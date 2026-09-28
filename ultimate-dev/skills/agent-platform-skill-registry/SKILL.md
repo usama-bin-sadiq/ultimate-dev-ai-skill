@@ -93,3 +93,11 @@ Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+
+Each file below is loaded on demand, not at triage. 4 file(s):
+
+- `references/generate-skill.md` — prose
+- `references/manage-skills.md` — Skill Lifecycle Management. This document covers state-changing actions (uploading, updating, deleting)
+- `references/monitor-operations.md` — Monitor Operations. This document covers how to monitor the status of Long-Running Operations (LRO)
+- `references/query-skills.md` — Skill Discovery. This document covers safe, read-only operations for finding and inspecting
+

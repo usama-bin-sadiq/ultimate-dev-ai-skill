@@ -488,3 +488,9 @@ immediately    Yes─┴─No
 | [capa-officer](../capa-officer/) | CAPA system oversight |
 | [qms-audit-expert](../qms-audit-expert/) | Internal audit program |
 | [quality-documentation-manager](../quality-documentation-manager/) | Document control oversight |
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/management-review-guide.md` — Management Review Guide. ISO 13485 Clause 5.6 management review requirements, inputs, outputs, and action tracking.
+- `references/quality-kpi-framework.md` — Quality KPI Framework. Quality performance indicators, targets, and monitoring guidelines for QMS effectiveness.
+

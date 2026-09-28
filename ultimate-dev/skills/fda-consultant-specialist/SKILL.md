@@ -302,7 +302,15 @@ Coordinated Public Disclosure
 These ship with the skill and are read on demand; none is needed to
 use it. Each answers one question the sections above do not.
 
-- [`references/fda_capa_requirements.md`](references/fda_capa_requirements.md)
+- [
+Each file below is loaded on demand, not at triage. 4 file(s):
+
+- `references/device_cybersecurity_guidance.md` — Medical Device Cybersecurity Guidance. Complete framework for FDA cybersecurity requirements based on FDA guidance documents and recognized consensus standards.
+- `references/fda_submission_guide.md` — FDA Submission Guide. Complete framework for 510(k), De Novo, and PMA submissions to the FDA.
+- `references/hipaa_compliance_framework.md` — HIPAA Compliance Framework for Medical Devices. Complete guide to HIPAA requirements for medical device manufacturers and software developers.
+- `references/qsr_compliance_requirements.md` — Quality System Regulation (QSR) — Historical Structure with QMSR/ISO 13485:2016 Mapping. > ## ⚠️ STATUS: QMSR transition — the QSR structure below is HISTORICAL
+
+`references/fda_capa_requirements.md`](references/fda_capa_requirements.md)
 
 ### Usage Examples
 

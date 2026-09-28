@@ -174,3 +174,9 @@ phases:
 - [ ] **Step 6: Iterate**: If the user requests changes, then generate an
   updated validation plan and repeat steps 2-5 until the user approves the
   validation plan.
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/design-recommendations.md` — prose
+- `references/product-mapping.md` — Product Mapping Guidance. For each component in the confirmed technical decomposition and agentic design
+

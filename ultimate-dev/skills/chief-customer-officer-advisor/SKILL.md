@@ -208,3 +208,8 @@ python scripts/cs_coverage_calculator.py book.json
 **Version:** 1.0.0
 **Status:** Production Ready
 **Disclaimer:** Retention benchmarks vary significantly by ACV, segment, and industry. This skill provides B2B SaaS-baseline guidance; consumer SaaS, marketplaces, and hardware all have materially different retention math.
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/cs_coverage_model.md` — prose
+

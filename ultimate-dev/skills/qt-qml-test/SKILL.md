@@ -401,3 +401,15 @@ whenever a rule citation here is unclear.
   accessor, aliases, dependencies) and what NOT to test.
 - [qt-quick-test-pitfalls.md](references/qt-quick-test-pitfalls.md) —
   symptom-keyed anti-patterns derived from the negative rules.
+
+Each file below is loaded on demand, not at triage. 8 file(s):
+
+- `references/qt-quick-test-controls.md` — Qt Quick Test — control-specific patterns. One section per Qt Quick Control.
+- `references/qt-quick-test-pitfalls.md` — Qt Quick Test — pitfalls. Symptom-keyed list of mistakes to avoid when generating Qt
+- `references/qt-quick-test-pre-send-scan.md` — Qt Quick Test — pre-send scan. Procedure for keeping user-facing chat messages free of
+- `references/qt-quick-test-project-context.md` — Qt Quick Test — project-context bounded reads. The minimum set of project files the skill should read to
+- `references/qt-quick-test-properties.md` — Qt Quick Test — property testing patterns. How to test the values of properties on a QML component.
+- `references/qt-quick-test-rules.md` — Qt Quick Test — testing rules (full text). The 47 rules that form the contract of the qt-qml-test
+- `references/qt-quick-test-source-import.md` — prose
+- `references/qt-quick-test-template.md` — Qt Quick Test — template variants. Paste-ready test skeletons.
+

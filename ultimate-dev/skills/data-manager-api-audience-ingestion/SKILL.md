@@ -191,3 +191,9 @@ minutes after sending the request.
 *   [REST API Reference: Ingest](https://developers.google.com/data-manager/api/reference/rest/v1/audienceMembers/ingest.md.txt)
 *   [REST API Reference: Remove](https://developers.google.com/data-manager/api/reference/rest/v1/audienceMembers/remove.md.txt)
 *   [REST API Reference: Remove All](https://developers.google.com/data-manager/api/reference/rest/v1/audienceMembers/removeAll.md.txt)
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/create-audience.md` — prose
+- `references/formatting.md` — Format User Data. guide and use that as the source of truth for formatting and
+

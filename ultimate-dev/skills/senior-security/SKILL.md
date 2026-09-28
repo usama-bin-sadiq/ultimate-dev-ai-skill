@@ -75,3 +75,10 @@ Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/cryptography-implementation.md` — Cryptography Implementation Guide. Practical cryptographic patterns for securing data at rest, in transit, and in use.
+- `references/security-architecture-patterns.md` — Proven security architecture patterns for designing resilient systems.
+- `references/threat-modeling-guide.md` — Threat Modeling Guide. Systematic approaches for identifying, analyzing, and mitigating security threats.
+

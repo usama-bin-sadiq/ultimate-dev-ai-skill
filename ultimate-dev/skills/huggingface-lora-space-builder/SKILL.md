@@ -392,3 +392,7 @@ The smoke-test exists to convert these from "user discovers it and reports back"
 - Asking for the HF token only at the end, then discovering the LoRA was private all along and you couldn't read the model card.
 - Exposing every diffusers knob. Pick the 1–3 controls that matter for this LoRA.
 - Long preambles in the chat reply once the Space is published. The Space URL is the deliverable; keep the wrap-up brief.
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/adapting-to-the-lora.md` — Adapting the demo to the specific LoRA. The task category (T2I, I2I, T2V, I2V, V2V) gets you a starting shape.
+

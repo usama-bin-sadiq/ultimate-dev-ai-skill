@@ -45,6 +45,22 @@ reached when a specific stage or decision needs it. Total: 54 files.
 | Considering delegation | `delegation.md` — check the upper bound first |
 | Tempted to learn something from this run | `learning-safety.md` before `learning-system.md` |
 
+### Quality checklists
+
+Seven references under `quality-checklists/`, each a quick reference rather than
+a system document. They are listed here because this file is the kernel's index
+— `SKILL.md` is at its 500-line ceiling, so it cannot carry them.
+
+| Situation | Load |
+|---|---|
+| Deciding whether a change is finished | `quality-checklists/definition-of-done.md` |
+| About to instrument a production system | `quality-checklists/observability-checklist.md` |
+| Reviewing a web change for accessibility | `quality-checklists/accessibility-checklist.md` |
+| Reviewing a web change for security | `quality-checklists/security-checklist.md` |
+| Reviewing a web change for performance | `quality-checklists/performance-checklist.md` |
+| Choosing a test approach in JS or TS | `quality-checklists/testing-patterns.md` |
+| Composing several agents, or unsure what a pattern does | `quality-checklists/orchestration-patterns.md` |
+
 ## What is not here
 
 The paths in this section are the ones a bundle omits. Naming them is how a

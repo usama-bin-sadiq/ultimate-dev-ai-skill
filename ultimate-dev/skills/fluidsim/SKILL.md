@@ -294,3 +294,13 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 6 file(s):
+
+- `references/advanced_features.md` — Forcing, operators, MPI, extensions, and migrations. FluidSim assembles forcing classes through the selected solver's registry.
+- `references/installation.md` — Installation, native dependencies, and backends. Verified 2026-07-23:
+- `references/output_analysis.md` — Output inventory, plotting, and budget analysis. Output analysis can detect errors and quantify diagnostics.
+- `references/parameters.md` — prose
+- `references/simulation_workflow.md` — Bounded simulation, pilot, and restart workflow. Before code, record:
+- `references/solvers.md` — Solver registry and selection. A solver key only identifies an implementation.
+

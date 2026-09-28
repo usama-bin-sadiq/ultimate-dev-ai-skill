@@ -269,3 +269,14 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 7 file(s):
+
+- `references/examples.md` — Seaborn Common Use Cases and Examples. This document provides practical examples for common data visualization scenarios using seaborn.
+- `references/function_reference.md` — Seaborn Function Reference. This document provides a comprehensive reference for all major seaborn functions, organized by category.
+- `references/grids_and_levels.md` — Multi-Plot Grids, Figure-Level vs Axes-Level. FacetGrid, PairGrid, and JointGrid, and how figure-level and axes-level functions
+- `references/objects_interface.md` — Seaborn Objects Interface. The seaborn.objects interface provides a modern, declarative API for building visualizations through composition.
+- `references/palettes_and_theming.md` — Color Palettes, Theming, and Aesthetics. Qualitative, sequential, and diverging palettes, colorblind-safe choices, and theme,
+- `references/patterns_and_troubleshooting.md` — Common Patterns and Troubleshooting. Frequently needed plot recipes, then the errors seaborn most often raises and what they
+- `references/plotting_functions.md` — Plotting Functions by Category. Relational, distribution, categorical, regression, and matrix plots: which function to
+

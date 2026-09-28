@@ -201,3 +201,11 @@ Use this release flow for predictability:
 - If no valid conventional commits found: fail early, do not generate misleading empty notes.
 - If git range invalid: surface explicit range in error output.
 - If write target missing: create safe changelog header scaffolding.
+
+Each file below is loaded on demand, not at triage. 4 file(s):
+
+- `references/changelog-formatting-guide.md` — Changelog Formatting Guide. Use Keep a Changelog section ordering:
+- `references/ci-integration.md` — CI Integration Examples. yaml
+- `references/hotfix-procedures.md` — Hotfix Procedures. Hotfixes are emergency releases designed to address critical production issues that cannot wait for the regular release cycle.
+- `references/monorepo-strategy.md` — Monorepo Changelog Strategy. Enforce scoped conventional commits to enable per-package filtering:
+

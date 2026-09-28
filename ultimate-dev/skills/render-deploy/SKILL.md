@@ -483,4 +483,17 @@ Optional: If you need deeper diagnostics (metrics/DB checks/error catalog), sugg
 These ship with the skill and are read on demand; none is needed to
 use it. Each answers one question the sections above do not.
 
-- [`references/error-patterns.md`](references/error-patterns.md)
+- [
+Each file below is loaded on demand, not at triage. 9 file(s):
+
+- `references/blueprint-spec.md` — Render Blueprint Specification. Complete reference for render.yaml Blueprint files.
+- `references/codebase-analysis.md` — Codebase Analysis (Deploy). Use this reference for framework-specific detection and build/start command selection when preparing a Render deployment.
+- `references/configuration-guide.md` — Render Configuration Guide. Common configuration patterns, best practices, and troubleshooting for Render deployments.
+- `references/deployment-details.md` — Deployment Details. Use this reference for service discovery, configuration patterns, quick commands, and common issues.
+- `references/direct-creation.md` — Direct Creation (MCP) Details. Use this reference for MCP direct-creation examples and follow-on configuration.
+- `references/post-deploy-checks.md` — Post-deploy checks. Use this after any deploy or service creation.
+- `references/runtimes.md` — Render Runtime Options. Complete guide to available runtimes on Render, including versions, configuration, and best practices for each language.
+- `references/service-types.md` — Render Service Types. Detailed explanation of each service type available on Render.
+- `references/troubleshooting-basics.md` — Basic troubleshooting (deploy-time and startup). Use this when a deploy fails, the service crashes on start, or health checks time out.
+
+`references/error-patterns.md`](references/error-patterns.md)

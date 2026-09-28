@@ -276,4 +276,9 @@ All output follows the structured communication standard:
 These ship with the skill and are read on demand; none is needed to
 use it. Each answers one question the sections above do not.
 
-- [`references/launch-playbook.md`](references/launch-playbook.md)
+- [
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/tool-types-guide.md` — Tool Types Guide — Comprehensive Reference for Free Marketing Tools. Each tool type explained with examples, build complexity, typical outcomes, and design guidance.
+
+`references/launch-playbook.md`](references/launch-playbook.md)

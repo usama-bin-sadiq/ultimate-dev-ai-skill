@@ -258,3 +258,13 @@ score,business,category,area,distance_km,website_status,website_url,social_urls,
 - **sales-enablement**: For battle cards and one-pagers used in the outreach
 - **directory-submissions**: For inbound discovery surfaces (the prospects might find you back)
 - **product-marketing**: For the ICP definition that anchors every prospecting engagement
+
+Each file below is loaded on demand, not at triage. 6 file(s):
+
+- `references/b2b-prospecting.md` — B2B Prospecting Reference. For when the user sells to non-SaaS B2B — services, agencies, manufacturers, mid-market and enterprise companies, professional services firms.
+- `references/compliance.md` — Prospecting Compliance Reference. The legal and platform-ToS constraints that apply to prospect list building.
+- `references/data-sources.md` — Prospecting Data Sources. Tool selection guide for prospecting across all three branches.
+- `references/demand-signals.md` — Demand-Signal Discovery (Find Your First Customers). The other three branches build a list from who fits (firmographics, technographics, proximity).
+- `references/local-prospecting.md` — Local SMB Prospecting Reference. For when the user sells to local small businesses — shops, gyms, restaurants, salons, clinics, professional services, contractors, real estate...
+- `references/saas-prospecting.md` — SaaS Prospecting Reference. For when the user sells SaaS or digital services to other SaaS companies / digital businesses.
+

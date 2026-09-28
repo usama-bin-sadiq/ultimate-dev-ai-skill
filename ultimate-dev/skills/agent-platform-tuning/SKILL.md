@@ -720,3 +720,10 @@ Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/data_prep.md` — Data Preparation for Agent Platform Model Tuning. Agent Platform Model Tuning requires training data in JSON Lines (JSONL)
+- `references/hf_datasets.md` — Huggingface Dataset References. This document provides references for various datasets used in Agent Platform
+- `references/tuning_guide.md` — Agent Platform Model Tuning Heuristics and Concepts. This guide details the core concepts of fine-tuning and provides heuristics for
+

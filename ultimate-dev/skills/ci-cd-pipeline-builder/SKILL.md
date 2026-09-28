@@ -87,3 +87,11 @@ python3 scripts/pipeline_generator.py --repo . --platform gitlab --output .gitla
 - [references/gitlab-ci-templates.md](references/gitlab-ci-templates.md)
 - [references/deployment-gates.md](references/deployment-gates.md)
 - [README.md](README.md)
+
+Each file below is loaded on demand, not at triage. 4 file(s):
+
+- `references/deployment-gates.md` — Deployment Gates. Every deploy job should define a rollback command or procedure reference.
+- `references/github-actions-templates.md` — GitHub Actions Templates. yaml
+- `references/gitlab-ci-templates.md` — GitLab CI Templates. yaml
+- `references/pipeline-design-notes.md` — Pipeline Design Notes — Pitfalls, Strategy, and Scaling. The advisory layer behind the ci-cd-pipeline-builder workflows: read this when
+

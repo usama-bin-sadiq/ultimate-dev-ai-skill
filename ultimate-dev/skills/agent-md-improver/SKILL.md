@@ -182,7 +182,14 @@ When presenting recommendations, remind users:
 These ship with the skill and are read on demand; none is needed to
 use it. Each answers one question the sections above do not.
 
-- [`references/update-guidelines.md`](references/update-guidelines.md)
+- [
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/quality-criteria.md` — CLAUDE.md Quality Criteria. 20 points: All essential commands documented with context
+- `references/templates.md` — CLAUDE.md Templates. ---
+- `references/update-guidelines.md` — prose
+
+`references/update-guidelines.md`](references/update-guidelines.md)
 
 ## Runtime notes
 

@@ -145,3 +145,15 @@ Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+
+Each file below is loaded on demand, not at triage. 8 file(s):
+
+- `references/change-history.md` — BigQuery change history lets you track the history of changes made to a BigQuery
+- `references/cli-usage.md` — BigQuery CLI Usage. The bq command-line tool is used to interact with BigQuery for managing
+- `references/client-library-usage.md` — BigQuery Client Libraries. Google Cloud client libraries provide an idiomatic way to interact with BigQuery
+- `references/continuous-queries.md` — BigQuery continuous queries are SQL statements that run continuously in an
+- `references/core-concepts.md` — BigQuery Core Concepts. BigQuery is a fully managed, AI-ready data platform that helps you manage and
+- `references/iac-usage.md` — BigQuery Infrastructure as Code. Managing BigQuery resources using Infrastructure as Code (IaC) ensures
+- `references/iam-security.md` — BigQuery IAM & Security. BigQuery uses Identity and Access Management (IAM) to provide granular access
+- `references/mcp-usage.md` — BigQuery MCP Usage. BigQuery is supported by a remote Model Context Protocol (MCP) server that
+

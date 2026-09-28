@@ -316,3 +316,8 @@ These references are extensive, and working through all of them mechanically pro
 For most companies, three or four factors genuinely decide the outcome — a moat that is widening or narrowing, returns on incremental capital, whether cash follows profit, and whether the price already assumes success. Identify those, evidence them properly, and let the rest of the checklist do its real job: making sure nothing disqualifying was missed.
 
 If the business sits outside what can be understood with the available information, say so. Declining to analyse is a legitimate and useful answer.
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/sectors/insurance-brokers-services.md` — prose
+

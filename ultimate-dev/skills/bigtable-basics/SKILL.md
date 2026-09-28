@@ -116,3 +116,13 @@ defined as SQL queries but they must be created using gcloud CLI.
 *   [Bigtable SQL Reference](https://cloud.google.com/bigtable/docs/googlesql-overview)
 *   [cbt CLI Reference](https://cloud.google.com/bigtable/docs/cbt-reference)
 *   [gcloud bigtable Reference](https://cloud.google.com/sdk/gcloud/reference/bigtable)
+
+Each file below is loaded on demand, not at triage. 6 file(s):
+
+- `references/cli_data_access.md` — prose
+- `references/client_libraries.md` — Bigtable Client Library User Guide. This document outlines critical technical details about Bigtable data model and
+- `references/dataplex.md` — Dataplex Catalog Search for Bigtable. This document provides patterns for searching Bigtable data assets in the
+- `references/infrastructure_management.md` — Bigtable Infrastructure and Administration. This document provides patterns for provisioning and managing Bigtable
+- `references/schema_design.md` — Bigtable Schema Design Guide for Agents. This document provides guidelines for designing performant schemas.
+- `references/sql_guide.md` — Bigtable SQL Guide for Agents. This document outlines key aspects of Google Bigtable's SQL dialect which
+

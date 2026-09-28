@@ -321,3 +321,10 @@ Always include a hook as the first element. Never deliver body copy without it. 
 - **content-production**: USE when operating a high-volume content machine across multiple creators. NOT for one-off post creation.
 - **content-humanizer**: USE when AI-drafted posts sound robotic or templated. NOT for strategy or scheduling.
 - **launch-strategy**: USE when coordinating social content around a product launch. NOT for evergreen posting schedules.
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/platforms.md` — Platform-Specific Strategy Guide. Detailed strategies for each major social platform.
+- `references/post-templates.md` — Post Format Templates. Ready-to-use templates for different platforms and content types.
+- `references/reverse-engineering.md` — Reverse Engineering Viral Content. Instead of guessing what works, systematically analyze top-performing content in your niche and extract proven patterns.
+

@@ -256,3 +256,12 @@ available, fetch https://arxiv.org/abs/2609.00065 (or
 http://export.arxiv.org/api/query?id_list=2609.00065) before writing the reference and take
 the author list, year, and version from that record. If the record lists a journal reference
 or publisher DOI, cite the published version instead.
+
+Each file below is loaded on demand, not at triage. 5 file(s):
+
+- `references/api_reference.md` — Zarr Python Quick Reference. Concise reference for zarr 3.2.x.
+- `references/chunking_and_compression.md` — Chunking and Compression. How to size chunks for an access pattern, sharding, the available codecs and Blosc
+- `references/integration.md` — Integration, Parallelism, and Consolidated Metadata. Using Zarr with NumPy, Dask, and Xarray; thread safety and concurrency settings; and
+- `references/performance_and_patterns.md` — Performance, Patterns, and Troubleshooting. Performance optimization, array introspection and storage sizing, common patterns
+- `references/storage_backends.md` — prose
+

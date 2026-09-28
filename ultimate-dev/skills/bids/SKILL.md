@@ -248,3 +248,8 @@ Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/core_workflows.md` — BIDS Core Workflows. The twelve workflow areas in full, with worked code and commands: directory structure,
+

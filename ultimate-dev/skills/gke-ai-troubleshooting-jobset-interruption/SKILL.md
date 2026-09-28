@@ -313,3 +313,8 @@ fails or triggers restarts across multiple attempts:
 -   [ ] Inspect pod timeline status and coordinator worker container logs.
 -   [ ] Recommend appropriate scheduling strategy (On-demand vs Spot) or host VM
     quarantining.
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/failure_signatures.md` — JobSet Interruption Failure Signatures. This document provides authentic, anonymized logs, metrics, and signal patterns
+

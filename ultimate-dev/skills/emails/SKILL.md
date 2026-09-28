@@ -307,3 +307,10 @@ What to measure and benchmarks
 - **ab-testing**: For testing email elements
 - **popups**: For email capture popups
 - **revops**: For lifecycle stages that trigger email sequences
+
+Each file below is loaded on demand, not at triage. 3 file(s):
+
+- `references/copy-guidelines.md` — Email Copy Guidelines. 1.
+- `references/email-types.md` — Email Types Reference. A comprehensive guide to lifecycle and campaign emails.
+- `references/sequence-templates.md` — Email Sequence Templates. Detailed templates for common email sequences.
+

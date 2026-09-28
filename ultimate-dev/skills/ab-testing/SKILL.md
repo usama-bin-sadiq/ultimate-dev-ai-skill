@@ -351,3 +351,9 @@ Over time, your playbook becomes a library of proven growth patterns specific to
 - **cro**: For generating test ideas based on CRO principles
 - **analytics**: For setting up test measurement
 - **copywriting**: For creating variant copy
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/sample-size-guide.md` — Sample Size Guide. Reference for calculating sample sizes and test duration.
+- `references/test-templates.md` — A/B Test Templates Reference. Templates for planning, documenting, and analyzing experiments.
+

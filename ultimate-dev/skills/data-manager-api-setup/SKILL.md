@@ -65,3 +65,12 @@ Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+
+Each file below is loaded on demand, not at triage. 5 file(s):
+
+- `references/dotnet.md` — .NET Client and Utility Library Installation. Install the Google.Ads.DataManager.V1 NuGet package:
+- `references/java.md` — Java Client and Utility Library Installation. Determine the latest version of com.google.api-ads:data-manager by running:
+- `references/node.md` — Node Client and Utility Library Installation. Install the Node.js client library:
+- `references/php.md` — PHP Client and Utility Library Installation. Install the googleads/data-manager component using Composer:
+- `references/python.md` — Python Client and Utility Library Installation. Install the Python client library:
+

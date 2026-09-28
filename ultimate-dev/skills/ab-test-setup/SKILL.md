@@ -314,3 +314,9 @@ All outputs should meet the quality standard: clear hypothesis, pre-registered m
 - **campaign-analytics** — USE after tests conclude to fold results into broader campaign attribution; NOT during the test itself.
 - **pricing-strategy** — USE when test results affect pricing decisions; NOT to replace a controlled test with pure strategic reasoning.
 - **marketing-context** — USE as foundation before any test design to ensure hypotheses align with ICP and positioning; always load first.
+
+Each file below is loaded on demand, not at triage. 2 file(s):
+
+- `references/sample-size-guide.md` — Sample Size Guide. Reference for calculating sample sizes and test duration.
+- `references/test-templates.md` — A/B Test Templates Reference. Templates for planning, documenting, and analyzing experiments.
+

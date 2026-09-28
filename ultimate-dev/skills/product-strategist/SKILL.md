@@ -225,3 +225,8 @@ See `references/examples/sample_growth_okrs.json` for a complete example.
 
 - **Senior PM** (`project-management/senior-pm/`) — Portfolio management and risk analysis inform strategic planning
 - **Competitive Teardown** (`product-team/competitive-teardown/`) — Competitive intelligence feeds product strategy
+
+Each file below is loaded on demand, not at triage. 1 file(s):
+
+- `references/okr_framework.md` — OKR Cascade Framework. A practical guide to Objectives and Key Results (OKRs) and how to cascade them across organizational levels.
+
