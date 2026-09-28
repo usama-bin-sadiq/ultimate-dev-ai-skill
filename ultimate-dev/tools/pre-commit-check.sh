@@ -185,6 +185,18 @@ run_step "sibling imports"      python3 tools/check-sibling-imports.py .
 run_step "evals up to date"     python3 tools/build-evals.py --check
 run_step "fixtures"             python3 tools/build-fixtures.py
 run_step "progressive-disclosure self-test" python3 tools/test-progressive-disclosure.py
+run_step "workflow-auth self-test"  python3 tools/test-workflow-auth.py
+
+# The guard itself, not just its self-test. A self-test proves the checker
+# works; running the checker proves the workflows are clean. Both, or the
+# first one is a test of a tool nobody invokes.
+#
+# It is here rather than in --full because the release path is the thing that
+# was broken three times, and a check that only runs when someone remembers
+# --full is the same class of bug one level down.
+if [ -d "$REPO_ROOT/.github/workflows" ]; then
+  run_step "workflow credentials" python3 tools/check-workflow-auth.py
+fi
 
 # ---- 3. syntax gate over the tools ------------------------------------------
 if command -v python3 >/dev/null 2>&1; then

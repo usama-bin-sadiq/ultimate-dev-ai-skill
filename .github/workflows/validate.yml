@@ -177,6 +177,23 @@ jobs:
       - name: Evaluation corpus and generated eval set agree
         run: python ultimate-dev/tools/build-evals.py --check
 
+      # Three release failures in this repository were the same bug: a step
+      # called `gh` and did not declare a credential in its own `env:`. An
+      # unbound GITHUB_TOKEN under `set -u`; a push against a discarded
+      # checkout credential; and `gh release create` with no GH_TOKEN at all,
+      # exit 4. `gh` reads only its own GH_TOKEN or GITHUB_TOKEN and inherits
+      # neither from a sibling step, so each step is independently unrunnable.
+      #
+      # All three survived because the step before each one happened to fail
+      # first. That is the part worth fixing: not the three cases, but the
+      # reason they were invisible. A check that runs here cannot be skipped by
+      # pushing with --no-verify, which is the one thing the pre-commit gate
+      # cannot prevent.
+      - name: Workflow self-test, then the guard it tests
+        run: |
+          python ultimate-dev/tools/test-workflow-auth.py
+          python ultimate-dev/tools/check-workflow-auth.py
+
       # Sixteen cases name a file the run is meant to read, and the corpus
       # states exact answers about them: 968 refunds against a naive count of
       # 1,204, one 18,422 ms row, a EUR 56,500 drop. Those were assertions in

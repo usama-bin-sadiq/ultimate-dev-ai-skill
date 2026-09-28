@@ -362,6 +362,21 @@ jobs:
         env:
           NEW_VERSION: ${{ steps.version.outputs.new_version }}
           OLD_VERSION: ${{ steps.version.outputs.old_version }}
+          # `gh release create` needs a credential of its own. The step that
+          # pushes the tag supplies ULTIMATE_DEV_TOKEN inline, and the version
+          # step supplies GITHUB_TOKEN, but this step declared neither -- and
+          # `gh` does not inherit either, because neither was exported into the
+          # job environment. It failed with "To use GitHub CLI in a GitHub
+          # Actions workflow, set the GH_TOKEN environment variable", exit 4.
+          #
+          # This is the third time this workflow has died on a credential the
+          # step did not declare. The first was an unbound GITHUB_TOKEN under
+          # `set -u`; the second was a push with persist-credentials disabled;
+          # this one is a missing token on the release call itself. Each was
+          # only reachable because the step before it happened to die first,
+          # which is why all three survived as long as they did. The class is
+          # now checked mechanically by tools/check-workflow-auth.py.
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           notes=$(awk -v v="[$NEW_VERSION]" '
