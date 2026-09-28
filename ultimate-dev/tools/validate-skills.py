@@ -505,8 +505,32 @@ def validate_agent_role(role: Path) -> dict[str, Any]:
         )
     if "## output" not in lowered and "output contract" not in lowered:
         errors.append(f"{role}: states no output contract; the caller cannot consume an undeclared result")
-    if "## when you must not" not in lowered and "## what you must not" not in lowered and "must not do" not in lowered:
-        warnings.append(f"{role}: prohibitions are not in a dedicated section")
+    # A dedicated prohibitions section, under any of the names authors actually
+    # use, OR the phrasing the previous test accepted. The previous test matched
+    # three literal strings and reported 14 roles that state prohibitions clearly
+    # -- "Critical Rules", "Never make an outcomes claim without a data source"
+    # -- because their heading was not one of the three.
+    #
+    # Both tests are kept. Replacing the old one with a heading regex alone
+    # raised the count from 14 to 192, because 178 roles state prohibitions in a
+    # numbered rule with no heading at all -- which is a formatting preference,
+    # not a safety gap, and the content test above already proves they are
+    # there. A warning that fires on 192 correct roles trains people to ignore
+    # warnings.
+    PROHIBITION_SECTION = re.compile(
+        r"^#{2,3}\s*(?:critical\s+rules?|hard\s+rules?|rules?|constraints?|"
+        r"boundaries|limits?|prohibitions?|guardrails?|"
+        r"what you (?:must|should) not|when you must not)\b",
+        re.IGNORECASE | re.M,
+    )
+    if (
+        not PROHIBITION_SECTION.search(body)
+        and "must not do" not in lowered
+    ):
+        warnings.append(
+            f"{role}: prohibitions are not gathered under a heading a caller can "
+            f"find; it states them, but a reader has to know to look"
+        )
 
     return {
         "path": str(role),
