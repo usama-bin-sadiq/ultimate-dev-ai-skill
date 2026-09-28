@@ -138,24 +138,45 @@ def balanced(text: str) -> bool:
 
 
 def sections(body: str) -> list[tuple[str, int, int, str]]:
-    """(heading, start, end, text) for every level-2 section, in order.
+    """(heading, level, start, end, text) for every top-level section, in order.
 
     A `## ` line inside a ```bash block is a shell comment, not a heading.
+
+    Level 1 counts as a boundary, except the document's own title. last30days
+    writes its sections as `# HEADING` -- five of them -- so 355 lines before
+    the first `## ` were a single uncuttable block, and no amount of moving
+    sections could bring a 2,422-line file under a 500-line ceiling.
+
+    The exception matters and is not a fudge: 2,023 of the 2,086 skills have
+    exactly one H1, and it is the title. Counting it as a section would make
+    the title a movable block, so the document would be a pointer to itself.
+    The first H1 is therefore the title, always; every later one is a section.
+
+    Blast radius, measured before the change: 11 skills have more than one H1.
+    The other 2,075 are unaffected, and 10 of the 11 are already under the
+    ceiling, so plan() returns before this matters for them at all.
     """
     lines = body.split("\n")
     inside = fence_state_at(lines)
-    marks: list[tuple[int, str]] = []
+    marks: list[tuple[int, int, str]] = []   # (position, level, name)
     pos = 0
+    seen_h1 = False
     for i, line in enumerate(lines):
         if not inside[i]:
-            m = re.match(r"^##\s+(.+)$", line)
+            m = re.match(r"^(#{1,2})\s+(.+)$", line)
             if m:
-                marks.append((pos, m.group(1).strip()))
+                level = len(m.group(1))
+                if level == 1:
+                    if seen_h1:
+                        marks.append((pos, level, m.group(2).strip()))
+                    seen_h1 = True
+                else:
+                    marks.append((pos, level, m.group(2).strip()))
         pos += len(line) + 1
-    out: list[tuple[str, int, int, str]] = []
-    for i, (start, name) in enumerate(marks):
+    out: list[tuple] = []
+    for i, (start, level, name) in enumerate(marks):
         end = marks[i + 1][0] if i + 1 < len(marks) else len(body)
-        out.append((name, start, end, body[start:end].rstrip() + "\n"))
+        out.append((name, level, start, end, body[start:end].rstrip() + "\n"))
     return out
 
 
@@ -227,12 +248,15 @@ def promote_heading(fragment: str, title: str) -> str:
     references/ files are read on their own. A file whose highest heading is an
     H2 reads as a fragment of something, and one heading level down from every
     other document in the tree.
+    A fragment that already opened with `# ` is left as it is. last30days writes
+    its sections as H1, so promoting there would have produced `## ` and put the
+    heading back a level, which is the opposite of the point.
     """
     lines = fragment.split("\n")
     for i, line in enumerate(lines):
-        m = re.match(r"^##\s+(.+?)\s*$", line)
+        m = re.match(r"^(#{1,2})\s+(.+?)\s*$", line)
         if m:
-            lines[i] = f"# {m.group(1)}"
+            lines[i] = f"# {m.group(2)}"
             break
     return "\n".join(lines)
 
@@ -260,7 +284,7 @@ def declared_paths(doc: str) -> set[str]:
     return found
 
 
-def pointer(name: str, dest: str) -> str:
+def pointer(name: str, dest: str, level: int = 2) -> str:
     """A placeholder that says where the section went.
 
     Two lines, not four. The first version carried a sentence of explanation
@@ -268,8 +292,11 @@ def pointer(name: str, dest: str) -> str:
     the explanation repeated the same advice N times in a file whose whole
     purpose is to be short. The pointer is a routing surface; a routing surface
     that explains itself at length is not one.
+
+    The level is the one the section had, so an H1 section leaves an H1 pointer
+    and the heading hierarchy of SKILL.md does not change underneath the reader.
     """
-    return f"## {name}\n\nDetail moved to `{dest}`.\n\n"
+    return f"{'#' * max(1, level)} {name}\n\nDetail moved to `{dest}`.\n\n"
 
 
 def plan(skill_md: pathlib.Path) -> dict | None:
@@ -302,7 +329,7 @@ def plan(skill_md: pathlib.Path) -> dict | None:
     inside = fence_state_at(body.split("\n"))
     at: dict[int, bool] = {offsets[i]: inside[i] for i in range(len(offsets))}
 
-    def movable(name: str, a: int, b: int, frag: str) -> bool:
+    def movable(name: str, level: int, a: int, b: int, frag: str) -> bool:
         """Whether a section may be moved, ignoring the two-pass question.
 
         One predicate, called by both passes. The second pass originally
@@ -357,9 +384,9 @@ def plan(skill_md: pathlib.Path) -> dict | None:
     for cand in reversed(eligible):
         if kept_line_count() <= LIMIT:
             break
-        moved_spans.add((cand[1], cand[2]))
+        moved_spans.add((cand[2], cand[3]))
         movers.append(cand)
-    movers.sort(key=lambda s: s[1])
+    movers.sort(key=lambda s: s[2])
 
     if not movers:
         return {
@@ -390,14 +417,14 @@ def plan(skill_md: pathlib.Path) -> dict | None:
         # cannot move something the first pass judged unsafe to move.
         protected = [
             sec for sec in secs
-            if (sec[1], sec[2]) not in moved_spans and movable(*sec)
+            if (sec[2], sec[3]) not in moved_spans and movable(*sec)
         ]
         for cand in reversed(protected):
             if kept_line_count() <= LIMIT:
                 break
-            moved_spans.add((cand[1], cand[2]))
+            moved_spans.add((cand[2], cand[3]))
             movers.append(cand)
-        movers.sort(key=lambda s: s[1])
+        movers.sort(key=lambda s: s[2])
 
     # Third pass: sections too small to be worth moving on their own merits.
     #
@@ -413,17 +440,17 @@ def plan(skill_md: pathlib.Path) -> dict | None:
         for cand in reversed(secs):
             if kept_line_count() <= LIMIT:
                 break
-            if (cand[1], cand[2]) in moved_spans:
+            if (cand[2], cand[3]) in moved_spans:
                 continue
             if NAVIGATIONAL.match(f"## {cand[0]}"):
                 continue
-            if cand[3].count("\n") <= POINTER_LINES:
+            if cand[4].count("\n") <= POINTER_LINES:
                 continue          # the pointer would be as big as the section
-            if at.get(cand[1]):
+            if at.get(cand[2]):
                 continue
-            moved_spans.add((cand[1], cand[2]))
+            moved_spans.add((cand[2], cand[3]))
             movers.append(cand)
-        movers.sort(key=lambda s: s[1])
+        movers.sort(key=lambda s: s[2])
 
     # ---- build outputs -------------------------------------------------
     #
@@ -451,7 +478,7 @@ def plan(skill_md: pathlib.Path) -> dict | None:
         ref_titles = {}
         taken: set[str] = set()
         dests = []
-        for name, _a, _b, frag in movers:
+        for name, _lv, _a, _b, frag in movers:
             key = slug(name)
             n = 2
             while key in taken:
@@ -464,9 +491,9 @@ def plan(skill_md: pathlib.Path) -> dict | None:
 
         pieces: list[str] = []
         cursor = 0
-        for (name, a, b, _f), dest in zip(movers, dests):
+        for (name, level, a, b, _f), dest in zip(movers, dests):
             pieces.append(body[cursor:a])
-            pieces.append(pointer(name, dest))
+            pieces.append(pointer(name, dest, level))
             cursor = b
         pieces.append(body[cursor:])
         new_skill = fm + "".join(pieces)
@@ -510,19 +537,19 @@ def plan(skill_md: pathlib.Path) -> dict | None:
         #
         # So: move one more section if there is one left to move, and only give
         # something back once there is nothing left to add.
-        already = {(a, b) for _n, a, b, _f in movers}
+        already = {(a, b) for _n, _lv, a, b, _f in movers}
         spare = [
             sec for sec in secs
-            if (sec[1], sec[2]) not in already
-            and (sec[1], sec[2]) not in walked_back
+            if (sec[2], sec[3]) not in already
+            and (sec[2], sec[3]) not in walked_back
             and not NAVIGATIONAL.match(f"## {sec[0]}")
-            and sec[3].count("\n") > POINTER_LINES
-            and not at.get(sec[1])
-            and balanced(sec[3])
+            and sec[4].count("\n") > POINTER_LINES
+            and not at.get(sec[2])
+            and balanced(sec[4])
         ]
         if spare:
-            movers.append(max(spare, key=lambda s: s[3].count("\n")))
-            movers.sort(key=lambda s: s[1])
+            movers.append(max(spare, key=lambda s: s[4].count("\n")))
+            movers.sort(key=lambda s: s[2])
             continue
         # Nothing left to move. Give back the smallest and measure again: that
         # is the least disclosure to give up.
@@ -533,8 +560,8 @@ def plan(skill_md: pathlib.Path) -> dict | None:
         # is what happened the first time, and it looked like a slow disk.
         if len(movers) <= 1:
             break
-        smallest = min(movers, key=lambda s: s[3].count("\n"))
-        walked_back.add((smallest[1], smallest[2]))
+        smallest = min(movers, key=lambda s: s[4].count("\n"))
+        walked_back.add((smallest[2], smallest[3]))
         movers.remove(smallest)
 
     # ---- the postcondition --------------------------------------------
@@ -574,7 +601,7 @@ def plan(skill_md: pathlib.Path) -> dict | None:
     for doc in new_refs.values():
         out_lines.update(doc.split("\n"))
     orig = collections.Counter(text.split("\n"))
-    for name, _a, _b, frag in movers:
+    for name, _lv, _a, _b, frag in movers:
         orig.subtract(frag.split("\n"))
     missing = orig - out_lines
     missing = {k: v for k, v in missing.items() if v > 0 and k.strip()}
@@ -636,8 +663,8 @@ def plan(skill_md: pathlib.Path) -> dict | None:
         # Exposed so a test can do its own line accounting against the original
         # rather than against this file's own idea of what it wrote. A test that
         # re-uses the writer's accounting is a test of nothing.
-        "moved_spans": [(a, b) for _n, a, b, _f in movers],
-        "fragments": [f for _n, _a, _b, f in movers],
+        "moved_spans": [(a, b) for _n, _lv, a, b, _f in movers],
+        "fragments": [f for _n, _lv, _a, _b, f in movers],
         "index_addition": index_addition,
         "orphaned_decls": orphaned,
         "walked_back": sorted(walked_back),

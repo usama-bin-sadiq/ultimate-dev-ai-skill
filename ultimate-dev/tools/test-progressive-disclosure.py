@@ -106,7 +106,7 @@ secs = apd.sections(body)
 check("B3 the strict reader finds both real sections",
       [s[0] for s in secs] == ["Workflow", "Reference"],
       str([s[0] for s in secs]))
-inner = secs[0][3]
+inner = secs[0][4]
 check("B4 the inner ``` did not end the block",
       inner.count("````") == 2, f"{inner.count('````')} four-tick markers")
 check("B5 the heading inside the block was not a section",
