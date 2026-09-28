@@ -420,105 +420,7 @@ Parse the user's input:
 
 ## Restore flow
 
-### Step 1: Find saved contexts
-
-```bash
-eval "$(~/<agent-config-dir>/gstack/bin/gstack-slug 2>/dev/null)" && mkdir -p ~/.gstack/projects/$SLUG
-eval "$(~/<agent-config-dir>/gstack/bin/gstack-paths)"
-CHECKPOINT_DIR="$GSTACK_STATE_ROOT/projects/$SLUG/checkpoints"
-if [ ! -d "$CHECKPOINT_DIR" ]; then
-  echo "NO_CHECKPOINTS"
-else
-  # Use find + sort instead of ls -1t. Two reasons:
-  # 1. Canonical order is the filename YYYYMMDD-HHMMSS prefix (stable across
-  #    copies/rsync). Filesystem mtime drifts and is not authoritative.
-  # 2. On macOS, `find ... | xargs ls -1t` with zero results falls back to
-  #    listing cwd. `sort -r` on empty input cleanly returns nothing.
-  # Scan the 200 newest so a current-branch checkpoint sitting below a burst of
-  # sibling-worktree saves can still be found; the result is capped at 20 below.
-  ALL=$(find "$CHECKPOINT_DIR" -maxdepth 1 -name "*.md" -type f 2>/dev/null | sort -r | head -200)
-  if [ -z "$ALL" ]; then
-    echo "NO_CHECKPOINTS"
-  else
-    # Order current-branch checkpoints first, other branches after. A git branch
-    # is checked out in at most one worktree, and all worktrees of a repo share
-    # one checkpoints dir (same origin-derived slug), so without this preference
-    # `/context-restore` in worktree A could load worktree B's newer checkpoint.
-    # Cross-branch resume (Conductor handoff) is preserved as the fallback: when
-    # the current branch has no checkpoint, the full newest-first set is used.
-    # CURRENT_BRANCH may be pre-set (tests); otherwise resolve it from git.
-    : "${CURRENT_BRANCH:=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)}"
-    SAME=""; OTHER=""
-    while IFS= read -r f; do
-      [ -n "$f" ] || continue
-      b=$(grep -m1 '^branch:' "$f" 2>/dev/null | sed 's/^branch:[[:space:]]*//')
-      if [ -n "$CURRENT_BRANCH" ] && [ "$b" = "$CURRENT_BRANCH" ]; then
-        SAME="${SAME}${f}
-"
-      else
-        OTHER="${OTHER}${f}
-"
-      fi
-    done <<EOF
-$ALL
-EOF
-    # Cap at 20: a user with 10k saved files shouldn't blow the context window.
-    FILES=$(printf '%s%s' "$SAME" "$OTHER" | grep -v '^[[:space:]]*$' | head -20)
-    echo "$FILES"
-  fi
-fi
-```
-
-**Candidates include every `.md` file in the directory**, but they are ordered
-**current-branch-first** (the branch is read from each file's `branch:`
-frontmatter). Other-branch files stay in the set as a fallback, which preserves
-Conductor workspace handoff when the current branch has no checkpoint of its own.
-
-### Step 2: Load the right file
-
-- If the user specified a title fragment or number: find the matching file among
-  the candidates.
-- Otherwise: load the **first file returned by Step 1 above** — that is the
-  newest `YYYYMMDD-HHMMSS` checkpoint for the current branch, or, if the current
-  branch has none, the newest across all branches.
-
-Read the chosen file and present a summary:
-
-```
-RESUMING CONTEXT
-════════════════════════════════════════
-Title:       {title}
-Branch:      {branch from frontmatter}
-Saved:       {timestamp, human-readable}
-Duration:    Last session was {formatted duration} (if available)
-Status:      {status}
-════════════════════════════════════════
-
-### Summary
-{summary from saved file}
-
-### Remaining Work
-{remaining work items}
-
-### Notes
-{notes}
-```
-
-If the current branch differs from the saved context's branch, note this:
-"This context was saved on branch `{branch}`. You are currently on
-`{current branch}`. You may want to switch branches before continuing."
-
-### Step 3: Offer next steps
-
-After presenting, ask via AskUserQuestion:
-
-- A) Continue working on the remaining items
-- B) Show the full saved file
-- C) Just needed the context, thanks
-
-If A, summarize the first remaining work item and suggest starting there.
-
----
+Detail moved to `references/restore-flow.md`.
 
 ## If no saved contexts exist
 
@@ -531,57 +433,9 @@ state, then `/context-restore` will find it."
 
 ## Important Rules
 
-- **Never modify code.** This skill only reads saved files and presents them.
-- **Prefer the current branch's own checkpoint, but keep all branches in the
-  fallback set.** Cross-branch resume (Conductor handoff) still works when the
-  current branch has no checkpoint; it just no longer lets a sibling worktree's
-  newer save shadow this branch's own.
-- **"Most recent" means the filename `YYYYMMDD-HHMMSS` prefix**, not
-  `ls -1t` (filesystem mtime). Filenames are stable across file-system
-  operations; mtime is not.
-- **This is a gstack skill, not a Claude Code built-in.** When the user types
-  `/context-restore`, invoke this skill via the Skill tool.
+Detail moved to `references/important-rules.md`.
 
 ## Runtime notes
 
-This file was adapted to be tool-neutral: it claimed a general scope and was
-bound to one tool. The procedure is unchanged; what changed is that a reader on a
-different runtime is told what to substitute.
-
-- **`gstack-skill-start`** — the preamble script gstack installs alongside the
-  skill. It prints the `KEY: value` STATUS lines (`SKILL_START`, `SESSION_ID`,
-  `SESSION_KIND`, `CONDUCTOR_SESSION`, `TEL_START`) and any
-  `GSTACK_INSTRUCTION_BEGIN`/`_END` block that the phases above branch on.
-  **Claude Code** and **Codex** both install it. A runtime with no gstack
-  dispatcher produces no STATUS lines at all, so take each branch's own stated
-  default and skip the onboarding and telemetry steps, which are marker-gated
-  and therefore lose nothing.
-- **slash-command dispatch** (`/review`, `/qa`, and so on) — how the phases are
-  entered. **Claude Code** exposes them as slash commands; **Codex** exposes the
-  same skills as `@name` invocations. A runtime with neither still has the
-  procedure: the numbered phases in this file, run in order, in one context.
-- **`AskUserQuestion`, `Agent`, `ExitPlanMode`** — host tool names, not concepts.
-  **Claude Code** provides all three natively; **Codex** provides its own
-  equivalents, and this file already treats the `mcp__*__AskUserQuestion`
-  variant as a third path. Where a runtime has no question tool, use the
-  **prose fallback** this file already specifies and stop for a typed answer.
-  Where it has no subagent tool, run the isolated-reviewer step sequentially and
-  record that you did.
-- **`codex exec`, `claude -p`** — how a phase is handed a fresh context. Two
-  different CLIs for one purpose, so this binding is not single-vendor; a runtime
-  that ships neither can only approximate isolation, by ending and
-restarting the session.
-- **`~/.gstack/`** — gstack's own per-user state: session id, plan file,
-  skill-usage log. It is where this toolkit puts its state, not a location any
-  other runtime reads.
-- **`bun run gen:skill-docs`** — this file is generated from a template by the
-  toolkit's own build step. Edits made here are overwritten on the next
-  regeneration; the template is the place a change has to be made to survive.
-- **`mcp__*__AskUserQuestion`** — a wildcard over *any* MCP server exposing that
-  tool, not a required server. Read it as "whatever the host's MCP layer calls
-  it", and treat its absence as the no-question-tool case above.
-Anything marked **means** is an implementation detail of one tool, and a reader
-on a different runtime may need a different mechanism for the same step. Anything
-marked **subject** means the capability is genuinely about that tool, and a reader
-without it should not expect this file to apply.
+Detail moved to `references/runtime-notes.md`.
 

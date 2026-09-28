@@ -413,129 +413,11 @@ The user might validate values...
 
 ## Validation Checklist
 
-Before finalizing a skill:
-
-**Structure:**
-- [ ] SKILL.md file exists with valid YAML frontmatter
-- [ ] Frontmatter has `name` and `description` fields
-- [ ] Markdown body is present and substantial
-- [ ] Referenced files actually exist
-
-**Description Quality:**
-- [ ] Uses third person ("This skill should be used when...")
-- [ ] Includes specific trigger phrases users would say
-- [ ] Lists concrete scenarios ("create X", "configure Y")
-- [ ] Not vague or generic
-
-**Content Quality:**
-- [ ] SKILL.md body uses imperative/infinitive form
-- [ ] Body is focused and lean (1,500-2,000 words ideal, <5k max)
-- [ ] Detailed content moved to references/
-- [ ] Examples are complete and working
-- [ ] Scripts are executable and documented
-
-**Progressive Disclosure:**
-- [ ] Core concepts in SKILL.md
-- [ ] Detailed docs in references/
-- [ ] Working code in examples/
-- [ ] Utilities in scripts/
-- [ ] SKILL.md references these resources
-
-**Testing:**
-- [ ] Skill triggers on expected user queries
-- [ ] Content is helpful for intended tasks
-- [ ] No duplicated information across files
-- [ ] References load when needed
+Detail moved to `references/validation-checklist.md`.
 
 ## Common Mistakes to Avoid
 
-### Mistake 1: Weak Trigger Description
-
-❌ **Bad:**
-```yaml
-description: Provides guidance for working with hooks.
-```
-
-**Why bad:** Vague, no specific trigger phrases, not third person
-
-✅ **Good:**
-```yaml
-description: This skill should be used when the user asks to "create a hook", "add a PreToolUse hook", "validate tool use", or mentions hook events. Provides comprehensive hooks API guidance.
-```
-
-**Why good:** Third person, specific phrases, concrete scenarios
-
-### Mistake 2: Too Much in SKILL.md
-
-❌ **Bad:**
-```
-skill-name/
-└── SKILL.md  (8,000 words - everything in one file)
-```
-
-**Why bad:** Bloats context when skill loads, detailed content always loaded
-
-✅ **Good:**
-```
-skill-name/
-├── SKILL.md  (1,800 words - core essentials)
-└── references/
-    ├── patterns.md (2,500 words)
-    └── advanced.md (3,700 words)
-```
-
-**Why good:** Progressive disclosure, detailed content loaded only when needed
-
-### Mistake 3: Second Person Writing
-
-❌ **Bad:**
-```markdown
-You should start by reading the configuration file.
-You need to validate the input.
-You can use the grep tool to search.
-```
-
-**Why bad:** Second person, not imperative form
-
-✅ **Good:**
-```markdown
-Start by reading the configuration file.
-Validate the input before processing.
-Use the grep tool to search for patterns.
-```
-
-**Why good:** Imperative form, direct instructions
-
-### Mistake 4: Missing Resource References
-
-❌ **Bad:**
-```markdown
-# SKILL.md
-
-[Core content]
-
-[No mention of references/ or examples/]
-```
-
-**Why bad:** Claude doesn't know references exist
-
-✅ **Good:**
-```markdown
-# SKILL.md
-
-[Core content]
-
-## Additional Resources
-
-### Reference Files
-- **`references/patterns.md`** - Detailed patterns
-- **`references/advanced.md`** - Advanced techniques
-
-### Examples
-- **`examples/script.sh`** - Working example
-```
-
-**Why good:** Claude knows where to find additional information
+Detail moved to `references/common-mistakes-to-avoid.md`.
 
 ## Quick Reference
 
@@ -580,61 +462,17 @@ Good for: Complex domains with validation utilities
 
 ## Best Practices Summary
 
-✅ **DO:**
-- Use third-person in description ("This skill should be used when...")
-- Include specific trigger phrases ("create X", "configure Y")
-- Keep SKILL.md lean (1,500-2,000 words)
-- Use progressive disclosure (move details to references/)
-- Write in imperative/infinitive form
-- Reference supporting files clearly
-- Provide working examples
-- Create utility scripts for common operations
-- Study plugin-dev's skills as templates
-
-❌ **DON'T:**
-- Use second person anywhere
-- Have vague trigger conditions
-- Put everything in SKILL.md (>3,000 words without references/)
-- Write in second person ("You should...")
-- Leave resources unreferenced
-- Include broken or incomplete examples
-- Skip validation
+Detail moved to `references/best-practices-summary.md`.
 
 ## Additional Resources
-This skill ships `references/patterns.md`, `references/advanced.md` and
-`references/schema.md`. The worked example below shows how a generated
-skill should point at its own reference files.
 
-
-### Study These Skills
-
-Plugin-dev's skills demonstrate best practices:
-- `../hook-development/` - Progressive disclosure, utilities
-- `../agent-development/` - AI-assisted creation, references
-- `../mcp-integration/` - Comprehensive references
-- `../plugin-settings/` - Real-world examples
-- `../command-development/` - Clear critical concepts
-- `../plugin-structure/` - Good organization
-
-### Reference Files
-
-For complete skill-creator methodology:
-- **`references/skill-creator-original.md`** - Full original skill-creator content
+Detail moved to `references/additional-resources.md`.
 
 ## Implementation Workflow
 
-To create a skill for your plugin:
+Detail moved to `references/implementation-workflow.md`.
 
-1. **Understand use cases**: Identify concrete examples of skill usage
-2. **Plan resources**: Determine what scripts/references/examples needed
-3. **Create structure**: `mkdir -p skills/skill-name/{references,examples,scripts}`
-4. **Write SKILL.md**:
-   - Frontmatter with third-person description and trigger phrases
-   - Lean body (1,500-2,000 words) in imperative form
-   - Reference supporting files
-5. **Add resources**: Create references/, examples/, scripts/ as needed
-6. **Validate**: Check description, writing style, organization
-7. **Test**: Verify skill loads on expected triggers
-8. **Iterate**: Improve based on usage
 
-Focus on strong trigger descriptions, progressive disclosure, and imperative writing style for effective skills that load when needed and provide targeted guidance.
+## Reference Index
+
+3 reference file(s) are named in `references/README.md`.

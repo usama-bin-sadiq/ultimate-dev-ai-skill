@@ -367,220 +367,15 @@ await generator.dispose();
 
 ## Advanced Configuration
 
-### Environment Configuration (`env`)
-
-The `env` object provides comprehensive control over Transformers.js execution, caching, and model loading.
-
-**Quick Overview:**
-
-```javascript
-import { env, LogLevel } from '@huggingface/transformers';
-
-// View version
-console.log(env.version); // e.g., '4.x'
-
-// Common settings
-env.allowRemoteModels = true;  // Load from Hugging Face Hub
-env.allowLocalModels = false;  // Load from file system
-env.localModelPath = '/models/'; // Local model directory
-env.useFSCache = true;         // Cache models on disk (Node.js)
-env.useBrowserCache = true;    // Cache models in browser
-env.cacheDir = './.cache';     // Cache directory location
-// Optional: override logging level (default is LogLevel.WARNING)
-env.logLevel = LogLevel.INFO;
-
-// Optional: custom fetch for auth headers, retries, abort signals, etc.
-env.fetch = (url, options) =>
-  fetch(url, {
-    ...options,
-    headers: {
-      ...options?.headers,
-      Authorization: `Bearer ${HF_TOKEN}`,
-    },
-  });
-```
-
-**Configuration Patterns:**
-
-```javascript
-// Development: Fast iteration with remote models
-env.allowRemoteModels = true;
-env.useFSCache = true;
-
-// Production: Local models only
-env.allowRemoteModels = false;
-env.allowLocalModels = true;
-env.localModelPath = '/app/models/';
-
-// Custom CDN
-env.remoteHost = 'https://cdn.example.com/models';
-
-// Disable caching (testing)
-env.useFSCache = false;
-env.useBrowserCache = false;
-```
-
-For complete documentation on all configuration options, caching strategies, cache management, pre-downloading models, and more, see:
-
-**→ [Configuration Reference](./references/CONFIGURATION.md)**
-
-### ModelRegistry (v4)
-
-`ModelRegistry` gives you visibility and control over model assets before loading a pipeline. Use it to estimate download size, check cache status, inspect available dtypes, and clear cached artifacts for a specific task/model/options tuple.
-
-```javascript
-import { ModelRegistry } from '@huggingface/transformers';
-
-const task = 'feature-extraction';
-const modelId = 'onnx-community/all-MiniLM-L6-v2-ONNX';
-const modelOptions = { dtype: 'fp32' };
-
-// List required files for this pipeline
-const files = await ModelRegistry.get_pipeline_files(task, modelId, modelOptions);
-
-// Check if assets are already cached
-const cached = await ModelRegistry.is_pipeline_cached(task, modelId, modelOptions);
-
-// Inspect precision formats available for this model
-const dtypes = await ModelRegistry.get_available_dtypes(modelId);
-
-console.log({ files: files.length, cached, dtypes });
-```
-
-For production patterns and full API coverage, see **[ModelRegistry Reference](./references/MODEL_REGISTRY.md)**.
-
-### Standalone Tokenization (`@huggingface/tokenizers`)
-
-For tokenization-only workflows, use `@huggingface/tokenizers`. It is a separate lightweight package useful when you need fast tokenization/encoding without loading full model inference pipelines.
-
-```bash
-npm install @huggingface/tokenizers
-```
-
-```javascript
-import { Tokenizer } from '@huggingface/tokenizers';
-```
-
-### Working with Tensors
-
-```javascript
-import { AutoTokenizer, AutoModel } from '@huggingface/transformers';
-
-// Load tokenizer and model separately for more control
-const tokenizer = await AutoTokenizer.from_pretrained('bert-base-uncased');
-const model = await AutoModel.from_pretrained('bert-base-uncased');
-
-// Tokenize input
-const inputs = await tokenizer('Hello world!');
-
-// Run model
-const outputs = await model(inputs);
-```
-
-### Batch Processing
-
-```javascript
-const classifier = await pipeline('sentiment-analysis');
-
-// Process multiple texts
-const results = await classifier([
-  'I love this!',
-  'This is terrible.',
-  'It was okay.'
-]);
-```
+Detail moved to `references/advanced-configuration.md`.
 
 ## Runtime-Specific Considerations
 
-### WebGPU Usage
-WebGPU provides GPU acceleration in browsers and server-side runtimes (when supported):
-
-```javascript
-const pipe = await pipeline('text-generation', 'onnx-community/gemma-3-270m-it-ONNX', {
-  device: 'webgpu',
-  dtype: 'fp32'
-});
-```
-
-**Note**: Use `webgpu` when available and fall back to WASM/CPU when not supported in the current runtime.
-
-### WASM Performance
-WASM is the most compatible execution backend across runtimes:
-
-```javascript
-// Optimized for browsers with quantization
-const pipe = await pipeline('sentiment-analysis', 'model-id', {
-  dtype: 'q8'  // or 'q4' for even smaller size
-});
-```
-
-### Progress Tracking & Loading Indicators
-
-Models can be large (ranging from a few MB to several GB) and consist of multiple files. Track download progress by passing a callback to the `pipeline()` function:
-
-```javascript
-import { pipeline } from '@huggingface/transformers';
-
-// Track progress for each file
-const fileProgress = {};
-
-function onProgress(info) {
-  if (info.status === 'progress_total') {
-    console.log(`Total: ${info.progress.toFixed(1)}%`);
-    return;
-  }
-
-  console.log(`${info.status}: ${info.file ?? ''}`);
-  
-  if (info.status === 'progress') {
-    fileProgress[info.file] = info.progress;
-    console.log(`${info.file}: ${info.progress.toFixed(1)}%`);
-  }
-  
-  if (info.status === 'done') {
-    console.log(`✓ ${info.file} complete`);
-  }
-}
-
-// Pass callback to pipeline
-const classifier = await pipeline('sentiment-analysis', null, {
-  progress_callback: onProgress
-});
-```
-
-**Progress Info Properties:**
-
-```typescript
-interface ProgressInfo {
-  status: 'initiate' | 'download' | 'progress' | 'progress_total' | 'done' | 'ready';
-  name: string;      // Model id or path
-  file?: string;     // File being processed (per-file events)
-  progress?: number; // Percentage (0-100, for 'progress' and 'progress_total')
-  loaded?: number;   // Bytes downloaded (only for 'progress' status)
-  total?: number;    // Total bytes (only for 'progress' status)
-}
-```
-
-For complete examples including browser UIs, React components, CLI progress bars, and retry logic, see:
-
-**→ [Pipeline Options - Progress Callback](./references/PIPELINE_OPTIONS.md#progress-callback)**
+Detail moved to `references/runtime-specific-considerations.md`.
 
 ## Error Handling
 
-```javascript
-try {
-  const pipe = await pipeline('sentiment-analysis', 'model-id');
-  const result = await pipe('text to analyze');
-} catch (error) {
-  if (error.message.includes('fetch')) {
-    console.error('Model download failed. Check internet connection.');
-  } else if (error.message.includes('ONNX')) {
-    console.error('Model execution failed. Check model compatibility.');
-  } else {
-    console.error('Unknown error:', error);
-  }
-}
-```
+Detail moved to `references/error-handling.md`.
 
 ## Performance Tips
 
@@ -594,70 +389,19 @@ try {
 
 ## Memory Management
 
-**IMPORTANT:** Always call `pipe.dispose()` when finished to prevent memory leaks.
-
-```javascript
-const pipe = await pipeline('sentiment-analysis');
-const result = await pipe('Great product!');
-await pipe.dispose();  // ✓ Free memory (100MB - several GB per model)
-```
-
-**When to dispose:**
-- Application shutdown or component unmount
-- Before loading a different model
-- After batch processing in long-running apps
-
-Models consume significant memory and hold GPU/CPU resources. Disposal is critical for browser memory limits and server stability.
-
-For detailed patterns (React cleanup, servers, browser), see **[Code Examples](./references/EXAMPLES.md)**
+Detail moved to `references/memory-management.md`.
 
 ## Troubleshooting
 
-### Model Not Found
-- Verify model exists on Hugging Face Hub
-- Check model name spelling
-- Ensure model has ONNX files (look for `onnx` folder in model repo)
-
-### Memory Issues
-- Use smaller models or quantized versions (`dtype: 'q4'`)
-- Reduce batch size
-- Limit sequence length with `max_length`
-
-### WebGPU Errors
-- Check browser compatibility (Chrome 113+, Edge 113+)
-- Try `dtype: 'fp16'` if `fp32` fails
-- Fall back to WASM if WebGPU unavailable
+Detail moved to `references/troubleshooting.md`.
 
 ## Reference Documentation
 
-### This Skill
-- **[Pipeline Options](./references/PIPELINE_OPTIONS.md)** - Configure `pipeline()` with `progress_callback`, `device`, `dtype`, etc.
-- **[Configuration Reference](./references/CONFIGURATION.md)** - Global `env` configuration for caching and model loading
-- **[ModelRegistry Reference](./references/MODEL_REGISTRY.md)** - Inspect files, cache status, dtypes, and clear cache before loading pipelines
-- **[Caching Reference](./references/CACHE.md)** - Browser Cache API, Node.js filesystem cache, and custom cache implementations
-- **[Text Generation Guide](./references/TEXT_GENERATION.md)** - Streaming, chat format, and generation parameters
-- **[Model Architectures](./references/MODEL_ARCHITECTURES.md)** - Supported models and selection tips
-- **[Code Examples](./references/EXAMPLES.md)** - Real-world implementations for different runtimes
-
-### Official Transformers.js
-- Official docs: https://huggingface.co/docs/transformers.js
-- API reference: https://huggingface.co/docs/transformers.js/api/pipelines
-- Model hub: https://huggingface.co/models?library=transformers.js
-- GitHub: https://github.com/huggingface/transformers.js
-- Examples: https://github.com/huggingface/transformers.js-examples
+Detail moved to `references/reference-documentation.md`.
 
 ## Best Practices
 
-1. **Always Dispose Pipelines**: Call `pipe.dispose()` when done - critical for preventing memory leaks
-2. **Start with Pipelines**: Use the pipeline API unless you need fine-grained control
-3. **Test Locally First**: Test models with small inputs before deploying
-4. **Monitor Model Sizes**: Be aware of model download sizes for web applications
-5. **Handle Loading States**: Show progress indicators for better UX
-6. **Version Pin**: Pin specific model versions for production stability
-7. **Error Boundaries**: Always wrap pipeline calls in try-catch blocks
-8. **Progressive Enhancement**: Provide fallbacks for unsupported browsers
-9. **Reuse Models**: Load once, use many times - don't recreate pipelines unnecessarily
-10. **Graceful Shutdown**: Dispose models on SIGTERM/SIGINT in servers
+Detail moved to `references/best-practices.md`.
 
 ## Quick Reference: Task IDs
 
@@ -693,14 +437,9 @@ This skill enables you to integrate state-of-the-art machine learning capabiliti
 
 ## Reference files
 
-These ship with the skill and are read on demand; none is needed to
-use it. Each answers one question the sections above do not.
+Detail moved to `references/reference-files.md`.
 
-- [`references/CACHE.md`](references/CACHE.md)
-- [`references/CONFIGURATION.md`](references/CONFIGURATION.md)
-- [`references/EXAMPLES.md`](references/EXAMPLES.md)
-- [`references/MODEL_ARCHITECTURES.md`](references/MODEL_ARCHITECTURES.md)
-- [`references/MODEL_REGISTRY.md`](references/MODEL_REGISTRY.md)
-- [`references/PIPELINE_OPTIONS.md`](references/PIPELINE_OPTIONS.md)
-- [`references/TEXT_GENERATION.md`](references/TEXT_GENERATION.md)
 
+## Reference Index
+
+7 reference file(s) are named in `references/README.md`.

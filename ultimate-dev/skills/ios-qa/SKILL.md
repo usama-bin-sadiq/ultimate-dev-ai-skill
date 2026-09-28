@@ -456,169 +456,27 @@ tokens (default 1h) for remote agents.
 
 ## Phase 0: Session warm-start (optional)
 
-If `~/.gstack/ios-qa-session.json` exists and the device is still connected,
-skip Phase 1-2 and jump to Phase 3. The session cache holds the rotated token,
-UDID, tunnel address, and accessor hash. Invalidate the cache when:
-
-- The user passes `--cold` to force a full bootstrap.
-- The accessor hash mismatch is detected on first state query.
-- The daemon reports the cached UDID is no longer connected.
-
-```bash
-SESSION="$HOME/.gstack/ios-qa-session.json"
-if [ -f "$SESSION" ] && [ "$COLD" != "1" ]; then
-  CACHED_UDID=$(python3 -c "import json,os; d=json.load(open(os.path.expanduser('$SESSION'))); print(d['udid'])")
-  CACHED_PORT=$(python3 -c "import json,os; d=json.load(open(os.path.expanduser('$SESSION'))); print(d['daemon_port'])")
-  if curl -sf "http://127.0.0.1:$CACHED_PORT/healthz" > /dev/null; then
-    echo "Warm start: daemon alive, device $CACHED_UDID connected"
-  fi
-fi
-```
+Detail moved to `references/phase-0-session-warm-start-optional.md`.
 
 ## Phase 1: Read source, plan codegen
 
-1. Before changing the app or replacing an installed build, verify that the
-   bridge is compatible with the project:
-   - The generator currently supports file-scope `@Observable` classes only;
-     `ObservableObject`, `@StateObject`, and other observation models do not
-     produce accessors.
-   - The documented dependency wiring assumes a SwiftPM app manifest. For an
-     `.xcodeproj` or `.xcworkspace`, do not invent package or target wiring.
-   If either requirement is unmet, stop the bridge bootstrap without modifying
-   the app. Preserve any installed production or TestFlight build. Prefer an
-   existing real-device XCUITest harness; when a separate QA build is needed,
-   use an isolated bundle identifier and non-production entitlements so it can
-   coexist with the production app. Report fixture-driven state, provider UI,
-   and actual external-provider success as distinct evidence tiers.
-2. Walk the app source (passed as `--source <dir>`) and identify all `@Observable`
-   classes. Note any property immediately preceded by the generator marker
-   comment `// @Snapshotable` — those are the snapshot-eligible fields. The
-   marker is a comment so it composes with the `@Observable` macro. Each
-   marked field must belong to a file-scope observable class and be a writable
-   instance `var` with an explicit type and an internal or public setter.
-   Snapshot types are JSON-native scalars (`String`, `Bool`, integer widths,
-   `Float`, `Double`, `CGFloat`), arrays, String-keyed dictionaries, and their
-   Optional compositions. Keys must be unique across observable classes.
-   Codegen stops with a source diagnostic instead of emitting a broken or
-   lossy harness when any of these constraints is violated.
-3. Show the user the accessor list and ask whether to install the DebugBridge
-   SPM dependency into their `Package.swift` (one AskUserQuestion).
+Detail moved to `references/phase-1-read-source-plan-codegen.md`.
 
 ## Phase 2: Bootstrap the device bridge
 
-1. Generate the canonical local bridge package, typed accessors, and installed
-   version marker with one deterministic command:
-   ```bash
-   ~/.claude/skills/gstack/bin/gstack-ios-qa-regen \
-     --app-source "<source-dir>" \
-     --bridge-dir "<source-dir>/DebugBridge"
-   ```
-   The regenerator also removes the explicit obsolete flat-file set created by
-   older ios-sync versions, preventing a stale second harness from remaining
-   in the app target.
-2. Add the generated `DebugBridge` local SPM dependency to the app's
-   `Package.swift`. The package
-   ships three Debug-config-only library products:
-   - `DebugBridgeCore` (Swift, cross-platform) — StateServer + bridge protocols.
-   - `DebugBridgeTouch` (Objective-C, iOS-only) — KIF-derived in-process touch
-     synthesis with iOS 18+ `_UIHitTestContext` SwiftUI hit-testing.
-   - `DebugBridgeUI` (Swift, iOS-only) — Screenshot / Elements / Mutation
-     bridge implementations.
-   The app target depends on `DebugBridgeUI` with `.when(configuration: .debug)`
-   (transitively pulls in Core + Touch). Release builds refuse to link these
-   targets.
-3. Wire the bridges from the `@main` App init, gated on `#if DEBUG`:
-   ```swift
-   #if DEBUG
-   import DebugBridgeCore
-   #if canImport(UIKit)
-   import DebugBridgeUI
-   // Install resolvers before StateServer opens its listener.
-   DebugBridgeUIWiring.installAll()
-   #endif
-   // Replace AppState/AppStateAccessor with the type discovered in Phase 1.
-   DebugBridgeManager.shared.start(
-       appState: appState,
-       register: AppStateAccessor.register
-   )
-   #endif
-   ```
-4. Build + deploy to the device with `xcodebuild -scheme <SchemeName>
-   -destination 'platform=iOS,id=<UDID>' build install`.
-5. Launch via `devicectl device process launch --device <UDID> --console <bundle-id>`.
-   Capture the boot token printed to `os_log` on first run.
-6. Spawn the Mac-side daemon (on-demand) — `gstack-ios-qa-daemon`. Daemon
-   acquires an exclusive flock on `~/.gstack/ios-qa-daemon.pid`. If another
-   daemon is alive, the second invocation discovers its port and connects.
-7. Daemon immediately calls `POST /auth/rotate` on the iOS StateServer with a
-   fresh in-memory-only token. The boot token becomes useless ~5s later.
-   Anything scraping `os_log` past this point sees a dead credential.
-   If a fresh daemon finds the app running after another daemon consumed that
-   one-use token, it verifies the bundle owner, relaunches the target once,
-   waits for the new token, verifies ownership again, and then rotates.
+Detail moved to `references/phase-2-bootstrap-the-device-bridge.md`.
 
 ## Phase 3: Vision-driven agent loop
 
-Each iteration:
-
-1. `GET /screenshot` (via daemon) → save PNG.
-2. `GET /elements` → accessibility tree.
-3. `GET /state/snapshot` (only `// @Snapshotable` fields) → current state.
-4. Decide next action based on what's on the screen vs the test goal.
-5. `POST /session/acquire` to grab the device lock.
-6. Execute `POST /tap`, `/swipe`, `/type`, or `POST /state/<key>` write.
-7. Re-screenshot; compare; record finding if buggy.
-8. `POST /session/release` once the iteration is done.
-
-Each authenticated mutating request through the tailnet listener (if remote
-mode is active) writes an audit row to
-`~/.gstack/security/ios-qa-audit.jsonl`.
+Detail moved to `references/phase-3-vision-driven-agent-loop.md`.
 
 ## Modes
 
-**Local-USB mode (default).** Daemon binds loopback only; no Tailscale
-required. The spawning skill gets full-surface access. Best for solo
-development.
-
-**Tailnet mode (`--tailnet`).** Daemon additionally binds the Tailscale
-interface (never `0.0.0.0`). Requires `tailscaled` to be running locally and
-the daemon to be able to read `/var/run/tailscale.sock`. Fails closed if the
-socket is missing, permission-denied, or returns an unparseable WhoIs
-response. Remote agents hit `POST /auth/mint` over tailnet, daemon
-canonicalizes identity via WhoIs, checks the allowlist file, mints a
-session token. See `ios-qa/docs/tailscale-acl-example.md`.
-
-**Capability tiers (tailnet mode).** Minted tokens default to `interact`
-(taps, swipes, types). Higher tiers require explicit owner mint:
-
-- **observe:** `/screenshot`, `/elements`, `GET /state/*`, `/healthz`,
-  `/session/heartbeat`.
-- **interact:** observe + `/tap`, `/swipe`, `/type`.
-- **mutate:** interact + `POST /state/<key>`.
-- **restore:** mutate + `POST /state/restore`.
-
-Owner mints via `gstack-ios-qa-mint --remote <identity> --capability <tier>`
-on the Mac. Self-service mint over tailnet only succeeds for already-allowlisted
-identities.
-
-**Recording mode (`--recording`).** DebugOverlay renders a small diagonal
-"AGENT DEMO" watermark in a corner so screencasts are unambiguous about the
-device being agent-driven.
+Detail moved to `references/modes.md`.
 
 ## Demo mode
 
-If the user says "demo", "demo mode", "show me", or "I want to see it
-working", run in **DEMO MODE**. This changes how the agent interacts with
-the app:
-
-**DEMO MODE OVERRIDES ALL OTHER RULES.** When demo mode is active, the
-agent MUST drive every action through visible UI (`/tap`, `/swipe`, `/type`)
-and NEVER use `POST /state/*` writes to skip steps. Viewers see the agent
-type every key, tap every button. The on-device DebugOverlay attribution
-chip shows "Driven by Claude Code (demo)" or the remote agent identity.
-
-In demo mode, the screencap rate is bumped to 4fps so the recording feels
-live.
+Detail moved to `references/demo-mode.md`.
 
 ## Failure modes + recovery
 

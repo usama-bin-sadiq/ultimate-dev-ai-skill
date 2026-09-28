@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# The gate CI already applies, run before the commit exists.
+#
+# Enabled by:   git config core.hooksPath .githooks
+# All the logic lives in ultimate-dev/tools/pre-commit-check.sh, which is
+# committed and can be run by hand at any time:
+#
+#   ultimate-dev/tools/pre-commit-check.sh            the fast gate
+#   ultimate-dev/tools/pre-commit-check.sh --full     plus bundle and parity
+#   ultimate-dev/tools/pre-commit-check.sh --baseline show the known backlog
+#
+# It blocks NEW errors and NEW warnings, measured against HEAD. The tree carries
+# a known backlog of --strict warnings today; a gate that refuses every commit
+# until that backlog is zero is a gate people bypass, and a bypassed gate is
+# worse than none because it looks like it is working. The backlog is printed
+# on request and never subtracted away.
+#
+# `git commit --no-verify` skips this. That is intentional.
+set -uo pipefail
+ROOT="$(git rev-parse --show-toplevel)"
+exec "$ROOT/ultimate-dev/tools/pre-commit-check.sh" "$@"

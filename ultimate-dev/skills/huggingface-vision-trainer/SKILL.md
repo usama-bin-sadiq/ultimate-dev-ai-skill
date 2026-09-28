@@ -316,51 +316,7 @@ Dashboard at: `https://huggingface.co/spaces/{username}/trackio`
 
 ## Model & hardware selection
 
-### Recommended object detection models
-
-| Model | Params | Use case |
-|-------|--------|----------|
-| `ustc-community/dfine-small-coco` | 10.4M | Best starting point — fast, cheap, SOTA quality |
-| `PekingU/rtdetr_v2_r18vd` | 20.2M | Lightweight real-time detector |
-| `ustc-community/dfine-large-coco` | 31.4M | Higher accuracy, still efficient |
-| `PekingU/rtdetr_v2_r50vd` | 43M | Strong real-time baseline |
-| `ustc-community/dfine-xlarge-obj365` | 63.5M | Best accuracy (pretrained on Objects365) |
-| `PekingU/rtdetr_v2_r101vd` | 76M | Largest RT-DETR v2 variant |
-
-Start with `ustc-community/dfine-small-coco` for fast iteration. Move to D-FINE Large or RT-DETR v2 R50 for better accuracy.
-
-### Recommended image classification models
-
-All `timm/` models work out of the box via `AutoModelForImageClassification` (loaded as `TimmWrapperForImageClassification`). See [references/timm_trainer.md](references/timm_trainer.md) for details.
-
-| Model | Params | Use case |
-|-------|--------|----------|
-| `timm/mobilenetv3_small_100.lamb_in1k` | 2.5M | Ultra-lightweight — mobile/edge, fastest training |
-| `timm/mobilevit_s.cvnets_in1k` | 5.6M | Mobile transformer — good accuracy/speed trade-off |
-| `timm/resnet50.a1_in1k` | 25.6M | Strong CNN baseline — reliable, well-studied |
-| `timm/vit_base_patch16_dinov3.lvd1689m` | 86.6M | Best accuracy — DINOv3 self-supervised ViT |
-
-Start with `timm/mobilenetv3_small_100.lamb_in1k` for fast iteration. Move to `timm/resnet50.a1_in1k` or `timm/vit_base_patch16_dinov3.lvd1689m` for better accuracy.
-
-### Recommended SAM/SAM2 segmentation models
-
-| Model | Params | Use case |
-|-------|--------|----------|
-| `facebook/sam2.1-hiera-tiny` | 38.9M | Fastest SAM2 — good for quick experiments |
-| `facebook/sam2.1-hiera-small` | 46.0M | Best starting point — good quality/speed balance |
-| `facebook/sam2.1-hiera-base-plus` | 80.8M | Higher capacity for complex segmentation |
-| `facebook/sam2.1-hiera-large` | 224.4M | Best SAM2 accuracy — requires more VRAM |
-| `facebook/sam-vit-base` | 93.7M | Original SAM — ViT-B backbone |
-| `facebook/sam-vit-large` | 312.3M | Original SAM — ViT-L backbone |
-| `facebook/sam-vit-huge` | 641.1M | Original SAM — ViT-H, best SAM v1 accuracy |
-
-Start with `facebook/sam2.1-hiera-small` for fast iteration. SAM2 models are generally more efficient than SAM v1 at similar quality. Only the mask decoder is trained by default (vision and prompt encoders are frozen).
-
-### Hardware recommendation
-
-All recommended OD and IC models are under 100M params — **`t4-small` (16 GB VRAM, $0.40/hr) is sufficient for all of them.** Image classification models are generally smaller and faster than object detection models — `t4-small` handles even ViT-Base comfortably. For SAM2 models up to `hiera-base-plus`, `t4-small` is sufficient since only the mask decoder is trained. For `sam2.1-hiera-large` or SAM v1 models, use `l4x1` or `a10g-large`. Only upgrade if you hit OOM from large batch sizes — reduce batch size first before switching hardware. Common upgrade path: `t4-small` → `l4x1` ($0.80/hr, 24 GB) → `a10g-large` ($1.50/hr, 24 GB).
-
-For full hardware flavor list: refer to the `hugging-face-jobs` skill. For cost estimation: run `scripts/estimate_cost.py`.
+Detail moved to `references/model-hardware-selection.md`.
 
 ## Quick start — Object Detection
 
@@ -521,83 +477,21 @@ print(f"Job ID: {job_info.id}")
 
 ## Checking job status
 
-**MCP tool (if available):**
-```
-hf_jobs("ps")                                   # List all jobs
-hf_jobs("logs", {"job_id": "your-job-id"})      # View logs
-hf_jobs("inspect", {"job_id": "your-job-id"})   # Job details
-```
-
-**Python API fallback:**
-```python
-from huggingface_hub import HfApi
-api = HfApi()
-api.list_jobs()                                  # List all jobs
-api.get_job_logs(job_id="your-job-id")           # View logs
-api.get_job(job_id="your-job-id")                # Job details
-```
+Detail moved to `references/checking-job-status.md`.
 
 ## Common failure modes
 
-### OOM (CUDA out of memory)
-Reduce `per_device_train_batch_size` (try 4, then 2), reduce `IMAGE_SIZE`, or upgrade hardware.
-
-### Dataset format errors
-Run `scripts/dataset_inspector.py` first. The training script auto-detects xyxy vs xywh, converts string categories to integer IDs, and adds `image_id` if missing. Ensure `objects.bbox` contains 4-value coordinate lists in absolute pixels and `objects.category` contains either integer IDs or string labels.
-
-### Hub push failures (401)
-Verify: (1) job secrets include token (see directive #2), (2) script sets `training_args.hub_token` BEFORE creating the `Trainer`, (3) `push_to_hub=True` is set, (4) correct `hub_model_id`, (5) token has write permissions.
-
-### Job timeout
-Increase timeout (see directive #5 table), reduce epochs/dataset, or use checkpoint strategy with `hub_strategy="every_save"`.
-
-### KeyError: 'test' (missing test split)
-The object detection training script handles this gracefully — it falls back to the `validation` split. Ensure you're using the latest `scripts/object_detection_training.py`.
-
-### Single-class dataset: "iteration over a 0-d tensor"
-`torchmetrics.MeanAveragePrecision` returns scalar (0-d) tensors for per-class metrics when there's only one class. The template `scripts/object_detection_training.py` handles this by calling `.unsqueeze(0)` on these tensors. Ensure you're using the latest template.
-
-### Poor detection performance (mAP < 0.15)
-Increase epochs (30-50), ensure 500+ images, check per-class mAP for imbalanced classes, try different learning rates (1e-5 to 1e-4), increase image size.
-
-For comprehensive troubleshooting: see [references/reliability_principles.md](references/reliability_principles.md)
+Detail moved to `references/common-failure-modes.md`.
 
 ## Reference files
 
-- [scripts/object_detection_training.py](scripts/object_detection_training.py) — Production-ready object detection training script
-- [scripts/image_classification_training.py](scripts/image_classification_training.py) — Production-ready image classification training script (supports timm models)
-- [scripts/sam_segmentation_training.py](scripts/sam_segmentation_training.py) — Production-ready SAM/SAM2 segmentation training script (bbox & point prompts)
-- [scripts/dataset_inspector.py](scripts/dataset_inspector.py) — Validate dataset format for OD, classification, and SAM segmentation
-- [scripts/estimate_cost.py](scripts/estimate_cost.py) — Estimate training costs for any vision model (includes SAM/SAM2)
-- [references/object_detection_training_notebook.md](references/object_detection_training_notebook.md) — Object detection training workflow, augmentation strategies, and training patterns
-- [references/image_classification_training_notebook.md](references/image_classification_training_notebook.md) — Image classification training workflow with ViT, preprocessing, and evaluation
-- [references/finetune_sam2_trainer.md](references/finetune_sam2_trainer.md) — SAM2 fine-tuning walkthrough with MicroMat dataset, DiceCE loss, and Trainer integration
-- [references/timm_trainer.md](references/timm_trainer.md) — Using timm models with HF Trainer (TimmWrapper, transforms, full example)
-- [references/hub_saving.md](references/hub_saving.md) — Detailed Hub persistence guide and verification checklist
-- [
-Each file below is loaded on demand, not at triage. 6 file(s):
-
-- `references/finetune_sam2_trainer.md` — Fine-tuning SAM2 with HF Trainer. Fine-tune SAM2.1 on a small part of the MicroMat dataset for image matting,
-- `references/hub_saving.md` — Saving Vision Models to Hugging Face Hub. ---
-- `references/image_classification_training_notebook.md` — Image classification. ---
-- `references/object_detection_training_notebook.md` — Object Detection Training Reference. ---
-- `references/reliability_principles.md` — Reliability Principles for Training Jobs. ---
-- `references/timm_trainer.md` — Using timm models with Hugging Face Trainer. Transformers has first-class support for timm models via the TimmWrapper classes.
-
-references/reliability_principles.md](references/reliability_principles.md) — Failure prevention principles from production experience
+Detail moved to `references/reference-files.md`.
 
 ## External links
 
-- [Transformers Object Detection Guide](https://huggingface.co/docs/transformers/tasks/object_detection)
-- [Transformers Image Classification Guide](https://huggingface.co/docs/transformers/tasks/image_classification)
-- [DETR Model Documentation](https://huggingface.co/docs/transformers/model_doc/detr)
-- [ViT Model Documentation](https://huggingface.co/docs/transformers/model_doc/vit)
-- [HF Jobs Guide](https://huggingface.co/docs/huggingface_hub/guides/jobs) — Main Jobs documentation
-- [HF Jobs Configuration](https://huggingface.co/docs/hub/en/jobs-configuration) — Hardware, secrets, timeouts, namespaces
-- [HF Jobs CLI Reference](https://huggingface.co/docs/huggingface_hub/guides/cli#hf-jobs) — Command line interface
-- [Object Detection Models](https://huggingface.co/models?pipeline_tag=object-detection)
-- [Image Classification Models](https://huggingface.co/models?pipeline_tag=image-classification)
-- [SAM2 Model Documentation](https://huggingface.co/docs/transformers/model_doc/sam2)
-- [SAM Model Documentation](https://huggingface.co/docs/transformers/model_doc/sam)
-- [Object Detection Datasets](https://huggingface.co/datasets?task_categories=task_categories:object-detection)
-- [Image Classification Datasets](https://huggingface.co/datasets?task_categories=task_categories:image-classification)
+Detail moved to `references/external-links.md`.
+
+
+## Reference Index
+
+6 reference file(s) are named in `references/README.md`.

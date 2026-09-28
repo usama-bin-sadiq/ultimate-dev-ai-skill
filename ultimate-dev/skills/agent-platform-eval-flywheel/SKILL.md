@@ -471,74 +471,7 @@ unsupported), say so explicitly. Don't paper over gaps.
 
 ## SDK Quick Reference
 
-```python
-import agentplatform
-from agentplatform import types
-from google.genai import types as genai_types
-import pandas as pd
-
-# Initialize client
-client = agentplatform.Client(project="PROJECT_ID", location="LOCATION")
-
-# --- SINGLE-TURN EVAL (pandas DataFrame) -- RECOMMENDED ---
-# The converter wraps plain strings for you.
-df = pd.DataFrame({
-    "prompt":   ["Q1", "Q2"],
-    "response": ["A1", "A2"],
-})
-dataset = types.EvaluationDataset(eval_dataset_df=df)
-
-# --- SINGLE-TURN EVAL (direct EvalCase) ---
-# Verbose and easy to get wrong; see references/dataset_schema.md for the
-# exact types before using this form.
-dataset = types.EvaluationDataset(eval_cases=[
-    types.EvalCase(
-        prompt=genai_types.UserContent("Query here"),
-        responses=[types.ResponseCandidate(
-            response=genai_types.ModelContent("Model response here"))],
-        reference=types.ResponseCandidate(
-            response=genai_types.ModelContent("Ground truth here")),
-    ),
-])
-
-# --- MULTI-TURN AGENT EVAL ---
-agent_data = types.evals.AgentData(
-    agents={"my_agent": types.evals.AgentConfig(
-        agent_id="my_agent", instruction="You are helpful.")},
-    turns=[types.evals.ConversationTurn(turn_index=0, events=[
-        types.evals.AgentEvent(author="user",
-            content=genai_types.Content(role="user",
-                parts=[genai_types.Part(text="Hello")])),
-        types.evals.AgentEvent(author="my_agent",
-            content=genai_types.Content(role="model",
-                parts=[genai_types.Part(text="Hi! How can I help?")])),
-    ])],
-)
-dataset = types.EvaluationDataset(
-    eval_cases=[types.EvalCase(agent_data=agent_data)])
-
-# --- METRICS ---
-predefined = types.RubricMetric.MULTI_TURN_TRAJECTORY_QUALITY
-custom_llm = types.LLMMetric(name="tone",
-    prompt_template="Is this polite? Response: {response}")
-custom_code = types.CodeExecutionMetric(name="check",
-    custom_function='def evaluate(instance): return {"score": 1.0}')
-
-# --- EVALUATE ---
-result = client.evals.evaluate(dataset=dataset, metrics=[predefined])
-
-# --- RESULTS ---
-for s in result.summary_metrics:
-    print(f"{s.metric_name}: mean={s.mean_score}, pass_rate={s.pass_rate}")
-for case in result.eval_case_results:
-    for cand in case.response_candidate_results:
-        for name, r in cand.metric_results.items():
-            print(f"  {name}: score={r.score}, explanation={r.explanation}")
-```
-
-See [references/sdk_patterns.md](references/sdk_patterns.md) for advanced
-patterns: synthetic data generation, pairwise comparison, `MetricPromptBuilder`,
-multi-agent evaluation.
+Detail moved to `references/sdk-quick-reference.md`.
 
 ## Bundled scripts
 
@@ -554,21 +487,9 @@ Script                   | When to use
 
 ## Runtime notes
 
-This file was adapted to be tool-neutral: it claimed a general scope and was
-bound to one tool. The procedure is unchanged; what changed is that a reader on a
-different runtime is told what to substitute.
+Detail moved to `references/runtime-notes.md`.
 
-- **pip** — means. One tool's way of doing a step a different runtime may do another way.
-Anything marked **means** is an implementation detail of one tool, and a reader
-on a different runtime may need a different mechanism for the same step. Anything
-marked **subject** means the capability is genuinely about that tool, and a reader
-without it should not expect this file to apply.
 
-Each file below is loaded on demand, not at triage. 5 file(s):
+## Reference Index
 
-- `references/dataset_schema.md` — Evaluation Dataset Schema. Canonical formats for evaluation datasets in the Google GenAI Evaluation SDK.
-- `references/deployment.md` — Deploying and Evaluating Models on Agent Platform Endpoints. Reference for the deployment-and-endpoint-evaluation subset of the Quality
-- `references/failure_patterns.md` — Evaluation Failure Patterns & Fixes. Common failure modes observed in GenAI agent evaluations, mapped to their root
-- `references/metric_registry.md` — GenAI Evaluation Metric Registry. Complete catalog of evaluation metrics available in the agentplatform SDK.
-- `references/sdk_patterns.md` — Agent Platform Evaluation SDK Patterns. Code patterns for common evaluation scenarios using agentplatform.genai.evals
-
+5 reference file(s) are named in `references/README.md`.

@@ -422,52 +422,7 @@ Settings files should be:
 
 ## Real-World Examples
 
-### multi-agent-swarm Plugin
-
-**.claude/multi-agent-swarm.local.md:**
-```markdown
----
-agent_name: auth-implementation
-task_number: 3.5
-pr_number: 1234
-coordinator_session: team-leader
-enabled: true
-dependencies: ["Task 3.4"]
-additional_instructions: Use JWT tokens, not sessions
----
-
-# Task: Implement Authentication
-
-Build JWT-based authentication for the REST API.
-Coordinate with auth-agent on shared types.
-```
-
-**Hook usage (agent-stop-notification.sh):**
-- Checks if file exists (line 15-18: quick exit if not)
-- Parses frontmatter to get coordinator_session, agent_name, enabled
-- Sends notifications to coordinator if enabled
-- Allows quick activation/deactivation via `enabled: true/false`
-
-### ralph-loop Plugin
-
-**.claude/ralph-loop.local.md:**
-```markdown
----
-iteration: 1
-max_iterations: 10
-completion_promise: "All tests passing and build successful"
----
-
-Fix all the linting errors in the project.
-Make sure tests pass after each fix.
-```
-
-**Hook usage (stop-hook.sh):**
-- Checks if file exists (line 15-18: quick exit if not active)
-- Reads iteration count and max_iterations
-- Extracts completion_promise for loop termination
-- Reads body as the prompt to feed back
-- Updates iteration count on each loop
+Detail moved to `references/real-world-examples.md`.
 
 ## Quick Reference
 
@@ -506,41 +461,11 @@ fi
 
 ## Additional Resources
 
-### Reference Files
-
-For detailed implementation patterns:
-
-- **`references/parsing-techniques.md`** - Complete guide to parsing YAML frontmatter and markdown bodies
-- **`references/real-world-examples.md`** - Deep dive into multi-agent-swarm and ralph-loop implementations
-
-### Example Files
-
-Working examples in `examples/`:
-
-- **`read-settings-hook.sh`** - Hook that reads and uses settings
-- **`create-settings-command.md`** - Command that creates settings file
-- **`example-settings.md`** - Template settings file
-
-### Utility Scripts
-
-Development tools in `scripts/`:
-
-- **`validate-settings.sh`** - Validate settings file structure
-- **`parse-frontmatter.sh`** - Extract frontmatter fields
+Detail moved to `references/additional-resources.md`.
 
 ## Implementation Workflow
 
-To add settings to a plugin:
-
-1. Design settings schema (which fields, types, defaults)
-2. Create template file in plugin documentation
-3. Add gitignore entry for `.claude/*.local.md`
-4. Implement settings parsing in hooks/commands
-5. Use quick-exit pattern (check file exists, check enabled field)
-6. Document settings in plugin README with template
-7. Remind users that changes require Claude Code restart
-
-Focus on keeping settings simple and providing good defaults when settings file doesn't exist.
+Detail moved to `references/implementation-workflow.md`.
 
 ## Runtime notes
 
@@ -553,3 +478,7 @@ Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
+
+## Reference Index
+
+1 reference file(s) are named in `references/README.md`.

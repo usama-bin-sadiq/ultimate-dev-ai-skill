@@ -340,40 +340,11 @@ Escalate after 3 failed attempts, uncertain security-sensitive changes, or scope
 
 ## Operational Self-Improvement
 
-Before completing, review the session for durable learnings and log each one —
-this step ALWAYS runs, it is not conditional on something feeling noteworthy
-(#2402: 43 of 44 learnings came from explicit /learn because "if you
-discovered" read as optional). A durable learning is a project quirk, command
-fix, pitfall, or pattern that would save 5+ minutes in a future session. If
-the review genuinely surfaces none, state "No durable learnings this session"
-in your completion summary — an explicit empty result, not a skipped step.
-
-```bash
-~/<agent-config-dir>/gstack/bin/gstack-learnings-log '{"skill":"SKILL_NAME","type":"operational","key":"SHORT_KEY","insight":"DESCRIPTION","confidence":N,"source":"observed"}'
-```
-
-Do not log obvious facts or one-time transient errors.
+Detail moved to `references/operational-self-improvement.md`.
 
 ## Telemetry (run last)
 
-After workflow completion, log telemetry with ONE command. OUTCOME is
-success/error/abort/unknown; `SESSION_ID` and `TEL_START` are the values the
-preamble's skill-start output echoed. It also drains the artifacts-sync queue
-(the former skill-end sync step — do not run gstack-brain-sync separately).
-
-**PLAN MODE EXCEPTION — ALWAYS RUN:** This writes telemetry to
-`~/.gstack/analytics/`, matching preamble analytics writes.
-
-```bash
-~/<agent-config-dir>/gstack/bin/gstack-skill-end --skill "landing-report" --outcome OUTCOME \
-  --session-id "SESSION_ID" --tel-start "TEL_START" --used-browse USED_BROWSE \
-  --error-message "ERROR_MESSAGE" --failed-step "FAILED_STEP" 2>/dev/null || true
-```
-
-Replace `OUTCOME` and `USED_BROWSE` (yes/no) before running; substitute
-`SESSION_ID`/`TEL_START` from the skill-start echoes. `ERROR_MESSAGE`/`FAILED_STEP`
-are "" unless outcome is error. If the command is missing (stale install), skip
-telemetry — it never blocks the workflow.
+Detail moved to `references/telemetry-run-last.md`.
 
 ## Plan Status Footer
 
@@ -520,44 +491,5 @@ writes, no git mutations, no network state changes. Safe to run in plan mode.
 
 ## Runtime notes
 
-This file was adapted to be tool-neutral: it claimed a general scope and was
-bound to one tool. The procedure is unchanged; what changed is that a reader on a
-different runtime is told what to substitute.
-
-- **`gstack-skill-start`** — the preamble script gstack installs alongside the
-  skill. It prints the `KEY: value` STATUS lines (`SKILL_START`, `SESSION_ID`,
-  `SESSION_KIND`, `CONDUCTOR_SESSION`, `TEL_START`) and any
-  `GSTACK_INSTRUCTION_BEGIN`/`_END` block that the phases above branch on.
-  **Claude Code** and **Codex** both install it. A runtime with no gstack
-  dispatcher produces no STATUS lines at all, so take each branch's own stated
-  default and skip the onboarding and telemetry steps, which are marker-gated
-  and therefore lose nothing.
-- **slash-command dispatch** (`/review`, `/qa`, and so on) — how the phases are
-  entered. **Claude Code** exposes them as slash commands; **Codex** exposes the
-  same skills as `@name` invocations. A runtime with neither still has the
-  procedure: the numbered phases in this file, run in order, in one context.
-- **`AskUserQuestion`, `Agent`, `ExitPlanMode`** — host tool names, not concepts.
-  **Claude Code** provides all three natively; **Codex** provides its own
-  equivalents, and this file already treats the `mcp__*__AskUserQuestion`
-  variant as a third path. Where a runtime has no question tool, use the
-  **prose fallback** this file already specifies and stop for a typed answer.
-  Where it has no subagent tool, run the isolated-reviewer step sequentially and
-  record that you did.
-- **`codex exec`, `claude -p`** — how a phase is handed a fresh context. Two
-  different CLIs for one purpose, so this binding is not single-vendor; a runtime
-  that ships neither can only approximate isolation, by ending and
-restarting the session.
-- **`~/.gstack/`** — gstack's own per-user state: session id, plan file,
-  skill-usage log. It is where this toolkit puts its state, not a location any
-  other runtime reads.
-- **`bun run gen:skill-docs`** — this file is generated from a template by the
-  toolkit's own build step. Edits made here are overwritten on the next
-  regeneration; the template is the place a change has to be made to survive.
-- **`mcp__*__AskUserQuestion`** — a wildcard over *any* MCP server exposing that
-  tool, not a required server. Read it as "whatever the host's MCP layer calls
-  it", and treat its absence as the no-question-tool case above.
-Anything marked **means** is an implementation detail of one tool, and a reader
-on a different runtime may need a different mechanism for the same step. Anything
-marked **subject** means the capability is genuinely about that tool, and a reader
-without it should not expect this file to apply.
+Detail moved to `references/runtime-notes.md`.
 

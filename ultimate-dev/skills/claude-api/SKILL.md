@@ -469,64 +469,7 @@ Server-side tools run on Anthropic's infrastructure - no client-side execution l
 
 ## Reading Guide
 
-After detecting the language, read the relevant files based on what the user needs. Every `{lang}/...`, `shared/...`, and `curl/...` path cited in this document is relative to this skill's base directory, and none of those files' content is included above - Read each one on demand before relying on what it covers.
-
-**All SDK languages use the same multi-file layout** - directory `{lang}/claude-api/` containing `README.md` (install, client init, basic request, thinking, caching, stop details, misc), `tool-use.md` (tool definitions, agentic loop, Anthropic-defined tools, structured outputs), `streaming.md`, `batches.md`, `files-api.md`. Not every language has every file (e.g., Ruby has no `batches.md`); if a file is absent, that feature's example is not yet documented for that language - fall back to the cURL shape or WebFetch the SDK repo from `shared/live-sources.md`. **cURL** -> `curl/examples.md`.
-
-The Quick Task Reference below uses the `{lang}/claude-api/FILE.md` path notation for all languages.
-
-### Quick Task Reference
-
-**Single text classification/summarization/extraction/Q&A:**
--> Read only `{lang}/claude-api/README.md` - **always read the README first** for any task (installation, quick start, common patterns, error handling)
-
-**Chat UI or real-time response display:**
--> Read `{lang}/claude-api/README.md` + `{lang}/claude-api/streaming.md`
-
-**Long-running conversations (may exceed context window):**
--> Read `{lang}/claude-api/README.md` - see Compaction section
-**Migrating to a newer model (Fable 5.1 / Fable 5 / Opus 5 / Opus 4.8 / Opus 4.7 / Opus 4.6 / Sonnet 5 / Sonnet 4.6), replacing a retired model, or translating `budget_tokens` / prefill patterns to the current API:**
--> Read `shared/model-migration.md`
-**Upgrading the Anthropic SDK package itself across a major version (`anthropic` 0.x -> 1.x: `httpx2`, awaited async `.with_raw_response`, removed deprecated parameters / aliases / Text Completions, Python >= 3.10) - or writing new code against a project already on 1.x:**
--> Read `{lang}/claude-api/sdk-upgrade.md` (currently Python only; other SDKs have no bundled major-version guide yet - use that SDK's CHANGELOG via `shared/live-sources.md`)
-**Prompting or tuning Fable 5/5.1 (long turns, effort, verbosity, autonomous runs, sub-agents):**
--> Read `shared/model-migration.md` -> Migrating to Claude Fable 5.1 -> Behavioral shifts (prompt-tunable) + Long-running agent recommendations
-**Prompting or tuning Claude Fable 5.1 (progress updates, parallel tool calls, writing density / formatting, autonomy, test sprawl, whole-file rewrites) or making a harness compatible with preserved thinking's history-editing check (history edits, compaction, per-turn reminders):**
--> Read `shared/model-migration.md` -> Migrating to Claude Fable 5.1 from Claude Fable 5 -> New API features + Behavioral shifts (prompt-tunable); for the history-editing check itself (the three-step check, the append-only edit table, compaction shapes), Breaking change 3 in the same section
-**Prompt caching / optimize caching / "why is my cache hit rate low":**
--> Read `shared/prompt-caching.md` (prefix-stability design, breakpoint placement, anti-patterns that silently invalidate cache) + `{lang}/claude-api/README.md` (Prompt Caching section)
-**Auditing or cleaning up prompts, skills, or tool descriptions ("is this prompt outdated", "remove the cruft", "this was written for an older model"):**
--> Read `shared/prompt-audit.md` - dated-pattern tables with greppable signals, the keep list (what NOT to delete), and the report + proposed-diff output contract
-**Count tokens in a file / prompt / diff ("how many tokens is X"):**
--> Read `shared/token-counting.md` - use `messages.count_tokens`, never `tiktoken`
-**Reducing or reviewing API spend ("the bill is too high", "make this cheaper", "am I overspending", cost per completed task, cheapest model or effort that holds quality):**
--> Read `shared/cost-optimization.md` - baseline and token profile first, then the levers in order (free wins before tradeoffs) with measured expectations, and a workload-shape -> lever mapping table
-
-**Function calling / tool use / agents:**
--> Read `{lang}/claude-api/README.md` + `shared/tool-use-concepts.md` (conceptual foundations: function calling, code execution, memory, structured outputs) + `{lang}/claude-api/tool-use.md` (language-specific code examples: tool runner, manual loop, code execution, memory, structured outputs)
-
-**Agent design (tool surface, context management, caching strategy):**
--> Read `shared/agent-design.md` (bash vs. dedicated tools, programmatic tool calling, tool search/skills, context editing vs. compaction vs. memory, caching principles)
-
-**Batch processing (non-latency-sensitive; runs asynchronously at 50% cost):**
--> Read `{lang}/claude-api/README.md` + `{lang}/claude-api/batches.md`
-
-**File uploads across multiple requests (same file without re-uploading):**
--> Read `{lang}/claude-api/README.md` + `{lang}/claude-api/files-api.md`
-
-**Organization administration (members, invites, workspaces, API keys, rate limit reports, service accounts, WIF resources, CMEK):**
--> Read `shared/admin-api.md` - `client.beta.organization` endpoint/method table, admin credentials, per-language naming and pagination, what stays curl-only
-
-**Debugging HTTP errors or implementing error handling:**
--> Read `shared/error-codes.md` - per-SDK typed exception class table and the Go `errors.As` pattern
-
-**Latest official documentation:**
--> WebFetch the URLs in `shared/live-sources.md`
-
-**Managed Agents (server-managed stateful agents with workspace):**
--> See the reading guide in the `## Managed Agents (Beta)` section above - it lists every `shared/managed-agents-*.md` file and the language-specific READMEs (`{lang}/managed-agents/README.md`, `curl/managed-agents.md`).
-
----
+Detail moved to `references/reading-guide.md`.
 
 ## When to Use WebFetch
 
@@ -540,30 +483,5 @@ Live documentation URLs are in `shared/live-sources.md`.
 
 ## Common Pitfalls
 
-- Don't truncate inputs when passing files or content to the API. If the content is too long to fit in the context window, notify the user and discuss options (chunking, summarization, etc.) rather than silently truncating.
-- **Prefill removed (Fable 5, Claude Fable 5.1, Opus 5, Sonnet 5, and the 4.6/4.7/4.8 family):** Assistant message prefills (last-assistant-turn prefills) return a 400 error on Fable 5, Claude Fable 5.1, Opus 5, Sonnet 5, Opus 4.6, Opus 4.7, Opus 4.8, and Sonnet 4.6. Use structured outputs (`output_config.format`) or system prompt instructions to control response format instead. (One exception: the fallback-credit prefill claim - when redeeming a credit with `fallback_has_prefill_claim: true`, the server accepts the echoed assistant message; see the migration guide's refusal section.)
-- **Confirm migration scope before editing:** When a user asks to migrate code to a newer Claude model without naming a specific file, directory, or file list, **ask which scope to apply first** - the entire working directory, a specific subdirectory, or a specific set of files. Do not start editing until the user confirms. Imperative phrasings like "migrate my codebase", "move my project to X", "upgrade to Sonnet 4.6", or bare "migrate to Opus 4.8" are **still ambiguous** - they tell you what to do but not where, so ask. Proceed without asking only when the prompt names an exact file, a specific directory, or an explicit file list ("migrate `app.py`", "migrate everything under `services/`", "update `a.py` and `b.py`"). See `shared/model-migration.md` Step 0.
-- **`max_tokens` defaults:** Don't lowball `max_tokens` - hitting the cap truncates output mid-thought and requires a retry. For non-streaming requests, default to `~16000` (keeps responses under SDK HTTP timeouts). For streaming requests, default to `~64000` (timeouts aren't a concern, so give the model room). Only go lower when you have a hard reason: classification (`~256`), cost caps, deliberately short outputs, or **`max_tokens: 0`** for cache pre-warming (see `shared/prompt-caching.md` -> Pre-warming).
-- **Disabling thinking on Claude Opus 5 has two failure modes - prefer low/medium effort instead.** Only affects code that explicitly opts out; thinking is on by default, so watch for a disabled-thinking setting carried forward from Opus 4.8. With `thinking: {type: "disabled"}`, the model occasionally writes a tool call into its **visible text** instead of a `tool_use` block: the turn succeeds, the call never runs, no error is raised, and in an agentic loop that text pollutes later turns. It can also leak `<thinking>` tags into the response. Turning thinking on and lowering `effort` fixes both and still cuts cost. If a route must stay thinking-off: **delete** any don't-think/don't-reason rule (it makes tag leakage worse), don't name thinking tags, and add the combined instruction *"When you use a tool, you may say a brief sentence first. If no tool can express what the user asked for, say so instead of guessing. Do not include internal or system XML tags in your response."* Details: `shared/model-migration.md` -> Two failure modes when thinking is disabled.
-- **128K output tokens:** Fable 5, Claude Fable 5.1, Opus 5, Opus 4.6, Opus 4.7, Opus 4.8, Sonnet 5, and Sonnet 4.6 support up to 128K `max_tokens`, but the SDKs require streaming for values that large to avoid HTTP timeouts. Use `.stream()` with `.get_final_message()` / `.finalMessage()`.
-- **Forced tool use removed (Claude Fable 5.1 / Claude Mythos 5.1, as on Mythos Preview):** `tool_choice: {type: "any"}` and `{type: "tool", name: ...}` return a 400 (`tool_choice: type "tool" and "any" are not supported for this model.`), on `count_tokens` and Batches too. Use `{type: "auto"}` plus an explicit instruction naming the tool, `strict: true` on the tool to keep schema-valid arguments, or structured outputs (`output_config.format`) when the forced call only existed to get JSON back. `{type: "none"}` is unaffected; `disable_parallel_tool_use` still works with `auto` (at most one call).
-- **Tool call JSON parsing (Fable 5, Claude Fable 5.1, Opus 5, and the 4.6/4.7/4.8 family):** Fable 5, Claude Fable 5.1, Opus 5, Opus 4.6, Opus 4.7, Opus 4.8, and Sonnet 4.6 may produce different JSON string escaping in tool call `input` fields (e.g., Unicode or forward-slash escaping). Always parse tool inputs with `json.loads()` / `JSON.parse()` - never do raw string matching on the serialized input.
-- **Structured outputs (all models):** Use `output_config: {format: {...}}` instead of the deprecated `output_format` parameter on `messages.create()`. This is a general API change, not 4.6-specific.
-- **Don't reimplement SDK functionality:** The SDK provides high-level helpers - use them instead of building from scratch. Specifically: use `stream.finalMessage()` instead of wrapping `.on()` events in `new Promise()`; use typed exception classes (`Anthropic.RateLimitError`, etc.) instead of string-matching error messages; use SDK types (`Anthropic.MessageParam`, `Anthropic.Tool`, `Anthropic.Message`, etc.) instead of redefining equivalent interfaces.
-- **Error handling - catch a chain, not one broad class.** A single `except APIStatusError` / `catch (AnthropicServiceException)` / `rescue APIError` loses the distinction between retryable (429, >=500, network) and non-retryable (400/404) failures. Write a most-specific-first chain - e.g. `NotFoundError` -> `RateLimitError` -> `APIStatusError` -> `APIConnectionError` (or the Go equivalent: `errors.As` into `*anthropic.Error` then `switch apierr.StatusCode { case 404: ...; case 429: ...; default: ... }`). Per-language class names and namespaces are in `shared/error-codes.md`.
-- **Don't research SDK types - write first.** If a type name isn't shown in the documentation included in this skill, write the code file from the namespace/package tables in the language-specific doc and let the compiler's error point you to the right name. Do not spend turns on WebFetch, SDK-repo clones, or compiling-and-running a separate reflection program to discover type names before writing - produce the source file first, then fix what the compiler reports. A quick `strings` / `jar tf` / `javap` against the installed SDK is acceptable for locating names (it returns in seconds), but don't escalate beyond that. A file with a wrong type name is recoverable; a session spent on discovery with no file written is not.
-- **Bash and text editor tools are Anthropic-defined, schema-less.** Declare `{"type": "bash_20250124", "name": "bash"}` / `{"type": "text_editor_20250728", "name": "str_replace_based_edit_tool"}` - no `input_schema`. A custom tool with your own schema named `"bash"` is a different tool. Handler paths and security checks are in `shared/tool-use-concepts.md` § Client-Side Tools.
-- **Advisor tool model pairing.** The advisor tool's `model` must be at least as capable as the request's top-level `model` - e.g. executor `claude-sonnet-5` -> advisor `claude-opus-4-8` or `claude-opus-4-7`. An invalid pair returns 400. Pairing table in `shared/tool-use-concepts.md` § Advisor. Availability: `shared/platform-availability.md`.
-- **Agent Skills != Managed Agents.** To have Claude generate a `.pptx`/`.xlsx`/etc. via Agent Skills, call `client.beta.messages.create` with `container={"skills": [...]}`, the `code_execution_20260521` tool, and the `code-execution-2025-08-25` beta (Skills is out of beta - no `skills-2025-10-02` header needed). Do not use `client.beta.agents` / `sessions` / `environments` here - those are the Managed Agents surface, not Agent Skills.
-- **MCP connector needs both halves.** `mcp_servers=[{type:"url", url, name}]` alone is rejected as a validation error - also add `tools=[{type:"mcp_toolset", mcp_server_name:<same name>}]` with beta `mcp-client-2025-11-20`. Availability: `shared/platform-availability.md`.
-- **`inference_geo` is a direct top-level request parameter** - `client.messages.create(..., inference_geo="us")` / `.inferenceGeo("us")`. Do not put it in `extra_body` / `putAdditionalBodyProperty`. (Messages API only - on Managed Agents, `inference_geo` instead nests inside the agent's `model` object, never top-level; see `shared/managed-agents-core.md` § Pinning inference geography.) Supported on Opus 4.6 / Sonnet 4.6 and later; availability: `shared/platform-availability.md`. `response.usage.inference_geo` reports where inference ran.
-- **Fine-grained tool streaming is not a beta feature.** Set `eager_input_streaming: true` on the tool definition and call the regular `client.messages.stream(...)`. There is no beta header and no `client.beta.*` path.
-- **Cache diagnostics is beta.** Use `client.beta.messages.*` with beta `cache-diagnosis-2026-04-07`. Pass `diagnostics: {previous_message_id: null}` on the first turn and `diagnostics: {previous_message_id: <previous response id>}` on subsequent turns; the result is on `response.diagnostics`. Availability: `shared/platform-availability.md`.
-- **Memory tool type is `memory_20250818`.** Declare `{"type": "memory_20250818", "name": "memory"}`. Go uses the beta-namespace type `{OfMemoryTool20250818: &anthropic.BetaMemoryTool20250818Param{}}` on `client.Beta.Messages.New`; Python/TypeScript/Ruby/PHP/C# use the non-beta `client.messages.create`; Java has both a non-beta `MemoryTool20250818` and a beta tool-runner path. Python/TypeScript provide `BetaAbstractMemoryTool` / `betaMemoryTool` helpers for implementing the backend.
-- **Use a model the feature actually supports.** Some features are restricted to specific model tiers - fast mode is Claude Opus 5 / Opus 4.8 only (and Claude API only), task budgets (Messages API only - Managed Agents session budgets have no model-tier restriction) are Claude Opus 5 / Fable 5 / Claude Fable 5.1 (confirm at launch) / Sonnet 5 / Opus 4.8 / 4.7 only, and the advisor tool requires a valid executor<->advisor pair. If the user's prompt names a model that the feature doesn't support, use a supported model instead and note the substitution in the output.
-- **Don't define custom types for SDK data structures:** The SDK exports types for all API objects. Use `Anthropic.MessageParam` for messages, `Anthropic.Tool` for tool definitions, `Anthropic.ToolUseBlock` / `Anthropic.ToolResultBlockParam` for tool results, `Anthropic.Message` for responses. Defining your own `interface ChatMessage { role: string; content: unknown }` duplicates what the SDK already provides and loses type safety.
-- **Report and document output:** For tasks that produce reports, documents, or visualizations, the code execution sandbox has `python-docx`, `python-pptx`, `matplotlib`, `pillow`, and `pypdf` pre-installed. Claude can generate formatted files (DOCX, PDF, charts) and return them via the Files API - consider this for "report" or "document" type requests instead of plain stdout text.
-- **Server-tool errors don't raise.** Web search and web fetch errors return HTTP 200 with a `web_search_tool_result` / `web_fetch_tool_result` block whose `content` is a single error object (e.g. `{error_code: "max_uses_exceeded"}`) - not a raised exception. For web search, a success `content` is a *list*; an error `content` is an *object* - branch on that before indexing.
-- **Managed Agents web tools ignore the environment's `networking`.** `web_search` / `web_fetch` run on Anthropic's servers in cloud *and* self-hosted environments, and Console org-level web settings apply to the Messages API only. Restrict them per tool with `allowed_domains` **or** `blocked_domains` (never both; 1-64 plain hostnames per list, subdomains covered; IPs, bare TLDs, single-label and `localhost`-style names rejected on both tools; a path suffix is allowed only on `web_search`) on the toolset `configs` entry - `shared/managed-agents-tools.md` § Web search & web fetch settings.
-- **Code execution output block type:** `code_execution_20260521` returns `bash_code_execution_tool_result` (with `.content.stdout`), **not** the legacy bare `code_execution_tool_result`. Iterate `response.content` and match on the correct type.
-- **Tool search: never defer everything.** The search tool itself must not have `defer_loading: true`, and at least one tool in `tools` must be non-deferred, or the API returns 400 `All tools have defer_loading set`.
+Detail moved to `references/common-pitfalls.md`.
+

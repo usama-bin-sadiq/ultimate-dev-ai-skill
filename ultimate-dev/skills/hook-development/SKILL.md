@@ -424,206 +424,23 @@ Plugin hooks merge with user's hooks and run in parallel.
 
 ## Security Best Practices
 
-### Input Validation
-
-Always validate inputs in command hooks:
-
-```bash
-#!/bin/bash
-set -euo pipefail
-
-input=$(cat)
-tool_name=$(echo "$input" | jq -r '.tool_name')
-
-# Validate tool name format
-if [[ ! "$tool_name" =~ ^[a-zA-Z0-9_]+$ ]]; then
-  echo '{"decision": "deny", "reason": "Invalid tool name"}' >&2
-  exit 2
-fi
-```
-
-### Path Safety
-
-Check for path traversal and sensitive files:
-
-```bash
-file_path=$(echo "$input" | jq -r '.tool_input.file_path')
-
-# Deny path traversal
-if [[ "$file_path" == *".."* ]]; then
-  echo '{"decision": "deny", "reason": "Path traversal detected"}' >&2
-  exit 2
-fi
-
-# Deny sensitive files
-if [[ "$file_path" == *".env"* ]]; then
-  echo '{"decision": "deny", "reason": "Sensitive file"}' >&2
-  exit 2
-fi
-```
-
-See `examples/validate-write.sh` and `examples/validate-bash.sh` for complete examples.
-
-### Quote All Variables
-
-```bash
-# GOOD: Quoted
-echo "$file_path"
-cd "$CLAUDE_PROJECT_DIR"
-
-# BAD: Unquoted (injection risk)
-echo $file_path
-cd $CLAUDE_PROJECT_DIR
-```
-
-### Set Appropriate Timeouts
-
-```json
-{
-  "type": "command",
-  "command": "bash script.sh",
-  "timeout": 10
-}
-```
-
-**Defaults:** Command hooks (60s), Prompt hooks (30s)
+Detail moved to `references/security-best-practices.md`.
 
 ## Performance Considerations
 
-### Parallel Execution
-
-All matching hooks run **in parallel**:
-
-```json
-{
-  "PreToolUse": [
-    {
-      "matcher": "Write",
-      "hooks": [
-        {"type": "command", "command": "check1.sh"},  // Parallel
-        {"type": "command", "command": "check2.sh"},  // Parallel
-        {"type": "prompt", "prompt": "Validate..."}   // Parallel
-      ]
-    }
-  ]
-}
-```
-
-**Design implications:**
-- Hooks don't see each other's output
-- Non-deterministic ordering
-- Design for independence
-
-### Optimization
-
-1. Use command hooks for quick deterministic checks
-2. Use prompt hooks for complex reasoning
-3. Cache validation results in temp files
-4. Minimize I/O in hot paths
+Detail moved to `references/performance-considerations.md`.
 
 ## Temporarily Active Hooks
 
-Create hooks that activate conditionally by checking for a flag file or configuration:
-
-**Pattern: Flag file activation**
-```bash
-#!/bin/bash
-# Only active when flag file exists
-FLAG_FILE="$CLAUDE_PROJECT_DIR/.enable-strict-validation"
-
-if [ ! -f "$FLAG_FILE" ]; then
-  # Flag not present, skip validation
-  exit 0
-fi
-
-# Flag present, run validation
-input=$(cat)
-# ... validation logic ...
-```
-
-**Pattern: Configuration-based activation**
-```bash
-#!/bin/bash
-# Check configuration for activation
-CONFIG_FILE="$CLAUDE_PROJECT_DIR/.claude/plugin-config.json"
-
-if [ -f "$CONFIG_FILE" ]; then
-  enabled=$(jq -r '.strictMode // false' "$CONFIG_FILE")
-  if [ "$enabled" != "true" ]; then
-    exit 0  # Not enabled, skip
-  fi
-fi
-
-# Enabled, run hook logic
-input=$(cat)
-# ... hook logic ...
-```
-
-**Use cases:**
-- Enable strict validation only when needed
-- Temporary debugging hooks
-- Project-specific hook behavior
-- Feature flags for hooks
-
-**Best practice:** Document activation mechanism in plugin README so users know how to enable/disable temporary hooks.
+Detail moved to `references/temporarily-active-hooks.md`.
 
 ## Hook Lifecycle and Limitations
 
-### Hooks Load at Session Start
-
-**Important:** Hooks are loaded when Claude Code session starts. Changes to hook configuration require restarting Claude Code.
-
-**Cannot hot-swap hooks:**
-- Editing `hooks/hooks.json` won't affect current session
-- Adding new hook scripts won't be recognized
-- Changing hook commands/prompts won't update
-- Must restart Claude Code: exit and run `claude` again
-
-**To test hook changes:**
-1. Edit hook configuration or scripts
-2. Exit Claude Code session
-3. Restart: `claude` or `cc`
-4. New hook configuration loads
-5. Test hooks with `claude --debug`
-
-### Hook Validation at Startup
-
-Hooks are validated when Claude Code starts:
-- Invalid JSON in hooks.json causes loading failure
-- Missing scripts cause warnings
-- Syntax errors reported in debug mode
-
-Use `/hooks` command to review loaded hooks in current session.
+Detail moved to `references/hook-lifecycle-and-limitations.md`.
 
 ## Debugging Hooks
 
-### Enable Debug Mode
-
-```bash
-claude --debug
-```
-
-Look for hook registration, execution logs, input/output JSON, and timing information.
-
-### Test Hook Scripts
-
-Test command hooks directly:
-
-```bash
-echo '{"tool_name": "Write", "tool_input": {"file_path": "/test"}}' | \
-  bash ${CLAUDE_PLUGIN_ROOT}/scripts/validate.sh
-
-echo "Exit code: $?"
-```
-
-### Validate JSON Output
-
-Ensure hooks output valid JSON:
-
-```bash
-output=$(./your-hook.sh < test-input.json)
-echo "$output" | jq .
-```
+Detail moved to `references/debugging-hooks.md`.
 
 ## Quick Reference
 
@@ -662,49 +479,13 @@ echo "$output" | jq .
 
 ## Additional Resources
 
-### Reference Files
-
-For detailed patterns and advanced techniques, consult:
-
-- **`references/patterns.md`** - Common hook patterns (8+ proven patterns)
-- **`references/migration.md`** - Migrating from basic to advanced hooks
-- **`references/advanced.md`** - Advanced use cases and techniques
-
-### Example Hook Scripts
-
-Working examples in `examples/`:
-
-- **`validate-write.sh`** - File write validation example
-- **`validate-bash.sh`** - Bash command validation example
-- **`load-context.sh`** - SessionStart context loading example
-
-### Utility Scripts
-
-Development tools in `scripts/`:
-
-- **`validate-hook-schema.sh`** - Validate hooks.json structure and syntax
-- **`test-hook.sh`** - Test hooks with sample input before deployment
-- **`hook-linter.sh`** - Check hook scripts for common issues and best practices
-
-### External Resources
-
-- **Official Docs**: https://docs.claude.com/en/docs/claude-code/hooks
-- **Examples**: See security-guidance plugin in marketplace
-- **Testing**: Use `claude --debug` for detailed logs
-- **Validation**: Use `jq` to validate hook JSON output
+Detail moved to `references/additional-resources.md`.
 
 ## Implementation Workflow
 
-To implement hooks in a plugin:
+Detail moved to `references/implementation-workflow.md`.
 
-1. Identify events to hook into (PreToolUse, Stop, SessionStart, etc.)
-2. Decide between prompt-based (flexible) or command (deterministic) hooks
-3. Write hook configuration in `hooks/hooks.json`
-4. For command hooks, create hook scripts
-5. Use ${CLAUDE_PLUGIN_ROOT} for all file references
-6. Validate configuration with `scripts/validate-hook-schema.sh hooks/hooks.json`
-7. Test hooks with `scripts/test-hook.sh` before deployment
-8. Test in Claude Code with `claude --debug`
-9. Document hooks in plugin README
 
-Focus on prompt-based hooks for most use cases. Reserve command hooks for performance-critical or deterministic checks.
+## Reference Index
+
+3 reference file(s) are named in `references/README.md`.

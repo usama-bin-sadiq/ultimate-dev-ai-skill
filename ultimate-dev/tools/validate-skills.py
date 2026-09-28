@@ -752,25 +752,35 @@ def validate_skill(skill_dir: Path, repo_root: Path) -> dict[str, Any]:
             f"references/{p.relative_to(refs_dir).as_posix()}"
             for p in sorted(refs_dir.rglob("*.md"))
         }
-        # A kernel reference reachable through references/README.md IS
-        # reachable, and the bundler already says so -- it consults the index
-        # before reporting an orphan. This check did not, so 1,505 warnings
-        # fired for references the kernel genuinely reaches through its own
-        # annotated map, and `--strict` treats a warning as a failure, which
-        # made the flag unpassable on a clean tree and therefore meaningless.
+        # A skill's own reference index names its references just as the
+        # kernel's does, and the kernel was not special here -- it was simply
+        # the only tree where an index had been written. Gating this on
+        # skill_dir == SKILL_ROOT meant a sub-skill with 300 reference files
+        # could not hold an index, so moving its index into references/ -- the
+        # move the 500-line guidance asks for, and the one this repository's own
+        # tool makes -- orphaned all 300 at once.
         #
-        # The index is the same file, read the same way, for the same reason:
-        # a reference the reader is told where to find is not an orphan.
+        # The premise is unchanged and was always right: a reference a reader
+        # is never told about is an orphan. A reference named in that skill's
+        # index has been told about.
         via_index: set[str] = set()
         index = refs_dir / "README.md"
-        if skill_dir == SKILL_ROOT and index.is_file():
+        if index.is_file():
             index_text = index.read_text(encoding="utf-8", errors="replace")
-            # rglob, because the kernel's reference tree has subdirectories --
-            # references/quality-checklists/ holds seven files. A top-level glob
-            # did not see them and reported the tree as orphaned even though
-            # the index names the directory.
+            # rglob, because a reference tree can be organised into
+            # subdirectories -- the kernel's references/quality-checklists/ holds
+            # seven files, and a top-level glob did not see them and reported the
+            # tree as orphaned even though the index names the directory.
+            # Only the index itself is skipped, and by path rather than by name.
+            # The test was `p.name == "README.md"`, which also skipped the 60
+            # per-topic READMEs inside cloudflare-deploy/references/ -- so
+            # `present` counted them as reference files while this scan refused
+            # to credit the index for naming them, and 62 files were reported
+            # unreachable by the very rule that had just made them reachable. A
+            # README inside a topic directory is a document a reader opens; the
+            # index at the top of references/ is the index.
             for p in sorted(refs_dir.rglob("*.md")):
-                if p.name == "README.md":
+                if p == index:
                     continue
                 rel = p.relative_to(refs_dir).as_posix()
                 if p.name in index_text or rel in index_text:

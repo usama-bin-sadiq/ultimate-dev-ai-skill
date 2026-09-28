@@ -392,24 +392,33 @@ def check_orphans() -> list[str]:
     rather than the tree: progressive disclosure is the mechanism, and a reachability
     model that forbids it is measuring the opposite of what it means to measure.
     So a kernel reference reachable through the index counts as reachable.
+
+    That exception was then written for the kernel only, on the reasoning that
+    the kernel was the tree that had an index. It was not -- it was the only
+    tree where one had been written. Once apply-progressive-disclosure.py began
+    writing them, transformers-js had one, and the bundler still reported its
+    files unreachable while the index named every one of them.
+    validate-skills.py carried the identical gate and the identical blind spot.
+
+    The kernel is not special. A reference named in the skill's own index has
+    been told about, and that is the entire premise of the check.
     """
     problems: list[str] = []
-    index = SKILL_ROOT / "references" / "README.md"
-    via_index = (index.read_text(encoding="utf-8") if index.is_file() else "")
     for skill_md in [SKILL_ROOT / "SKILL.md", *sorted(SKILL_ROOT.glob("skills/*/SKILL.md"))]:
         if not skill_md.is_file():
             continue
         text = skill_md.read_text(encoding="utf-8")
         declared = declared_paths(text)
-        is_kernel = skill_md.parent == SKILL_ROOT
         refs_dir = skill_md.parent / "references"
         if not refs_dir.is_dir():
             continue
+        index = refs_dir / "README.md"
+        via_index = index.read_text(encoding="utf-8") if index.is_file() else ""
         for path in sorted(refs_dir.glob("*.md")):
             if f"references/{path.name}" in declared:
                 continue
-            if is_kernel and path.name in via_index:
-                continue          # reachable via references/README.md
+            if path.name in via_index:
+                continue          # reachable via this skill's references/README.md
             problems.append(
                 f"{path.relative_to(SKILL_ROOT)}: not reachable from "
                 f"{skill_md.relative_to(SKILL_ROOT)}"

@@ -449,36 +449,7 @@ Ready for the next section!
 
 ## Writing Workflows
 
-### Blog Post Workflow
-1. Outline together
-2. Research key points
-3. Write introduction → get feedback
-4. Write body sections → feedback each
-5. Write conclusion → final review
-6. Polish and edit
-
-### Newsletter Workflow
-1. Discuss hook ideas
-2. Quick outline (shorter format)
-3. Draft in one session
-4. Review for clarity and links
-5. Quick polish
-
-### Technical Tutorial Workflow
-1. Outline steps
-2. Write code examples
-3. Add explanations
-4. Test instructions
-5. Add troubleshooting section
-6. Final review for accuracy
-
-### Thought Leadership Workflow
-1. Brainstorm unique angle
-2. Research existing perspectives
-3. Develop your thesis
-4. Write with strong POV
-5. Add supporting evidence
-6. Craft compelling conclusion
+Detail moved to `references/writing-workflows.md`.
 
 ## Pro Tips
 
@@ -492,40 +463,11 @@ Ready for the next section!
 
 ## File Organization
 
-Recommended structure for writing projects:
-
-```
-~/writing/article-name/
-├── outline.md          # Your outline
-├── research.md         # All research and citations
-├── draft-v1.md         # First draft
-├── draft-v2.md         # Revised draft
-├── final.md            # Publication-ready
-├── feedback.md         # Collected feedback
-└── sources/            # Reference materials
-    ├── study1.pdf
-    └── article2.md
-```
+Detail moved to `references/file-organization.md`.
 
 ## Best Practices
 
-### For Research
-- Verify sources before citing
-- Use recent data when possible
-- Balance different perspectives
-- Link to original sources
-
-### For Feedback
-- Be specific about what you want: "Is this too technical?"
-- Share your concerns: "I'm worried this section drags"
-- Ask questions: "Does this flow logically?"
-- Request alternatives: "What's another way to explain this?"
-
-### For Voice
-- Share examples of your writing
-- Specify tone preferences
-- Point out good matches: "That sounds like me!"
-- Flag mismatches: "Too formal for my style"
+Detail moved to `references/best-practices.md`.
 
 ## Related Use Cases
 
@@ -539,19 +481,5 @@ Recommended structure for writing projects:
 
 ## Runtime notes
 
-This file was adapted to be tool-neutral: it claimed a general scope and was
-bound to one tool. The procedure is unchanged; what changed is that a reader on a
-different runtime is told what to substitute.
-
-- **"Open Claude Code from this directory and start writing"** — the step is
-  *give your agent read and write access to a folder*. **Claude Code** is named as
-  one way to do that. Any runtime that can open a directory in the workspace does
-  the same thing, and the outlining, research, and section-feedback workflow above
-  is unchanged.
-- **the writing folder in the examples** — an example working directory, not a
-  fixed location. Use a directory the user owns.
-Anything marked **means** is an implementation detail of one tool, and a reader
-on a different runtime may need a different mechanism for the same step. Anything
-marked **subject** means the capability is genuinely about that tool, and a reader
-without it should not expect this file to apply.
+Detail moved to `references/runtime-notes.md`.
 

@@ -1,0 +1,322 @@
+<!-- Moved verbatim from cloudflare-deploy/SKILL.md, the 'section' section. Relative links were rebased for the new depth; the prose is otherwise unchanged. -->
+
+# Troubleshooting
+
+### Escalated Network Access
+
+If deployment fails due to network issues (timeouts, DNS errors, connection resets), rerun the deploy with escalated permissions (use `sandbox_permissions=require_escalated`). The deploy requires escalated network access when sandbox networking blocks outbound requests.
+
+Example guidance to the user:
+
+```
+The deploy needs escalated network access to deploy to Cloudflare. I can rerun the command with escalated permissions—want me to proceed?
+```
+
+Each file below is loaded on demand, not at triage. 306 file(s):
+
+- `./agents-sdk/README.md` — Cloudflare Agents SDK enables building AI-powered agents on Durable Objects with state, WebSockets, SQL, scheduling, and AI integration.
+- `./agents-sdk/api.md` — API Reference. For AI chat with auto-streaming, message history, tools, resumable streaming.
+- `./agents-sdk/configuration.md` — Configuration. jsonc
+- `./agents-sdk/gotchas.md` — Gotchas & Best Practices. Cause: Mutating state directly or not calling setState() after modifications
+- `./agents-sdk/patterns.md` — Patterns & Use Cases. Server (AIChatAgent):
+- `./ai-gateway/README.md` — Expert guidance for implementing Cloudflare AI Gateway - a universal gateway for AI model providers with analytics, caching, rate limiting, and...
+- `./ai-gateway/configuration.md` — prose
+- `./ai-gateway/dynamic-routing.md` — Dynamic Routing. Configure complex routing in dashboard without code changes.
+- `./ai-gateway/features.md` — Features & Capabilities. Dashboard: Settings → Cache Responses → Enable
+- `./ai-gateway/sdk-integration.md` — AI Gateway SDK Integration. typescript
+- `./ai-gateway/troubleshooting.md` — AI Gateway Troubleshooting. typescript
+- `./ai-search/README.md` — Cloudflare AI Search Reference. Expert guidance for implementing Cloudflare AI Search (formerly AutoRAG), Cloudflare's managed semantic search and RAG service.
+- `./ai-search/api.md` — AI Search API Reference. typescript
+- `./ai-search/configuration.md` — AI Search Configuration. jsonc
+- `./ai-search/gotchas.md` — AI Search Gotchas. Timestamp precision: Use seconds (10-digit), not milliseconds.
+- `./ai-search/patterns.md` — AI Search Patterns. typescript
+- `./analytics-engine/README.md` — Cloudflare Workers Analytics Engine Reference. Expert guidance for implementing unlimited-cardinality analytics at scale using Cloudflare Workers Analytics Engine.
+- `./analytics-engine/api.md` — Analytics Engine API Reference. Fire-and-forget (returns void, not Promise).
+- `./analytics-engine/configuration.md` — Analytics Engine Configuration. 1.
+- `./analytics-engine/gotchas.md` — prose
+- `./analytics-engine/patterns.md` — Analytics Engine Patterns. typescript
+- `./api/README.md` — Cloudflare API Integration. Guide for working with Cloudflare's REST API - authentication, SDK usage, common patterns, and troubleshooting.
+- `./api/api.md` — API Reference. typescript
+- `./api/configuration.md` — Configuration. Security: Never commit tokens.
+- `./api/gotchas.md` — Gotchas & Troubleshooting. Actual Limits:
+- `./api/patterns.md` — Common Patterns. Problem: API returns paginated results.
+- `./api-shield/README.md` — Cloudflare API Shield Reference. Expert guidance for API Shield - comprehensive API security suite for discovery, protection, and monitoring.
+- `./api-shield/api.md` — API Reference. Base: /zones/{zoneid}/apigateway
+- `./api-shield/configuration.md` — Configuration. > ⚠️ Classic Schema Validation deprecated.
+- `./api-shield/gotchas.md` — Gotchas & Troubleshooting. Cause: Classic rules still active, conflicting with new system
+- `./api-shield/patterns.md` — Patterns & Use Cases. bash
+- `./argo-smart-routing/README.md` — Cloudflare Argo Smart Routing Skill Reference. Cloudflare Argo Smart Routing is a performance optimization service that detects real-time network issues and routes web traffic across the most...
+- `./argo-smart-routing/api.md` — API Reference. Note on Smart Shield: Argo Smart Routing is being integrated into Cloudflare's Smart Shield product.
+- `./argo-smart-routing/configuration.md` — Configuration Management. Note on Smart Shield Evolution: Argo Smart Routing is being integrated into Smart Shield.
+- `./argo-smart-routing/gotchas.md` — Best Practices Summary. Smart Shield Note: Argo Smart Routing evolving into Smart Shield.
+- `./argo-smart-routing/patterns.md` — Integration Patterns. typescript
+- `./bindings/README.md` — Cloudflare Bindings Skill Reference. Expert guidance on Cloudflare Workers Bindings - the runtime APIs that connect Workers to Cloudflare platform resources.
+- `./bindings/api.md` — prose
+- `./bindings/configuration.md` — Binding Configuration Reference. jsonc
+- `./bindings/gotchas.md` — Binding Gotchas and Troubleshooting. typescript
+- `./bindings/patterns.md` — Binding Patterns and Best Practices. typescript
+- `./bot-management/README.md` — Cloudflare Bot Management. Enterprise-grade bot detection, protection, and mitigation using ML/heuristics, bot scores, JavaScript detections, and verified bot handling.
+- `./bot-management/api.md` — Bot Management API. typescript
+- `./bot-management/configuration.md` — Bot Management Configuration. Note: Dashboard paths differ between old and new UI:
+- `./bot-management/gotchas.md` — Bot Management Gotchas. Cause: Bot Management didn't run (internal Cloudflare request, Worker routing to zone (Orange-to-Orange), or request handled before BM (Redirect...
+- `./bot-management/patterns.md` — Bot Management Patterns. txt
+- `./browser-rendering/README.md` — Cloudflare Browser Rendering Skill Reference. Description: Expert knowledge for Cloudflare Browser Rendering - control headless Chrome on Cloudflare's global network for browser automation...
+- `./browser-rendering/api.md` — Browser Rendering API. Base: https://api.cloudflare.com/client/v4/accounts/{accountId}/browser-rendering
+- `./browser-rendering/configuration.md` — Configuration & Setup. bash
+- `./browser-rendering/gotchas.md` — Browser Rendering Gotchas. Subject to fair-use policy.
+- `./browser-rendering/patterns.md` — Browser Rendering Patterns. typescript
+- `./c3/README.md` — prose
+- `./c3/api.md` — C3 CLI Reference. bash
+- `./c3/configuration.md` — C3 Generated Configuration
+- `./c3/gotchas.md` — C3 Troubleshooting. Error: "Invalid namespace ID"
+- `./c3/patterns.md` — C3 Usage Patterns. bash
+- `./cache-reserve/README.md` — Cloudflare Cache Reserve. Persistent cache storage built on R2 for long-term content retention
+- `./cache-reserve/api.md` — Cache Reserve API
+- `./cache-reserve/configuration.md` — Cache Reserve Configuration. Minimum steps to enable:
+- `./cache-reserve/gotchas.md` — Cache Reserve Gotchas. Cause: Asset is not cacheable, TTL < 10 hours, Content-Length header missing, or blocking headers present (Set-Cookie, Vary: )
+- `./cache-reserve/patterns.md` — Cache Reserve Patterns. typescript
+- `./containers/README.md` — Cloudflare Containers Skill Reference. APPLIES TO: Cloudflare Containers ONLY - NOT general Cloudflare Workers
+- `./containers/api.md` — Container Class API. typescript
+- `./containers/configuration.md` — Wrangler Configuration. jsonc
+- `./containers/gotchas.md` — Critical Gotchas. Problem: WebSocket connections fail silently
+- `./containers/patterns.md` — Routing Patterns. typescript
+- `./cron-triggers/README.md` — Cloudflare Cron Triggers. Schedule Workers execution using cron expressions.
+- `./cron-triggers/api.md` — Cron Triggers API. typescript
+- `./cron-triggers/configuration.md` — Cron Triggers Configuration. jsonc
+- `./cron-triggers/gotchas.md` — Cron Triggers Gotchas. Problem: Cron runs at wrong time relative to local timezone
+- `./cron-triggers/patterns.md` — Cron Triggers Patterns. typescript
+- `./d1/README.md` — Cloudflare D1 Database. Expert guidance for Cloudflare D1, a serverless SQLite database designed for horizontal scale-out across multiple databases.
+- `./d1/api.md` — D1 API Reference. typescript
+- `./d1/configuration.md` — D1 Configuration. jsonc
+- `./d1/gotchas.md` — D1 Gotchas & Troubleshooting. Cause: Using string interpolation instead of prepared statements with bind()
+- `./d1/patterns.md` — D1 Patterns & Best Practices. typescript
+- `./ddos/README.md` — Cloudflare DDoS Protection. Autonomous, always-on protection against DDoS attacks across L3/4 and L7.
+- `./ddos/api.md` — DDoS API. typescript
+- `./ddos/configuration.md` — DDoS Configuration. 1.
+- `./ddos/gotchas.md` — DDoS Gotchas. Cause: Sensitivity too high, wrong action, or missing exceptions
+- `./ddos/patterns.md` — DDoS Protection Patterns. typescript
+- `./do-storage/README.md` — Cloudflare Durable Objects Storage. Persistent storage API for Durable Objects with SQLite and KV backends, PITR, and automatic concurrency control.
+- `./do-storage/api.md` — DO Storage API Reference. typescript
+- `./do-storage/configuration.md` — DO Storage Configuration. wrangler.jsonc:
+- `./do-storage/gotchas.md` — DO Storage Gotchas & Troubleshooting. Durable Objects use input/output gates to prevent race conditions:
+- `./do-storage/patterns.md` — DO Storage Patterns & Best Practices. typescript
+- `./do-storage/testing.md` — DO Storage Testing. Testing Durable Objects with storage using vitest-pool-workers.
+- `./durable-objects/README.md` — Expert guidance for building stateful applications with Cloudflare Durable Objects.
+- `./durable-objects/api.md` — Durable Objects API. typescript
+- `./durable-objects/configuration.md` — Durable Objects Configuration. jsonc
+- `./durable-objects/gotchas.md` — Durable Objects Gotchas. Problem: Variables lost after hibernation
+- `./durable-objects/patterns.md` — Durable Objects Patterns. RPC (compat ≥2024-04-03): Type-safe, simpler, default for new projects
+- `./email-routing/README.md` — Cloudflare Email Routing Skill Reference. Cloudflare Email Routing enables custom email addresses for your domain that route to verified destination addresses.
+- `./email-routing/api.md` — Email Routing API Reference. typescript
+- `./email-routing/configuration.md` — Email Routing Configuration. jsonc
+- `./email-routing/gotchas.md` — Gotchas & Troubleshooting. Problem: "stream already consumed" or worker hangs
+- `./email-routing/patterns.md` — Common Patterns. typescript
+- `./email-workers/README.md` — Cloudflare Email Workers. Process incoming emails programmatically using Cloudflare Workers runtime.
+- `./email-workers/api.md` — Email Workers API Reference. Complete API reference for Cloudflare Email Workers runtime.
+- `./email-workers/configuration.md` — Email Workers Configuration. jsonc
+- `./email-workers/gotchas.md` — Email Workers Gotchas. typescript
+- `./email-workers/patterns.md` — Email Workers Patterns. typescript
+- `./hyperdrive/README.md` — Hyperdrive. Accelerates database queries from Workers via connection pooling, edge setup, query caching.
+- `./hyperdrive/api.md` — API Reference. See [README.md](./README.md) for overview, [configuration.md](./configuration.md) for setup.
+- `./hyperdrive/configuration.md` — Configuration. See [README.md](./README.md) for overview.
+- `./hyperdrive/gotchas.md` — Gotchas. See [README.md](./README.md), [configuration.md](./configuration.md), [api.md](./api.md), [patterns.md](./patterns.md).
+- `./hyperdrive/patterns.md` — Patterns. See [README.md](./README.md), [configuration.md](./configuration.md), [api.md](./api.md).
+- `./images/README.md` — Cloudflare Images Skill Reference. Cloudflare Images is an end-to-end image management solution providing storage, transformation, optimization, and delivery at scale via Cloudflare's...
+- `./images/api.md` — API Reference. toml
+- `./images/configuration.md` — prose
+- `./images/gotchas.md` — Gotchas & Best Practices. typescript
+- `./images/patterns.md` — Common Patterns
+- `./kv/README.md` — prose
+- `./kv/api.md` — KV API Reference. typescript
+- `./kv/configuration.md` — KV Configuration. bash
+- `./kv/gotchas.md` — prose
+- `./kv/patterns.md` — KV Patterns & Best Practices. typescript
+- `./miniflare/README.md` — Miniflare. Local simulator for Cloudflare Workers development/testing.
+- `./miniflare/api.md` — Programmatic API. typescript
+- `./miniflare/configuration.md` — Configuration. js
+- `./miniflare/gotchas.md` — Gotchas & Troubleshooting. Not supported:
+- `./miniflare/patterns.md` — Testing Patterns. Quick guide:
+- `./network-interconnect/README.md` — Cloudflare Network Interconnect (CNI). Private, high-performance connectivity to Cloudflare's network.
+- `./network-interconnect/api.md` — CNI API Reference. See [README.md](README.md) for overview.
+- `./network-interconnect/configuration.md` — CNI Configuration. See [README.md](README.md) for overview.
+- `./network-interconnect/gotchas.md` — CNI Gotchas & Troubleshooting. Cause: Cross-connect not installed, RX/TX fibers reversed, wrong fiber type, or low light levels
+- `./network-interconnect/patterns.md` — CNI Patterns. See [README.md](README.md) for overview.
+- `./observability/README.md` — Cloudflare Observability Skill Reference. Purpose: Comprehensive guidance for implementing observability in Cloudflare Workers, covering traces, logs, metrics, and analytics.
+- `./observability/api.md` — API Reference. Endpoint: https://api.cloudflare.com/client/v4/graphql
+- `./observability/configuration.md` — Configuration Patterns. jsonc
+- `./observability/gotchas.md` — Common Errors. Cause: Observability disabled, Worker not redeployed, no traffic, low sampling rate, or log size exceeds 256 KB
+- `./observability/patterns.md` — Observability Patterns. typescript
+- `./pages/README.md` — Cloudflare Pages. JAMstack platform for full-stack apps on Cloudflare's global network.
+- `./pages/api.md` — Functions API
+- `./pages/configuration.md` — Configuration. jsonc
+- `./pages/gotchas.md` — Gotchas. Problem: Function endpoints return 404 or don't execute
+- `./pages/patterns.md` — Patterns. typescript
+- `./pages-functions/README.md` — Cloudflare Pages Functions. Serverless functions on Cloudflare Pages using Workers runtime.
+- `./pages-functions/api.md` — Function API. typescript
+- `./pages-functions/configuration.md` — prose
+- `./pages-functions/gotchas.md` — Gotchas & Debugging. Problem: ctx.env.MYBINDING shows type error
+- `./pages-functions/patterns.md` — Common Patterns. Non-blocking tasks after response sent (analytics, cleanup, webhooks):
+- `./pipelines/README.md` — Cloudflare Pipelines. ETL streaming platform for ingesting, transforming, and loading data into R2 with SQL transformations.
+- `./pipelines/api.md` — Pipelines API Reference. typescript
+- `./pipelines/configuration.md` — Pipelines Configuration. jsonc
+- `./pipelines/gotchas.md` — Pipelines Gotchas. Most common issue.
+- `./pipelines/patterns.md` — Pipelines Patterns. typescript
+- `./pulumi/README.md` — Expert guidance for Cloudflare Pulumi Provider (@pulumi/cloudflare).
+- `./pulumi/api.md` — API & Data Sources. Export resource identifiers:
+- `./pulumi/configuration.md` — Resource Configuration. typescript
+- `./pulumi/gotchas.md` — Troubleshooting & Best Practices. Problem: Worker fails with "Cannot use import statement outside a module"
+- `./pulumi/patterns.md` — Architecture Patterns. typescript
+- `./queues/README.md` — Cloudflare Queues. Flexible message queuing for async task processing with guaranteed at-least-once delivery and configurable batching.
+- `./queues/api.md` — Queues API Reference. typescript
+- `./queues/configuration.md` — Queues Configuration. bash
+- `./queues/gotchas.md` — Queues Gotchas & Troubleshooting. Problem: Throwing uncaught error in queue handler retries the entire batch, not just the failed message
+- `./queues/patterns.md` — Queues Patterns & Best Practices. typescript
+- `./r2/README.md` — Cloudflare R2 Object Storage. S3-compatible object storage with zero egress fees, optimized for large file storage and delivery.
+- `./r2/api.md` — R2 API Reference. typescript
+- `./r2/configuration.md` — R2 Configuration. wrangler.jsonc:
+- `./r2/gotchas.md` — R2 Gotchas & Troubleshooting. typescript
+- `./r2/patterns.md` — R2 Patterns & Best Practices. typescript
+- `./r2-data-catalog/README.md` — Cloudflare R2 Data Catalog Skill Reference. Expert guidance for Cloudflare R2 Data Catalog - Apache Iceberg catalog built into R2 buckets.
+- `./r2-data-catalog/api.md` — API Reference. R2 Data Catalog exposes standard [Apache Iceberg REST Catalog API](https://github.com/apache/iceberg/blob/main/open-api/rest-catalog-open-api.yaml).
+- `./r2-data-catalog/configuration.md` — Configuration. How to enable R2 Data Catalog and configure authentication.
+- `./r2-data-catalog/gotchas.md` — Gotchas & Troubleshooting. Common problems → causes → solutions.
+- `./r2-data-catalog/patterns.md` — Common Patterns. Practical patterns for R2 Data Catalog with PyIceberg.
+- `./r2-sql/README.md` — Cloudflare R2 SQL Skill Reference. Expert guidance for Cloudflare R2 SQL - serverless distributed query engine for Apache Iceberg tables.
+- `./r2-sql/api.md` — R2 SQL API Reference. SQL syntax, functions, operators, and data types for R2 SQL queries.
+- `./r2-sql/configuration.md` — R2 SQL Configuration. Setup and configuration for R2 SQL queries.
+- `./r2-sql/gotchas.md` — R2 SQL Gotchas. Limitations, troubleshooting, and common pitfalls for R2 SQL.
+- `./r2-sql/patterns.md` — R2 SQL Patterns. Common patterns, use cases, and integration examples for R2 SQL.
+- `./realtime-sfu/README.md` — Cloudflare Realtime SFU Reference. Expert guidance for building real-time audio/video/data applications using Cloudflare Realtime SFU (Selective Forwarding Unit).
+- `./realtime-sfu/api.md` — API Reference. bash
+- `./realtime-sfu/configuration.md` — Configuration & Deployment. 1.
+- `./realtime-sfu/gotchas.md` — Gotchas & Troubleshooting. Cause: First STUN delayed during consensus forming (normal behavior)
+- `./realtime-sfu/patterns.md` — Patterns & Use Cases
+- `./realtimekit/README.md` — Expert guidance for building real-time video and audio applications using Cloudflare RealtimeKit - a comprehensive SDK suite for adding customizable...
+- `./realtimekit/api.md` — RealtimeKit API Reference. Complete API reference for Meeting object, REST endpoints, and SDK methods.
+- `./realtimekit/configuration.md` — RealtimeKit Configuration. Configuration guide for RealtimeKit setup, client SDKs, and wrangler integration.
+- `./realtimekit/gotchas.md` — RealtimeKit Gotchas & Troubleshooting. Cause: Auth token invalid/expired, API credentials lack permissions, or network blocks WebRTC
+- `./realtimekit/patterns.md` — RealtimeKit Patterns. tsx
+- `./sandbox/README.md` — Cloudflare Sandbox SDK. Secure isolated code execution in containers on Cloudflare's edge.
+- `./sandbox/api.md` — API Reference. typescript
+- `./sandbox/configuration.md` — Configuration. typescript
+- `./sandbox/gotchas.md` — Gotchas & Best Practices. Cause: keepAlive: true without calling destroy()
+- `./sandbox/patterns.md` — Common Patterns. typescript
+- `./secrets-store/README.md` — prose
+- `./secrets-store/api.md` — prose
+- `./secrets-store/configuration.md` — prose
+- `./secrets-store/gotchas.md` — prose
+- `./secrets-store/patterns.md` — prose
+- `./smart-placement/README.md` — Cloudflare Workers Smart Placement. Automatic workload placement optimization to minimize latency by running Workers closer to backend infrastructure rather than end users.
+- `./smart-placement/api.md` — Smart Placement API. Query Worker placement status via Cloudflare API:
+- `./smart-placement/configuration.md` — Smart Placement Configuration. jsonc
+- `./smart-placement/gotchas.md` — Smart Placement Gotchas. Cause: Not enough traffic for Smart Placement to analyze
+- `./smart-placement/patterns.md` — Smart Placement Patterns. typescript
+- `./snippets/README.md` — Cloudflare Snippets Skill Reference. Expert guidance for Cloudflare Snippets ONLY - a lightweight JavaScript-based edge logic platform for modifying HTTP requests and responses.
+- `./snippets/api.md` — Snippets API Reference. javascript
+- `./snippets/configuration.md` — Snippets Configuration Guide. Best for: Quick tests, single snippets, visual rule building
+- `./snippets/gotchas.md` — Gotchas & Best Practices. Runtime error or syntax error.
+- `./snippets/patterns.md` — Snippets Patterns. javascript
+- `./spectrum/README.md` — Cloudflare Spectrum Skill Reference. Cloudflare Spectrum provides security and acceleration for ANY TCP or UDP-based application.
+- `./spectrum/api.md` — REST API Endpoints
+- `./spectrum/configuration.md` — Origin Types. Use when origin is a single server with static IP.
+- `./spectrum/gotchas.md` — Common Issues. Problem: Connections fail or timeout
+- `./spectrum/patterns.md` — Common Use Cases. Terraform:
+- `./static-assets/README.md` — Cloudflare Static Assets Skill Reference. Expert guidance for deploying and configuring static assets with Cloudflare Workers.
+- `./static-assets/api.md` — API Reference. The ASSETS binding provides access to static assets via the Fetcher interface.
+- `./static-assets/configuration.md` — Minimal configuration requires only assets.directory:
+- `./static-assets/gotchas.md` — Best Practices. Instead of runworkerfirst = true, use array patterns:
+- `./static-assets/patterns.md` — Common Patterns. 1.
+- `./stream/README.md` — Cloudflare Stream. Serverless live and on-demand video streaming platform with one API.
+- `./stream/api-live.md` — Stream Live Streaming API. Live input creation, status checking, simulcast, and WebRTC streaming.
+- `./stream/api.md` — Stream API Reference. Upload, playback, live streaming, and management APIs.
+- `./stream/configuration.md` — Stream Configuration. Setup, environment variables, and wrangler configuration.
+- `./stream/gotchas.md` — Stream Gotchas. Cause: Uploaded file is not a valid video format
+- `./stream/patterns.md` — Stream Patterns. Common workflows, full-stack flows, and best practices.
+- `./tail-workers/README.md` — Cloudflare Tail Workers. Specialized Workers that consume execution events from producer Workers for logging, debugging, analytics, and observability.
+- `./tail-workers/api.md` — Tail Workers API Reference. typescript
+- `./tail-workers/configuration.md` — prose
+- `./tail-workers/gotchas.md` — Tail Workers Gotchas & Debugging. Problem: Async work doesn't complete or tail Worker times out
+- `./tail-workers/patterns.md` — Tail Workers Common Patterns. While most tail Worker implementations are custom, these libraries may help:
+- `./terraform/README.md` — Expert guidance for Cloudflare Terraform Provider - infrastructure as code for Cloudflare resources.
+- `./terraform/api.md` — Terraform Data Sources Reference. Query existing Cloudflare resources to reference in your configurations.
+- `./terraform/configuration.md` — Terraform Configuration Reference. Complete resource configurations for Cloudflare infrastructure.
+- `./terraform/gotchas.md` — Terraform Troubleshooting & Best Practices. Common issues, security considerations, and best practices.
+- `./terraform/patterns.md` — Terraform Patterns & Use Cases. Architecture patterns, multi-environment setups, and real-world use cases.
+- `./tunnel/README.md` — Cloudflare Tunnel. Secure outbound-only connections between infrastructure and Cloudflare's global network.
+- `./tunnel/api.md` — Tunnel API. Base URL: https://api.cloudflare.com/client/v4
+- `./tunnel/configuration.md` — Tunnel Configuration. Tunnels use one of two config sources:
+- `./tunnel/gotchas.md` — Tunnel Gotchas. Cause: Tunnel not running or not connected
+- `./tunnel/networking.md` — Tunnel Networking. Cloudflared requires outbound access on:
+- `./tunnel/patterns.md` — Tunnel Patterns. yaml
+- `./turn/README.md` — Expert guidance for implementing Cloudflare TURN Service in WebRTC applications.
+- `./turn/api.md` — TURN API Reference. Complete API documentation for Cloudflare TURN service credentials and key management.
+- `./turn/configuration.md` — TURN Configuration. Setup and configuration for Cloudflare TURN service in Workers and applications.
+- `./turn/gotchas.md` — TURN Gotchas & Troubleshooting. Common mistakes, security best practices, and troubleshooting for Cloudflare TURN.
+- `./turn/patterns.md` — TURN Implementation Patterns. Production-ready patterns for implementing Cloudflare TURN in WebRTC applications.
+- `./turnstile/README.md` — Cloudflare Turnstile Implementation Skill Reference. Expert guidance for implementing Cloudflare Turnstile - a smart CAPTCHA alternative that protects websites from bots without showing traditional...
+- `./turnstile/api.md` — API Reference. The Turnstile JavaScript API is available at window.turnstile after loading the script.
+- `./turnstile/configuration.md` — Configuration. html
+- `./turnstile/gotchas.md` — Troubleshooting & Gotchas. Problem: Client-only validation is easily bypassed.
+- `./turnstile/patterns.md` — Common Patterns. html
+- `./vectorize/README.md` — Cloudflare Vectorize. Globally distributed vector database for AI applications.
+- `./vectorize/api.md` — Vectorize API Reference. typescript
+- `./vectorize/configuration.md` — Vectorize Configuration. bash
+- `./vectorize/gotchas.md` — Vectorize Gotchas. Insert/upsert/delete return immediately but vectors aren't queryable for 5-10 seconds.
+- `./vectorize/patterns.md` — Vectorize Patterns. typescript
+- `./waf/README.md` — Cloudflare WAF Expert Skill Reference. Expertise: Cloudflare Web Application Firewall (WAF) configuration, custom rules, managed rulesets, rate limiting, attack detection, and API...
+- `./waf/api.md` — API Reference. typescript
+- `./waf/configuration.md` — prose
+- `./waf/gotchas.md` — Gotchas & Troubleshooting. Problem: Rules execute in unexpected order
+- `./waf/patterns.md` — Common Patterns. typescript
+- `./web-analytics/README.md` — Cloudflare Web Analytics. Privacy-first web analytics providing Core Web Vitals, traffic metrics, and user insights without compromising visitor privacy.
+- `./web-analytics/configuration.md` — prose
+- `./web-analytics/gotchas.md` — Web Analytics Gotchas. Symptom: Only initial pageload counted
+- `./web-analytics/integration.md` — Framework Integration. Web Analytics is dashboard-only - no programmatic API.
+- `./web-analytics/patterns.md` — Web Analytics Patterns. Dashboard → Core Web Vitals → Click metric → Debug View shows top 5 problematic elements.
+- `./workerd/README.md` — Workerd Runtime. V8-based JS/Wasm runtime powering Cloudflare Workers.
+- `./workerd/api.md` — Workerd APIs. javascript
+- `./workerd/configuration.md` — Workerd Configuration. capnp
+- `./workerd/gotchas.md` — Workerd Gotchas. Cause: Compatibility date not set
+- `./workerd/patterns.md` — Workerd Patterns. capnp
+- `./workers/README.md` — Expert guidance for building, deploying, and optimizing Cloudflare Workers applications.
+- `./workers/api.md` — Workers Runtime APIs. typescript
+- `./workers/configuration.md` — Workers Configuration. jsonc
+- `./workers/frameworks.md` — Workers Frameworks. Workers-native web framework with excellent TypeScript support and middleware ecosystem.
+- `./workers/gotchas.md` — Workers Gotchas. Cause: Worker exceeded CPU time limit (10ms standard, 30ms unbound)
+- `./workers/patterns.md` — Workers Patterns. typescript
+- `./workers-ai/README.md` — Expert guidance for Cloudflare Workers AI - serverless GPU-powered AI inference at the edge.
+- `./workers-ai/api.md` — Workers AI API Reference. typescript
+- `./workers-ai/configuration.md` — Workers AI Configuration. jsonc
+- `./workers-ai/gotchas.md` — Workers AI Gotchas. typescript
+- `./workers-ai/patterns.md` — Workers AI Patterns. typescript
+- `./workers-for-platforms/README.md` — Cloudflare Workers for Platforms. Multi-tenant platform with isolated customer code execution at scale.
+- `./workers-for-platforms/api.md` — API Operations. bash
+- `./workers-for-platforms/configuration.md` — Configuration. jsonc
+- `./workers-for-platforms/gotchas.md` — Gotchas & Limits. Cause: Attempting to get Worker that doesn't exist in namespace
+- `./workers-for-platforms/patterns.md` — Multi-Tenant Patterns. typescript
+- `./workers-playground/README.md` — Cloudflare Workers Playground Skill Reference. Cloudflare Workers Playground is a browser-based sandbox for instantly experimenting with, testing, and deploying Cloudflare Workers without...
+- `./workers-playground/api.md` — Workers Playground API. javascript
+- `./workers-playground/configuration.md` — Configuration. Navigate to [workers.cloudflare.com/playground](https://workers.cloudflare.com/playground)
+- `./workers-playground/gotchas.md` — Workers Playground Gotchas. javascript
+- `./workers-playground/patterns.md` — Workers Playground Patterns. javascript
+- `./workers-vpc/README.md` — Workers VPC Connectivity. Connect Cloudflare Workers to private networks and internal infrastructure using TCP Sockets.
+- `./workers-vpc/api.md` — TCP Sockets API Reference. Complete API reference for the Cloudflare Workers TCP Sockets API (cloudflare:sockets).
+- `./workers-vpc/configuration.md` — Setup and configuration for TCP Sockets in Cloudflare Workers.
+- `./workers-vpc/gotchas.md` — Gotchas and Troubleshooting. Common pitfalls, limitations, and solutions for TCP Sockets in Cloudflare Workers.
+- `./workers-vpc/patterns.md` — Common Patterns. Real-world patterns and examples for TCP Sockets in Cloudflare Workers.
+- `./workflows/README.md` — Cloudflare Workflows. Durable multi-step applications with automatic retries, state persistence, and long-running execution.
+- `./workflows/api.md` — Workflow APIs. typescript
+- `./workflows/configuration.md` — Workflow Configuration. jsonc
+- `./workflows/gotchas.md` — Gotchas & Debugging. Cause: Step execution exceeding 10 minute default timeout or configured timeout
+- `./workflows/patterns.md` — Workflow Patterns. typescript
+- `./wrangler/README.md` — Cloudflare Wrangler. Official CLI for Cloudflare Workers - develop, manage, and deploy Workers from the command line.
+- `./wrangler/api.md` — Wrangler Programmatic API. Node.js APIs for testing and development.
+- `./wrangler/configuration.md` — Wrangler Configuration. Configuration reference for wrangler.jsonc (recommended).
+- `./wrangler/gotchas.md` — Wrangler Common Issues. Cause: Confusion between binding name (code) and resource ID
+- `./wrangler/patterns.md` — Wrangler Development Patterns. Common workflows and best practices.
+- `./zaraz/IMPLEMENTATION_SUMMARY.md` — Zaraz Reference Implementation Summary. All tasks loaded 366 lines regardless of need.
+- `./zaraz/README.md` — Expert guidance for Cloudflare Zaraz - server-side tag manager for loading third-party tools at the edge.
+- `./zaraz/api.md` — Zaraz Web API. Client-side JavaScript API for tracking events, setting properties, and managing consent.
+- `./zaraz/configuration.md` — Zaraz Configuration. 1.
+- `./zaraz/gotchas.md` — Zaraz Gotchas. Check:
+- `./zaraz/patterns.md` — Zaraz Patterns. History Change Trigger (Recommended): Configure in dashboard - no code needed, Zaraz auto-detects route changes.

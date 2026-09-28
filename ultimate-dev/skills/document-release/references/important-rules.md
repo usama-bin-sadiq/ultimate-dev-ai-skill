@@ -1,0 +1,17 @@
+<!-- Moved verbatim from document-release/SKILL.md, the 'section' section. Relative links were rebased for the new depth; the prose is otherwise unchanged. -->
+
+# Important Rules
+
+- **Read before editing.** Always read the full content of a file before modifying it.
+- **Never clobber CHANGELOG.** Polish wording only. Never delete, replace, or regenerate entries.
+- **Never bump VERSION silently.** Always ask. Even if already bumped, check whether it covers the full scope of changes.
+- **Be explicit about what changed.** Every edit gets a one-line summary.
+- **Generic heuristics, not project-specific.** The audit checks work on any repo.
+- **Discoverability matters.** Every doc file should be reachable from README or <agent-instructions>.
+- **Coverage map informs, never generates.** The Diataxis coverage map flags gaps for the PR body
+  and future work. It does NOT auto-generate missing documentation pages or sections. When gaps
+  are found, suggest `/document-generate` as the follow-up skill.
+- **Diagram drift is advisory.** Flag stale architecture diagrams in the PR body but do not
+  auto-edit ASCII art or Mermaid blocks — they require human judgment to update correctly.
+- **Voice: friendly, user-forward, not obscure.** Write like you're explaining to a smart person
+  who hasn't seen the code.

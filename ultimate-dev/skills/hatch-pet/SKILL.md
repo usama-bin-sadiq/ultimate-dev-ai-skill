@@ -385,121 +385,7 @@ Use lightweight subagents for image-heavy work by default. This bounds each `$im
 
 ## Subagent Delegation
 
-Unless explicitly forbidden by the user, use subagents for this run. If the user has not allowed the use of subagents, or the intent on subagent use is vague, then ask the user for permission to spawn subagents for parallel lanes of work.
-
-Parent responsibilities:
-
-- run the brand discovery worker before preparation when the user provides a bare brand/product/company/prospect name
-- prepare the run and inspect `imagegen-jobs.json`
-- assign the base job, row jobs, and final contact-sheet QA to lightweight workers
-- copy selected worker outputs into their decoded paths and mark jobs complete in `imagegen-jobs.json`
-- create the base frame, written to `references/canonical-base.png`, from the
-  selected base output — this is the output directory, and the file is absent
-  until the step above has run
-- run the approved `running-left` mirror derivation when appropriate
-- run deterministic image processing, packaging, repair regeneration, and cleanup
-
-Base worker responsibilities:
-
-- handle only the `base` job
-- read `prompts/base-pet.md` and use any listed reference images
-- use `$imagegen` only
-- honor any compact brand inspiration line in the prompt as broad visual/personality guidance, without copying logos, readable marks, UI screenshots, slogans, or text
-- return only `selected_source=/absolute/path/to/selected-output.png` and `qa_note=<one sentence>`
-
-Row worker responsibilities:
-
-- handle exactly one row job
-- read the row prompt and use all listed input images
-- use `$imagegen` only; do not draw, edit, tile, or synthesize sprites locally
-- perform a quick visual sanity check for frame count, identity, chroma background, spacing, clipping, and detached effects
-- enforce the row prompt's transparency and effects rules, including no detached effects, no wave marks for `waving`, no speed lines or dust for directional running rows, no literal foot-running for the non-directional `running` row, and only attached opaque sprite-like tears/smoke/stars when allowed by the state prompt
-- return only `selected_source=/absolute/path/to/selected-output.png` and `qa_note=<one sentence>`
-
-Final visual QA worker responsibilities:
-
-- inspect `qa/contact-sheet.png` plus the row GIFs under `qa/previews/`, with `qa/review.json` and `final/validation.json` as text context when useful
-- verify all 9 rows match the Codex app state contract and the same pet identity
-- return a compact result: `visual_qa=pass` or `visual_qa=fail`, plus row-specific repair notes when failing
-- do not edit files, queue repairs, package, or clean up
-
-Model choice for workers:
-
-- Prefer a smaller capable model for brand discovery, since it returns a compact research brief rather than doing orchestration.
-- Prefer a smaller capable model for visual workers, such as `gpt-5.4-mini` with medium reasoning, when model override is available.
-- Use the parent/default model only for orchestration or when a smaller worker model is unavailable.
-- Keep at most two generation workers active at once unless the user explicitly asks for higher parallelism. Run final visual QA as a single worker after deterministic image processing. Close workers after their result has been consumed.
-
-Use this base worker prompt:
-
-```text
-Generate the hatch-pet base image.
-
-Run dir: <absolute run dir>
-Job id: base
-Prompt file: <absolute base prompt file>
-Input images:
-- <absolute path> — <role>
-
-Use $imagegen only. Read the base prompt and attach every listed input image. If the prompt contains brand inspiration, use it only as broad mascot-safe guidance; do not copy logos, readable marks, UI screenshots, slogans, or text. Before returning, visually check that the result is one centered full-body pet on a flat chroma background, with no text, scenery, shadows, or detached effects.
-
-Do not edit manifests, copy into decoded, mark jobs complete, generate rows, run image-processing scripts, repair, package, or open unrelated files.
-Do not include Markdown image previews, base64, or extra attachments in the final response.
-
-Return exactly:
-selected_source=/absolute/path/to/selected-output.png
-qa_note=<one sentence>
-```
-
-Use this row worker prompt:
-
-```text
-Generate one hatch-pet row.
-
-Run dir: <absolute run dir>
-Row id: <row-id>
-Prompt file: <absolute prompt file>
-Retry prompt file: <absolute retry prompt file>
-Input images:
-- <absolute path> — <role>
-- <absolute path> — <role>
-
-Use $imagegen only. Read the row prompt and attach every listed input image. If imagegen returns Bad Request, retry once with the retry prompt and the same input images.
-
-Before returning, visually check: exact frame count, same pet identity as canonical base, flat chroma background, complete separated unclipped poses, and no detached effects or guide marks. The prompt's transparency and effects rules are mandatory: no detached effects, no wave marks for `waving`, no speed lines or dust for directional running rows, no literal foot-running for the non-directional `running` row, and only attached opaque sprite-like tears/smoke/stars when allowed by the state prompt.
-
-Do not edit manifests, copy into decoded, mark jobs complete, mirror rows, run image-processing scripts, repair, package, or open unrelated files.
-Do not include Markdown image previews, base64, or extra attachments in the final response.
-
-Return exactly:
-selected_source=/absolute/path/to/selected-output.png
-qa_note=<one sentence>
-```
-
-Use this final visual QA worker prompt:
-
-```text
-Visually QA one finalized hatch-pet contact sheet.
-
-Run dir: <absolute run dir>
-Contact sheet: <absolute run dir>/qa/contact-sheet.png
-Preview dir: <absolute run dir>/qa/previews
-Review JSON: <absolute run dir>/qa/review.json
-Validation JSON: <absolute run dir>/final/validation.json
-
-Inspect the contact sheet and the preview GIFs visually. Confirm the same pet identity, style, palette, silhouette, face, proportions, and props across all rows:
-0 idle, 1 running-right, 2 running-left, 3 waving, 4 jumping, 5 failed, 6 waiting, 7 running, 8 review.
-
-Fail rows with identity drift, missing/blank frames, copied guide marks, white/nontransparent backgrounds, cropped bodies, slot overlap, detached effects, shadows/glows/smears/dust, chroma-key artifacts, motion that does not match the row state, unintended size popping, wrong facing direction, reversed or non-alternating gait, or idle loops that are effectively static.
-
-Do not edit files, queue repairs, package, clean up, or inspect unrelated files.
-
-Return exactly:
-visual_qa=pass|fail
-qa_note=<one sentence summary>
-repair_rows=<comma-separated row ids, or none>
-repair_notes=<short row-specific notes, or none>
-```
+Detail moved to `references/subagent-delegation.md`.
 
 ## Repair Workflow
 
@@ -511,27 +397,7 @@ For extraction-induced motion popping, do not regenerate imagery first. If the s
 
 ## Rules
 
-- Keep `$imagegen` as the primary generation layer.
-- For brand/product/company/prospect requests without a concrete avatar description or reference image, run brand discovery before base generation and pass only the compact brief into the run.
-- Use `$imagegen` as the only visual generation layer. Do not invoke image APIs, image CLIs, local raster generators, or one-off generation scripts from this skill.
-- Keep reference images attached/visible for `$imagegen` whenever the chosen path supports references.
-- Attach the row's `references/layout-guides/<state>.png` image to every row-strip job as a layout-only guide, and do not accept outputs that copy guide pixels.
-- Use lightweight visual workers for base generation, row-strip visual generation, and final contact-sheet QA by default; the parent owns manifest updates, deterministic image scripts, packaging, and cleanup.
-- Generate every normal visual job with `$imagegen`: base plus all row strips that are not explicitly approved `running-left` mirror derivations.
-- Treat only the base job as eligible for prompt-only generation; every row job must attach its listed grounding images.
-- Generate `running-right` before deciding whether `running-left` can be mirrored.
-- When `running-left` is mirrored, preserve frame order and timing semantics; derive it through the deterministic script instead of mirroring an entire strip wholesale.
-- Do not derive or reuse `waiting`, `running`, `failed`, `review`, `jumping`, or `waving` from another state; each has distinct app semantics and must be generated as its own row.
-- Never substitute locally drawn, tiled, transformed, or code-generated row strips for missing `$imagegen` outputs.
-- Only mark a visual job complete after its selected output has been copied into the decoded output path.
-- Do not rely on generated images for exact atlas geometry; use this skill's deterministic image scripts.
-- Use the chroma key stored in `pet_request.json`; do not force a fixed green screen.
-- Keep the pet's silhouette, face, materials, palette, style, and props consistent across all rows.
-- Treat visual identity or style drift as a blocker even when `qa/review.json` and `final/validation.json` have no errors.
-- Treat a contact sheet that shows cropped references, repeated tiles, white cell backgrounds, or non-sprite fragments as failed.
-- Treat preview GIFs that show extraction-induced size popping, reversed directional timing, wrong facing direction, or inert idle loops as failed.
-- Treat forbidden detached effects, chroma-key-adjacent artifacts, shadows, glows, smears, dust, landing marks, wave marks, speed lines, or motion trails as failed rows.
-- Treat `qa/review.json` errors as blockers. Warnings require visual review.
+Detail moved to `references/rules.md`.
 
 ## Acceptance Criteria
 
@@ -552,3 +418,7 @@ use it. Each answers one question the sections above do not.
 
 - [`references/codex-pet-contract.md`](references/codex-pet-contract.md)
 - [`references/qa-rubric.md`](references/qa-rubric.md)
+
+## Reference Index
+
+1 reference file(s) are named in `references/README.md`.
