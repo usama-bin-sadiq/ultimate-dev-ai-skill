@@ -1,9 +1,21 @@
 # Architecture
 
 This document explains how the system is put together and, where the choice was
-not obvious, why. The full specification is in `new-arch.md`; the requirements
-are in `prd.md`; the executed behaviour is in
-`SKILL.md`.
+not obvious, why. It is rationale, not specification: it records the reasoning
+behind decisions, and where it and the specification disagree the specification
+wins.
+
+- **Specification** — `new-arch-updated.md` (revision 2)
+- **Requirements** — `prd.md`
+- **Executed behaviour** — `SKILL.md`
+
+`new-arch.md` is revision 1 and is retained because ADR 0008 and ADR 0009
+record divergences against it. It is superseded: it has no coordination-mode
+section, so a reader following it would not find the four modes that
+`SKILL.md` Step 4 implements and that `references/coordination-modes.md`
+specifies. Two things in this repository still say `new-arch.md` where they mean
+the current specification, and both are recorded as divergences rather than
+silently corrected — see ADR 0009.
 
 ## The load-bearing claim
 
@@ -134,6 +146,34 @@ instance that produced it, plus a stated scope. A promoted capability that turns
 out wrong must be identifiable and removable. The ladder —
 `OBSERVED → CANDIDATE → VALIDATING → VALIDATED → PROMOTED → ACTIVE → DEPRECATED`
 — exists to make that reversibility structural rather than aspirational.
+
+### 6. Coordination mode is a decision, and it is not the same as capability
+
+The first five decisions are about *what* to do. This one is about *how many
+contexts* do it.
+
+Four modes — **inline**, **delegate**, **route**, **handoff** — and the choice is
+made before any capability is acquired, because it changes what acquiring one
+means. Under `delegate` a capability is something you call; under `route` it is
+something a decision can select; under `handoff` it is something that arrives
+with authority already attached.
+
+Recording it as a boundary is the part that matters. Everything else about the
+modes is a table; what stops them collapsing into one another is that a
+transition between them is a decision with a recorded rejected alternative, the
+same as any other boundary. A mode change that nobody wrote down is
+indistinguishable, downstream, from never having chosen.
+
+The load-bearing correction is to the earlier claim that *agents are not the
+architecture*. That was right about swarm-shaped fan-out and wrong about
+transfer: a handoff moves authority, and once authority has moved the decision
+fabric has to survive the move. So the claim is now **JEv is the architecture —
+including when it hands off**, and the four modes are ways of being one kernel
+rather than four. ADR 0008 records the amendment.
+
+The selection test and the per-mode costs are in
+`references/coordination-modes.md`; the specification is revision 2's
+§4.
 
 ## Trust boundaries
 

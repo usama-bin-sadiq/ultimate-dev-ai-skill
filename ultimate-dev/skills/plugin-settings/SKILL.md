@@ -553,19 +553,3 @@ Anything marked **means** is an implementation detail of one tool, and a reader
 on a different runtime may need a different mechanism for the same step. Anything
 marked **subject** means the capability is genuinely about that tool, and a reader
 without it should not expect this file to apply.
-
-Each file below is loaded on demand, not at triage. 12 file(s):
-
-- `references/additional-resources.md` — Additional Resources. <!-- Moved verbatim from plugin-settings/SKILL.md, the
-- `references/best-practices.md` — Best Practices. <!-- Moved verbatim from plugin-settings/SKILL.md, the
-- `references/changing-settings.md` — Changing Settings. <!-- Moved verbatim from plugin-settings/SKILL.md, the
-- `references/common-patterns.md` — Common Patterns. <!-- Moved verbatim from plugin-settings/SKILL.md, the
-- `references/configuration.md` — Configuration. <!-- Moved verbatim from plugin-settings/SKILL.md, the
-- `references/creating-settings-files.md` — prose
-- `references/file-structure.md` — File Structure. <!-- Moved verbatim from plugin-settings/SKILL.md, the
-- `references/implementation-workflow.md` — Implementation Workflow. <!-- Moved verbatim from plugin-settings/SKILL.md, the
-- `references/quick-reference.md` — Quick Reference. <!-- Moved verbatim from plugin-settings/SKILL.md, the
-- `references/reading-settings-files.md` — Reading Settings Files. <!-- Moved verbatim from plugin-settings/SKILL.md, the
-- `references/runtime-notes.md` — Runtime notes. <!-- Moved verbatim from plugin-settings/SKILL.md, the
-- `references/security-considerations.md` — Security Considerations. <!-- Moved verbatim from plugin-settings/SKILL.md, the
-

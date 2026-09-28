@@ -253,3 +253,4 @@ Rules:
 
 - Fill in known context, but allow the model to infer and mark assumptions.
 - Include 1–2 repo-path anchors per major claim; do not dump every match.
+```

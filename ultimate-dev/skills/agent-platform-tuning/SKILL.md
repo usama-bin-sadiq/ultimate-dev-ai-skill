@@ -330,15 +330,329 @@ environment: they would downgrade packages other tools may share.
 
 ## Phase 1: Dataset Preparation & Upload {#phase-1}
 
-Detail moved verbatim to `references/phase-1-dataset-preparation-upload-phase-1.md`. Load it when this section matters and the pointer is not enough.
+### 1.0 Dataset Discovery & Confirmation
+
+-   **User-Provided Dataset Verification:** If the user specifies a dataset
+    filename or path in their prompt, verify its existence in the workspace
+    (e.g. via script execution or checking for typos).
+    *   **If the file cannot be found anywhere**, you **MUST** inform the user
+        that the dataset file does not exist or cannot be accessed. You **MUST**
+        prompt the user to provide a valid dataset path. Alternatively, if
+        candidate dataset files are found in the workspace during your search,
+        you **MUST** present the candidates to the user and ask them to select
+        one. You **MUST** stop tool execution immediately after reporting the
+        missing file or presenting candidates, and wait for the user's response.
+        Do **NOT** ask for 90/10 validation split permission, and do **NOT**
+        attempt to upload the dataset before receiving a valid dataset file
+        selection from the user.
+    *   **If the file is found and verified**, proceed to Step 1.1 Formatting &
+        Validation below.
+-   **Auto-Discovery: From User Bucket:** If the user does not have a dataset
+    and no suitable alternative is found in the Hugging Face reference, offer to
+    search the user's GCS buckets for potential training data. Prioritize
+    searching for files with extensions like `.jsonl`, `.json`, `.csv`, and
+    `.parquet`. If such files are found, read the first few lines/records of
+    each to determine if they contain text-based data suitable for tuning (e.g.,
+    prompt/completion pairs) that can be modified to follow
+    [Data Preparation Guide](references/data_prep.md) and is related to the
+    tuning task requested. **DO NOT** search without prompting first.
+-   **Auto-Discovery: From Task to Huggingface:** If the user has a specific
+    task (e.g. math reasoning, coding, instruction following) or wants to use a
+    Hugging Face dataset without naming a specific one, refer to
+    [Huggingface Datasets Reference](references/hf_datasets.md) and recommend
+    matching datasets (e.g., `open-r1/OpenR1-Math-220k` or
+    `AI-MO/NuminaMath-TIR` for mathematical reasoning; `openai/gsm8k` is also
+    widely used). For each dataset recommended, provide some information about
+    the dataset and provide some reasonable splits, and ask the user to select
+    one. Do NOT output generic instructions telling the user to prepare and
+    upload their own data — proactively guide the interactive dataset discovery,
+    preview, and preparation flow.
+
+    > [!IMPORTANT] **CRITICAL: Ask for Confirmation and Column Selection.** Once
+    > the dataset is selected, execute Python via `run_command` to inspect the
+    > dataset using `load_dataset(..., streaming=True)`. Do not proceed with
+    > dataset preparation or upload until you perform the following steps and
+    > get user confirmation: 1. **Dataset and Split Confirmation:** Present the
+    > dataset and available splits to the user and have them confirm which to
+    > use. 2. **Column Selection (Hugging Face or Custom Datasets):** You
+    > must: - Provide a list of all available columns in the selected dataset
+    > split. - **Show a few samples from the dataset** to help the user
+    > understand the content and make the choice of columns. - Recommend which
+    > columns should be mapped to `prompt` (or user message) and `completion`
+    > (or assistant response), offering a few reasonable options if
+    > applicable. - Ask the user to confirm the column mapping or specify which
+    > columns to use.
+
+### 1.1 Formatting & Validation
+
+-   **Conversion**: If data is in CSV, JSON, or Parquet, use
+    `scripts/prepare_dataset.py` to convert.
+-   **Validation Split Confirmation**: Whenever generating or preparing a single
+    dataset without an explicit validation set (including when generating sample
+    chat/instruction datasets or preparing training datasets), you MUST generate
+    or process the data using Python via `run_command` and **you MUST prompt the
+    user** to seek permission to split the training dataset 90/10 to form a
+    validation dataset (using `--validation_split 0.1` or Python script). If
+    they agree, proceed with the split. If they decline, just use the training
+    dataset without a validation dataset. Do **NOT** offer an 80/20 split; the
+    tuning service rejects it, for the reason given in
+    the
+    [Data Preparation Guide](references/data_prep.md#sizing-the-validation-split).
+ Do NOT proceed to upload the dataset or
+    submit the tuning job before asking the user about the 90/10 validation
+    split!
+-   **Validation**: If data is already in JSONL, validate it before uploading.
+    Simply having a `.jsonl` extension is not enough. You must verify that the
+    content schema is valid for tuning (e.g. correct system/user/model roles).
+
+```bash
+python3 scripts/prepare_dataset.py \
+    --input my_data.jsonl \
+    --format <messages|messages_gemini> \
+    --validate_only
+```
+
+*(Use `--format messages` for open models and `--format messages_gemini` for
+Gemini models.)* - Refer to [Data Preparation Guide](references/data_prep.md)
+for required schemas.
+
+### 1.2 Upload
+
+Upload formatted `.jsonl` files to GCS using a unique directory (e.g., with a
+datetime timestamp) to avoid overwriting outputs from different runs. If the
+user named a bucket (e.g., `gs://mybucket`), use that bucket name EXACTLY as
+provided (verbatim) and NEVER prepend the project ID or modify the bucket name.
+
+```bash
+ARTIFACTS="gs://YOUR_BUCKET/tuning_agent_job_<datetime>/dataset.jsonl"
+gcloud storage cp dataset.jsonl "$ARTIFACTS"
+```
 
 ## Phase 2: Model Configuration & Recommendation {#phase-2}
 
-Detail moved verbatim to `references/phase-2-model-configuration-recommendation-phase-2.md`. Load it when this section matters and the pointer is not enough.
+Help the user choose the best model and parameters. **Always seek user
+confirmation before submitting the job.**
+
+-   If the user does not specify a specific model in their prompt, calculate
+    recommendations based on the **Models Catalog**.
+-   **Prompt for Confirmation:** Present the recommended model to the user and
+    ask for their confirmation before configuring hyperparameters.
+
+### 2.1 Configuration
+
+#### For Open Models
+
+-   Recommend `tuning_mode`, `epochs`, `learning_rate`, and `adapter_size` based
+    on the [Tuning Guide](references/tuning_guide.md) and model-specific
+    baselines in the [Models Catalog](references/models.md).
+
+#### Verify the Live Model ID
+
+Before submitting the job, run `scripts/list_models.py` and pick `--base_model`
+only from its `models` output. Do not invent IDs or version numbers.
+
+```bash
+python3 scripts/list_models.py --project YOUR_PROJECT --filter gemini
+```
+
+Output: `{"models": [...], "total_count": N, "truncated": bool}`.
+
+-   For Gemini, strip `google/` and `@default` (e.g.
+    `google/gemini-2.5-flash@default` → `gemini-2.5-flash`); for open models,
+    pass `publisher/family@version` as-is.
+-   Skip Gemini variants ending in `-embedding`, `-tts`, `-image`,
+    `-computer-use`, or `-native-audio`; they are not tunable.
+-   If `truncated` is `true`, re-run with a tighter `--filter` (e.g.
+    `gemini-2.5`) before deciding the target version is unavailable.
+-   If `models` is empty, stop and ask the user.
+
+### 2.2 Calculating Cost (Open Models Only)
+
+> [!WARNING] **CRITICAL: Always Use `run_command` with
+> `scripts/calculate_cost.py`** Do **NOT** call the `estimate_cost` ADK tool for
+> model tuning. The `estimate_cost` tool only supports specific endpoint serving
+> pricing and will fail with `Unsupported request type` on tuning requests. You
+> **MUST** call the `run_command` tool to execute Python code or
+> `scripts/calculate_cost.py` (or
+> `/workspace/skills/agent-platform-tuning/scripts/calculate_cost.py`) to
+> calculate the cost. Whenever a model is chosen or the user switches models
+> (e.g. from Llama to Gemma), you **MUST** call `run_command` to calculate or
+> recalculate the cost before presenting the dry-run confirmation prompt. Always
+> report the calculated dollar figure (e.g., `Estimated tuning cost: $X.XX`) in
+> the dry-run confirmation prompt.
+
+-   We calculate the estimated cost of tuning based on the dataset and the
+    selected model in the [Models Catalog](references/models.md):
+
+    ```bash
+    python3 scripts/calculate_cost.py \
+        --input my_data.jsonl \
+        --model MODEL_NAME \
+        --tuning_mode TUNING_MODE \
+        --epochs epochs
+    ```
+
+    `--model` takes either the display name (`Qwen 3 8B`) or the same resource
+    name you pass to `--base_model` (`qwen/qwen3@qwen3-8b`), so the value chosen
+    in Step 2.1 can be reused as-is.
+
+> [!NOTE] **Handling Missing Dataset Errors:** If `scripts/calculate_cost.py`
+> fails because the dataset file (e.g. `my_data.jsonl` or `dummy_data.jsonl`)
+> cannot be found, you **MUST** inform the user that the dataset file does not
+> exist or cannot be accessed. You **MUST** prompt the user to provide a valid
+> dataset path, and stop tool execution immediately to wait for their response.
+> Do **NOT** retry or loop, do **NOT** invent a specific cost number, and do
+> **NOT** prompt for job submission approval before receiving a valid dataset
+> from the user.
+
+-   **Prompt for Confirmation:** Present the recommended hyperparameter
+    configuration and estimated cost (with the concrete dollar figure calculated
+    above) to the user and ask for their approval before proceeding to job
+    submission. Make sure to note that the estimated cost is just an estimate
+    and can vary from actual billing costs.
 
 ## Phase 3: Tuning Job Execution {#phase-3-tuning-job-execution}
 
-Detail moved verbatim to `references/phase-3-tuning-job-execution-phase-3-tuning-job-execution.md`. Load it when this section matters and the pointer is not enough.
+**CRITICAL Pre-Flight Check (GCS Verification):** Before you propose a
+confirmation prompt or submit any tuning job, you **MUST** verify that the
+specified training dataset GCS URI (e.g. `gs://dummy_bucket/dataset.jsonl` or
+`gs://YOUR_BUCKET/...`) actually exists and is accessible. Run `gcloud storage
+ls $DATASET_URI` (or `gsutil ls`).
+
+*   **If the verification fails** (e.g. `BucketNotFound`, `404`, `AccessDenied`,
+    or indicating a dummy/missing bucket), you **MUST** inform the user that the
+    GCS bucket or dataset does not exist or cannot be accessed. You **MUST**
+    prompt the user to provide a valid GCS URI for the dataset, and stop tool
+    execution immediately to wait for their response. Do **NOT** propose a
+    confirmation prompt and do **NOT** execute any tuning scripts before
+    receiving a valid dataset URI from the user.
+*   **If the verification succeeds**, proceed to propose the confirmation prompt
+    below.
+
+### For Gemini Models
+
+Submit the Gemini supervised fine-tuning job using the Python SDK
+(`google.genai` or `vertexai.tuning.sft`):
+
+```python
+from google import genai
+from google.genai import types
+
+client = genai.Client(enterprise=True, project=PROJECT, location=LOCATION)
+tuning_job = client.tunings.tune(
+    base_model=BASE_MODEL,  # e.g. "gemini-2.5-flash"
+    training_dataset=types.TuningDataset(gcs_uri=TRAIN_DATASET_URI),
+    config=types.CreateTuningJobConfig(
+        epoch_count=EPOCHS,  # e.g. 3
+        learning_rate_multiplier=LEARNING_RATE_MULTIPLIER,  # e.g. 1.0
+        validation_dataset=(
+            types.TuningValidationDataset(gcs_uri=VAL_DATASET_URI)
+            if VAL_DATASET_URI
+            else None
+        ),
+    ),
+)
+print("Tuning Job Resource Name:", tuning_job.name)
+```
+
+Alternatively using `vertexai.tuning.sft`:
+
+```python
+import vertexai
+from vertexai.tuning import sft
+
+vertexai.init(project=PROJECT, location=LOCATION)
+job = sft.train(
+    source_model=BASE_MODEL,
+    train_dataset=TRAIN_DATASET_URI,
+    validation_dataset=VAL_DATASET_URI,
+    epochs=EPOCHS,
+    learning_rate_multiplier=LEARNING_RATE_MULTIPLIER,
+)
+print("Tuning Job Resource Name:", job.resource_name)
+```
+
+Execute the Python script via `python3` (inline or written to
+`/tmp/submit_gemini_tuning.py`). Report the returned operation name or trackable
+resource identifier, and do NOT wait for the terminal state.
+
+### For Open Models
+
+Submit the open model tuning job using `scripts/tune_open_model.py` or the
+Python SDK. Identify the model id using available models documentation
+at
+[documentation](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/open-model-tuning#supported-models).
+
+
+`--base_model` takes a publisher model **resource name**
+(`{publisher}/{model_id}@{version_id}`), not the display name shown in the
+catalog. See "Model Resource Name Format" in `references/models.md` for the
+format, verified examples, and how to look up a name you do not have.
+
+Using `scripts/tune_open_model.py`:
+
+```bash
+python3 scripts/tune_open_model.py \
+    --project YOUR_PROJECT \
+    --location global \
+    --base_model BASE_MODEL_ID \
+    --train_dataset gs://YOUR_BUCKET/tuning_agent_job_<datetime>/dataset.jsonl \
+    --output_uri gs://YOUR_BUCKET/tuning_agent_job_<datetime>/output \
+    --epochs EPOCHS \
+    --learning_rate LR \
+    --tuning_mode MODE
+```
+
+*(If `scripts/tune_open_model.py` is not in the current working directory, run
+the Python SDK snippet directly with `python3 -c "..."` or write it to
+`/tmp/submit_open_tuning.py` using `client.tunings.tune`.)*
+
+This script is open model only, and `--location` falls back to `global` if
+omitted. Always pass the location the user confirmed in section 0.2 explicitly,
+so it is visible in the command string you present for approval.
+
+> [!WARNING] **`--output_uri` is required for open models.** The Python SDK
+> declares it as `output_uri: Optional[str] = None`, but the tuning backend
+> rejects open model jobs that omit it with `INVALID_ARGUMENT: The output_uri
+> field is required for this model.` Treat the SDK's "optional" signature as
+> wrong here and always pass a GCS destination.
+
+Because the flag is mandatory, you must establish where the tuned model is
+written before you can submit. **Never invent a bucket name, derive one from the
+project number, or run `gcloud storage buckets create` unprompted.** Creating a
+bucket is a mutating action and is subject to the Tier M confirmation policy
+below.
+
+-   **The user named a bucket or URI** → use it EXACTLY as specified by the user
+    (verbatim), appending a unique per-job directory as in section 1.2.
+    **CRITICAL:** NEVER alter, prefix, or prepend the project number or anything
+    else to a user-specified bucket name! Even if `gcloud storage buckets list`
+    shows an existing bucket with a project-prefixed name (e.g.
+    `gs://PROJECT-mybucket` when the user asked for `gs://mybucket`), you MUST
+    use the user's exact bucket name `gs://mybucket` verbatim. Never silently
+    substitute an existing bucket.
+-   **A bucket was already used for the dataset upload in section 1.2** →
+    propose reusing it for the output and ask the user to confirm.
+-   **Neither or user states they have no bucket** → Check existing buckets in
+    the project (`gcloud storage buckets list --project=PROJECT`) or offer to
+    create a dedicated bucket. When proposing a bucket to create, ensure the
+    bucket name is unique by including a unique suffix or timestamp (e.g.
+    `gs://PROJECT-tuning-$(date +%s)` or
+    `gs://PROJECT-tuning-artifacts-<timestamp>` in LOCATION) to prevent HTTP 409
+    collisions with previously created buckets. Propose the destination bucket
+    in your configuration dry-run preview and ask the user for confirmation
+    before proceeding.
+
+> [!IMPORTANT] **Interactive Confirmation Required (Tier M):** Before proceeding
+> with job submission, you **MUST** present the proposed command string showing
+> all literal flags in a confirmation prompt to the user with 'Yes' and 'No'
+> options.
+
+> **CRITICAL:** When presenting this confirmation prompt to the user, you MUST
+> output it as a direct plain text response and stop tool execution immediately.
+> Do NOT call any command execution or interactive tools in the same turn, as
+> unexpected tool calls may be auto-replied by the simulation harness and cause
+> an infinite loop. Yield immediately for the user's reply.
 
 ## Phase 4: Monitoring {#phase-4-monitoring}
 
@@ -412,14 +726,4 @@ Each file below is loaded on demand, not at triage. 3 file(s):
 - `references/data_prep.md` — Data Preparation for Agent Platform Model Tuning. Agent Platform Model Tuning requires training data in JSON Lines (JSONL)
 - `references/hf_datasets.md` — Huggingface Dataset References. This document provides references for various datasets used in Agent Platform
 - `references/tuning_guide.md` — Agent Platform Model Tuning Heuristics and Concepts. This guide details the core concepts of fine-tuning and provides heuristics for
-
-
-Each file below is loaded on demand, not at triage. 6 file(s):
-
-- `references/phase-0-environment-iam-setup-phase-0.md` — Phase 0: Environment & IAM Setup {#phase-0}. <!-- Moved verbatim from agent-platform-tuning/SKILL.md, the
-- `references/phase-4-monitoring-phase-4-monitoring.md` — Phase 4: Monitoring {#phase-4-monitoring}. <!-- Moved verbatim from agent-platform-tuning/SKILL.md, the
-- `references/phase-5-model-deployment-phase-5-model-deployment.md` — Phase 5: Model Deployment {#phase-5-model-deployment}. <!-- Moved verbatim from agent-platform-tuning/SKILL.md, the
-- `references/resources.md` — Resources. <!-- Moved verbatim from agent-platform-tuning/SKILL.md, the
-- `references/runtime-notes.md` — Runtime notes. <!-- Moved verbatim from agent-platform-tuning/SKILL.md, the
-- `references/workflow-decision-tree.md` — Workflow Decision Tree. <!-- Moved verbatim from agent-platform-tuning/SKILL.md, the
 

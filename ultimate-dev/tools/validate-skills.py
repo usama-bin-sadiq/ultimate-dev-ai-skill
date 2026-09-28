@@ -105,6 +105,9 @@ REF_PATTERN = re.compile(
 )
 
 
+FENCE_LINE = re.compile(r"^(\s*)(`{3,}|~{3,})(.*)$")
+
+
 def _load_text_rules():
     """Import tools/text_rules.py by path, since CI runs this file as a script.
 
@@ -165,7 +168,7 @@ def in_fenced_code(md_path: Path, upto_line: int) -> bool:
     except OSError:
         return False
     for line in text.split("\n")[:upto_line]:
-        m = re.match(r"^(\s*)(`{3,}|~{3,})(.*)$", line)
+        m = FENCE_LINE.match(line)
         if not m:
             continue
         token, info = m.group(2), m.group(3).strip()
@@ -935,6 +938,53 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
     # reimplement CommonMark's closing rule here, the fence state is computed by
     # the same helper -- imported, not copied -- and the reasoning lives in one
     # place.
+    # An unclosed fence is not a formatting nit. Every rule in this file that
+    # reasons about fences -- the marker exemption, the reference declaration,
+    # the sibling-link check -- reads them with a state machine, and a fence
+    # that never closes puts that machine out of phase for the rest of the
+    # document. Six skills have one, and the effect is that everything after it
+    # is invisible to the checks: a reference listed after the break is reported
+    # as an orphan, and a real marker inside what the reader sees as prose is
+    # silently exempt.
+    #
+    # It also made a refactoring tool loop. context-save could not be split
+    # correctly because every section after line 303 was inside a fence, so each
+    # pass re-added rows the previous pass had written and the file grew 24
+    # lines per pass forever.
+    for md in sorted(repo_root.rglob("*.md")):
+        rel_md = md.relative_to(repo_root)
+        if rel_md.parts[0] in {".git", "vendor"} or ".eval-fixtures" in rel_md.parts:
+            continue
+        if rel_md.name in SOURCE_SPECS or "runs" in rel_md.parts:
+            continue
+        open_fence = ""
+        for line_no, line in enumerate(
+            md.read_text(encoding="utf-8", errors="replace").split("\n"), 1
+        ):
+            m = FENCE_LINE.match(line)
+            if not m:
+                continue
+            token, info = m.group(2), m.group(3).strip()
+            if not open_fence:
+                open_fence = token
+            elif (
+                token[0] == open_fence[0]
+                and len(token) >= len(open_fence)
+                and not info
+            ):
+                # The length test is load-bearing and this loop first omitted it,
+                # so a ```` marker closed a ``` block here while
+                # in_fenced_code() -- which is what the other checks use -- said
+                # it did not. The same document was balanced and unbalanced at
+                # once depending on which check asked, and a check that
+                # disagrees with itself cannot be used to judge a document.
+                open_fence = ""
+        if open_fence:
+            errors.append(
+                f"{rel_md}: an unclosed {open_fence!r} fence; every fence-aware "
+                f"check after it reads this document wrongly"
+            )
+
     consumed_stems = _consumed_by_script(repo_root)
     for path in sorted(repo_root.rglob("*.md")):
         rel = path.relative_to(repo_root)
@@ -1417,11 +1467,28 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
                 )
         if kernel.is_file():
             kernel_body = kernel.read_text(encoding="utf-8")
-            unreferenced = [role.stem for role in roles if role.stem not in kernel_body]
+            # A role is dispatched, not mentioned. What makes one reachable is a
+            # row in references/delegation.md; SKILL.md names the nineteen the
+            # kernel relies on and points at the table for the rest. So the
+            # question is whether the role has a dispatch condition, and asking
+            # instead whether SKILL.md contains its name reported 267 roles as
+            # unreachable after the table was built -- the check and the design
+            # were describing different things.
+            dispatch_doc = SKILL_ROOT / "references" / "delegation.md"
+            dispatched: set[str] = set()
+            if dispatch_doc.is_file():
+                dispatched = set(
+                    re.findall(
+                        r"agents/([a-z0-9_-]+)\.md",
+                        dispatch_doc.read_text(encoding="utf-8", errors="replace"),
+                    )
+                )
+            unreferenced = [role.stem for role in roles if role.stem not in dispatched]
             if unreferenced:
                 warnings.append(
-                    f"{AGENTS_DIR}/: not mentioned in SKILL.md, so the kernel will not "
-                    f"know to delegate to them: {', '.join(unreferenced)}"
+                    f"{AGENTS_DIR}/: no row in references/delegation.md, so no "
+                    f"decision can reach them: {', '.join(sorted(unreferenced)[:12])}"
+                    + (f" (+{len(unreferenced) - 12} more)" if len(unreferenced) > 12 else "")
                 )
             # A count written in prose goes stale the moment a file is added, and
             # it goes stale silently: nothing about "290" stops being true on its

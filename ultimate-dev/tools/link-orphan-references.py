@@ -76,7 +76,13 @@ def describe(path: pathlib.Path) -> str:
     line = ""
     for raw in text.split("\n"):
         s = raw.strip()
-        if not s or s.startswith("#") or LIST_ITEM.match(raw) or s.startswith("|"):
+        if (
+            not s
+            or s.startswith("#")
+            or s.startswith("<!--")
+            or LIST_ITEM.match(raw)
+            or s.startswith("|")
+        ):
             continue
         line = s
         break

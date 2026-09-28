@@ -173,11 +173,106 @@ Wait for all URLs before proceeding. Extract the file key from each URL — the 
 
 ## MCP Method — Extraction via Figma MCP
 
-Detail moved verbatim to `references/mcp-method-extraction-via-figma-mcp.md`. Load it when this section matters and the pointer is not enough.
+*(Use when: single-mode system, or user is not comfortable with a terminal)*
+
+**Requires:** Figma MCP connected. No personal access token or local setup needed.
+
+**Note:** This method reads only the currently active variable mode in Figma. If the design system has multiple modes (e.g. Light/Dark) the user will need to switch modes in Figma between reads — workable but more steps. Don't mention this limitation upfront; only explain it if multiple modes are discovered during extraction.
+
+### Step 1a — Verify Figma MCP is connected
+
+Before doing anything else, confirm that Figma MCP tools are available. Look for tools whose names suggest variable extraction, design context reading, or file metadata — different Figma MCP servers may use different exact names (e.g. `get_variable_defs`, `getVariableDefinitions`, `figma_get_variables`). Treat the tool names in this skill as examples, not fixed contracts — match by purpose, not exact string.
+
+If no Figma tools are available at all, tell the user:
+> "The Figma MCP connector isn't connected yet. Connect it in your Claude interface (Settings → Connectors or MCP configuration), then come back and we can start."
+
+Do not proceed until the connection is confirmed.
+
+### Step 1b — Check for modes
+
+Call `get_variable_defs` with the file node ID to see what collections and modes exist:
+
+```
+Tool: get_variable_defs
+Input: { "nodeId": "<root node id or specific variable group node id>" }
+```
+
+If the response shows multiple modes and the user wants all of them, explain that you'll need them to switch modes in Figma between reads, and proceed.
+
+### Step 1c — Extract variables
+
+Call `get_variable_defs` on the relevant nodes. Work through token categories one collection at a time — colors, typography, spacing, radii, shadows. For each collection, read the active mode's values.
+
+**If multiple modes need to be captured:**
+- Extract and record all values for the current mode
+- Ask the user to switch the active mode in Figma (View menu → Variable Modes, or the mode switcher on the canvas)
+- Call `get_variable_defs` again and record values for the new mode
+- Repeat for each mode
+- Merge into a single token file with mode keys (see output format in Step 5)
+
+### Step 1d — Resolve aliases
+
+If any variable value references another variable (an alias), resolve it to its final value. Do not write unresolved alias references into the output file — flag any that cannot be resolved and ask the user.
+
+---
 
 ## curl Method — Extraction from the user's local machine
 
-Detail moved verbatim to `references/curl-method-extraction-from-the-user-s-local-machine.md`. Load it when this section matters and the pointer is not enough.
+*(Use when: multiple variable modes, and user is comfortable with a terminal)*
+
+**Requires:** Terminal access (curl is built into macOS and Linux; available on Windows 10+), and a Figma Personal Access Token (viewer scope is enough).
+
+**Important:** Complete all steps in this section — especially PAT setup and verification — before running any curl commands. Running curl with an invalid token will create broken output files.
+
+> **Community files are not supported.** The curl commands only work on Figma files that are in your own account (files you own or have been invited to). Community files you are viewing but have not duplicated will return a 403 error. If the user is working from a community file, ask them to duplicate it to their account first: in Figma, open the community file → click **Duplicate to your drafts** → use the duplicated file's URL instead.
+
+### Step 1a — Set up a Figma Personal Access Token
+
+Do this before anything else. Ask the user:
+
+> "Before we run the extraction command, you'll need a Figma Personal Access Token. Do you already have one?"
+
+If yes: proceed to verification (Step 1b).
+
+If no, guide them through creating one:
+> 1. Open Figma in your browser or desktop app
+> 2. Click your avatar (top-left) → **Settings**
+> 3. Go to the **Security** tab
+> 4. Scroll to **Personal access tokens** → click **Generate new token**
+> 5. Give it any name (e.g. "Claude token export"), set scope to **Viewer**
+> 6. Copy the token immediately — Figma only shows it once
+
+### Step 1b — Verify the PAT works before proceeding
+
+If the PAT was recently verified (within the last 90 days), the user can skip this step. Otherwise, ask the user to run this verification command in their terminal:
+
+```bash
+curl -H "X-Figma-Token: YOUR_TOKEN" "https://api.figma.com/v1/me"
+```
+
+Expected result: a JSON response containing their Figma account email (e.g. `"email": "name@example.com"`).
+
+If the response contains `"status": 403` or `"Invalid token"`: the token is wrong or expired. Ask the user to generate a new one and try again. **Do not proceed to extraction until the verification succeeds.**
+
+### Step 1c — Run the variables extraction
+
+Ask the user to run in their terminal:
+
+```bash
+curl -H "X-Figma-Token: YOUR_TOKEN" "https://api.figma.com/v1/files/FILE_KEY/variables/local" -o design-tokens-raw.json
+```
+
+This saves the complete raw variable export — all collections, all modes, all values — to `design-tokens-raw.json`.
+
+### Step 1d — Share the result
+
+Once the command completes, ask the user to either:
+- Upload `design-tokens-raw.json` to the conversation, or
+- Paste its contents into the conversation
+
+Then continue to Step 2 (Text Styles) below.
+
+---
 
 ## Extract Styles
 
@@ -496,19 +591,3 @@ Give the user a brief summary and ask them to review the output:
 - [ ] Shadows / elevation levels (if present)
 - [ ] Icon size tokens (if present)
 - [ ] Animation / duration tokens (if present)
-
-Each file below is loaded on demand, not at triage. 12 file(s):
-
-- `references/extract-styles.md` — Extract Styles. <!-- Moved verbatim from qt-figma-token-extraction/SKILL.md, the
-- `references/skill-structure.md` — Skill Structure. <!-- Moved verbatim from qt-figma-token-extraction/SKILL.md, the
-- `references/step-0-check-qt-project-setup.md` — Step 0 — Check Qt Project Setup. <!-- Moved verbatim from qt-figma-token-extraction/SKILL.md, the
-- `references/step-1-routing-questions.md` — Step 1 — Routing Questions. <!-- Moved verbatim from qt-figma-token-extraction/SKILL.md, the
-- `references/step-2-collect-all-figma-file-links.md` — Step 2 — Collect All Figma File Links. <!-- Moved verbatim from qt-figma-token-extraction/SKILL.md, the
-- `references/step-3-review-the-raw-output.md` — Step 3 — Review the Raw Output. <!-- Moved verbatim from qt-figma-token-extraction/SKILL.md, the
-- `references/step-4-map-token-types-and-apply-naming-conventions.md` — Step 4 — Map Token Types and Apply Naming Conventions. <!-- Moved verbatim from qt-figma-token-extraction/SKILL.md, the
-- `references/step-5-write-design-tokens-json.md` — prose
-- `references/step-6-generate-qml-files.md` — prose
-- `references/step-7-review-fix-qml-and-update-cmakelists-txt.md` — prose
-- `references/step-8-summary.md` — Step 8 — Summary. <!-- Moved verbatim from qt-figma-token-extraction/SKILL.md, the
-- `references/token-categories-checklist.md` — Token Categories Checklist. <!-- Moved verbatim from qt-figma-token-extraction/SKILL.md, the
-

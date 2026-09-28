@@ -138,3 +138,4 @@ Scripts can extract:
 - `typography.heading`, `typography.body`
 - `voice.traits`, `voice.prohibited`
 - `logo.variants`, `logo.minSize`
+```

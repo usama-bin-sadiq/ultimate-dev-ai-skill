@@ -184,3 +184,4 @@ pnpm db:migrate
 - Include executable verification checks after each setup phase.
 - Prefer links to canonical docs instead of duplicating long content.
 - Update this template when stack conventions or tooling change.
+```

@@ -50,3 +50,4 @@ grep -q "<guardrail phrase>" "<target file>"
   survives across runs.
 - Keep behavioral prompts minimal and self-contained so a future run (or skill-creator
   eval) can replay them without this conversation's context.
+```

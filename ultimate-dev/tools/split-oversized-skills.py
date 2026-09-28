@@ -60,8 +60,34 @@ KEEP = re.compile(
 
 
 def sections(body: str) -> list[tuple[str, int, int, str]]:
-    """(heading, start, end, text) for every level-2 section, in order."""
-    marks = [(m.start(), m.group(1).strip()) for m in re.finditer(r"^##\s+(.+)$", body, re.M)]
+    """(heading, start, end, text) for every level-2 section, in order.
+
+    Fence-aware, and that is the whole point. A `## ` line inside a ```bash
+    block is not a heading -- it is a shell comment -- and treating it as one
+    cut a fenced block in half, so the half that stayed had a fence that never
+    closed. 55 reference files were written that way.
+
+    The fence walk uses the same rule as every other fence-aware check in this
+    repository: a run of the same character at least as long as the one that
+    opened it, carrying no info string.
+    """
+    FENCE = re.compile(r"^(\s*)(`{3,}|~{3,})(.*)$")
+    marks = []
+    fence = ""
+    pos = 0
+    for line in body.split("\n"):
+        m = FENCE.match(line)
+        if m:
+            tok, info = m.group(2), m.group(3).strip()
+            if not fence:
+                fence = tok
+            elif tok[0] == fence[0] and len(tok) >= len(fence) and not info:
+                fence = ""
+        elif not fence:
+            h = re.match(r"^##\s+(.+)$", line)
+            if h:
+                marks.append((pos, h.group(1).strip()))
+        pos += len(line) + 1
     out = []
     for i, (start, name) in enumerate(marks):
         end = marks[i + 1][0] if i + 1 < len(marks) else len(body)
@@ -72,6 +98,41 @@ def sections(body: str) -> list[tuple[str, int, int, str]]:
 def slug(name: str) -> str:
     s = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
     return s or "section"
+
+
+
+def rebase_paths(text: str) -> str:
+    """Fix relative paths for a file that moved from SKILL.md into references/.
+
+    Moving a section up one directory breaks every relative path in it, and the
+    breakage is silent from the tool's point of view: the content moved, the
+    file was written, and the path is now wrong in a file nobody re-reads.
+
+    Two forms, both produced by this tool's own output or by prose that assumed
+    it:
+
+      ./references/x.md   a link written from SKILL.md, now one level too deep.
+                          Inside references/ the file is a sibling, so it is
+                          ./x.md.
+      ../something/       a link written to a sibling section from SKILL.md.
+                          The sibling moved to references/ too, so the path from
+                          the new location is ./something/.
+
+    Only rewritten, never dropped: a path with no match on disk is left alone,
+    because it was probably already pointing at something outside the skill and
+    guessing where it meant would be inventing a reference.
+    """
+    text = re.sub(
+        r"(\]\(|`)(\./)?references/([A-Za-z0-9._/-]+?\.md)",
+        lambda m: m.group(1) + "./" + m.group(3),
+        text,
+    )
+    text = re.sub(
+        r"(\]\(|`)(\.\./)(?=[A-Za-z0-9._-]+/)",
+        lambda m: m.group(1) + "./",
+        text,
+    )
+    return text
 
 
 def main() -> int:
@@ -101,10 +162,59 @@ def main() -> int:
         # few sections rather than 125 lines in: skillify is 501 lines with a
         # 369-line opening section, and a rule that only fires past 125 lines
         # left the two sections after it in place.
+        # Whole-document balance is a precondition, not a filter.
+        #
+        # Filtering per section is not enough. A fence opened in a section that
+        # STAYS is closed by a marker in a section that MOVES, so every
+        # individual section can look self-contained and the split still breaks
+        # the document. agent-platform-troubleshooting has exactly that, and the
+        # per-section filter passed it through, leaving 63 files whose fence
+        # never closes.
+        #
+        # If the document does not balance on its own, this tool does not touch
+        # it. Repairing it is a content decision -- where the missing closer goes
+        # is a judgement about what the block was -- and a tool that guesses
+        # would be guessing in the one place a guess is invisible.
+        def whole_balanced(doc: str) -> bool:
+            f = ""
+            for line in doc.split("\n"):
+                mm = re.match(r"^(\s*)(`{3,}|~{3,})(.*)$", line)
+                if not mm:
+                    continue
+                tok, info = mm.group(2), mm.group(3).strip()
+                if not f:
+                    f = tok
+                elif tok[0] == f[0] and len(tok) >= len(f) and not info:
+                    f = ""
+            return not f
+
+        if not whole_balanced(body):
+            print(f"  {skill_md.parent.name}: skipped, fence state is not balanced "
+                  f"and splitting would carry the error into every new file")
+            continue
+
+        # A section whose own text opens a fence it does not close is not a
+        # section -- it is half a code block, and cutting there produces a file
+        # whose fence never closes. The validator reports 65 of those, all in
+        # files this tool wrote, which is the honest count: the damage is mine.
+        def fence_balanced(fragment: str) -> bool:
+            f = ""
+            for line in fragment.split("\n"):
+                m = re.match(r"^(\s*)(`{3,}|~{3,})(.*)$", line)
+                if not m:
+                    continue
+                tok, info = m.group(2), m.group(3).strip()
+                if not f:
+                    f = tok
+                elif tok[0] == f[0] and not info:
+                    f = ""
+            return not f
+
         movers = [
             sec for sec in secs
             if not KEEP.match(sec[0])
             and (sec[2] - sec[1]) > 2000
+            and fence_balanced(sec[3])
         ]
         if not movers:
             continue
@@ -173,7 +283,7 @@ def main() -> int:
         fence = ""
         starts_in = {}
         pos = 0
-        for line in body.split("\n", 1):
+        for line in body.split("\n"):
             m = re.match(r"^(\s*)(`{3,}|~{3,})(.*)$", line)
             if m:
                 token, info = m.group(2), m.group(3).strip()
@@ -262,13 +372,14 @@ def main() -> int:
         for key, section_text in new_refs.items():
             heading = re.match(r"^##\s+(.+)$", section_text)
             title = heading.group(1) if heading else key
+            section_text = rebase_paths(section_text)
             doc = (
-                f"<!-- Moved verbatim from {skill_md.parent.name}/SKILL.md, the\n"
-                f"     '{title}' section. The split is mechanical: the content is\n"
-                f"     unchanged, and it is here so SKILL.md stays the routing\n"
-                f"     surface rather than a manual. -->\n\n"
+                f"<!-- Moved from {skill_md.parent.name}/SKILL.md, the\n"
+                f"     '{title}' section. Relative links were rebased for the new\n"
+                f"     depth; the prose is otherwise unchanged. -->\n\n"
                 + section_text
             )
+
             (refs / f"{key}.md").write_text(doc, encoding="utf-8")
             written.append(f"`references/{key}.md`")
 

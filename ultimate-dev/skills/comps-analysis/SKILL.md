@@ -35,8 +35,37 @@ description: |
 ---
 
 ## Overview
+This skill teaches Claude to build institutional-grade comparable company analyses that combine operating metrics, valuation multiples, and statistical benchmarking. The output is a structured Excel/spreadsheet that enables informed investment decisions through peer comparison.
 
-Detail moved verbatim to `references/overview.md`. Load it when this section matters and the pointer is not enough.
+**Reference Material & Contextualization:**
+
+An example comparable company analysis is provided in `examples/comps_example.xlsx`. When using this or other example files in this skill directory, use them intelligently:
+
+**DO use examples for:**
+- Understanding structural hierarchy (how sections flow)
+- Grasping the level of rigor expected (statistical depth, documentation standards)
+- Learning principles (clear headers, transparent formulas, audit trails)
+
+**DO NOT use examples for:**
+- Exact reproduction of format or metrics
+- Copying layout without considering context
+- Applying the same visual style regardless of audience
+
+**ALWAYS ask yourself first:**
+1. **"Do you have a preferred format or should I adapt the template style?"**
+2. **"Who is the audience?"** (Investment committee, board presentation, quick reference, detailed memo)
+3. **"What's the key question?"** (Valuation, growth analysis, competitive positioning, efficiency)
+4. **"What's the context?"** (M&A evaluation, investment decision, sector benchmarking, performance review)
+
+**Adapt based on specifics:**
+- **Industry context**: Big tech mega-caps need different metrics than emerging SaaS startups
+- **Sector-specific needs**: Add relevant metrics early (e.g., cloud ARR, enterprise customers, developer ecosystem for tech)
+- **Company familiarity**: Well-known companies may need less background, more focus on delta analysis
+- **Decision type**: M&A requires different emphasis than ongoing portfolio monitoring
+
+**Core principle:** Use template principles (clear structure, statistical rigor, transparent formulas) but vary execution based on context. The goal is institutional-quality analysis, not institutional-looking templates.
+
+User-provided examples and explicit preferences always take precedence over defaults.
 
 ## Core Philosophy
 **"Build the right structure first, then let the data tell the story."**
@@ -317,7 +346,54 @@ If you have more than 15 metrics, you're probably including noise. Edit ruthless
 
 ## Section 6: Best Practices & Quality Checks
 
-Detail moved verbatim to `references/section-6-best-practices-quality-checks.md`. Load it when this section matters and the pointer is not enough.
+### Before You Start
+1. **Define the peer group** - Companies must be truly comparable (similar business model, scale, geography)
+2. **Choose the right period** - LTM smooths seasonality; quarterly shows trends
+3. **Standardize units upfront** - Millions vs. billions decision affects everything
+4. **Map data sources** - Know where each number comes from
+
+### As You Build
+1. **Input all raw data first** - Complete the blue text before writing formulas
+2. **Add cell comments to ALL hard-coded inputs** - Right-click cell → Insert Comment → Document source OR assumption
+
+   **For sourced data, cite exactly where it came from:**
+   - Example: "Bloomberg Terminal - MSFT Equity DES, accessed 2024-10-02"
+   - Example: "Q4 2024 10-K filing, page 42, line item 'Total Revenue'"
+   - Example: "FactSet consensus estimate as of 2024-10-02"
+   - **Include hyperlinks when possible**: Right-click cell → Link → paste URL to SEC filing, data source, or report
+
+   **For assumptions, explain the reasoning:**
+   - Example: "Assumed 15% EBITDA margin based on peer median, company does not disclose"
+   - Example: "Estimated Enterprise Value as Market Cap + $50M net debt (from Q3 balance sheet, Q4 not yet available)"
+   - Example: "Forward P/E based on street consensus EPS of $3.45 (average of 12 analyst estimates)"
+
+   **Why this matters**: Enables audit trails, data verification, assumption transparency, and future updates
+3. **Build formulas row by row** - Test each calculation before moving on
+4. **Use absolute references for headers** - $C$6 locks the header row
+5. **Format consistently** - Percentages as percentages, not decimals
+6. **Add conditional formatting** - Highlight outliers automatically
+
+### Sanity Checks
+- **Margin test**: Gross margin > EBITDA margin > Net margin (always true by definition)
+- **Multiple reasonableness**: 
+  - EV/Revenue: typically 0.5-20x (varies widely by industry)
+  - EV/EBITDA: typically 8-25x (fairly consistent across industries)
+  - P/E: typically 10-50x (depends on growth rate)
+- **Growth-multiple correlation**: Higher growth usually means higher multiples
+- **Size-efficiency trade-off**: Larger companies often have better margins (scale benefits)
+
+### Common Mistakes to Avoid
+❌ Mixing market cap and enterprise value in formulas
+❌ Using different time periods for numerator and denominator (LTM vs quarterly)
+❌ Hardcoding numbers into formulas instead of cell references
+❌ **Hard-coded inputs without cell comments citing the source OR explaining the assumption**
+❌ Missing hyperlinks to SEC filings or data sources when available
+❌ Including too many metrics without clear purpose
+❌ Including non-comparable companies (different business models)
+❌ Using outdated data without disclosure
+❌ Calculating averages of percentages incorrectly (should be median)
+
+---
 
 ## Section 6: Advanced Features
 
@@ -357,7 +433,62 @@ This helps answer: "Is our target company trading rich or cheap vs. peers?"
 
 ## Section 7: Workflow & Practical Tips
 
-Detail moved verbatim to `references/section-7-workflow-practical-tips.md`. Load it when this section matters and the pointer is not enough.
+### Step-by-Step Process
+1. **Set up structure** (30 minutes)
+   - Create all headers
+   - Format cells (blue for inputs, black for formulas)
+   - Lock in units and date references
+
+2. **Gather data** (60-90 minutes)
+   - Pull from primary sources (S&P Kensho MCP, FactSet MCP, Daloopa MCP if available; otherwise Bloomberg, SEC)
+   - Input all raw numbers in blue
+   - Document sources in notes section
+
+3. **Build formulas** (30 minutes)
+   - Start with simple ratios (margins)
+   - Progress to multiples (EV/Revenue)
+   - Add cross-checks (do margins make sense?)
+
+4. **Add statistics** (15 minutes)
+   - Copy formula structure for all columns
+   - Verify ranges are correct (B7:B9, not B7:B10)
+   - Check quartile logic
+
+5. **Quality control** (30 minutes)
+   - Run sanity checks
+   - Verify formula references
+   - Check for #DIV/0! or #REF! errors
+   - Compare against known benchmarks
+
+6. **Documentation** (15 minutes)
+   - Complete notes section
+   - Add data sources
+   - Define methodologies
+   - Date-stamp the analysis
+
+### Pro Tips
+- **Save templates**: Build once, reuse forever
+- **Color-code outliers**: Conditional formatting for values >2 standard deviations
+- **Link to source files**: Hyperlink to Bloomberg screenshots or SEC filings
+- **Version control**: Save as "Comps_v1_2024-12-15" with clear dating
+- **Collaborative reviews**: Have someone else check your formulas
+
+### Excel Formatting Checklist (Optional - adapt to user preferences)
+- [ ] Font set to user's preferred style (default: Times New Roman, 11pt data, 12pt headers)
+- [ ] Section headers formatted per user's template (default: dark blue #17365D with white bold text)
+- [ ] Column headers formatted per user's template (default: light blue/gray #D9E2F3 with black bold text)
+- [ ] Statistics rows formatted per user's template (default: light gray #F2F2F2)
+- [ ] No borders applied (clean, minimal appearance)
+- [ ] **Column widths set to uniform/even width** (creates clean, professional appearance)
+- [ ] **Row heights set to consistent height** (typically 20-25pt for data rows)
+- [ ] Numbers formatted with proper decimal precision and thousands separators
+- [ ] **All metrics center-aligned** for clean, uniform appearance
+- [ ] **One blank row for separation between company data and statistics rows**
+- [ ] **No separate "SECTOR STATISTICS" or "VALUATION STATISTICS" header rows**
+- [ ] **Every hard-coded input cell has a comment with either: (1) exact data source, OR (2) assumption explanation**
+- [ ] **Hyperlinks added to cells where applicable** (SEC filings, data provider pages, reports)
+
+---
 
 ## Section 8: Example Template Layout
 
@@ -528,22 +659,3 @@ After completing a comp analysis, ask:
 5. What would make this more useful next time?
 
 The best comp analyses evolve with each iteration. Save templates, learn from feedback, and refine the structure based on what decision-makers actually use.
-
-Each file below is loaded on demand, not at triage. 15 file(s):
-
-- `references/continuous-improvement.md` — Continuous Improvement. <!-- Moved verbatim from comps-analysis/SKILL.md, the
-- `references/core-philosophy.md` — Core Philosophy. <!-- Moved verbatim from comps-analysis/SKILL.md, the
-- `references/critical-formulas-over-hardcodes-step-by-step-verification.md` — ⚠️ CRITICAL: Formulas Over Hardcodes + Step-by-Step Verification. <!-- Moved verbatim from comps-analysis/SKILL.md, the
-- `references/key-principles-summary.md` — Key Principles Summary. <!-- Moved verbatim from comps-analysis/SKILL.md, the
-- `references/output-checklist.md` — Output Checklist. <!-- Moved verbatim from comps-analysis/SKILL.md, the
-- `references/section-1-document-structure-setup.md` — Section 1: Document Structure & Setup. <!-- Moved verbatim from comps-analysis/SKILL.md, the
-- `references/section-10-red-flags-warning-signs.md` — Section 10: Red Flags & Warning Signs. <!-- Moved verbatim from comps-analysis/SKILL.md, the
-- `references/section-11-formulas-reference-guide.md` — Section 11: Formulas Reference Guide. <!-- Moved verbatim from comps-analysis/SKILL.md, the
-- `references/section-2-operating-statistics-financial-metrics.md` — Section 2: Operating Statistics & Financial Metrics. <!-- Moved verbatim from comps-analysis/SKILL.md, the
-- `references/section-3-valuation-multiples-investment-metrics.md` — Section 3: Valuation Multiples & Investment Metrics. <!-- Moved verbatim from comps-analysis/SKILL.md, the
-- `references/section-4-notes-methodology-documentation.md` — Section 4: Notes & Methodology Documentation. <!-- Moved verbatim from comps-analysis/SKILL.md, the
-- `references/section-5-choosing-the-right-metrics-decision-framework.md` — Section 5: Choosing the Right Metrics (Decision Framework). <!-- Moved verbatim from comps-analysis/SKILL.md, the
-- `references/section-6-advanced-features.md` — Section 6: Advanced Features. <!-- Moved verbatim from comps-analysis/SKILL.md, the
-- `references/section-8-example-template-layout.md` — Section 8: Example Template Layout. <!-- Moved verbatim from comps-analysis/SKILL.md, the
-- `references/section-9-industry-specific-additions-optional.md` — Section 9: Industry-Specific Additions (Optional). <!-- Moved verbatim from comps-analysis/SKILL.md, the
-
