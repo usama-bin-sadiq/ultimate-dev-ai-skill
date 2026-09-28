@@ -702,5 +702,24 @@ use it. Each answers one question the sections above do not.
 - [`references/MODEL_ARCHITECTURES.md`](references/MODEL_ARCHITECTURES.md)
 - [`references/MODEL_REGISTRY.md`](references/MODEL_REGISTRY.md)
 - [`references/PIPELINE_OPTIONS.md`](references/PIPELINE_OPTIONS.md)
-- [`references/TEXT_GENERATION.md`](references/TEXT_GENERATION.md)
+- [
+Each file below is loaded on demand, not at triage. 15 file(s):
+
+- `references/advanced-configuration.md` — Advanced Configuration. <!-- Moved verbatim from transformers-js/SKILL.md, the
+- `references/best-practices.md` — Best Practices. <!-- Moved verbatim from transformers-js/SKILL.md, the
+- `references/core-concepts.md` — Core Concepts. <!-- Moved verbatim from transformers-js/SKILL.md, the
+- `references/error-handling.md` — Error Handling. <!-- Moved verbatim from transformers-js/SKILL.md, the
+- `references/finding-and-choosing-models.md` — Finding and Choosing Models. <!-- Moved verbatim from transformers-js/SKILL.md, the
+- `references/installation.md` — Installation. <!-- Moved verbatim from transformers-js/SKILL.md, the
+- `references/memory-management.md` — Memory Management. <!-- Moved verbatim from transformers-js/SKILL.md, the
+- `references/performance-tips.md` — Performance Tips. <!-- Moved verbatim from transformers-js/SKILL.md, the
+- `references/quick-reference-task-ids.md` — Quick Reference: Task IDs. <!-- Moved verbatim from transformers-js/SKILL.md, the
+- `references/reference-documentation.md` — Reference Documentation. <!-- Moved verbatim from transformers-js/SKILL.md, the
+- `references/reference-files.md` — Reference files. <!-- Moved verbatim from transformers-js/SKILL.md, the
+- `references/runtime-specific-considerations.md` — Runtime-Specific Considerations. <!-- Moved verbatim from transformers-js/SKILL.md, the
+- `references/supported-tasks.md` — Supported Tasks. <!-- Moved verbatim from transformers-js/SKILL.md, the
+- `references/troubleshooting.md` — Troubleshooting. <!-- Moved verbatim from transformers-js/SKILL.md, the
+- `references/when-to-use-this-skill.md` — When to Use This Skill. <!-- Moved verbatim from transformers-js/SKILL.md, the
+
+`references/TEXT_GENERATION.md`](references/TEXT_GENERATION.md)
 

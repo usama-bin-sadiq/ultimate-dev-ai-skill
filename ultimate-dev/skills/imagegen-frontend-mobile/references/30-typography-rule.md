@@ -1,0 +1,28 @@
+<!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+     '30-typography-rule' section. The split is mechanical: the content is
+     unchanged, and it is here so SKILL.md stays the routing
+     surface rather than a manual. -->
+
+## 30. TYPOGRAPHY RULE
+
+Typography is a primary design tool.
+
+Always ensure:
+- strong title/body/label contrast
+- readable mobile scale
+- clear section headers
+- short CTA copy
+- believable type rhythm across screens
+- good line count control
+
+Do not:
+- make everything the same weight
+- use too many font moods
+- create awkward line wrapping
+- use oversized headline drama on every screen
+- let body text become tiny or decorative
+
+For premium apps:
+- typography should feel deliberate, not loud by default
+
+---

@@ -552,80 +552,17 @@ uv run scripts/paper_manager.py validate \
 
 ## Reference files
 
-These ship with the skill and are read on demand; none is needed to
-use it. Each answers one question the sections above do not.
+Detail moved verbatim to `references/reference-files.md`. Load it when this section matters and the pointer is not enough.
 
-- [`references/quick_reference.md`](references/quick_reference.md)
+Each file below is loaded on demand, not at triage. 7 file(s):
 
-### Integration with tfrere's Research Template
+- `references/1-paper-page-management.md` — 1. Paper Page Management. <!-- Moved verbatim from huggingface-paper-publisher/SKILL.md, the
+- `references/2-link-papers-to-artifacts.md` — 2. Link Papers to Artifacts. <!-- Moved verbatim from huggingface-paper-publisher/SKILL.md, the
+- `references/3-research-article-creation.md` — 3. Research Article Creation. <!-- Moved verbatim from huggingface-paper-publisher/SKILL.md, the
+- `references/4-metadata-management.md` — 4. Metadata Management. <!-- Moved verbatim from huggingface-paper-publisher/SKILL.md, the
+- `references/citation.md` — Citation. <!-- Moved verbatim from huggingface-paper-publisher/SKILL.md, the
+- `references/integration-with-hf-ecosystem.md` — Integration with HF Ecosystem. <!-- Moved verbatim from huggingface-paper-publisher/SKILL.md, the
+- `references/quick_reference.md` — Quick Reference Guide. bash
 
-This skill complements [tfrere's research article template](https://huggingface.co/spaces/tfrere/research-article-template) by providing:
 
-- Automated paper indexing workflows
-- Repository linking capabilities
-- Metadata management tools
-- Citation generation utilities
 
-You can use tfrere's template for writing, then use this skill to publish and link the paper on Hugging Face Hub.
-
-### Common Patterns
-
-**Pattern 1: New Paper Publication**
-```bash
-# Write → Publish → Index → Link
-uv run scripts/paper_manager.py create --template modern --output paper.md
-# (Submit to arXiv)
-uv run scripts/paper_manager.py index --arxiv-id "2301.12345"
-uv run scripts/paper_manager.py link --repo-id "user/model" --arxiv-id "2301.12345"
-```
-
-**Pattern 2: Existing Paper Discovery**
-```bash
-# Search → Check → Link
-uv run scripts/paper_manager.py search --query "transformers"
-uv run scripts/paper_manager.py check --arxiv-id "2301.12345"
-uv run scripts/paper_manager.py link --repo-id "user/model" --arxiv-id "2301.12345"
-```
-
-**Pattern 3: Author Portfolio Management**
-```bash
-# Claim → Verify → Organize
-uv run scripts/paper_manager.py claim --arxiv-id "2301.12345"
-uv run scripts/paper_manager.py list-my-papers
-uv run scripts/paper_manager.py toggle-visibility --arxiv-id "2301.12345" --show true
-```
-
-### API Integration
-
-**Python Script Example:**
-```python
-from scripts.paper_manager import PaperManager
-
-pm = PaperManager(hf_token="your_token")
-
-# Index paper
-pm.index_paper("2301.12345")
-
-# Link to model
-pm.link_paper(
-    repo_id="username/model",
-    repo_type="model",
-    arxiv_id="2301.12345",
-    citation="Full citation text"
-)
-
-# Check status
-status = pm.check_paper("2301.12345")
-print(status)
-```
-
-### Future Enhancements
-
-Planned features for future versions:
-- Support for non-arXiv papers (conference proceedings, journals)
-- Automatic citation formatting from DOI
-- Paper comparison and versioning tools
-- Collaborative paper writing features
-- Integration with LaTeX workflows
-- Automated figure and table extraction
-- Paper metrics and impact tracking

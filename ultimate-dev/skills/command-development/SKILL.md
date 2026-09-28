@@ -438,7 +438,24 @@ use it. Each answers one question the sections above do not.
 - [`references/documentation-patterns.md`](references/documentation-patterns.md)
 - [`references/interactive-commands.md`](references/interactive-commands.md)
 - [`references/marketplace-considerations.md`](references/marketplace-considerations.md)
-- [`references/testing-strategies.md`](references/testing-strategies.md)
+- [
+Each file below is loaded on demand, not at triage. 13 file(s):
+
+- `references/bash-execution-in-commands.md` — Bash Execution in Commands. <!-- Moved verbatim from command-development/SKILL.md, the
+- `references/best-practices.md` — Best Practices. <!-- Moved verbatim from command-development/SKILL.md, the
+- `references/command-basics.md` — Command Basics. <!-- Moved verbatim from command-development/SKILL.md, the
+- `references/command-organization.md` — Command Organization. <!-- Moved verbatim from command-development/SKILL.md, the
+- `references/common-patterns.md` — Common Patterns. <!-- Moved verbatim from command-development/SKILL.md, the
+- `references/dynamic-arguments.md` — Dynamic Arguments. <!-- Moved verbatim from command-development/SKILL.md, the
+- `references/file-format.md` — File Format. <!-- Moved verbatim from command-development/SKILL.md, the
+- `references/file-references.md` — File References. <!-- Moved verbatim from command-development/SKILL.md, the
+- `references/overview.md` — Overview. <!-- Moved verbatim from command-development/SKILL.md, the
+- `references/reference-files.md` — Reference files. <!-- Moved verbatim from command-development/SKILL.md, the
+- `references/troubleshooting.md` — Troubleshooting. <!-- Moved verbatim from command-development/SKILL.md, the
+- `references/validation-patterns.md` — Validation Patterns. <!-- Moved verbatim from command-development/SKILL.md, the
+- `references/yaml-frontmatter-fields.md` — YAML Frontmatter Fields. <!-- Moved verbatim from command-development/SKILL.md, the
+
+`references/testing-strategies.md`](references/testing-strategies.md)
 
 ### Bash Commands
 
@@ -570,242 +587,11 @@ PR #$1 Workflow:
 
 ## Plugin-Specific Features
 
-### CLAUDE_PLUGIN_ROOT Variable
-
-Plugin commands have access to `${CLAUDE_PLUGIN_ROOT}`, an environment variable that resolves to the plugin's absolute path.
-
-**Purpose:**
-
-- Reference plugin files portably
-- Execute plugin scripts
-- Load plugin configuration
-- Access plugin templates
-
-**Basic usage:**
-
-```markdown
----
-description: Analyze using plugin script
-allowed-tools: Bash(node:*)
----
-
-Run analysis: !`node ${CLAUDE_PLUGIN_ROOT}/scripts/analyze.js $1`
-
-Review results and report findings.
-```
-
-**Common patterns:**
-
-```markdown
-# Execute plugin script
-
-!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/script.sh`
-
-# Load plugin configuration
-
-@${CLAUDE_PLUGIN_ROOT}/config/settings.json
-
-# Use plugin template
-
-@${CLAUDE_PLUGIN_ROOT}/templates/report.md
-
-# Access plugin resources
-
-@${CLAUDE_PLUGIN_ROOT}/docs/reference.md
-```
-
-**Why use it:**
-
-- Works across all installations
-- Portable between systems
-- No hardcoded paths needed
-- Essential for multi-file plugins
-
-### Plugin Command Organization
-
-Plugin commands discovered automatically from `commands/` directory:
-
-```
-plugin-name/
-├── commands/
-│   ├── foo.md              # /foo (plugin:plugin-name)
-│   ├── bar.md              # /bar (plugin:plugin-name)
-│   └── utils/
-│       └── helper.md       # /helper (plugin:plugin-name:utils)
-└── plugin.json
-```
-
-**Namespace benefits:**
-
-- Logical command grouping
-- Shown in `/help` output
-- Avoid name conflicts
-- Organize related commands
-
-**Naming conventions:**
-
-- Use descriptive action names
-- Avoid generic names (test, run)
-- Consider plugin-specific prefix
-- Use hyphens for multi-word names
-
-### Plugin Command Patterns
-
-**Configuration-based pattern:**
-
-```markdown
----
-description: Deploy using plugin configuration
-argument-hint: [environment]
-allowed-tools: Read, Bash(*)
----
-
-Load configuration: @${CLAUDE_PLUGIN_ROOT}/config/$1-deploy.json
-
-Deploy to $1 using configuration settings.
-Monitor deployment and report status.
-```
-
-**Template-based pattern:**
-
-```markdown
----
-description: Generate docs from template
-argument-hint: [component]
----
-
-Template: @${CLAUDE_PLUGIN_ROOT}/templates/docs.md
-
-Generate documentation for $1 following template structure.
-```
-
-**Multi-script pattern:**
-
-```markdown
----
-description: Complete build workflow
-allowed-tools: Bash(*)
----
-
-Build: !`bash ${CLAUDE_PLUGIN_ROOT}/scripts/build.sh`
-Test: !`bash ${CLAUDE_PLUGIN_ROOT}/scripts/test.sh`
-Package: !`bash ${CLAUDE_PLUGIN_ROOT}/scripts/package.sh`
-
-Review outputs and report workflow status.
-```
-
-**See `references/plugin-features-reference.md` for detailed patterns.**
+Detail moved verbatim to `references/plugin-specific-features.md`. Load it when this section matters and the pointer is not enough.
 
 ## Integration with Plugin Components
 
-Commands can integrate with other plugin components for powerful workflows.
-
-### Agent Integration
-
-Launch plugin agents for complex tasks:
-
-```markdown
----
-description: Deep code review
-argument-hint: [file-path]
----
-
-Initiate comprehensive review of @$1 using the code-reviewer agent.
-
-The agent will analyze:
-
-- Code structure
-- Security issues
-- Performance
-- Best practices
-
-Agent uses plugin resources:
-
-- ${CLAUDE_PLUGIN_ROOT}/config/rules.json
-- ${CLAUDE_PLUGIN_ROOT}/checklists/review.md
-```
-
-**Key points:**
-
-- Agent must exist in `plugin/agents/` directory
-- Claude uses Task tool to launch agent
-- Document agent capabilities
-- Reference plugin resources agent uses
-
-### Skill Integration
-
-Leverage plugin skills for specialized knowledge:
-
-```markdown
----
-description: Document API with standards
-argument-hint: [api-file]
----
-
-Document API in @$1 following plugin standards.
-
-Use the api-docs-standards skill to ensure:
-
-- Complete endpoint documentation
-- Consistent formatting
-- Example quality
-- Error documentation
-
-Generate production-ready API docs.
-```
-
-**Key points:**
-
-- Skill must exist in `plugin/skills/` directory
-- Mention skill name to trigger invocation
-- Document skill purpose
-- Explain what skill provides
-
-### Hook Coordination
-
-Design commands that work with plugin hooks:
-
-- Commands can prepare state for hooks to process
-- Hooks execute automatically on tool events
-- Commands should document expected hook behavior
-- Guide Claude on interpreting hook output
-
-See `references/plugin-features-reference.md` for examples of commands that coordinate with hooks
-
-### Multi-Component Workflows
-
-Combine agents, skills, and scripts:
-
-```markdown
----
-description: Comprehensive review workflow
-argument-hint: [file]
-allowed-tools: Bash(node:*), Read
----
-
-Target: @$1
-
-Phase 1 - Static Analysis:
-!`node ${CLAUDE_PLUGIN_ROOT}/scripts/lint.js $1`
-
-Phase 2 - Deep Review:
-Launch code-reviewer agent for detailed analysis.
-
-Phase 3 - Standards Check:
-Use coding-standards skill for validation.
-
-Phase 4 - Report:
-Template: @${CLAUDE_PLUGIN_ROOT}/templates/review.md
-
-Compile findings into report following template.
-```
-
-**When to use:**
-
-- Complex multi-step workflows
-- Leverage multiple plugin capabilities
-- Require specialized analysis
-- Need structured outputs
+Detail moved verbatim to `references/integration-with-plugin-components.md`. Load it when this section matters and the pointer is not enough.
 
 ## Validation Patterns
 

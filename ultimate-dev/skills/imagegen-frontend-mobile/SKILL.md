@@ -85,69 +85,7 @@ Generate mobile screen images and screen-flow images only.
 
 ## 1. ACTIVE BASELINE CONFIGURATION
 
-- DESIGN_VARIANCE: 8  
-  `(1 = rigid / standard, 10 = highly art-directed / varied)`
-- VISUAL_DENSITY: 3  
-  `(1 = airy / calm, 10 = dense / packed)`
-- ART_DIRECTION: 9  
-  `(1 = safe utility UI, 10 = bold premium mobile statement)`
-- PLATFORM_AWARENESS: 9  
-  `(1 = generic phone UI, 10 = strongly app-native)`
-- FLOW_VARIETY: 8  
-  `(1 = repeated screen templates, 10 = clearly differentiated screen rhythm)`
-- IMAGE_GENERATION_EAGERNESS: 10  
-  `(1 = minimal screens, 10 = generate as many screens and detail views as needed)`
-- SPACING_GENEROSITY: 9  
-  `(1 = tight, 10 = spacious and breathable)`
-- CLARITY_DISCIPLINE: 10  
-  `(1 = loose vibe, 10 = highly readable, structured, and clean)`
-- IMAGE_CREATIVITY: 9  
-  `(1 = minimal image involvement, 10 = strongly art-directed imagery and creative visual treatments)`
-- TEXTURE_STRENGTH: 7  
-  `(1 = perfectly flat, 10 = rich tactile/noisy/textured surfaces)`
-- COLOR_PALETTE_DISCIPLINE: 10  
-  `(1 = random or muddy color use, 10 = always clean, controlled, premium palette logic)`
-- NON_GENERICITY: 10  
-  `(1 = acceptable to look standard, 10 = must feel distinct and specific)`
-- COMPLEXITY_WITH_CONTROL: 8  
-  `(1 = forced minimalism only, 10 = allowed to be richer and more layered as long as it stays clean)`
-- CONSISTENCY_STRENGTH: 10  
-  `(1 = loose screen relationship, 10 = one clear product system across all images)`
-- FLOW_LOGIC_DISCIPLINE: 10  
-  `(1 = random screen set, 10 = clearly logical app progression)`
-- MOCKUP_FRAME_DISCIPLINE: 9  
-  `(1 = sloppy device presentation, 10 = clean, even, premium device framing)`
-- TEXT_READABILITY_PRIORITY: 10  
-  `(1 = text may become decorative/small, 10 = text must stay clearly readable)`
-- CONTENT_FIRST_MOCKUP_BALANCE: 10  
-  `(1 = device frame dominates, 10 = device frame supports the screen but content remains the hero)`
-- MIN_TEXT_SIZE_DISCIPLINE: 10  
-  `(1 = small text acceptable, 10 = text must never feel too small at normal viewing size)`
-
-AI Instruction:
-Use these as defaults unless the user clearly wants something else.
-Adapt them to the app category.
-
-Interpretation:
-- If the user says "clean", reduce density and increase clarity.
-- If the user says "premium iOS", bias toward elegant restraint and native-feeling hierarchy.
-- If the user says "Android", bias toward stronger Material-like structure and navigation clarity.
-- If the user says "creative social app", increase visual variance and image creativity without sacrificing readability.
-- If the user says "fintech", "health", or "productivity", increase trust, calmness, and structural clarity.
-- Do not be lazy with screen count.
-- If more screens would make the flow better, generate more screens.
-- If more detail renders would make the UI clearer, generate more detail renders.
-- Default toward richer art direction than standard AI mobile output.
-- Use creative assets, texture, and imagery deliberately, not randomly.
-- Always keep the color palette clean, controlled, and intentional.
-- Avoid generic color choices.
-- Do not force every app into ultra-simple minimalism.
-- Keep text comfortably readable at normal viewing size.
-- Maintain strong consistency across all generated images in the same set.
-- Keep device framing neat, even, and professional.
-- Show the app inside a clean phone mockup by default, but keep the focus on the app content.
-
----
+Detail moved verbatim to `references/1-active-baseline-configuration.md`. Load it when this section matters and the pointer is not enough.
 
 ## 2. PLATFORM MODE RULE
 
@@ -760,118 +698,7 @@ Avoid fake brand slop:
 
 ## 22. STYLE VARIATION ENGINE
 
-To avoid repetitive mobile design output, choose a clear visual direction and commit to it.
-
-### Theme Paradigm
-Choose 1:
-1. pristine light
-2. deep dark
-3. soft wellness neutral
-4. premium monochrome
-5. rich accent-driven
-6. editorial luxe
-7. playful consumer color
-8. calm productivity minimal
-
-### Typography Character
-Choose 1:
-1. clean system-like sans
-2. refined grotesk
-3. expressive premium display + clean body
-4. soft humanist sans
-5. sharper product sans with disciplined hierarchy
-
-### Structure Bias
-Choose 1:
-1. list-led utility
-2. card-led modular
-3. dashboard-led overview
-4. media-led storytelling
-5. profile-led identity
-6. commerce-led browse and detail flow
-7. chat-led conversational flow
-8. wellness-led calm block rhythm
-
-### Image Art Direction Bias
-Choose 1:
-1. editorial photography
-2. cinematic lifestyle imagery
-3. soft illustration-led
-4. tactile abstract compositions
-5. premium product imagery
-6. mixed photo + vector art direction
-7. moody atmospheric backdrops
-8. collage-lite layered imagery
-
-### Texture / Surface Treatment
-Choose 1:
-1. ultra-subtle grain
-2. matte paper texture
-3. foggy gradient atmosphere
-4. soft noise wash
-5. blurred image haze
-6. clean flat with one textured hero area
-7. tactile monochrome surface
-8. low-opacity technical pattern
-
-### Palette Logic
-Choose 1:
-1. restrained monochrome + one accent
-2. warm neutral palette + sharp dark contrast
-3. cool mineral palette + clean highlight accent
-4. editorial cream / charcoal / muted accent
-5. rich dark base + refined warm accent
-6. wellness soft palette with controlled saturation
-7. bright consumer palette with disciplined balance
-8. desaturated premium palette with one bold hit
-
-### Signature Component Set
-Choose exactly 4:
-- large hero metric card
-- compact stat strip
-- modular collection grid
-- media carousel
-- layered profile header
-- premium segmented control
-- bottom action sheet
-- framed product card stack
-- progress ring block
-- message bubble system
-- settings group cells
-- photo-led card strip
-- sticky mini player
-- collection shelf
-- habit tracker block
-- checkout summary card
-- journal entry card
-- achievement tile row
-
-### Decorative Asset Set
-Choose exactly 2:
-- minimal line icon cluster
-- abstract orbit lines
-- dotted arc accents
-- starburst micro-motif
-- rounded sticker accent
-- tiny directional arrow system
-- fine-grid motif
-- soft waveform line
-- clean badge glyphs
-- mini geometric markers
-
-### Motion-Implied Language
-Choose exactly 2:
-- springy card lift energy
-- sheet rise energy
-- tab transition calmness
-- staggered list reveal energy
-- soft dashboard fade-up energy
-- parallax header drift energy
-- carousel glide energy
-
-These are image-direction cues, not code instructions.
-
----
+Detail moved verbatim to `references/22-style-variation-engine.md`. Load it when this section matters and the pointer is not enough.
 
 ## 23. COLOR PALETTE RULE
 
@@ -1463,3 +1290,43 @@ It should actively avoid:
 - oversized device framing that distracts from the design
 
 The final result should look like a high-end mobile app concept with clean hierarchy, good flow logic, strong visual taste, richer image direction, a clean controlled color palette, non-generic art direction, strong multi-screen consistency, readable typography, premium phone mockup framing, and clear platform-aware structure.
+
+Each file below is loaded on demand, not at triage. 36 file(s):
+
+- `references/10-device-mockup-frame-rule.md` — 10. DEVICE MOCKUP FRAME RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/11-onboarding-flow-rule.md` — 11. ONBOARDING FLOW RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/12-first-screen-cleanliness-rule.md` — 12. FIRST SCREEN CLEANLINESS RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/13-safe-area-and-system-region-rule.md` — 13. SAFE AREA AND SYSTEM REGION RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/14-navigation-rule.md` — 14. NAVIGATION RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/15-clean-layout-rule.md` — 15. CLEAN LAYOUT RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/16-creative-image-direction-rule.md` — 16. CREATIVE IMAGE DIRECTION RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/17-background-texture-and-surface-rule.md` — 17. BACKGROUND TEXTURE AND SURFACE RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/18-image-behind-text-rule.md` — 18. IMAGE-BEHIND-TEXT RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/19-creative-asset-rule.md` — 19. CREATIVE ASSET RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/2-platform-mode-rule.md` — 2. PLATFORM MODE RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/20-iconography-rule.md` — 20. ICONOGRAPHY RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/21-mobile-anti-ai-tells-rule.md` — 21. MOBILE ANTI-AI-TELLS RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/23-color-palette-rule.md` — 23. COLOR PALETTE RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/24-non-genericity-rule.md` — 24. NON-GENERICITY RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/25-not-always-simple-rule.md` — 25. NOT ALWAYS SIMPLE RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/26-image-system-rule.md` — 26. IMAGE SYSTEM RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/27-fixed-mobile-media-frame-rule.md` — 27. FIXED MOBILE MEDIA FRAME RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/28-text-rule.md` — 28. TEXT RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/29-text-size-and-readability-rule.md` — 29. TEXT SIZE AND READABILITY RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/3-mandatory-screen-first-rule.md` — 3. MANDATORY SCREEN-FIRST RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/30-typography-rule.md` — 30. TYPOGRAPHY RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/31-spacing-and-density-rule.md` — 31. SPACING AND DENSITY RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/32-screen-to-screen-variation-rule.md` — 32. SCREEN-TO-SCREEN VARIATION RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/33-category-specific-bias.md` — 33. CATEGORY-SPECIFIC BIAS. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/34-regeneration-rule.md` — 34. REGENERATION RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/35-quality-check.md` — 35. QUALITY CHECK. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/36-response-behavior.md` — 36. RESPONSE BEHAVIOR. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/37-example-interpretations.md` — 37. EXAMPLE INTERPRETATIONS. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/38-final-goal.md` — 38. FINAL GOAL. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/4-generate-enough-screens-rule.md` — prose
+- `references/5-do-not-crop-old-images-rule.md` — 5. DO NOT CROP OLD IMAGES RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/6-app-design-bible-rule.md` — 6. APP DESIGN BIBLE RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/7-multi-screen-consistency-rule.md` — 7. MULTI-SCREEN CONSISTENCY RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/8-logical-flow-rule.md` — 8. LOGICAL FLOW RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+- `references/9-default-mockup-presence-rule.md` — 9. DEFAULT MOCKUP PRESENCE RULE. <!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the
+

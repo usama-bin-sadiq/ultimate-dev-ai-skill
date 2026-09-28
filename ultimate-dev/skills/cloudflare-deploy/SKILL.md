@@ -213,17 +213,10 @@ Need IaC? → pulumi/ (Pulumi), terraform/ (Terraform), or api/ (REST API)
 
 ## Troubleshooting
 
-### Escalated Network Access
+Detail moved verbatim to `references/troubleshooting.md`. Load it when this section matters and the pointer is not enough.
 
-If deployment fails due to network issues (timeouts, DNS errors, connection resets), rerun the deploy with escalated permissions (use `sandbox_permissions=require_escalated`). The deploy requires escalated network access when sandbox networking blocks outbound requests.
 
-Example guidance to the user:
-
-```
-The deploy needs escalated network access to deploy to Cloudflare. I can rerun the command with escalated permissions—want me to proceed?
-```
-
-Each file below is loaded on demand, not at triage. 306 file(s):
+Each file below is loaded on demand, not at triage. 310 file(s):
 
 - `references/agents-sdk/README.md` — Cloudflare Agents SDK enables building AI-powered agents on Durable Objects with state, WebSockets, SQL, scheduling, and AI integration.
 - `references/agents-sdk/api.md` — API Reference. For AI chat with auto-streaming, message history, tools, resumable streaming.
@@ -261,6 +254,7 @@ Each file below is loaded on demand, not at triage. 306 file(s):
 - `references/argo-smart-routing/configuration.md` — Configuration Management. Note on Smart Shield Evolution: Argo Smart Routing is being integrated into Smart Shield.
 - `references/argo-smart-routing/gotchas.md` — Best Practices Summary. Smart Shield Note: Argo Smart Routing evolving into Smart Shield.
 - `references/argo-smart-routing/patterns.md` — Integration Patterns. typescript
+- `references/authentication-required-before-deploy.md` — Authentication (Required Before Deploy). <!-- Moved verbatim from cloudflare-deploy/SKILL.md, the
 - `references/bindings/README.md` — Cloudflare Bindings Skill Reference. Expert guidance on Cloudflare Workers Bindings - the runtime APIs that connect Workers to Cloudflare platform resources.
 - `references/bindings/api.md` — prose
 - `references/bindings/configuration.md` — Binding Configuration Reference. jsonc
@@ -372,6 +366,8 @@ Each file below is loaded on demand, not at triage. 306 file(s):
 - `references/pipelines/configuration.md` — Pipelines Configuration. jsonc
 - `references/pipelines/gotchas.md` — Pipelines Gotchas. Most common issue.
 - `references/pipelines/patterns.md` — Pipelines Patterns. typescript
+- `references/prerequisites.md` — Prerequisites. <!-- Moved verbatim from cloudflare-deploy/SKILL.md, the
+- `references/product-index.md` — Product Index. <!-- Moved verbatim from cloudflare-deploy/SKILL.md, the
 - `references/pulumi/README.md` — Expert guidance for Cloudflare Pulumi Provider (@pulumi/cloudflare).
 - `references/pulumi/api.md` — API & Data Sources. Export resource identifiers:
 - `references/pulumi/configuration.md` — Resource Configuration. typescript
@@ -382,6 +378,7 @@ Each file below is loaded on demand, not at triage. 306 file(s):
 - `references/queues/configuration.md` — Queues Configuration. bash
 - `references/queues/gotchas.md` — Queues Gotchas & Troubleshooting. Problem: Throwing uncaught error in queue handler retries the entire batch, not just the failed message
 - `references/queues/patterns.md` — Queues Patterns & Best Practices. typescript
+- `references/quick-decision-trees.md` — Quick Decision Trees. <!-- Moved verbatim from cloudflare-deploy/SKILL.md, the
 - `references/r2/README.md` — Cloudflare R2 Object Storage. S3-compatible object storage with zero egress fees, optimized for large file storage and delivery.
 - `references/r2/api.md` — R2 API Reference. typescript
 - `references/r2/configuration.md` — R2 Configuration. wrangler.jsonc:

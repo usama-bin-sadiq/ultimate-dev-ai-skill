@@ -511,82 +511,7 @@ hf_jobs("logs", {"job_id": "your-job-id"})
 
 ## Dataset Validation
 
-**Validate dataset format BEFORE launching GPU training to prevent the #1 cause of training failures: format mismatches.**
-
-### Why Validate
-
-- 50%+ of training failures are due to dataset format issues
-- DPO especially strict: requires exact column names (`prompt`, `chosen`, `rejected`)
-- Failed GPU jobs waste $1-10 and 30-60 minutes
-- Validation on CPU costs ~$0.01 and takes <1 minute
-
-### When to Validate
-
-**ALWAYS validate for:**
-- Unknown or custom datasets
-- DPO training (CRITICAL - 90% of datasets need mapping)
-- Any dataset not explicitly TRL-compatible
-
-**Skip validation for known TRL datasets:**
-- `trl-lib/ultrachat_200k`, `trl-lib/Capybara`, `HuggingFaceH4/ultrachat_200k`, etc.
-
-### Usage
-
-```python
-hf_jobs("uv", {
-    "script": "https://huggingface.co/datasets/mcp-tools/skills/raw/main/dataset_inspector.py",
-    "script_args": ["--dataset", "username/dataset-name", "--split", "train"]
-})
-```
-
-The script is fast, and will usually complete synchronously.
-
-### Reading Results
-
-The output shows compatibility for each training method:
-
-- **`✓ READY`** - Dataset is compatible, use directly
-- **`✗ NEEDS MAPPING`** - Compatible but needs preprocessing (mapping code provided)
-- **`✗ INCOMPATIBLE`** - Cannot be used for this method
-
-When mapping is needed, the output includes a **"MAPPING CODE"** section with copy-paste ready Python code.
-
-### Example Workflow
-
-```python
-# 1. Inspect dataset (costs ~$0.01, <1 min on CPU)
-hf_jobs("uv", {
-    "script": "https://huggingface.co/datasets/mcp-tools/skills/raw/main/dataset_inspector.py",
-    "script_args": ["--dataset", "argilla/distilabel-math-preference-dpo", "--split", "train"]
-})
-
-# 2. Check output markers:
-#    ✓ READY → proceed with training
-#    ✗ NEEDS MAPPING → apply mapping code below
-#    ✗ INCOMPATIBLE → choose different method/dataset
-
-# 3. If mapping needed, apply before training:
-def format_for_dpo(example):
-    return {
-        'prompt': example['instruction'],
-        'chosen': example['chosen_response'],
-        'rejected': example['rejected_response'],
-    }
-dataset = dataset.map(format_for_dpo, remove_columns=dataset.column_names)
-
-# 4. Launch training job with confidence
-```
-
-### Common Scenario: DPO Format Mismatch
-
-Most DPO datasets use non-standard column names. Example:
-
-```
-Dataset has: instruction, chosen_response, rejected_response
-DPO expects: prompt, chosen, rejected
-```
-
-The validator detects this and provides exact mapping code to fix it.
+Detail moved verbatim to `references/dataset-validation.md`. Load it when this section matters and the pointer is not enough.
 
 ## Converting Models to GGUF
 
@@ -729,7 +654,30 @@ use it. Each answers one question the sections above do not.
 - [HF Jobs Documentation](https://huggingface.co/docs/huggingface_hub/guides/jobs)
 - [TRL Example Scripts](https://github.com/huggingface/trl/tree/main/examples/scripts)
 - [UV Scripts Guide](https://docs.astral.sh/uv/guides/scripts/)
-- [UV Scripts Organization](https://huggingface.co/uv-scripts)
+- [
+Each file below is loaded on demand, not at triage. 19 file(s):
+
+- `references/asynchronous-job-guidelines.md` — Asynchronous Job Guidelines. <!-- Moved verbatim from huggingface-llm-trainer/SKILL.md, the
+- `references/choose-a-base-model-model-selection.md` — Choose a Base Model (Model Selection). <!-- Moved verbatim from huggingface-llm-trainer/SKILL.md, the
+- `references/common-failure-modes.md` — Common Failure Modes. <!-- Moved verbatim from huggingface-llm-trainer/SKILL.md, the
+- `references/common-training-patterns.md` — Common Training Patterns. <!-- Moved verbatim from huggingface-llm-trainer/SKILL.md, the
+- `references/converting-models-to-gguf.md` — Converting Models to GGUF. <!-- Moved verbatim from huggingface-llm-trainer/SKILL.md, the
+- `references/cost-estimation.md` — Cost Estimation. <!-- Moved verbatim from huggingface-llm-trainer/SKILL.md, the
+- `references/critical-saving-results-to-hub.md` — Critical: Saving Results to Hub. <!-- Moved verbatim from huggingface-llm-trainer/SKILL.md, the
+- `references/example-training-scripts.md` — Example Training Scripts. <!-- Moved verbatim from huggingface-llm-trainer/SKILL.md, the
+- `references/hardware-selection.md` — Hardware Selection. <!-- Moved verbatim from huggingface-llm-trainer/SKILL.md, the
+- `references/key-directives.md` — Key Directives. <!-- Moved verbatim from huggingface-llm-trainer/SKILL.md, the
+- `references/key-takeaways.md` — Key Takeaways. <!-- Moved verbatim from huggingface-llm-trainer/SKILL.md, the
+- `references/local-script-execution.md` — Local Script Execution. <!-- Moved verbatim from huggingface-llm-trainer/SKILL.md, the
+- `references/monitoring-and-tracking.md` — Monitoring and Tracking. <!-- Moved verbatim from huggingface-llm-trainer/SKILL.md, the
+- `references/prerequisites-checklist.md` — Prerequisites Checklist. <!-- Moved verbatim from huggingface-llm-trainer/SKILL.md, the
+- `references/quick-start-three-approaches.md` — Quick Start: Three Approaches. <!-- Moved verbatim from huggingface-llm-trainer/SKILL.md, the
+- `references/reference-files.md` — Reference files. <!-- Moved verbatim from huggingface-llm-trainer/SKILL.md, the
+- `references/resources.md` — Resources. <!-- Moved verbatim from huggingface-llm-trainer/SKILL.md, the
+- `references/timeout-management.md` — Timeout Management. <!-- Moved verbatim from huggingface-llm-trainer/SKILL.md, the
+- `references/when-to-use-this-skill.md` — When to Use This Skill. <!-- Moved verbatim from huggingface-llm-trainer/SKILL.md, the
+
+UV Scripts Organization](https://huggingface.co/uv-scripts)
 
 ## Key Takeaways
 

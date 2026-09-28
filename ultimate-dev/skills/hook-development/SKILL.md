@@ -120,158 +120,7 @@ Execute bash commands for deterministic checks:
 
 ## Hook Events
 
-### PreToolUse
-
-Execute before any tool runs. Use to approve, deny, or modify tool calls.
-
-**Example (prompt-based):**
-```json
-{
-  "PreToolUse": [
-    {
-      "matcher": "Write|Edit",
-      "hooks": [
-        {
-          "type": "prompt",
-          "prompt": "Validate file write safety. Check: system paths, credentials, path traversal, sensitive content. Return 'approve' or 'deny'."
-        }
-      ]
-    }
-  ]
-}
-```
-
-**Output for PreToolUse:**
-```json
-{
-  "hookSpecificOutput": {
-    "permissionDecision": "allow|deny|ask",
-    "updatedInput": {"field": "modified_value"}
-  },
-  "systemMessage": "Explanation for Claude"
-}
-```
-
-### PostToolUse
-
-Execute after tool completes. Use to react to results, provide feedback, or log.
-
-**Example:**
-```json
-{
-  "PostToolUse": [
-    {
-      "matcher": "Edit",
-      "hooks": [
-        {
-          "type": "prompt",
-          "prompt": "Analyze edit result for potential issues: syntax errors, security vulnerabilities, breaking changes. Provide feedback."
-        }
-      ]
-    }
-  ]
-}
-```
-
-**Output behavior:**
-- Exit 0: stdout shown in transcript
-- Exit 2: stderr fed back to Claude
-- systemMessage included in context
-
-### Stop
-
-Execute when main agent considers stopping. Use to validate completeness.
-
-**Example:**
-```json
-{
-  "Stop": [
-    {
-      "matcher": "*",
-      "hooks": [
-        {
-          "type": "prompt",
-          "prompt": "Verify task completion: tests run, build succeeded, questions answered. Return 'approve' to stop or 'block' with reason to continue."
-        }
-      ]
-    }
-  ]
-}
-```
-
-**Decision output:**
-```json
-{
-  "decision": "approve|block",
-  "reason": "Explanation",
-  "systemMessage": "Additional context"
-}
-```
-
-### SubagentStop
-
-Execute when subagent considers stopping. Use to ensure subagent completed its task.
-
-Similar to Stop hook, but for subagents.
-
-### UserPromptSubmit
-
-Execute when user submits a prompt. Use to add context, validate, or block prompts.
-
-**Example:**
-```json
-{
-  "UserPromptSubmit": [
-    {
-      "matcher": "*",
-      "hooks": [
-        {
-          "type": "prompt",
-          "prompt": "Check if prompt requires security guidance. If discussing auth, permissions, or API security, return relevant warnings."
-        }
-      ]
-    }
-  ]
-}
-```
-
-### SessionStart
-
-Execute when Claude Code session begins. Use to load context and set environment.
-
-**Example:**
-```json
-{
-  "SessionStart": [
-    {
-      "matcher": "*",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/load-context.sh"
-        }
-      ]
-    }
-  ]
-}
-```
-
-**Special capability:** Persist environment variables using `$CLAUDE_ENV_FILE`:
-```bash
-echo "export PROJECT_TYPE=nodejs" >> "$CLAUDE_ENV_FILE"
-```
-
-### SessionEnd
-
-Execute when session ends. Use for cleanup, logging, and state preservation.
-
-### PreCompact
-
-Execute before context compaction. Use to add critical information to preserve.
-
-### Notification
-
-Execute when Claude sends notifications. Use to react to user notifications.
+Detail moved verbatim to `references/hook-events.md`. Load it when this section matters and the pointer is not enough.
 
 ## Hook Output Format
 
@@ -708,3 +557,22 @@ To implement hooks in a plugin:
 9. Document hooks in plugin README
 
 Focus on prompt-based hooks for most use cases. Reserve command hooks for performance-critical or deterministic checks.
+
+Each file below is loaded on demand, not at triage. 15 file(s):
+
+- `references/additional-resources.md` — Additional Resources. <!-- Moved verbatim from hook-development/SKILL.md, the
+- `references/debugging-hooks.md` — Debugging Hooks. <!-- Moved verbatim from hook-development/SKILL.md, the
+- `references/environment-variables.md` — Environment Variables. <!-- Moved verbatim from hook-development/SKILL.md, the
+- `references/hook-configuration-formats.md` — Hook Configuration Formats. <!-- Moved verbatim from hook-development/SKILL.md, the
+- `references/hook-input-format.md` — Hook Input Format. <!-- Moved verbatim from hook-development/SKILL.md, the
+- `references/hook-lifecycle-and-limitations.md` — Hook Lifecycle and Limitations. <!-- Moved verbatim from hook-development/SKILL.md, the
+- `references/hook-output-format.md` — Hook Output Format. <!-- Moved verbatim from hook-development/SKILL.md, the
+- `references/hook-types.md` — Hook Types. <!-- Moved verbatim from hook-development/SKILL.md, the
+- `references/implementation-workflow.md` — Implementation Workflow. <!-- Moved verbatim from hook-development/SKILL.md, the
+- `references/matchers.md` — Matchers. <!-- Moved verbatim from hook-development/SKILL.md, the
+- `references/performance-considerations.md` — Performance Considerations. <!-- Moved verbatim from hook-development/SKILL.md, the
+- `references/plugin-hook-configuration.md` — Plugin Hook Configuration. <!-- Moved verbatim from hook-development/SKILL.md, the
+- `references/quick-reference.md` — Quick Reference. <!-- Moved verbatim from hook-development/SKILL.md, the
+- `references/security-best-practices.md` — Security Best Practices. <!-- Moved verbatim from hook-development/SKILL.md, the
+- `references/temporarily-active-hooks.md` — Temporarily Active Hooks. <!-- Moved verbatim from hook-development/SKILL.md, the
+

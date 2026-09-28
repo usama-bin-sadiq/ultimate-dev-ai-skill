@@ -782,367 +782,15 @@ The setup wizard's mechanical work lives in a Python module so it runs across al
 
 ## CRITICAL: Parse User Intent
 
-Before doing anything, parse the user's input for:
-
-1. **TOPIC**: What they want to learn about (e.g., "web app mockups", "Claude Code skills", "image generation")
-2. **TARGET TOOL** (if specified): Where they'll use the prompts (e.g., "Nano Banana Pro", "ChatGPT", "Midjourney")
-3. **QUERY TYPE**: What kind of research they want:
-   - **PROMPTING** - "X prompts", "prompting for X", "X best practices" → User wants to learn techniques and get copy-paste prompts
-   - **RECOMMENDATIONS** - "best X", "top X", "what X should I use", "recommended X" → User wants a LIST of specific things
-   - **NEWS** - "what's happening with X", "X news", "latest on X" → User wants current events/updates
-   - **COMPARISON** - "X vs Y", "X versus Y", "compare X and Y", "X or Y which is better" → User wants a side-by-side comparison
-   - **GENERAL** - anything else → User wants broad understanding of the topic
-
-Common patterns:
-- `[topic] for [tool]` → "web mockups for Nano Banana Pro" → TOOL IS SPECIFIED
-- `[topic] prompts for [tool]` → "UI design prompts for Midjourney" → TOOL IS SPECIFIED
-- Just `[topic]` → "iOS design mockups" → TOOL NOT SPECIFIED, that's OK
-- "best [topic]" or "top [topic]" → QUERY_TYPE = RECOMMENDATIONS
-- "what are the best [topic]" → QUERY_TYPE = RECOMMENDATIONS
-- "X vs Y" or "X versus Y" → QUERY_TYPE = COMPARISON, TOPIC_A = X, TOPIC_B = Y (split on ` vs ` or ` versus ` with spaces)
-
-**IMPORTANT: Do NOT ask about target tool before research.**
-- If tool is specified in the query, use it
-- If tool is NOT specified, run research first, then ask AFTER showing results
-
-**Store these variables:**
-- `TOPIC = [extracted topic]`
-- `TARGET_TOOL = [extracted tool, or "unknown" if not specified]`
-- `QUERY_TYPE = [RECOMMENDATIONS | NEWS | HOW-TO | COMPARISON | GENERAL]`
-- `REGISTER = [default | exec | dev | creator | eli5]` from an explicit `--register` argument, otherwise `LAST30DAYS_REGISTER`, otherwise `default`. A legacy `ELI5_MODE=true` config means `eli5` when no register was selected. Register words are controls, not part of TOPIC.
-- `TOPIC_A = [first item]` (only if COMPARISON)
-- `TOPIC_B = [second item]` (only if COMPARISON)
-
-**Confirm the topic with a branded, truthful message. Build ACTIVE_SOURCES_LIST from the engine's own source diagnostic — do NOT infer availability by checking env vars or `.env`.** The engine resolves credentials at runtime from several places (process environment, `.env`, macOS Keychain, etc.), so a config-file check silently under-reports sources whenever a key is resolved at runtime rather than written literally in `.env`. Run the engine's `--diagnose` and read its result:
-
-```bash
-SKILL_DIR="<absolute path of the directory containing the SKILL.md you just Read>"
-"${LAST30DAYS_PYTHON}" "${SKILL_DIR}/scripts/last30days.py" --diagnose
-```
-
-`--diagnose` prints JSON. `ACTIVE_SOURCES_LIST` is its `available_sources` array — the engine's authoritative source set, computed after credential resolution. Map the tokens to display names: `reddit`→Reddit, `hackernews`→Hacker News, `polymarket`→Polymarket, `github`→GitHub, `digg`→Digg, `x`→X, `youtube`→YouTube, `tiktok`→TikTok, `instagram`→Instagram, `threads`→Threads, `pinterest`→Pinterest, `linkedin`→LinkedIn, `bluesky`→Bluesky, `perplexity`→Perplexity, `grounding`→Web, `jobs`→Jobs, `meta_ads`→Meta Ads, `corpus`→Your files, `dripstack`→DripStack.
-
-- If EXCLUDE_SOURCES is set (comma-separated, case-insensitive): drop any matching source from ACTIVE_SOURCES_LIST before displaying
-
-**Local corpus source:** If the user asks to include their own notes/documents, preserve each supplied directory as a repeatable `--corpus <dir>` engine flag. `LAST30DAYS_CORPUS_DIRS` activates persistent registered directories automatically. Do not WebSearch, upload, quote into a hosted request, or otherwise expose those paths or contents. Corpus retrieval is an offline source lane; its candidates also bypass remote reranker/fun-scoring prompts and use deterministic local scoring. The engine renders matches under the 🔒 **From your files** badge. The normal recency window uses file modification time; add `--corpus-all-time` only when the user explicitly asks to include older files. Corpus evidence is excluded from `--publish-html`, `library feed --publish`, and agent JSON by default. `LAST30DAYS_CORPUS_IN_EXPORT=1` is the explicit agent-JSON privacy opt-in; never enable it on the user's behalf. When a corpus is configured alongside `LAST30DAYS_API_KEY`/`LAST30DAYS_API_BASE`, the engine deliberately bypasses the hosted backend and runs locally.
-
-**Perplexity source:** use it only when the user asks for Perplexity, Deep Research, or paid grounded synthesis, or when `perplexity` is already enabled in `INCLUDE_SOURCES` / `--search`. Prefer `PERPLEXITY_API_KEY`: normal runs use the controlled Agent API path, `search` returns raw Search API rows, and `both` combines them. Existing `OPENROUTER_API_KEY` installs stay compatible through one synchronous Sonar call; `search` and `both` fall back to Sonar because those direct APIs need a Perplexity key. Every normal mode is capped at one whole-topic planner subquery per command, including competitor fanout, and is not repeated during thin-source retries. With a direct key, normal Agent mode supplies only `web_search`, forces it for citation-critical grounding, uses a bounded step count, and supplies a local instruction. `sonar` remains a deprecated direct-key alias for `agent`. `LAST30DAYS_PERPLEXITY_AGENT_PRESET` is an explicit direct-key choice only; never set it for the user. `--deep-research` requires a normal positional topic. A direct key starts at most one paid `high`-preset background run with a 600-second default wall timeout; OpenRouter preserves the synchronous `perplexity/sonar-deep-research` fallback. It cannot be combined with discovery, drill, cached-only, competitor, or vs-mode. A local timeout does not stop a direct remote run. Report safe model and response metadata, but never expose request headers or raw tool traces.
-
-**Reddit backend pin:** Reddit defaults to the free keyless backend. When `SCRAPECREATORS_API_KEY` is available, ScrapeCreators Reddit **search** backfills only if that free path returns **no items** (empty-only — a thin but non-empty free scrape does not spend credits). If the user wants paid coverage on thin free runs, tell them to set `LAST30DAYS_REDDIT_SC_MIN_ITEMS=<N>` (backfill when free yield is below N). If they say public Reddit is shallow, bot-gated, or missing nested comments, tell them they can set `LAST30DAYS_REDDIT_BACKEND=scrapecreators` alongside `SCRAPECREATORS_API_KEY` to make ScrapeCreators primary and keep the free path as fallback. Do not set either automatically for normal runs.
-
-**Doctor health check:** When the user asks for a health check ("is X working?", "why is a source missing?", "what's broken?", "did setup work?"), run `"${LAST30DAYS_PYTHON}" "${SKILL_DIR}/scripts/last30days.py" doctor` (append `--json` for the machine contract) and relay the audit and fix prescriptions. `doctor` renders a **four-state audit** - **WORKING** (verified this run/last run or keyless-always-on), **TURNED ON - UNVERIFIED** (configured/opted-in but no run evidence), **NOT WORKING** (configured but failing, or the last run errored), **COULD BE ON** (available, not yet configured) - one line per source, plus a **CLI-health** block for sources that need a downloaded binary and indented **backup/comment** sub-lanes. Two on-demand modes: `doctor --postmortem` reads the last run's `last-report.json` and reports what actually broke per source (Failed/Partial/Succeeded with fix hints) - reach for it right after a run that returned less than expected; `doctor --probe` runs a **bounded** live test (free HTTP + keyless CLI sources only; credit-gated sources are never probed) to verify WORKING instead of guessing, and the same bounded probe auto-fires on a plain `doctor` when there is no fresh run. Per-source probe deadline is `LAST30DAYS_DOCTOR_PROBE_TIMEOUT` (default 10s). **MANDATORY standing rule.** Before research that depends on login-backed sources (X via cookies, Reddit's ScrapeCreators backfill), consult `doctor --cached --json` — it serves the report cached at `~/.config/last30days/doctor-cache.json` within its TTL (`LAST30DAYS_DOCTOR_TTL` seconds, default 900) for the cost of one file read. Re-run live `doctor` only when the cache is stale or the previous run reported a degraded login-backed source. When X is in ACTIVE_SOURCES_LIST, announce its predicted backend from the report's `sources.x.active_backend` (e.g. "X will use: bird") in the pre-research status line.
-
-**Grok session expiry handling:** The grok CLI backend for X reports three auth states: `ok` (non-expired credentials), `expired` (access_token `expires_at` is past), and `missing` (never signed in). When doctor reports grok as **degraded** with an expiry timestamp, say "Grok session expired at {timestamp}; will attempt refresh at run time. If refresh fails, run `grok login --device-auth`" — not "Grok CLI is not signed in" (which misrepresents the history). The refresh attempt happens automatically at research time: an expired access_token does not prove the refresh_token is dead. If the run then fails with `auth_revoked` or `invalid_grant`, the user truly needs to re-login. **Host-facing copy:** when `sources.x.run_outcome.state` is `auth-failed` and the prior run's outcome was `ok`, say "X used {fallback} after the Grok session expired — run `grok login --device-auth` to restore first-party X." Avoid "Grok CLI is not signed in" when `run_outcome` history shows it worked recently. Avoid proactively installing grok or prompting about grok unless the user asks for first-party X search; the cookie and XAI_API_KEY paths work without a Grok subscription.
-
-
-Then display (use "and more" if 5+ sources, otherwise list all with Oxford comma):
-
-For GENERAL / NEWS / RECOMMENDATIONS / PROMPTING queries:
-```
-/last30days - searching {ACTIVE_SOURCES_LIST} for what people are saying about {TOPIC}.
-```
-
-For COMPARISON queries:
-```
-/last30days - comparing {TOPIC_A} vs {TOPIC_B} across {ACTIVE_SOURCES_LIST}.
-```
-
-Do NOT show a multi-line "Parsed intent" block with TOPIC=, TARGET_TOOL=, QUERY_TYPE= variables. Do NOT promise a specific time. Do NOT list sources that aren't configured.
-
-Then proceed immediately to Step 0.45.
-
----
+Detail moved verbatim to `references/critical-parse-user-intent.md`. Load it when this section matters and the pointer is not enough.
 
 ## Step 0.45: Query Quality Pre-Flight (detect keyword-trap topics BEFORE running the engine)
 
-**MANDATORY. Before Step 0.5, diagnose the topic for known failure classes. If the topic is a keyword trap, reframe or ask a clarifying question BEFORE calling the engine. Running the engine on a doomed query burns 5+ minutes and produces junk. Detecting the trap upfront costs one turn.**
-
-Known keyword-trap classes and how to handle each:
-
-**Class 1: Demographic shopping query**
-- Pattern: `gift for {age} year old {gender}`, `what to buy for my {relationship}`, `present for {demographic}`, `birthday gift for {age} {gender}`.
-- Why it fails: no human on Reddit posts "I bought a 42 year old man a gift." Real posts use relationship + hobbies + budget. The literal phrase is not the vocabulary of the actual discussions. The 2026-04-18 "Birthday gift for 42 year old man" run returned r/todayilearned, r/japannews crime posts, r/LivestreamFail drama - none about gifts.
-- Action: **Ask ONE clarifying question upfront**:
-  > "Before I research, tell me a bit more - hobbies (cooks / runs / reads / gaming / outdoors / golf / music)? Relationship (husband / dad / friend / boss / brother)? Budget range? A 'gift for a 42 year old man' is a wide net; hobbies + relationship narrow it 10x."
-- If the user declines to narrow ("just run it"), reframe to generic-demographic and scope to gift subreddits:
-  - Drop the literal age (age 42 reads identically to 41 or 43 in social content; the number causes keyword collisions like Jackie Robinson #42)
-  - Rewrite as `gifts for men in their 40s` or `gifts for men who [hobby]`
-  - Scope `--subreddits=GiftIdeas,BuyItForLife,AskMen,malefashionadvice,Dads` (plus hobby-specific subs when known)
-  - Note in the Resolved block: "Reframed demographic shopping query. Dropping literal age; scoping to gift communities."
-
-**Class 2: Numeric / age keyword trap**
-- Pattern: topic contains a specific number that collides with unrelated content (42 = Jackie Robinson + Hitchhiker's + a 42" quilt; 40 = 40th anniversary posts; 50 = state-count posts; 100 = bench-press posts).
-- Why it fails: the number dominates retrieval and pulls in unrelated content. A search that prominently features "42" returns jersey-number posts; a search for "the 100" returns TV-show posts.
-- Action: Strip the number from the engine search query unless changing or removing it would change the topic itself (e.g., "GPT-4" yes, "40 year old man" no, "Area 51" yes, "top 10 foods" no). Keep the number in the user's original framing for context; drop it from the engine query. Document in Resolved: "Dropping '{number}' from the search query - it is a keyword trap that pulls in unrelated content. Search will cover the concept generically."
-
-**Class 3: Overly-literal concept phrase**
-- Pattern: `how to use X`, `what is Y`, `tutorial for Z`, `explain A` — tutorial-shaped phrasing where social posts are in different vocabulary.
-- Why it fails: social posts about Docker do not say "how to use Docker"; they say "my Docker setup", "nginx in Docker", "my dev loop", "tip for folks using Docker Compose". Tutorial phrasing matches blog titles, not social discussions.
-- Action: Reframe from tutorial phrasing to discussion phrasing: "how to use Docker" becomes "Docker tips tricks workflows" or "Docker production setups". Document the reframe in the Resolved block.
-
-**Class 4: Generic single-noun common word**
-- Pattern: topic is a single common noun with no specific hook (`bread`, `sneakers`, `coffee`, `shoes`, `headphones`).
-- Why it fails: single-noun queries have no anchor — the corpus is infinite and the signal is noise.
-- Action: Ask for specificity before running:
-  > "{TOPIC} is a huge category - are you asking about {specific-facet-A}, {specific-facet-B}, or {specific-facet-C}? Each is a different community. Pick one or tell me the angle."
-
-**Class 5: Non-English / non-Latin-script topic (Hebrew, Arabic, Chinese, Japanese, etc.)**
-- Pattern: topic contains non-Latin characters (Hebrew [\u0590-\u05FF], Arabic [\u0600-\u06FF], CJK [\u4E00-\u9FFF], etc.).
-- Why it fails without intervention: Reddit, HackerNews, GitHub, and Polymarket are English-dominant platforms. A Hebrew brand like "קפה עלית" scores zero entity-matches across all four sources and returns only English-language noise as fallback padding.
-- Action: **Mandatory pre-flight steps for non-English topics:**
-  1. **Force `--web-backend brave`** in the engine command. Brave indexes non-English web (Ynet/Walla/Mako for Hebrew; Haber7/Hurriyet for Turkish; etc.) and is the only available source with real-language coverage.
-  2. **Skip `--subreddits` targeting unless the topic has a known English-speaking community.** Generic subreddits (r/food, r/Israel) return English noise; omit them or scope tightly to known bilingual communities.
-  3. **Note in the Resolved block:** "Non-English topic detected ([language]). Routing to `--web-backend brave`; Reddit/HN/GitHub will likely return zero on-topic results."
-  4. **X/Twitter and YouTube are the highest-value missing sources for non-English topics.** Surface this clearly in the output so the user knows what would unlock deeper coverage.
-- Do NOT skip this class check for mixed-script queries (e.g. "קפה עלית Elite Coffee") - if any non-Latin characters are present, Class 5 applies.
-
-**Pre-Flight decision flow (do this BEFORE any WebSearch):**
-1. Read the topic. Match against Classes 1-5 above.
-2. If the topic matches a class, ALWAYS emit a visible pre-flight note before the Resolved block:
-   - `Pre-Flight: topic matches {Class N} ({class name}). {Action: clarifying question / reframe / specificity ask}.`
-3. If the action is a clarifying question, STOP after emitting it. Wait for the user response before any engine work.
-4. If the topic does NOT match any class, emit a one-liner: `Pre-Flight: topic is a {named-entity / comparison / concept} - proceeding to Step 0.5.` Then proceed.
-
-**One-turn gate rule:** do NOT run the engine on a keyword-trap topic without either (a) explicit user confirmation to "just run it anyway", or (b) a concrete reframed query. Burning 5 minutes on a doomed run is worse than a one-turn clarifying question.
-
-**When the user provides context inline:** if a Class 1 query already contains hobbies/relationship/budget ("gift for my cooking-obsessed husband, $200"), SKIP the clarifying question and go straight to the reframe + scope action. The clarifying question exists to fill in the gaps; if the gaps are already filled, move on.
-
----
+Detail moved verbatim to `references/step-0-45-query-quality-pre-flight-detect-keyword-trap-topics-before-running-the-engine.md`. Load it when this section matters and the pointer is not enough.
 
 ## Step 0.5: Pre-Flight Resolution (handles, repos, communities)
 
-**Pre-Flight Checklist — do NOT stop after the first flag. Every applicable flag below is MANDATORY for its topic class.**
-
-Before running the engine, determine which flags apply to this topic and resolve them. Reading only the "X handle" subsection and stopping there is the named failure mode of the Peter Steinberger disaster #2 (2026-04-18). The model admitted on debug: "I treated the 'X handle resolution' section as the full contract for pre-flight resolution and didn't --help the script to see what else existed." The checklist below IS the full contract.
-
-| Flag | Resolved in | Applies when |
-|------|-------------|--------------|
-| `--x-handle={handle}` | Step 0.5 (Section A below) | X is in `ACTIVE_SOURCES_LIST` and the topic is a person, brand, product, or creator with an X presence |
-| `--x-related={h1,h2,...}` | Step 0.5 (Section A below) | X is in `ACTIVE_SOURCES_LIST` and the topic has associated entities (founders, commentators, spouse, collaborators, media handles) |
-| `--github-user={user}` | Step 0.5b | Topic is a person who ships code (developer, engineer, CEO-who-codes, researcher) |
-| `--github-repo={owner/repo}` | Step 0.5c | Topic is a product / project / open-source tool |
-| `--trustpilot-domain={domain}` | Step 0.5d | Topic is a company / brand / service with a Trustpilot presence (passing the flag also auto-activates the opt-in Trustpilot source for this run) |
-| `--amazon-query={keyword}` | Step 0.5e | Recent buyer sentiment would materially inform the report AND `brightdata` is on PATH and logged in. Keyword is brand-plus-category (`Weber grill`), and for a person topic it is their company's product line (`June Oven`), not their name. Also add `amazon` to `--search` |
-| `--meta-ads-page={page_id}` | Step 0.5f | Name-based advertiser resolution picked the wrong company, or the brand advertises only under product-line page names. Accepts a numeric Ad Library page id or an Ad Library URL with `view_all_page_id`; a facebook.com vanity URL is not a page id. Also add `meta_ads` to `--search` |
-| `--subreddits={sub1,sub2,...}` | Step 0.55 | Always — almost every topic has active Reddit communities |
-| `--tiktok-hashtags={h1,h2,...}` | Step 0.55 | Always — inferred from topic |
-| `--tiktok-creators={c1,c2,...}` | Step 0.55 | Creator / influencer / brand topics |
-| `--ig-creators={c1,c2,...}` | Step 0.55 | Creator / brand topics |
-| `--web-backend brave` | Step 0.45 Class 5 | **MANDATORY** for non-Latin-script topics (Hebrew, Arabic, CJK, etc.) — Brave is the only source that indexes non-English web |
-| `--web-backend parallel-mcp` | Explicit user request only | Use only when the user asks to use Parallel Search MCP. This opts the run into sending its search objective and queries to `https://search.parallel.ai/mcp`; never select it automatically. Anonymous use sends no authorization header; an existing `PARALLEL_API_KEY` is sent as Bearer auth. |
-| `--auto-resolve` | Fallback | WebSearch is available but Step 0.55 could not resolve everything cleanly — use as belt-and-suspenders |
-
-**Checkpoint before running the engine:** your Bash command must include every flag from the checklist that applies to this topic. For a person who ships code (the Peter Steinberger class), that is MINIMUM `--x-handle` AND `--github-user` AND `--subreddits`, and typically `--x-related` too. A command with only `--x-handle` on a person topic is a pre-flight skip and a Step 0.5 regression.
-
----
-
-### Section A: Resolve X Handles (only when X is active and the topic could have X accounts)
-
-If `ACTIVE_SOURCES_LIST` contains `x` and TOPIC looks like it could have its own X/Twitter account - **people, creators, brands, products, tools, companies, communities** (e.g., "Dor Brothers", "Jason Calacanis", "Nano Banana Pro", "Seedance", "Midjourney"), do WebSearches to find handles in three categories. If X is not active, skip this section without prompting or trying to unlock it.
-
-**1. Primary handle** (the entity itself):
-```
-WebSearch("{TOPIC} X twitter handle site:x.com")
-```
-
-**2. Company/organization handle OR founder/creator handle** -- This mapping is bidirectional:
-- If the topic is a **PERSON**, resolve their company's X handle. A CEO's story is inseparable from their company's story.
-- If the topic is a **PRODUCT or COMPANY**, resolve the founder/creator's personal X handle. The creator's personal account often has the most candid, high-signal content.
-```
-WebSearch("{TOPIC} company CEO of site:x.com")
-```
-OR for products:
-```
-WebSearch("{TOPIC} creator founder X twitter site:x.com")
-```
-Examples: Sam Altman -> @OpenAI, Dario Amodei -> @AnthropicAI, OpenClaw -> @steipete (Peter Steinberger), Paperclip -> @dotta, Claude Code -> @alexalbert__.
-
-**3. 1-2 related handles** -- People/entities closely associated with the topic (spouse, collaborator, band member), PLUS 1-2 prominent commentator/media handles that regularly cover this topic:
-```
-WebSearch("{RELATED_PERSON_OR_ENTITY} X twitter handle site:x.com")
-```
-For a music artist, find music commentary accounts (e.g., @PopBase, @HotFreestyle, @DailyRapFacts).
-For a tech CEO, find tech media accounts (e.g., @TechCrunch, @TheInformation).
-For a product, find reviewer accounts in that category.
-
-From the results, extract their X/Twitter handles. Look for:
-- **Verified profile URLs** like `x.com/{handle}` or `twitter.com/{handle}`
-- Mentions like "@handle" in bios, articles, or social profiles
-- "Follow @handle on X" patterns
-
-**Verify accounts are real, not parody/fan accounts.** Check for:
-- Verified/blue checkmark in the search results
-- Official website linking to the X account
-- Consistent naming (e.g., @thedorbrothers for "The Dor Brothers", not @DorBrosFan)
-- If results only show fan/parody/news accounts (not the entity's own account), skip - the entity may not have an X presence
-
-Pass handles to the CLI:
-- Primary: `--x-handle={handle}` (without @)
-- Related: `--x-related={handle1},{handle2},{company_handle},{commentator_handles}` (comma-separated, without @)
-
-Example for "Kanye West":
-- Primary: `--x-handle=kanyewest`
-- Related: `--x-related=travisscott,PopBase,HotFreestyle`
-
-Example for "Sam Altman":
-- Primary: `--x-handle=sama`
-- Related: `--x-related=OpenAI,TechCrunch`
-
-Related handles are searched with lower weight (0.3) so they appear in results but don't dominate over the primary entity's content.
-
-**Note about @grok:** Grok is Elon's AI on X (xAI). It often appears in search results with thoughtful, accurate analysis. When citing @grok in your synthesis, frame it as "per Grok's AI analysis of [article/topic]" rather than treating it as an independent human commentator.
-
-**Skip this step if:**
-- TOPIC is clearly a generic concept, not an entity (e.g., "best rap songs 2026", "how to use Docker", "AI ethics debate")
-- TOPIC already contains @ (user provided the handle directly)
-- Using `--quick` depth
-- WebSearch shows no official X account exists for this entity
-
-Store: `RESOLVED_HANDLE = {handle or empty}`, `RESOLVED_RELATED = {comma-separated handles or empty}`
-
-### Step 0.5b: Resolve GitHub Username (if topic is a person) — MANDATORY FOR PERSON TOPICS
-
-**MANDATORY when the topic is a person (developer, creator, CEO, founder, engineer, researcher) and WebSearch is available.** Resolving the X handle but NOT the GitHub handle is the documented Peter Steinberger failure mode (2026-04-18). Without `--github-user={handle}`, GitHub search becomes a keyword match across all of GitHub instead of person-mode scoped to `user:{handle}`. The result is typically 5-10 thin unrelated items instead of the person's actual commits, PRs, releases, and top-starred repos. Treat this as a peer step to Step 0.5 (X handle resolution), not an afterthought.
-
-Do the WebSearch:
-
-```
-WebSearch("{TOPIC} github profile site:github.com")
-```
-
-From the results, extract their GitHub username from URLs like `github.com/{username}`.
-
-**Verify the account is correct:** Check that the profile description or pinned repos match the person you're researching. Common names may return multiple profiles.
-
-Pass to the CLI: `--github-user={username}` (without @)
-
-Worked examples:
-- For "Peter Steinberger", a WebSearch for `Peter Steinberger github profile site:github.com` returns @steipete. Pass `--github-user=steipete`.
-- For "Matt Van Horn": `--github-user=mvanhorn`
-- For "Garry Tan": `--github-user=garrytan`
-
-**Person-mode GitHub tells a different story than keyword search.** Instead of "who mentioned this person in an issue body," it answers: "What are they shipping? Where are they getting merged? What do their own projects look like?" The engine fetches PR velocity, top repos with star counts, release notes, and README summaries.
-
-**Skip this step if:**
-- TOPIC is clearly NOT a person (products, concepts, events)
-- TOPIC already has `--github-user` specified by the user
-- Using `--quick` depth
-- WebSearch shows no GitHub profile for this person (report "no GitHub handle found for this person" and proceed without `--github-user` rather than fabricating one)
-
-Store: `RESOLVED_GITHUB_USER = {username or empty}`
-
-**Checkpoint for person topics:** by the time you reach the Research Execution command, for a person topic you MUST have BOTH `RESOLVED_HANDLE` (from Step 0.5) AND `RESOLVED_GITHUB_USER` (from this step) OR an explicit "no X account" / "no GitHub profile" note. The Bash command that follows must include BOTH `--x-handle={handle}` AND `--github-user={handle}` when resolved. A person-topic run that shows only one of the two is a Step 0.5b regression.
-
-### Step 0.5c: Resolve GitHub Repos (if topic is a product/project)
-
-If TOPIC looks like a product, tool, or open source project (not a person), resolve its GitHub repo for project-mode search:
-
-```
-WebSearch("{TOPIC} github repo site:github.com")
-```
-
-From the results, extract `owner/repo` from URLs like `github.com/{owner}/{repo}`.
-
-Pass to the CLI: `--github-repo={owner/repo}`
-
-For comparisons ("X vs Y"), resolve repos for both topics: `--github-repo={repo_a},{repo_b}`
-
-Example for "OpenClaw": `--github-repo=openclaw/openclaw`
-Example for "OpenClaw vs Paperclip": `--github-repo=openclaw/openclaw,paperclipai/paperclip`
-
-Project-mode GitHub fetches live star counts, README snippets, latest releases, and top issues directly from the API. This is always more accurate than blog posts or YouTube videos citing weeks-old numbers.
-
-**Skip this step if:**
-- TOPIC is a person (use `--github-user` instead)
-- TOPIC has no GitHub presence (not a software project)
-- WebSearch shows no GitHub repo for this topic
-
-Store: `RESOLVED_GITHUB_REPOS = {comma-separated owner/repo or empty}`
-
-### Step 0.5d: Resolve Trustpilot Domain (if topic is a company/brand)
-
-When TOPIC is a company, brand, or service and you want Trustpilot review evidence, resolve its Trustpilot review-page domain. Trustpilot pages are keyed by domain (`www.thriftbooks.com`), not company name — a bare name 404s. Passing `--trustpilot-domain` (or a per-entity `trustpilot_domain` in `--competitors-plan`) auto-activates the opt-in Trustpilot source for that run — you do not also need `INCLUDE_SOURCES=trustpilot`.
-
-**You usually already have it.** Step 0.55 item 6 (first-party positioning) fetches the official site — capture the bare hostname while you're there. When positioning wasn't fetched, one lookup covers it:
-
-```
-WebSearch("{TOPIC} official site")
-```
-
-Pass to the CLI: `--trustpilot-domain={domain}` (e.g., `--trustpilot-domain=www.thriftbooks.com`)
-
-The flag is used verbatim, bypasses the engine's brand-shape gate, and auto-activates Trustpilot for the run, so it also unlocks Trustpilot for multi-word company names ("Stanley Steemer carpet cleaning"). For comparisons, put a per-entity `trustpilot_domain` in each PEER entity's `--competitors-plan` entry; the MAIN topic's domain must ride the outer `--trustpilot-domain` flag (the engine does not read a main-topic entry out of the plan).
-
-**A miss is not fatal.** When the flag is absent, the engine resolves name → domain itself via the CLI's search **only when Trustpilot is already active** (`INCLUDE_SOURCES=trustpilot` or `--search` includes it); headless `--auto-resolve` fills a hint the engine verifies, but that hint alone does not activate the source. Resolve the flag when the domain is already in hand or the company name is ambiguous (lookalike or same-named companies) — an explicit domain is the only way to guarantee the right company *and* turn the source on.
-
-**Skip this step if:**
-- TOPIC is a person, event, or abstract concept (no company reviews to fetch)
-- You intentionally want Trustpilot off for this run (`EXCLUDE_SOURCES=trustpilot`)
-
-Store: `RESOLVED_TRUSTPILOT_DOMAIN = {domain or empty}`
-
----
-
-### Step 0.5e: Decide the Amazon Buyer-Signal Lane (if `brightdata` is available)
-
-**Availability first.** This lane exists only when the Bright Data CLI is on PATH and logged in (`--diagnose` reports `brightdata_installed` and `brightdata_authenticated`). If either is false the source does not exist, nothing changes, and you should skip this step entirely — do not mention it, do not suggest installing it mid-run.
-
-**The one question to ask:** *would recent Amazon buyer sentiment materially inform this report?* Not "is this shopping" — the test is whether buyer evidence is real evidence for this topic.
-
-| Topic | Fires? | `--amazon-query` |
-|---|---|---|
-| "Weber Grills" | Yes — brand topic where review signal is core evidence | `Weber grill` |
-| "best bluetooth speaker under $100" | Yes — buying question, the whole point | `bluetooth speaker` |
-| "Bentgo Box" | Yes — brand line | `Bentgo lunch box` |
-| "Matt Van Horn" (CEO of June) | Yes — **and the keyword is the company's product, not the person** | `June Oven` |
-| "Kanye West" | No — person/culture topic, buyer reviews are noise | — |
-| "the 2026 election" | No — nothing to buy | — |
-
-**Two mechanics that matter:**
-
-1. **The keyword is yours to choose and is often not the topic.** Map person → company → product line using what you know plus what Step 0.55 surfaced. A "Matt Van Horn" run that searches Amazon for his name returns nothing; searching `June Oven` returns his company's product reviews, which is the actual signal.
-2. **Phrase it as brand plus category, never bare brand.** A bare brand keyword lands on Amazon's ad-heavy page 1 and can miss the brand's own bestsellers — a live `Bentgo` search returned 57 competitor ads and missed the flagship, while `Bentgo lunch box` surfaced it. Say `Weber grill`, not `Weber`.
-
-**`--search` is replace-not-add.** Passing `--search` narrows the run to exactly the sources listed, so include the full intended set: `--search reddit,x,youtube,amazon` — never a bare `--search amazon`, which would silently drop every other source.
-
-**Cost and latency, so you can set expectations:** one credit for the product search plus one per review pull, 4 per typical run against a 5,000/month free tier. Review sampling adds roughly 30 seconds to 2 minutes at default depth. Quick depth pulls no reviews at all.
-
-Store: `AMAZON_QUERY = {product keyword or empty}` — pass as `--amazon-query="{AMAZON_QUERY}"` and add `amazon` to `--search`.
-
-**Skip this step if:** the CLI is unavailable, the topic has no consumer-product dimension, or the user set `EXCLUDE_SOURCES=amazon`.
-
----
-
-### Step 0.5f: Decide the Meta Ads Lane (if a ScrapeCreators key is set)
-
-**Availability first.** This lane exists only when `SCRAPECREATORS_API_KEY` is configured (`--diagnose` reports `has_scrapecreators`). Without it the source does not exist, nothing changes, and you should skip this step entirely — do not mention it, do not suggest signing up mid-run.
-
-**The one question to ask:** *is there a brand here whose own paid message is evidence?* This lane answers "what is this company paying to say right now" — its live creatives, the products it is pushing, the promo codes it is running, and what its video ads say out loud. It is not a conversation source: nothing here is what people think about the brand, only what the brand is telling them.
-
-| Topic | Fires? | Why |
-|---|---|---|
-| A consumer-brand topic | Yes — the brand's own campaign is first-party evidence | Paid message next to customer reaction |
-| A retailer or membership warehouse | Yes — current promotions and seasonal push | Live offers are the story |
-| A direct-to-consumer startup | Yes — positioning shows up in ad copy first | Often the earliest signal of a repositioning |
-| A person, an executive, a creator | No — people do not run Ad Library campaigns | Their company might; use the company as the topic |
-| An AI tool, a framework, a developer product | No — resolution returns unrelated advertisers | A live check on one such topic returned 1,467 wrong-entity ads |
-| A news, politics, or culture topic | No — nothing to resolve | The lane ends unresolved and spends a credit finding that out |
-
-**Three mechanics that matter:**
-
-1. **Resolution can pick the wrong company, and the footer tells you when it did.** The lane resolves the advertiser page by name from an ad search. The 📣 footer line always names the page it resolved, and says `matched by partial name` when it fell back to the weakest match, so check it. If the advertiser is not the brand you meant, find the real page id and re-run with `--meta-ads-page`: `WebSearch("{TOPIC} facebook ad library")`, open the Ad Library result, and take the digits from its `view_all_page_id=` parameter. A `facebook.com/<name>` vanity URL is not a page id and the flag rejects it.
-2. **A brand that advertises under product-line names still resolves.** Matching works in both directions, so an umbrella topic finds a product-named page and vice versa. What does not resolve is a brand whose pages share no word with the topic; that is the override's main use.
-3. **The window means launched, not running.** Items are creatives that *started* inside the last 30 days. Long-running creatives from before are counted on the footer but never ranked, because "still advertising" is not news and "just launched this" is.
-
-**`--search` is replace-not-add.** Passing `--search` narrows the run to exactly the sources listed, so include the full intended set: `--search reddit,x,youtube,meta_ads` — never a bare `--search meta_ads`, which would silently drop every other source.
-
-**Cost and latency, so you can set expectations:** one or two credits to resolve the advertiser (a second only when the first search finds no name match), up to two more for its creatives, and up to three for video transcripts — at most seven per default-depth run against a 10,000-call free tier. Transcripts add roughly 15 to 45 seconds. Quick depth pulls no transcripts at all, though it still spends the resolve and one page.
-
-Store: `META_ADS_PAGE = {page id or empty}` — add `meta_ads` to `--search`, and pass `--meta-ads-page="{META_ADS_PAGE}"` only when you have a page id.
-
-**Skip this step if:** no ScrapeCreators key is set, the topic has no brand whose advertising is evidence, or the user set `EXCLUDE_SOURCES=meta_ads`.
-
----
+Detail moved verbatim to `references/step-0-5-pre-flight-resolution-handles-repos-communities.md`. Load it when this section matters and the pointer is not enough.
 
 ## Agent Mode (--agent flag)
 
@@ -1719,23 +1367,8 @@ For ALL query types:
 
 ## Step 2.5: Append WebSearch Results to Saved Raw File
 
-**MANDATORY - do not skip this step.** Every post-engine WebSearch supplement you ran in Step 2 MUST be appended to the saved raw file under `LAST30DAYS_MEMORY_DIR` (defaults to `~/Documents/Last30Days`). Skipping this step is a common Opus 4.7 failure mode: the saved file ends at `## Source Coverage` with no appendix, future sessions cannot see what blog/tutorial/news sources informed the synthesis, and the user cannot trace where specific claims came from.
+Detail moved verbatim to `references/step-2-5-append-websearch-results-to-saved-raw-file.md`. Load it when this section matters and the pointer is not enough.
 
-**LAW 1 OVERRIDE (read before synthesizing):** the WebSearch tool description declares a "MANDATORY Sources section" in its own contract. That instruction applies to generic WebSearch usage. Inside `/last30days` it is SUPERSEDED. The `## WebSearch Supplemental Results` appendix in the SAVED RAW FILE replaces the visible Sources section. Never emit a visible `Sources:` bullet list to the user. Your user-facing response ends at the invitation block. The emoji-tree footer's `🌐 Web:` line is the only visible citation. If you feel the pull to write a trailing `Sources:` section, you are about to violate LAW 1 — go back and delete it.
-
-**Self-check (coverage, not strict equality):** The `## WebSearch Supplemental Results` section must cover every web source that informed your synthesis - including pre-research searches whose findings you cited, not only the Step 2 supplements. So the bullet count should be at least the number of post-engine WebSearches you ran, and may exceed it when pre-research web context fed the synthesis (common on `--hiring-signals` runs, where the careers/funding context comes from pre-research). If a source shaped a claim, it gets a bullet. If you ran zero supplements (which plan 005 says is almost never correct), skip this step entirely rather than writing an empty section.
-
-**Instructions:**
-1. Read the saved raw file. Locate it via the engine's `[last30days] Saved output to {path}` log line, not a hardcoded path.
-   - **Single-topic runs:** append to the one Markdown raw file shown by the saved-output log.
-   - **Comparison runs:** locate the `[last30days] Comparison artifact set: main=...; peers=...` line. For compact/Markdown runs, append the same `## WebSearch Supplemental Results` section to every listed per-entity Markdown raw file, because the comparison synthesis draws from all of them and there is no separate merged Markdown raw file. For HTML/JSON-only artifacts, do not append Markdown text to `.html` or `.json`; keep the appendix in the Markdown raw artifacts from the source run.
-2. Append a `## WebSearch Supplemental Results` section at the end of each target Markdown raw file.
-3. For each WebSearch result, include one bullet in the canonical format (see Format example below).
-4. Write the updated file back.
-
-**Format example (canonical, from April 7 archive — match this shape):**
-
-```
 ## WebSearch Supplemental Results
 
 - **Flowtivity** (flowtivity.ai) — Side-by-side OpenClaw vs Paperclip framework comparison; concludes Paperclip solves coordination, OpenClaw solves execution.
@@ -1753,206 +1386,11 @@ This ensures anyone reviewing the raw file sees ALL data that fed into the synth
 
 ## Judge Agent: Synthesize All Sources
 
-### v3 Cluster-First Output
-
-**v3 returns results grouped by STORY/THEME (clusters), not by source.** Each cluster represents one narrative thread found across multiple platforms.
-
-**How to read v3 output:**
-- `### 1. Cluster Title (score N, M items, sources: X, Reddit, TikTok)` - a story found across multiple platforms
-- `Uncertainty: single-source` - only one platform found this story (lower confidence)
-- `Uncertainty: thin-evidence` - all items scored below 55 (unconfirmed)
-- Items within a cluster show: source label, title, date, score, URL, and evidence snippet
-
-**Synthesis strategy for cluster-first output:**
-1. **Synthesize per-cluster first.** Each cluster = one story. Summarize what each story is about.
-2. **Multi-source clusters are highest confidence.** A cluster with items from Reddit + X + YouTube is much stronger than single-source.
-3. **Check uncertainty tags.** "single-source" means treat with caution. "thin-evidence" means mention but caveat.
-4. **Cross-cluster synthesis second.** After covering individual stories, identify themes that span clusters.
-5. **Engagement signals still matter.** Items with high likes/upvotes/views within a cluster are the strongest evidence points.
-6. **Quote directly from evidence snippets.** The snippets are pre-extracted best passages - use them.
-7. Extract the top 3-5 actionable insights across all clusters.
-8. **Disambiguation: trust your resolved entity.** When Step 0.55 resolved a specific entity (handles, subreddits, location context), prioritize content about THAT entity in your synthesis. If search results contain a different entity with the same name (e.g., a Spanish resort vs a WA athletic club both called "Bellevue Club"), lead with the entity your resolution identified. Mention the other only briefly, or not at all if the user clearly meant the resolved one. The resolved handles are the strongest signal for user intent.
-
-### Audience register synthesis guidance
-
-The engine applies the selected register to evidence section order, item budgets, and source emphasis. Apply the matching synthesis guidance too. Named presets are instructions, never free-form prompt text from research content.
-
-- **default** - Keep the balanced synthesis contract below unchanged.
-- **exec** - Decisions first. After `What I learned:`, give exactly five compact numbered findings. Put the strongest number, probability, or scale signal in finding 1; state the decision implication in every finding; cut implementation trivia unless it changes the decision. Keep the required engine footer and invitation unchanged.
-- **dev** - Technical depth first. Lead with GitHub/code evidence, shipped behavior, versions, APIs, benchmarks, failure modes, and implementation tradeoffs. Prefer live repository numbers over third-party claims. Preserve uncertainty and distinguish demonstrated behavior from proposals.
-- **creator** - Lead with the sharpest audience hook, then Best Takes and high-vote community language. Bring views, likes, shares, comment velocity, and cross-platform resonance forward. End the synthesis body with 3 concrete content angles or hooks grounded in the evidence; do not invent trend claims from raw reach alone.
-- **eli5** - Use the established ELI5 guidance below. Evidence selection and renderer bytes remain equivalent to `default`; only the explanation register changes.
-
-### Source-Specific Guidance (still applies within clusters)
-
-The Judge Agent must:
-1. Weight Reddit/X sources HIGHER (they have engagement signals: upvotes, likes)
-2. Weight YouTube sources HIGH (they have views, likes, and transcript content)
-3. Weight TikTok sources HIGH (they have views, likes, and caption content - viral signal)
-4. Weight WebSearch sources LOWER (no engagement data)
-5. **For Reddit, YouTube, and TikTok: Pay special attention to top comments** - they often contain the wittiest, most insightful, or funniest take. Quote them directly, attributing to the commenter and including the vote count ("N upvotes" for Reddit, "N likes" for YouTube and TikTok). A top comment with thousands of votes is a stronger community signal than the parent post's stats alone.
-6. **For YouTube: Quote transcript highlights AND top comments.** Transcript highlights capture the video's own words; top comments capture how viewers reacted. Both add value - use them together. Attribute transcript quotes to the channel name.
-7. Identify patterns that appear across ALL sources (strongest signals)
-8. Note any contradictions between sources
-9. **Multi-source clusters (items from 3+ platforms) are the strongest signals.** Lead with these.
-10. **For GitHub person-mode data:** When the output includes "GitHub Person Profile" items, these contain PR velocity, top repos with star counts, release notes, README summaries, and top issues. Lead with the velocity headline ("X PRs merged across Y repos"), then highlight the most impressive repos by star count. Weave release notes into the narrative to show what actually shipped. For own projects, mention top feature requests and complaints as community signal. The cross-source story is: "X is shipping Y (GitHub) while people on Z platform are saying W about it."
-11. **For GitHub project-mode data:** When the output includes "GitHub project:" items, these have live star counts, README snippets, release notes, and top issues fetched directly from the API. Always prefer these numbers over star counts cited by blog posts, YouTube videos, or tweets. Live API data is authoritative. When items include "(live: NNK stars)" annotations, use those numbers.
-12. **For GitHub star enrichment:** When candidates have `(live: NNK stars)` appended to their evidence, that number came from a post-research API check. It overrides whatever the original source claimed.
-
-### Prediction Markets (Polymarket)
-
-**CRITICAL: When Polymarket returns relevant markets, prediction market odds are among the highest-signal data points in your research.** Real money on outcomes cuts through opinion. Treat them as strong evidence, not an afterthought.
-
-**How to interpret and synthesize Polymarket data:**
-
-1. **Prefer structural/long-term markets over near-term deadlines.** Championship odds > regular season title. Regime change > near-term strike deadline. IPO/major milestone > incremental update. Presidency > individual state primary. When multiple markets exist, the bigger question is more interesting to the user.
-
-2. **When the topic is an outcome in a multi-outcome market, call out that specific outcome's odds and movement.** Don't just say "Polymarket has a #1 seed market" - say "Arizona has a 28% chance of being the #1 overall seed, up 10% this month." The user cares about THEIR topic's position in the market.
-
-3. **Weave odds into the narrative as supporting evidence.** Don't isolate Polymarket data in its own paragraph. Instead: "Final Four buzz is building - Polymarket gives Arizona a 12% chance to win the championship (up 3% this week), and 28% to earn a #1 seed."
-
-4. **Citation format: show ONLY % odds. NEVER mention dollar volumes, liquidity, or betting amounts.** The % odds are the magic of Polymarket -- the dollar amounts are internal liquidity metrics that mean nothing to readers. Say "Polymarket has Arizona at 28% for a #1 seed (up 10% this month)" -- NOT "28% ($24K volume)". The dollar figure adds zero value and clutters the insight.
-
-5. **When multiple relevant markets exist, highlight 3-5 of the most interesting ones** in your synthesis, ordered by importance (structural > near-term). Don't just pick the highest-volume one.
-
-**Domain examples of market importance ranking:**
-- **Sports:** Championship/tournament odds > conference title > regular season > weekly matchup
-- **Geopolitics:** Regime change/structural outcomes > near-term strike deadlines > sanctions
-- **Tech/Business:** IPO, major product launch, company milestones > incremental updates
-- **Elections:** Presidency > primary > individual state
-
-**Do NOT display stats here - they come at the end, right before the invitation.**
-
-6. **Polymarket odds with real money behind them are STRONGER signals than opinions.** A $66K volume market with 96% odds is more reliable than 100 tweets. Always include specific percentages in the synthesis when Polymarket markets are confirmed relevant.
-
-### X Reply Cluster Weighting
-
-When you see a cluster of replies to a recommendation-request tweet (someone asking "what's the best X?" and getting multiple independent responses), call this out prominently. This is the strongest form of community endorsement - real people independently making the same recommendation without coordination. Example: "In a thread where @ecom_cork asked for Loom alternatives, every reply said Tella."
-
-### WebSearch Supplement Weighting for Comparisons
-
-For product comparison queries, WebSearch supplements (blog comparisons, review articles) should be weighted equally with social data. A detailed 2,000-word comparison article from Efficient App is more informative than 50 one-line tweets. Feature it in the synthesis.
-
----
+Detail moved verbatim to `references/judge-agent-synthesize-all-sources.md`. Load it when this section matters and the pointer is not enough.
 
 ## FIRST: Internalize the Research
 
-**CRITICAL: Ground your synthesis in the ACTUAL research content, not your pre-existing knowledge.**
-
-Read the research output carefully. Pay attention to:
-- **Exact product/tool names** mentioned (e.g., if research mentions "ClawdBot" or "@clawdbot", that's a DIFFERENT product than "Claude Code" - don't conflate them)
-- **Specific quotes and insights** from the sources - use THESE, not generic knowledge
-- **What the sources actually say**, not what you assume the topic is about
-
-**ANTI-PATTERN TO AVOID**: If user asks about "clawdbot skills" and research returns ClawdBot content (self-hosted AI agent), do NOT synthesize this as "Claude Code skills" just because both involve "skills". Read what the research actually says.
-
-**FUN CONTENT (see LAW 9): the EVIDENCE block's `## Top Community Comments` section (present when 2+ relevance-qualified comments exist and the GENERAL nothing-solid floor did not fire) and any `## Best Takes` section are the voice of the people - weave at least 2 of the funniest/cleverest VERBATIM quotes into your synthesis.** A 1,338-upvote comment that says "Where's the limewire link" tells you more about the cultural moment than a news article. Quote the actual text and attribute the commenter; when you inline-link the comment on a hidden-link host (Claude Code; Grok Bot / Cursor agent chat) copy its URL verbatim from the block (never reconstructed), and on a visible-URL host (Codex, Gemini CLI, raw CLI) keep the attribution plain and leave the URL to the saved raw file. Don't put fun content in a separate section - mix it into the narrative where it fits naturally. This is what makes the report feel alive rather than like a news summary. Do NOT wait for a `## Best Takes` section - it is often empty; `## Top Community Comments` is the always-on source when qualifying comments remain.
-
-**ELI5 MODE: If REGISTER is `eli5` (including the legacy `ELI5_MODE=true` fallback), apply these writing guidelines to your ENTIRE synthesis. Otherwise skip this block completely and write normally.**
-
-ELI5 Mode: Explain it to me like I'm 5 years old.
-
-- Assume I know nothing about this topic. Zero context.
-- No jargon without a quick explanation in parentheses
-- Short sentences. One idea per sentence.
-- Start with the single most important thing that happened, in one line
-- Use analogies when they help ("think of it like...")
-- Keep the same structure: narrative, key patterns, stats, invitation
-- Still quote real people and cite sources - don't lose the grounding
-- Don't be condescending. Simple is not stupid. ELI5 means accessible, not childish.
-
-Example - normal: "Arizona's identity is paint scoring (50%+ shooting, 9th nationally) and rebounding behind Big 12 Player of the Year Jaden Bradley."
-Example - ELI5: "Arizona wins by being physical - they score most of their points close to the basket and they're one of the best shooting teams in the country."
-
-Same data. Same sources. Just clearer.
-
-### If QUERY_TYPE = RECOMMENDATIONS — Signal-weighted picks, not mention counts
-
-**The failure mode for RECOMMENDATIONS queries is "counting when you should have judged."** Mention count rewards whatever is already popular, which is rarely what is actually recommended. Rank by signal quality instead.
-
-**Signal weights (highest to lowest):**
-1. **Practitioner testimony** (weight 5) - first-person "I use X and here's why" with specific reasoning, version numbers, or workflow details
-2. **Expert defection / authority move** (weight 4) - a domain insider publicly switching, endorsing, or picking (e.g., Flask creator switching from Python to Go)
-3. **Measurable claim** (weight 4) - specific number, benchmark, production adoption proof (e.g., "43.7% latency win", "LinkedIn and Uber running it in prod")
-4. **Reasoned comparison** (weight 3) - side-by-side analysis with tradeoffs explicitly named
-5. **Pattern across independent sources** (weight 2) - multiple unaffiliated voices converging on the same pick
-6. **Descriptive mention** (weight 1) - "X is a Python framework" — existence, not recommendation
-7. **Promotional / bootcamp / course-caption** (weight 0) - "comment CODE for my course" — skip entirely, do not count
-
-**Before ranking, separate "what EXISTS" from "what is RECOMMENDED":**
-- EXISTS = descriptive mentions, promotional content, training-data inertia, bootcamp curriculum, "learn X first" posts with no stakes attached
-- RECOMMENDED = reasoned picks from voices with stakes in the outcome (practitioners, experts, case studies, people who switched)
-- Only RECOMMENDED items drive the top of the ranking. Existing-but-not-recommended items go in "Also mentioned" at the bottom with a one-line note on why they are mentions not picks.
-
-**Lead with the 30-day DELTA, not the status-quo baseline.** What is the interesting movement? Who is switching? What is the contrarian signal? A status-quo leader with no movement is a footer item, not the headline. "Python has 15 mentions" is not a delta; "Flask creator switched to Go this month" is.
-
-**Output shape:**
-
-```
-🏆 Top recommendations (ranked by signal quality, not mention count):
-
-**[Pick 1]** - [one-line why it is the top recommendation based on the strongest signal in the research]
-- Evidence: [specific practitioner testimony, benchmark number, or expert pick - quote the actual signal]
-- Best for: [specific use case]
-- Voices: [real @handles, publications, or r/subreddits with stakes in the outcome]
-
-**[Pick 2]** - [same shape]
-
-**[Pick 3]** - [same shape]
-
-Also mentioned (exists, not recommended): [comma-separated list with one-line note on WHY each is a mention rather than a pick - e.g., "Python (status-quo default across bootcamp content; @javitm: 'agents have a strong bias for Python despite it probably not being the best')"]
-```
-
-**Anti-patterns to avoid:**
-- Leading with the most-mentioned option because it appears most frequently ("Python has 15 mentions so it is #1"). That is counting, not judging.
-- Treating every mention equally. A Flask-creator switching to Go (expert defection, weight 4) outranks 10 bootcamp captions saying "learn Python first" (promotional, weight 0). The bootcamp captions do not belong in the ranking at all.
-- Collapsing "best for what?" into one leaderboard. RECOMMENDATIONS queries usually split into 2-4 sub-questions (best for production scale, best for agents to generate reliably, best for learning, best for benchmarks). Separate them if the research supports it.
-- Ignoring anti-signal quotes. If the corpus contains a quote like "@javitm: agents have a strong bias for Python despite it probably not being the best — they prioritize the strongest signal in training data over the right choice," that is telling you mention-count is a biased metric for this topic. Read it; surface it; do not ignore it.
-- Stress-test your top pick before emitting. Ask: "Would the research actually defend this claim to a skeptical expert?" If the answer is no, re-rank.
-
-**Named failure mode (2026-04-18):** On `best programming language for AI agents`, Opus 4.7 led with `🏆 Most mentioned: Python (15+x mentions)` and put Go at #3 with 7x mentions. Model self-debug: "I counted when I should have judged. @javitm's quote should have changed the ranking because it called Python mentions a bias signal, not evidence of fit. I read that quote and then ranked by mention count anyway. The Flask-creator switching to Go was the real headline; I buried it." Do not repeat this failure.
-
-**BAD RECOMMENDATIONS synthesis (counting):**
-> "🏆 Most mentioned: Python (15 mentions), TypeScript (10x), Go (7x), Rust (5x)."
-
-**GOOD RECOMMENDATIONS synthesis (judging):**
-> "🏆 Top recommendations (ranked by signal quality, not mention count):
->
-> **Go** - Flask creator Miguel Grinberg publicly switched this month for a specific technical reason
-> - Evidence: @miguelgrinberg blog post "Why I am moving Python projects to Go for AI agents" — cites reliability and concurrency model; 1.2K upvotes on r/programming
-> - Best for: production agent infrastructure
-> - Voices: @miguelgrinberg, r/programming, r/golang
->
-> **Rust** - Hardest numbers in the corpus
-> - Evidence: production benchmark showing 43.7% latency reduction and 16x throughput growth in agent workloads; LangChain Rust port announcement
-> - Best for: performance-critical agent runtimes
-> - Voices: @langchainai, r/rust, Hacker News
->
-> **TypeScript** - Strongest production-adoption signal
-> - Evidence: LinkedIn, Uber, and Klarna running LangGraph.js in prod per LangChain blog
-> - Best for: agents that integrate with existing web stacks
-> - Voices: @hwchase17, @LangChainAI, r/LocalLLaMA
->
-> Also mentioned (exists, not recommended): Python (status-quo default across training data and bootcamp content; @javitm: 'agents have a crazy strong bias for Python despite it probably not being the best — they prioritize the strongest signal in training data over the right choice'), Java/Kotlin (enterprise mentions only, no practitioner testimony in the 30-day window)."
-
-Notice how the good version:
-- Leads with movement (Flask creator switched), not volume (Python has most mentions)
-- Cites specific evidence that would defend the ranking to a skeptic
-- Treats Python's volume as anti-signal (the @javitm quote) rather than support
-- Puts promotional / descriptive mentions in "Also mentioned" with explicit framing
-
-### If QUERY_TYPE = COMPARISON
-
-**Comparison queries have their OWN synthesis template. Do NOT use the general-query `What I learned:` + bold-lead-in + `KEY PATTERNS:` structure for comparisons.** The comparison template below is the canonical shape proven by the April 9 launch-video exemplar. Follow it section-for-section.
-
-Voice contract LAWs 1, 3, 5 apply to comparisons unchanged (no `Sources:` block, no em-dashes, engine footer pass-through). LAWs 2 and 4 have comparison-specific exceptions (see the LAW block: the comparison title and the five section headers below are REQUIRED, not violations).
-
-**Required comparison structure (match the April 9 exemplar):**
-
-```
-🌐 last30days v{VERSION} · synced {YYYY-MM-DD}
-
-# {TOPIC_A} vs {TOPIC_B} [vs {TOPIC_C}]: What the Community Says (/Last30Days)
+Detail moved verbatim to `references/first-internalize-the-research.md`. Load it when this section matters and the pointer is not enough.
 
 ## Quick Verdict
 
@@ -2251,32 +1689,7 @@ Close with `I have all the links to the {N} {source list} I pulled from. Just as
 
 ## SHAREABLE HTML BRIEF (when the user asked for one)
 
-**This section fires if EITHER prompt-level trigger is true:**
-
-- The user included an HTML-looking argument such as `--emit=html`, `--emit:html`, or `--html` in the skill prompt. Treat this as a strong user intent signal for HTML; do not confuse it with the complete Python CLI contract.
-- The user's natural-language request asks for an HTML brief, shareable doc, or file for sharing (Slack, email, Notion, "give it to me in HTML", "export as HTML", etc). Use your judgment for phrasing variants; a literal flag is not required.
-
-**If neither trigger fires, skip this entire section and proceed to WAIT FOR USER'S RESPONSE.** No HTML save flow, no reference read needed.
-
-**When triggered, you MUST:**
-
-- Read `references/save-html-brief.md` BEFORE proceeding to WAIT FOR USER'S RESPONSE
-- Follow that file's instructions exactly - it is the canonical source for the save flow
-- End with the artifact handoff defined there: saved HTML path, open the local file when the host can do so, and a concise confirmation for requests where HTML is the requested deliverable
-- If the user explicitly asks for a hosted/shareable web link, follow the opt-in publishing instructions in the reference file. Never publish by default.
-
-**You MUST NOT:**
-
-- Improvise the HTML save flow from memory or from instructions you've seen before
-- Skip the reference read because the steps "look familiar"
-- Save to a different path than the reference specifies
-- Add data quality warnings, debug headers, or safety notes to the saved HTML
-- Re-research the topic for the HTML render - the engine cache covers the second invocation
-- Upload or publish the HTML to a third-party host unless the user explicitly asked for hosted sharing and you have told them the link may be public/indexed unless password-protected
-
-**Why the directive is forceful:** the reference file is the only source of truth for the save flow. Skipping it produces broken artifacts - wrong path conventions, missing synthesis content, leaked engine debug output, or warnings that don't belong in shareable docs.
-
----
+Detail moved verbatim to `references/shareable-html-brief-when-the-user-asked-for-one.md`. Load it when this section matters and the pointer is not enough.
 
 ## WAIT FOR USER'S RESPONSE
 
@@ -2286,58 +1699,7 @@ Close with `I have all the links to the {N} {source list} I pulled from. Just as
 
 ## WHEN USER RESPONDS
 
-**Read their response and match the intent:**
-
-- If they ask a **QUESTION** about the topic → Answer from your research (no new searches, no prompt)
-- If they ask to **GO DEEPER** on a subtopic → Elaborate using your research findings
-- If they describe something they want to **CREATE** → Write ONE perfect prompt (see below)
-- If they ask for a **PROMPT** explicitly → Write ONE perfect prompt (see below)
-- If they say **"more fun"**, **"too serious"**, or similar → Write `FUN_LEVEL=high` to `~/.config/last30days/.env` (append, don't overwrite). Confirm: "Fun level set to high. Next run will surface more witty and viral content."
-- If they say **"less fun"**, **"too many jokes"**, or similar → Write `FUN_LEVEL=low` to `~/.config/last30days/.env`. Confirm: "Fun level set to low. Next run will focus on the news."
-- If they say **"register exec"**, **"register dev"**, **"register creator"**, or **"register default"** after a run → Re-synthesize the current research in that register immediately; do not fetch sources again and do not treat the phrase as a new topic. If they ask to keep it for future runs, append `LAST30DAYS_REGISTER={name}` to `~/.config/last30days/.env` (never overwrite the file).
-- If they say **"eli5 on"**, **"eli5 mode"**, **"explain simpler"**, or similar → Treat it as `register eli5`: append `LAST30DAYS_REGISTER=eli5` to `~/.config/last30days/.env`, then re-synthesize the current research immediately using the ELI5 guidance without fetching again. Confirm: "ELI5 mode on. All future runs will explain things like you're 5."
-- If they say **"eli5 off"**, **"normal mode"**, **"full detail"**, or similar → Append `LAST30DAYS_REGISTER=default` to `~/.config/last30days/.env`. Confirm: "ELI5 mode off. Back to full detail."
-- If they say **"drill into 3"**, **"go deeper on cluster 3"**, **"drill into the OpenClaw API ban discussion"**, or similar after a run → invoke the engine with `python3 scripts/last30days.py --drill "<their target>"`. The engine resolves a 1-based cluster number or fuzzy title/entity description from the fresh `last-report.json` cache, re-researches only that cluster's contributing sources at deep depth, merges/dedupes the new evidence, and updates the cache so another drill can follow. Relay the rendered **Original / Deeper** brief. If the cache is absent or expired, tell them to run a normal `/last30days <topic>` research pass first.
-- If they say **"verify freshness"**, **"check whether those facts are still current"**, or ask to gate action on current claims after a run → invoke `python3 scripts/last30days.py --verify-freshness` with no topic. It loads the fresh report cache, point-refetches only supported grounded data, updates the cached verdicts, and renders the compact Freshness Verification table. For a first-pass request, translate the intent into the normal engine invocation plus `--verify-freshness`. `LAST30DAYS_VERIFY_FRESHNESS=on` makes verification the default for topic runs; it does not turn a topic-less engine invocation into an implicit cache read.
-- If they say **"mark <topic> as covered"**, **"I covered X on the podcast"**, **"we published that article"**, or similar → invoke the engine with `python3 scripts/last30days.py queue cover "<topic name>" --save-dir="${LAST30DAYS_MEMORY_DIR}"` (same `--save-dir` scoping as discovery runs - queue rows live in that directory's research.db). Covering requires the exact queued topic name; on an unknown name the engine exits 2 and points at `queue list` - relay that, run `queue list`, and offer the queued names instead of retrying with guesses.
-- If they say **"what's in my topic queue"**, **"what should I talk about next"**, **"show my content pipeline"**, or similar → invoke `python3 scripts/last30days.py queue list --save-dir="${LAST30DAYS_MEMORY_DIR}"` and relay the rendered list (uncovered surfaced topics with domain, surface count, and last-surfaced date). An empty queue is a valid answer - suggest a `/last30days trending` or domain discovery run to populate it. (These two bullets cover the in-session case, after a run is already in context. The same asks arriving cold - with no research run yet this session - are handled by the TOPIC QUEUE FAST PATH near the top of this file, which runs the identical commands directly instead of falling into topic research.)
-
-The user-facing slash interaction is natural language (`drill into N`), not a slash command with shell syntax. `--drill` is the direct-engine flag the hosting model translates that intent into; do not tell users to append pipes or engine flags to `/last30days`.
-
-**Only write a prompt when the user wants one.** Don't force a prompt on someone who asked "what could happen next with Iran."
-
-### Writing a Prompt
-
-When the user wants a prompt, write a **single, highly-tailored prompt** using your research expertise.
-
-### CRITICAL: Match the FORMAT the research recommends
-
-**If research says to use a specific prompt FORMAT, YOU MUST USE THAT FORMAT.**
-
-**ANTI-PATTERN**: Research says "use JSON prompts with device specs" but you write plain prose. This defeats the entire purpose of the research.
-
-### Quality Checklist (run before delivering):
-- [ ] **FORMAT MATCHES RESEARCH** - If research said JSON/structured/etc, prompt IS that format
-- [ ] Directly addresses what the user said they want to create
-- [ ] Uses specific patterns/keywords discovered in research
-- [ ] Ready to paste with zero edits (or minimal [PLACEHOLDERS] clearly marked)
-- [ ] Appropriate length and style for TARGET_TOOL
-
-### Output Format:
-
-```
-Here's your prompt for {TARGET_TOOL}:
-
----
-
-[The actual prompt IN THE FORMAT THE RESEARCH RECOMMENDS]
-
----
-
-This uses [brief 1-line explanation of what research insight you applied].
-```
-
----
+Detail moved verbatim to `references/when-user-responds.md`. Load it when this section matters and the pointer is not enough.
 
 ## IF USER ASKS FOR MORE OPTIONS
 
@@ -2389,34 +1751,37 @@ Want another prompt? Just tell me what you're creating next.
 
 ## Security & Permissions
 
-**What this skill does:**
-- Sends search queries to ScrapeCreators API (`api.scrapecreators.com`) for TikTok and Instagram search, and as a Reddit search backup when the free Reddit path returns no items (requires SCRAPECREATORS_API_KEY; empty-only by default — see `LAST30DAYS_REDDIT_SC_MIN_ITEMS` / `LAST30DAYS_REDDIT_BACKEND`)
-- Legacy: Sends search queries to OpenAI's Responses API (`api.openai.com`) for Reddit discovery (fallback if no SCRAPECREATORS_API_KEY)
-- Sends search queries to X/Twitter via the official X API v2 (`api.x.com`, app-only bearer from `X_BEARER_TOKEN`, sent only in the Authorization header; the engine's default X path on a Grok Bot host next to xAI's API), optional user-provided `AUTH_TOKEN`/`CT0` env vars, explicit browser-cookie opt-in (`FROM_BROWSER` or setup consent), xAI's API (`api.x.ai` by default), Xquik's API (`xquik.com` by default), or the official X API v2 via xurl CLI (OAuth2, auto-detected when installed and authenticated)
-- Accepts a host-provided `--x-posts` envelope (a `.json` file of posts the hosting model fetched through its own X connector) as untrusted input: it replaces the engine's X fetch for that run, every row is validated and its citation URL rebuilt from the post id, and no X backend is called
-- Sends search queries to Algolia HN Search API (`hn.algolia.com`) for Hacker News story and comment discovery (free, no auth)
-- Sends search queries to Polymarket Gamma API (`gamma-api.polymarket.com`) for prediction market discovery (free, no auth)
-- Runs `yt-dlp` locally for YouTube search and transcript extraction (no API key, public data)
-- Sends search queries to ScrapeCreators API (`api.scrapecreators.com`) for TikTok and Instagram search, transcript/caption extraction (10,000 free calls, then PAYG)
-- Optionally sends search queries to Brave Search API, Parallel AI API, Perplexity API (`api.perplexity.ai`), or OpenRouter API for web search / synthesis
-- Fetches public Reddit thread data from `reddit.com` for engagement metrics
-- Stores research findings in local SQLite database (watchlist mode only)
-- Saves research briefings as .md files to `LAST30DAYS_MEMORY_DIR` (defaults to `~/Documents/Last30Days`)
-- Generates a local `index.html`, Atom `feed.xml`, and rendered brief pages from saved research when the user asks for the library feed
-- Publishes the library, feed, and referenced briefs to `ht-ml.app` only after explicit opt-in; hosted pages are public by default unless the user chooses password protection
-- Provides `--preflight` as an opt-in permission inspector (config source, planned writes, available sources); it does not read browser-cookie values, write files, or run live research. Do not run it as a required first-run step.
+Detail moved verbatim to `references/security-permissions.md`. Load it when this section matters and the pointer is not enough.
 
-**What this skill does NOT do:**
-- Does not post, like, or modify content on any platform
-- Does not access browser cookies unless explicitly configured or consented (`FROM_BROWSER`, manual X cookies, or setup with `--allow-browser-cookies`); `--preflight` and `--diagnose` do not read browser-cookie values
-- Does not use Codex ChatGPT auth as an OpenAI provider credential
-- Does not share API keys between providers
-- Does not log, cache, or write API keys to output files
-- Endpoint destinations follow configured provider base URLs; `--preflight` reports active and ignored endpoint overrides without printing secrets
-- Hacker News and Polymarket sources are always available (no API key, no binary dependency)
-- TikTok and Instagram sources require SCRAPECREATORS_API_KEY (10,000 free calls, then PAYG). Reddit uses ScrapeCreators search only as a backup when the free path returns no items (default), unless `LAST30DAYS_REDDIT_SC_MIN_ITEMS` or `LAST30DAYS_REDDIT_BACKEND=scrapecreators` is set.
-- Agent hosts invoke the slash-command skill contract; if `--agent` appears in the user's slash-command arguments, treat it as skill-level mode guidance, not a Python CLI flag.
 
-**Bundled scripts:** `scripts/last30days.py` (main research engine), `scripts/lib/` (search, enrichment, rendering modules), `scripts/lib/vendor/bird-search/` (vendored X search client, MIT licensed)
+Each file below is loaded on demand, not at triage. 28 file(s):
 
-Review scripts before first use to verify behavior.
+- `references/after-each-prompt-stay-in-expert-mode.md` — AFTER EACH PROMPT: Stay in Expert Mode. <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/agent-mode-agent-flag.md` — Agent Mode (--agent flag). <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/configuration.md` — Configuration. <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/context-memory.md` — CONTEXT MEMORY. <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/entity-1.md` — {Entity 1}. <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/entity-2.md` — {Entity 2}. <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/entity-3.md` — {Entity 3}. <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/first-internalize-the-research.md` — FIRST: Internalize the Research. <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/head-to-head.md` — Head-to-Head. <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/if-query-type-comparison.md` — If QUERY_TYPE = COMPARISON. <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/if-user-asks-for-more-options.md` — IF USER ASKS FOR MORE OPTIONS. <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/judge-agent-synthesize-all-sources.md` — Judge Agent: Synthesize All Sources. <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/output-summary-footer-after-each-prompt.md` — Output Summary Footer (After Each Prompt). <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/pre-present-self-check-run-before-displaying-the-synthesis.md` — PRE-PRESENT SELF-CHECK - run before displaying the synthesis. <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/quick-verdict.md` — Quick Verdict. <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/ranked-evidence-clusters.md` — Ranked Evidence Clusters. <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/research-execution.md` — Research Execution. <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/research-report-topic.md` — Research Report: {TOPIC}. <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/runtime-preflight.md` — Runtime Preflight. <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/step-0-55-pre-research-intelligence-resolve-communities-handles.md` — Step 0.55: Pre-Research Intelligence (resolve communities + handles). <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/step-0-75-generate-query-plan-you-are-the-planner.md` — prose
+- `references/step-0-first-run-setup-wizard.md` — Step 0: First-Run Setup Wizard. <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/step-2-do-websearch-after-script-completes.md` — STEP 2: DO WEBSEARCH AFTER SCRIPT COMPLETES. <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/the-bottom-line.md` — The Bottom Line. <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/the-emerging-stack.md` — The emerging stack. <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/then-show-summary-invite-vision.md` — THEN: Show Summary + Invite Vision. <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/wait-for-user-s-response.md` — WAIT FOR USER'S RESPONSE. <!-- Moved verbatim from last30days/SKILL.md, the
+- `references/websearch-supplemental-results.md` — WebSearch Supplemental Results. <!-- Moved verbatim from last30days/SKILL.md, the
+

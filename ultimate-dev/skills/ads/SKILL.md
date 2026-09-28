@@ -42,23 +42,7 @@ Gather this context (ask if not provided):
 
 ## Reference Routing
 
-This skill's depth lives in references — load by intent. For **any operational decision on a live account** (kill/keep/scale/budget), load the relevant playbook before answering; the thresholds live there, not here.
-
-| User intent | Load | Covers |
-|---|---|---|
-| "Can I afford this channel?", payback math, budgeting per plan, whether LTV:CAC lies | [payback-period.md](references/payback-period.md) | Why LTV:CAC is useless (4 flaws), Payback = CAC/ARPU (3–12mo), Discounted Payback, $9-vs-$999 worked examples, OOH+social, narrative momentum |
-| B2B strategy, funnel stages, budget splits, kill rules, lead quality, breakeven math | [b2b-paid-playbook.md](references/b2b-paid-playbook.md) | Demand lifecycle, leading/lagging signals, kill rules, offline conversion loop, U/B/F lead scoring, scaling quadrant |
-| Meta operations: when to kill/graduate/scale an ad, fatigue, testing structure, partnership/creator ads, declining reach | [meta-decision-system.md](references/meta-decision-system.md) | TCPL-anchored decision tree, ad-count ceiling, 80/20 CBO structure, fatigue bands, lead forms, Advantage+ transition, partnership-ads playbook, rolling-reach signal |
-| LinkedIn operations: bidding, audience sizing, scaling, benchmarks, TLAs, formats | [linkedin-b2b-playbook.md](references/linkedin-b2b-playbook.md) | Bidding progression, penetration scaling, sizing rules, funnel benchmarks, document/conversation ads, audit shortlist |
-| Google Search: what to spend on first, structure, match types, negatives, PMax | [google-search-playbook.md](references/google-search-playbook.md) | Intent ladder, account structure, match-type gates, negatives, bidding by volume, offline conversions, PMax guardrails |
-| Named-account targeting, pipeline acceleration, cross-channel retargeting | [abm-playbook.md](references/abm-playbook.md) | LinkedIn/Meta ABM, list mechanics, acceleration campaigns, UTM cross-channel remarketing, ABM measurement |
-| Generating Google RSAs | [rsa-output-spec.md](references/rsa-output-spec.md) | Mandatory output spec — limits, sidecars, template, self-check |
-| Auditing a live account, grading account health, quoting benchmarks, recommending changes | [audit-guardrails.md](references/audit-guardrails.md) | Pass/fail/unknown scoring, evidence coverage, recommendation safety, hard stops, benchmark discipline |
-| Itemized Google Ads / ecommerce account audit (Search + Shopping + PMax + GMC + Demand Gen) | [google-ads-audit-checklist.md](references/google-ads-audit-checklist.md) | 32 checks across 11 categories — feed/GMC quality, Shopping segmentation, PMax signals/budget, DG format splits, lander funnels; each scored pass/fail/unknown/NA via audit-guardrails |
-| Agentic creative/competitive research: ad-library teardown, review→persona mapping, organic competitor teardown | [creative-research-automation.md](references/creative-research-automation.md) | Ad Library output schema (format split, % partnership, inferred personas, top-10 by impressions), reviews→CSV→personas doc→deck, "who creatives target vs. who buys," connectors + scheduled-to-Slack workflow |
-| Audience setup, tracking setup, launch checklists, copy formulas | [audience-targeting.md](references/audience-targeting.md) · [conversion-tracking.md](references/conversion-tracking.md) · [platform-setup-checklists.md](references/platform-setup-checklists.md) · [ad-copy-templates.md](references/ad-copy-templates.md) | Existing foundations |
-
----
+Detail moved verbatim to `references/reference-routing.md`. Load it when this section matters and the pointer is not enough.
 
 ## Platform Selection Guide
 
@@ -130,95 +114,11 @@ LI_LeadGen_CMOs-SaaS_Whitepaper_Mar24
 
 ## Audience Understanding & Targeting
 
-Knowing your audience deeply is still the highest-leverage work in paid ads — demographics, job titles, pain points, fears, hopes, the exact language they use, who they follow, what they've tried, why they failed, what they buy. **Gather every identifier you can.**
-
-What's changed in 2026 is **where you apply that knowledge.** As ad-platform algorithms have gotten dramatically better at finding the right person, jamming all your audience identifiers into the platform's *targeting filters* underperforms feeding those same identifiers into the *creative* (headlines, copy, visuals, hooks, examples).
-
-The discipline now: **audience knowledge → creative first, targeting filters second.** How much that ratio tips toward "creative" varies meaningfully by platform.
-
-### Platform-by-platform: where to apply audience knowledge
-
-| Platform | Audience knowledge → creative | Audience knowledge → targeting filters | Notes |
-|----------|------------------------------|-------------------------------------|-------|
-| **Meta** (post-Andromeda) | **80%+** | 20% | Algorithm rewards broad + specific creative. See [[#Modern Meta playbook (Andromeda era — 2026+)]] below for the full reframe. Interest-stacking now actively hurts. |
-| **Google Search** | 40% | **60%** | Keywords are still the dominant signal — match-types, search-intent layering, and negative keywords still drive performance. Creative (RSA headlines) matters but is downstream of the keyword. |
-| **Google Performance Max / Demand Gen** | **70%** | 30% | Audience signals are advisory, not deterministic. Creative + product feed quality dominate. |
-| **LinkedIn** | 40% | **60%** | Job-title / company / industry filters still produce real precision because LinkedIn's identity data is high-quality. Creative makes the click; firmographics make the *right person* see it. |
-| **TikTok** | **70%** | 30% | Algorithm is closer to Meta's model — broad targeting + native-feeling creative wins. Some audience interests help but creative dominates. |
-| **Twitter/X** | 50% | 50% | Interest + follower targeting still meaningful, but creative differentiation is high-leverage given lower competition. |
-
-These ratios are directional, not precise. Test in your actual account.
-
-### Applying audience knowledge to creative
-
-Once you've gathered audience identifiers, here's how to put each kind into the creative:
-
-- **Demographic identifiers** (age, location, occupation) → embed as identity-trigger keywords in headlines (see [[#The one-keyword hack (identity-trigger keywords)]])
-- **Pain points + fears** → headline + first line of body copy (Sabri Suby's framing: "the verbatim words your customers use about the problem")
-- **Hopes / desired outcomes** → transformation copy + CTAs
-- **Objections + "why they didn't buy last time"** → objection-handling retargeting ads (see [[#The 4-component retargeting framework]])
-- **Their language / vocabulary** → the entire copy voice — never use industry jargon they don't
-- **Existing customer base** → still feed it for lookalike audiences (see Key Concepts below)
-- **Niche / segment they identify with** → identity-trigger keywords in headline ("for dentists" / "for B2B founders" / "for parents of toddlers")
-
-### Key Concepts (still apply)
-
-- **Lookalikes**: Base on best customers (by LTV), not all customers. Still high-value across platforms.
-- **Retargeting**: Segment by funnel stage (visitors vs. cart abandoners). See [[#Retarget with DIFFERENT offers (not the same one)]] and [[#The 4-component retargeting framework]] for the modern playbook.
-- **Exclusions**: Exclude existing customers and recent converters — showing ads to people who already bought wastes spend.
-
-### Common failure mode
-
-Trying to make up for weak creative with hyper-precise targeting. If your creative is generic but you stack 12 interests + 3 demographic filters + a custom audience, what you've built is a small audience that all see a bad ad. Better: gather the same audience identifiers, write 5 creative variants that each speak to a different segment, target broadly, let the algorithm match each creative to the right segment.
-
-**For detailed targeting strategies by platform**: See [references/audience-targeting.md](references/audience-targeting.md)
-
----
+Detail moved verbatim to `references/audience-understanding-targeting.md`. Load it when this section matters and the pointer is not enough.
 
 ## Modern Meta playbook (Andromeda era — 2026+)
 
-Meta launched the **Andromeda** algorithm in 2025, which fundamentally changed Meta ads. The old playbook (interest stacking, polished video creative, single-winner scaling) underperforms. The new playbook:
-
-### Creative volume is the constraint (statics > polished video)
-- Andromeda is "a hungry panda" — it needs constant fresh creative or it fatigues
-- **Statics often outperform video in 2026** because:
-  - Meta's algorithm has a bias toward statics — it can show more statics per session per user, so they're cheaper to deliver
-  - Static creative is 10x cheaper and faster to produce than video, enabling the volume Andromeda needs
-  - Even top advertisers running 17+ VSLs report that down-and-dirty native statics often beat 2.5-month-production VSLs
-- **Dedicate 1 hour per week** to producing fresh creatives for your winning offer. Volume > polish.
-
-### Creative IS the targeting (broad audience + specific creative)
-- The old playbook: stack interests, narrow the audience, hope to find the right buyer
-- The new playbook: target broadly (just the country) and let the creative do the targeting
-- **Long-form ad copy works better than short-form** in 2026 — gives Meta a wider context window to understand who to show the ad to
-- Test it: take your best winning ad with interest-stacked targeting, duplicate it, remove all targeting (just pick the country), run side-by-side for 7 days. Check CPAs. Broad typically wins.
-
-### The one-keyword hack (identity-trigger keywords)
-- Take your winning ad
-- Duplicate it with a niche/identity keyword inserted in the headline or body copy
-- *"Here's how to get 462 leads per week on autopilot"* → *"Here's how to get 462 **dental** leads per week on autopilot"* / *"...**lawyer** leads..."* / *"...**property investment** leads..."*
-- The keyword is an **identity trigger** for the viewer AND a targeting signal for Andromeda
-- Dramatically drops CPL and opens audience pockets you couldn't reach with a generic ad
-
-### AI variant farming (the 100-people test)
-- Take your winning ad
-- Feed to Claude/ChatGPT/Kong with the prompt:
-  > *"I want you to read this ad and be the author. If I show the next ad I'm going to ask you to write to 100 people, not 1 in 100 would be able to tell you it's written by a different person. Now write this for [demographic/niche]."*
-- The output should read essentially the same with subtle relevance shifts for the target
-- Apply in sequence: body copy → headlines → creative
-- Drop all variants in a CBO, let Meta's AI allocate spend
-
-### Zombie campaigns
-- After running a CBO, Meta will give 80% of variants no spend
-- Take the dead variants you have **high conviction** about
-- Launch them in a separate ad set ("zombie campaign")
-- Typically resurrects 20% as winners that Meta's first allocation passed over
-
-### Don't make ads look like ads
-- Hundreds of millions of people have ad blockers — the polished-ad aesthetic kills performance
-- Study what content **natively performs** in your niche on TikTok/Instagram/YouTube → produce ads that match that aesthetic
-- **Burner account technique:** create a clean Instagram/TikTok account, follow all influencers and pages in your niche, like their content. Your feed becomes a curated view of what's natively winning. Produce ads that match.
-- If you have an organic video with millions of views, **run that exact video as a paid ad** — proven content + paid distribution = the highest-leverage move
+Detail moved verbatim to `references/modern-meta-playbook-andromeda-era-2026.md`. Load it when this section matters and the pointer is not enough.
 
 ## Creative Best Practices
 
@@ -291,50 +191,7 @@ For hard kill/keep/scale thresholds, use the platform playbooks (see Reference R
 
 ## Retargeting Strategies
 
-### Funnel-Based Approach
-
-| Funnel Stage | Audience | Message | Goal |
-|--------------|----------|---------|------|
-| Top | Blog readers, video viewers | Educational, social proof | Move to consideration |
-| Middle | Pricing/feature page visitors | Case studies, demos | Move to decision |
-| Bottom | Cart abandoners, trial users | Urgency, objection handling | Convert |
-
-### Retargeting Windows
-
-| Stage | Window | Frequency Cap |
-|-------|--------|---------------|
-| Hot (cart/trial) | 1-7 days | Higher OK |
-| Warm (key pages) | 7-30 days | 3-5x/week |
-| Cold (any visit) | 30-90 days | 1-2x/week |
-
-### Exclusions to Set Up
-- Existing customers (unless upsell) and recent converters (7-14 day window)
-- Bounced visitors (<10 sec)
-- Irrelevant pages (careers, support)
-
-### Retarget with DIFFERENT offers (not the same one)
-
-The conventional retargeting playbook re-shows the same product/offer to people who didn't buy. The Sabri Suby principle: **the #1 reason someone didn't buy is the offer wasn't right for them.** Re-showing the same thing harder doesn't help.
-
-Instead, retarget with **different** products, services, or offers from your catalog:
-- Visitor clicked on protein powder, didn't buy → retarget with creatine (totally different category)
-- Visitor downloaded a lead magnet, didn't book a call → retarget with a different lead magnet on a related topic
-- Visitor viewed pricing, didn't sign up → retarget with a free audit or assessment instead
-
-The lift from this is often dramatic — a 2-3 ROAS audience on the original offer can hit 6+ ROAS on a different offer.
-
-### The 4-component retargeting framework
-
-Build out your retargeting layer with these 4 ad types running simultaneously:
-
-1. **Objection-handling ad** — directly addresses the most common reasons people didn't buy. To find these, **outbound call every lead** who didn't convert and ask why. The verbatim objections become the headline of this ad.
-2. **Proof testimonial carousel** — multi-image/multi-slide carousel of testimonials and proof that supports the claims of your original ad
-3. **Other-offers CBO** — your other best-performing ads for other products/services in one CBO, retargeted to the same audience
-4. **Value-first audit/assessment ad** — wraps your call in a free piece of value. Whether they buy or not, they leave with something useful. Lowers the friction to engage.
-
-These four together, retargeting the same audience that didn't convert from the top-of-funnel ad, dramatically lift the ROAS of the entire funnel.
-
----
+Detail moved verbatim to `references/retargeting-strategies.md`. Load it when this section matters and the pointer is not enough.
 
 ## Landing Page Alignment (the headline-mirror trick)
 
@@ -488,28 +345,37 @@ For tracking setup, see [references/conversion-tracking.md](references/conversio
 
 ## Related Skills
 
-- **ad-creative**: For generating and iterating ad headlines, descriptions, and creative at scale
-- **revops**: For the CRM side of ABM — lead scoring, routing, and the offline conversion loop
-- **customer-research / competitor-profiling / positioning**: Voice-of-customer that feeds ad copy and angles; and turning an organic-teardown shortlist + the personas doc from [creative-research-automation.md](references/creative-research-automation.md) into full competitor dossiers and positioning
-- **copywriting**: For landing page copy that converts ad traffic
-- **analytics / attribution**: Conversion tracking setup and the blended-CAC inputs behind [payback-period.md](references/payback-period.md); **pricing** sets the ARPU + plan structure that drive its Payback math (why blended LTV:CAC hides $9-vs-$999 variance)
-- **ab-testing**: For landing page testing to improve ROAS
-- **cro**: For optimizing post-click conversion rates
+Detail moved verbatim to `references/related-skills.md`. Load it when this section matters and the pointer is not enough.
 
-Each file below is loaded on demand, not at triage. 14 file(s):
+
+Each file below is loaded on demand, not at triage. 28 file(s):
 
 - `references/abm-playbook.md` — ABM Playbook (Paid). Account-based marketing with ads: targeting named accounts on LinkedIn and Meta, accelerating open pipeline, and stitching channels together.
+- `references/ad-copy-frameworks.md` — Ad Copy Frameworks. <!-- Moved verbatim from ads/SKILL.md, the
 - `references/ad-copy-templates.md` — prose
 - `references/audience-targeting.md` — Audience Targeting Reference. Detailed targeting strategies for each major ad platform.
 - `references/audit-guardrails.md` — Account Audits, Scoring & Recommendation Guardrails. Load this before auditing a live ad account, grading account health, quoting benchmarks, or recommending changes to a running campaign.
+- `references/audit-recommendation-guardrails.md` — Audit & Recommendation Guardrails. <!-- Moved verbatim from ads/SKILL.md, the
 - `references/b2b-paid-playbook.md` — B2B Paid Playbook. Cross-platform operating rules for B2B paid acquisition — where sales cycles run 2–24 months, in-platform conversions mislead, and lead quality...
+- `references/before-starting.md` — Before Starting. <!-- Moved verbatim from ads/SKILL.md, the
+- `references/campaign-optimization.md` — Campaign Optimization. <!-- Moved verbatim from ads/SKILL.md, the
+- `references/campaign-structure-best-practices.md` — Campaign Structure Best Practices. <!-- Moved verbatim from ads/SKILL.md, the
+- `references/common-mistakes-to-avoid.md` — Common Mistakes to Avoid. <!-- Moved verbatim from ads/SKILL.md, the
 - `references/conversion-tracking.md` — Conversion Tracking Setup. How to set up conversion tracking pixels across ad platforms.
+- `references/creative-best-practices.md` — Creative Best Practices. <!-- Moved verbatim from ads/SKILL.md, the
 - `references/creative-research-automation.md` — Creative Research Automation. An agentic workflow for running the creative-strategy research that usually eats most of a strategist's time — ad-library teardowns, review→persona...
 - `references/google-ads-audit-checklist.md` — Google Ads Audit Checklist (Ecommerce). An itemized, ecommerce-oriented audit of a live Google Ads + Merchant Center account: 32 checks across 11 categories, built to find wasted spend...
+- `references/google-rsa-output-spec-mandatory-when-generating-rsas.md` — Google RSA Output Spec (mandatory when generating RSAs). <!-- Moved verbatim from ads/SKILL.md, the
 - `references/google-search-playbook.md` — Google Search Playbook (B2B). Intent-first operating rules for Google Ads: where to spend first, how to structure the account, when to loosen match types, and how to keep smart...
+- `references/landing-page-alignment-the-headline-mirror-trick.md` — Landing Page Alignment (the headline-mirror trick). <!-- Moved verbatim from ads/SKILL.md, the
 - `references/linkedin-b2b-playbook.md` — LinkedIn B2B Playbook. Operational rules for LinkedIn Ads: bidding, audience sizing, scaling triggers, benchmarks, and format-specific tactics.
 - `references/meta-decision-system.md` — Meta Decision System (B2B). A quantified kill/keep/scale engine for Meta ads.
 - `references/payback-period.md` — Payback Period Budgeting. The gate before every channel decision: can I afford this channel?
+- `references/platform-selection-guide.md` — Platform Selection Guide. <!-- Moved verbatim from ads/SKILL.md, the
 - `references/platform-setup-checklists.md` — Platform Setup Checklists. Complete setup checklists for major ad platforms.
+- `references/platform-setup.md` — Platform Setup. <!-- Moved verbatim from ads/SKILL.md, the
+- `references/reporting-analysis.md` — Reporting & Analysis. <!-- Moved verbatim from ads/SKILL.md, the
 - `references/rsa-output-spec.md` — Google RSA Output Spec. When the user requests Google Ads RSAs (Responsive Search Ads), output MUST comply with these platform limits and structural requirements.
+- `references/task-specific-questions.md` — Task-Specific Questions. <!-- Moved verbatim from ads/SKILL.md, the
+- `references/tool-integrations.md` — Tool Integrations. <!-- Moved verbatim from ads/SKILL.md, the
 

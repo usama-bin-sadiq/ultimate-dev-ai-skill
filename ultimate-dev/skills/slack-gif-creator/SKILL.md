@@ -644,3 +644,16 @@ To use this toolkit, install these dependencies only if they aren't already pres
 ```bash
 pip install pillow imageio numpy
 ```
+
+Each file below is loaded on demand, not at triage. 9 file(s):
+
+- `references/animation-primitives.md` — Animation Primitives. <!-- Moved verbatim from slack-gif-creator/SKILL.md, the
+- `references/core-validators.md` — Core Validators. <!-- Moved verbatim from slack-gif-creator/SKILL.md, the
+- `references/dependencies.md` — Dependencies. <!-- Moved verbatim from slack-gif-creator/SKILL.md, the
+- `references/example-composition-patterns.md` — Example Composition Patterns. <!-- Moved verbatim from slack-gif-creator/SKILL.md, the
+- `references/helper-utilities.md` — Helper Utilities. <!-- Moved verbatim from slack-gif-creator/SKILL.md, the
+- `references/optimization-strategies.md` — Optimization Strategies. <!-- Moved verbatim from slack-gif-creator/SKILL.md, the
+- `references/philosophy.md` — Philosophy. <!-- Moved verbatim from slack-gif-creator/SKILL.md, the
+- `references/slack-s-requirements.md` — Slack's Requirements. <!-- Moved verbatim from slack-gif-creator/SKILL.md, the
+- `references/toolkit-structure.md` — Toolkit Structure. <!-- Moved verbatim from slack-gif-creator/SKILL.md, the
+
