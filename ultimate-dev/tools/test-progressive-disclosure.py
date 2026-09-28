@@ -344,6 +344,39 @@ if r and r["status"] == "plan":
 else:
     check("J2 no plan produced", False, (r or {}).get("why", "")[:60])
 
+print("\n=== K. the estimate counts the preamble before the first heading ===")
+# The estimate was frontmatter + sections. Everything before the first `## ` --
+# the H1 and the paragraph under it -- was in neither, so the estimate came out
+# a few lines below the file. The loop stopped on a number that was not the
+# number it was about to write, the postcondition caught that the result was
+# still over, and the tool reported a skill unfixable that it could fix by
+# moving one more 13-line section. Five lines was the entire margin.
+root = pathlib.Path(tempfile.mkdtemp())
+preamble = "".join(f"intro line {i}\n\n" for i in range(4))
+body = (
+    preamble +
+    "## Workflow\n" + filler(20, "wf") +
+    "".join(f"## Topic {i}\n" + filler(20, f"t{i}") for i in range(24))
+)
+p = make(root, "preamble", body)
+check("K0 the fixture really has a preamble", body.index("## ") > 0)
+check("K0b and it starts over the ceiling",
+      len(p.read_text().split("\n")) - 1 > apd.LIMIT,
+      f"{len(p.read_text().split(chr(10))) - 1} lines")
+r = apd.plan(p)
+if r and r["status"] == "plan":
+    real = len(r["new_skill"].split("\n")) - 1
+    check("K1 the written file is under the ceiling", real <= apd.LIMIT,
+          f"{real} lines")
+    check("K2 the estimate matched the file exactly",
+          r["why"].split(" -> ")[1].split(" ")[0] == str(real),
+          f"claimed {r['why'].split(' -> ')[1].split(' ')[0]}, actual {real}")
+    check("K3 the preamble survived into the output",
+          "intro line 0" in r["new_skill"])
+else:
+    check("K1 a preamble must not make a fixable file look unfixable", False,
+          (r or {}).get("why", "")[:70])
+
 print("\n=== E. a file already under the ceiling is left alone ===")
 root = pathlib.Path(tempfile.mkdtemp())
 p = make(root, "small", "## Workflow\n" + filler(50, "x"))

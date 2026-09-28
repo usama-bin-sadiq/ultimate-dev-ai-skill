@@ -416,17 +416,7 @@ It scores burstiness, vocabulary diversity, and stock-phrase density. A high AI-
 
 ## Working with Copy Sweeps
 
-When editing collaboratively:
-
-1. **Run a sweep and present findings** - Show what you found, why it's an issue
-2. **Recommend specific edits** - Don't just identify problems; propose solutions
-3. **Request the updated copy** - Let the author make final decisions
-4. **Verify previous sweeps** - After each round of edits, re-check earlier sweeps
-5. **Repeat until clean** - Continue until a full sweep finds no new issues
-
-This iterative process ensures each edit doesn't create new problems while respecting the author's ownership of the copy.
-
----
+Detail moved to `references/working-with-copy-sweeps.md`.
 
 ## References
 
@@ -492,16 +482,7 @@ Surface these issues WITHOUT being asked when you notice them in context:
 
 ## Communication
 
-All output follows the structured communication standard:
-
-- **Bottom line first** — state the overall copy health before diving into issues
-- **What + Why + How** — every flagged issue gets: what's wrong, why it hurts conversion, how to fix it
-- **Edits have reasons** — never change words without explaining the principle
-- **Confidence tagging** — 🟢 clear improvement / 🟡 judgment call / 🔴 needs author input
-
-Deliver findings sweep-by-sweep. Don't dump all issues at once. Prioritize by conversion impact, not writing preference.
-
----
+Detail moved to `references/communication.md`.
 
 ## Related Skills
 

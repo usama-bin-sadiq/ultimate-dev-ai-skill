@@ -1,0 +1,65 @@
+<!-- Moved verbatim from gemini-interactions-api/SKILL.md, the 'section' section. Relative links were rebased for the new depth; the prose is otherwise unchanged. -->
+
+# 5. Data Model & Step Types Reference
+
+An `Interaction` response contains `steps`, an array of typed step objects
+representing a structured timeline of the interaction turn. Read the current
+step `type` rather than assuming the last step is text — the trailing step may
+be a `function_call` or a `thought`.
+
+### Step Types
+
+**User steps:**
+
+*   `user_input`: User input (text, audio, multimodal). Contains a `content`
+    array. (This is why REST input payloads use `"type": "user_input"`, **not**
+    `"role": "user"`.)
+
+**Model/server steps:**
+
+*   `model_output`: Final model generation. Contains a `content` array with
+    `text`, `image`, `audio`, etc. (REST responses use `"type": "model_output"`,
+    **not** `"role": "model"`.)
+*   `thought`: Model reasoning / chain of thought. Has a `signature` field and
+    optional `summary`.
+*   `function_call`: Tool call request, with flat `id`, `name`, and `arguments`
+    fields (there is **no** nested `tool_calls` list).
+*   `function_result`: Tool result you send back, with `call_id`, `name`, and
+    `result` fields.
+*   `google_search_call` / `google_search_result`, `code_execution_call` /
+    `code_execution_result`, `url_context_call` / `url_context_result`,
+    `mcp_server_tool_call` / `mcp_server_tool_result`, `file_search_call` /
+    `file_search_result`: built-in and remote tool steps.
+
+### Content types (inside the `content` array on `model_output` and `user_input` steps)
+
+*   `text`: Text content (`text` field).
+*   `image` / `audio` / `document` / `video`: Content with `data`, `mime_type`,
+    or `uri`.
+
+### Convenience accessor
+
+*   `output_text`: The combined text from the trailing `model_output` steps.
+    Prefer this over hand-walking `steps[-1].content[0].text`, which breaks when
+    the last step is a tool call or a thought.
+
+### Streaming Event Types
+
+| Event                   | Description                                       |
+| ----------------------- | ------------------------------------------------- |
+| `interaction.created`   | Interaction created; includes metadata.           |
+| `step.start`            | A new step begins. Contains the step `type` and   |
+:                         : initial metadata.                                 :
+| `step.delta`            | Incremental data for the current step. Contains a |
+:                         : typed `delta` object (e.g. `delta.type == "text"` :
+:                         : with `delta.text`).                               :
+| `step.stop`             | The step is complete. Contains `index`.           |
+| `interaction.completed` | Interaction finished. Contains final `usage`.     |
+
+### Storage & retention
+
+Interactions are stored by default (`store=True`), which enables stateful
+features like `previous_interaction_id` and background execution. Passing
+`store=False` disables server-side retention and therefore also disables
+`previous_interaction_id` and `background` — in that mode you must pass the full
+conversation history in `input` on each turn.

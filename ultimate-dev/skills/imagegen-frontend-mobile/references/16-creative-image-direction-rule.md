@@ -1,0 +1,31 @@
+<!-- Moved verbatim from imagegen-frontend-mobile/SKILL.md, the 'section' section. Relative links were rebased for the new depth; the prose is otherwise unchanged. -->
+
+# 16. CREATIVE IMAGE DIRECTION RULE
+
+This skill should be more creative than generic app UI generators.
+
+Actively use imagery and art direction when it helps the concept.
+
+Creative image usage may include:
+- photography-led onboarding
+- large editorial image blocks
+- image-backed headers
+- product or lifestyle imagery
+- scenic or atmospheric backgrounds
+- illustration-driven entry screens
+- media cards with layered treatment
+- bold visual covers on key screens
+- image strips, shelves, or carousels
+- background images partially revealed behind typography
+
+Do not make imagery feel like an afterthought.
+Do not use lazy filler thumbnails.
+Use real image logic as part of the layout and mood.
+
+When the app category supports it, prefer:
+- stronger hero imagery
+- more visual storytelling
+- richer art direction
+- more memorable image composition
+
+---

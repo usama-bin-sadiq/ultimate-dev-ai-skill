@@ -301,19 +301,24 @@ def plan(skill_md: pathlib.Path) -> dict | None:
     moved_spans: set[tuple[int, int]] = set()
 
     def kept_line_count() -> int:
-        total = len(fm.split("\n")) - 1
-        for _n, a, b, _f in secs:
-            if (a, b) in moved_spans:
-                # The heading stays and the body becomes a pointer. This has to
-                # be the pointer's real newline count, not an estimate of it.
-                # An estimate one line low is one line low per moved section,
-                # so a file with fifteen of them lands fifteen lines over the
-                # ceiling while the tool reports success. Getting this wrong
-                # cost a run seventeen files it had already fixed.
-                total += POINTER_LINES
-            else:
-                total += body[a:b].count("\n")
-        return total
+        """Lines in the SKILL.md this selection would produce. Exactly.
+
+        Derived from the whole body rather than by walking the section list,
+        because walking the section list omits the text before the first `##`
+        -- the H1 and the paragraph under it. That omission is five lines in
+        copy-editing, which is the difference between an estimate of 500 and a
+        file of 505: the loop stopped, the postcondition caught the file was
+        still over, and the tool skipped a skill it could have fixed by moving
+        one more 13-line section.
+
+        The estimate has to equal the output, because it is what decides when to
+        stop. An estimate that is even one line low stops the loop one section
+        early, and every file it stops early in is reported as unfixable.
+        """
+        fm_lines = len(fm.split("\n")) - 1
+        body_lines = body.count("\n")
+        removed = sum(body[a:b].count("\n") for a, b in moved_spans)
+        return fm_lines + body_lines - removed + POINTER_LINES * len(moved_spans)
 
     # From the end backwards: the tail of a SKILL.md is reference material far
     # more often than its opening, and taking from the end leaves a contiguous

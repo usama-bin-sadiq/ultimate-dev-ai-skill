@@ -488,28 +488,9 @@ use it. Each answers one question the sections above do not.
 
 ## Supporting Links
 
--   [Agent Runtime Overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/agents.md.txt)
--   [Agent Gateway Overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/gateways/agent-gateway-overview.md.txt)
--   [Policies Overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/policies/overview.md.txt)
--   [Agent Identity Overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/agent-identity-overview.md.txt)
--   [Agent Registry Overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/agent-registry.md.txt)
--   [Deploy Agent Gateway Runtime](https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale/runtime/agent-gateway-runtime-deploy.md.txt)
--   [Private Service Connect Interface](https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale/runtime/private-service-connect-interface.md.txt)
--   [Troubleshoot Agent Gateway](https://docs.cloud.google.com/gemini-enterprise-agent-platform/troubleshooting/troubleshoot-agent-gateway.md.txt)
--   [Troubleshoot Agent Deployment](https://docs.cloud.google.com/gemini-enterprise-agent-platform/troubleshooting/agent-deployment.md.txt)
--   [Troubleshoot Runtime Setup](https://docs.cloud.google.com/gemini-enterprise-agent-platform/troubleshooting/runtime-setup.md.txt)
+Detail moved to `references/supporting-links.md`.
 
 ## Runtime notes
 
-This file was adapted to be tool-neutral: it claimed a general scope and was
-bound to one tool. The procedure is unchanged; what changed is that a reader on a
-different runtime is told what to substitute.
+Detail moved to `references/runtime-notes.md`.
 
-- `<project-root>` — the repository root. 1 machine-specific path(s) replaced.
-- `<agent-config-dir>` — wherever this runtime keeps its configuration. Not a fixed location.
-- `<agent-instructions>` — the file this runtime reads for standing instructions. Names differ per runtime and none is assumed.
-- **cloud-cli** — means. One tool's way of doing a step a different runtime may do another way.
-Anything marked **means** is an implementation detail of one tool, and a reader
-on a different runtime may need a different mechanism for the same step. Anything
-marked **subject** means the capability is genuinely about that tool, and a reader
-without it should not expect this file to apply.
