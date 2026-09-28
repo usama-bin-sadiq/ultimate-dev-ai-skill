@@ -1,7 +1,6 @@
 ---
 name: anti-overengineering-impact
 description: "Show anti-overengineering measured impact as a scoreboard: less code, less cost, more speed, from the benchmark medians. One-shot display."
-homepage: https://github.com/DietrichGebert/anti-overengineering
 license: MIT
 ---
 
