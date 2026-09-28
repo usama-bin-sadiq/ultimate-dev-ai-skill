@@ -5,4 +5,5 @@
 
 - `references/advanced.md`
 - `references/patterns.md`
+- `references/schema.md`
 - `references/skill-creator-original.md`

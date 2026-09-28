@@ -377,6 +377,46 @@ else:
     check("K1 a preamble must not make a fixable file look unfixable", False,
           (r or {}).get("why", "")[:70])
 
+print("\n=== L. the reconcile loop terminates, on the case that made it spin ===")
+# A file whose estimate lands just under the ceiling and then gains the five
+# line reference-index pointer. The first version of the reconcile loop
+# responded by giving a section back, which made the file bigger, which made
+# the given-back section a candidate again -- forever. The run hung and looked
+# like a slow disk.
+root = pathlib.Path(tempfile.mkdtemp())
+body = (
+    "## Workflow\n" + filler(20, "wf") +
+    "".join(f"## Part {i}\n" + filler(20, f"p{i}") for i in range(20)) +
+    "## Notes\n"
+    "See `references/deep/nested/file.md` for the thing.\n" + filler(200, "notes")
+)
+p = make(root, "spinner", body)
+check("L0 the fixture declares a reference, so an index will be needed",
+      "references/deep/nested/file.md" in p.read_text())
+done = False
+try:
+    import signal
+
+    def _boom(_sig, _frm):
+        raise TimeoutError
+
+    signal.signal(signal.SIGALRM, _boom)
+    signal.alarm(20)          # 20s: a loop that cannot converge is not slow
+    r = apd.plan(p)
+    signal.alarm(0)
+    done = True
+except TimeoutError:
+    signal.alarm(0)
+    r = None
+check("L1 plan() returned rather than spinning", done)
+if r is not None:
+    check("L2 the result is under the ceiling",
+          r["status"] != "plan" or len(r["new_skill"].split("\n")) - 1 <= apd.LIMIT,
+          f"{(r or {}).get('why', 'planned')[:60]}")
+    check("L3 no section is both moved and given back",
+          not ({(a, b) for a, b in r.get("moved_spans", [])}
+               & {(a, b) for a, b in r.get("walked_back", [])}))
+
 print("\n=== E. a file already under the ceiling is left alone ===")
 root = pathlib.Path(tempfile.mkdtemp())
 p = make(root, "small", "## Workflow\n" + filler(50, "x"))
