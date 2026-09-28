@@ -128,8 +128,27 @@ BLOCK_INDICATORS = (">", "|", ">-", "|-", ">+", "|+")
 # same failure in a different place. The word now has to appear as a slot:
 # shouted, bracketed, interpolated, or labelled and awaiting a value.
 PLACEHOLDER_WORDS = re.compile(
-    r"\b(TODO|FIXME|TBD|XXX|coming soon|lorem ipsum)\b", re.IGNORECASE
+    r"\b(XXX|coming soon|lorem ipsum)\b", re.IGNORECASE
 )
+# A second word list, matched case-SENSITIVELY, for the markers whose meaning
+# depends on the case.
+#
+# `TODO` is a work marker. `todo` is the noun: a task list, a product category
+# ("todo app", "free todo list with reminders"), and a filename
+# (`tasks/todo.md`, `anti_todo_card.py`). A skill that documents a task tracker
+# uses the lowercase word constantly and correctly. Matching it case-insensitively
+# reported 44 of those as unfinished, which is the same error as reading a
+# template's XXX as an unfilled slot: the check objecting to correct work.
+#
+# FIXME and TBD move with it. FIXME has no common lowercase noun, and TBD is
+# always an acronym, so case costs them nothing -- and leaving them in the
+# case-insensitive list while pulling TODO out would be a distinction with no
+# observable consequence, which is the kind of rule nobody can then reason about.
+#
+# They are applied to the raw line separately and OR'd with the pattern below.
+# Embedding this pattern inside an IGNORECASE wrapper would silently reinstate
+# the bug, so the composition is explicit in looks_unfilled().
+CASE_SENSITIVE_MARKERS = re.compile(r"\b(TODO|FIXME|TBD)\b")
 PLACEHOLDER_SLOT = re.compile(
     # Shouted, standing in for a value. The (?-i:...) scope is load-bearing:
     # the whole pattern is case-insensitive for TODO and friends, and without
@@ -151,6 +170,18 @@ PLACEHOLDER_PATTERN = re.compile(
     r"(?:" + PLACEHOLDER_WORDS.pattern + r")|(?:" + PLACEHOLDER_SLOT.pattern + r")",
     re.IGNORECASE,
 )
+
+
+def looks_unfilled(line: str) -> bool:
+    """Does this line carry an unfilled-marker signal?
+
+    The case-sensitive words are checked against the raw line and the
+    case-insensitive ones against the pattern above; either is enough. Keeping
+    the two apart is the whole point -- see CASE_SENSITIVE_MARKERS.
+    """
+    return bool(
+        CASE_SENSITIVE_MARKERS.search(line) or PLACEHOLDER_PATTERN.search(line)
+    )
 
 BUILD_ARTEFACT_PATTERN = re.compile(
     r"(__pycache__|\.pyc$|\.DS_Store|\.pytest_cache|\.mypy_cache|node_modules|\.egg-info)"
@@ -676,7 +707,7 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
         for lineno, line in enumerate(
             path.read_text(encoding="utf-8", errors="replace").splitlines(), 1
         ):
-            if not PLACEHOLDER_PATTERN.search(line):
+            if not looks_unfilled(line):
                 continue
             if prohibition.search(line):
                 continue

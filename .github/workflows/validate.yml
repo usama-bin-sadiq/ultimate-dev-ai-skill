@@ -524,6 +524,38 @@ jobs:
                   print("  caught  fenced marker correctly ignored")
               shutil.rmtree(clean, ignore_errors=True)
 
+          # Case is the whole distinction for TODO. `// TODO` is a work marker;
+          # "todo list", "todo app" and `tasks/todo.md` are a noun and a
+          # filename, and a skill documenting a task tracker uses the lowercase
+          # word constantly and correctly. Case-insensitive matching reported 44
+          # of those as unfinished. Both directions are asserted because the
+          # failure mode of getting it wrong is silent in opposite directions --
+          # too strict is noisy, too loose ships a real marker.
+          def add_lowercase_todo(s):
+              p = s / S / "references" / "triage.md"
+              p.write_text(p.read_text() + "\nThe plan is written to tasks/todo"
+                           + ".md and tracked on the todo list.\n")
+
+          with tempfile.TemporaryDirectory() as tmp:
+              clean = Path(tmp) / "lowercase"
+              shutil.copytree(ROOT, clean, symlinks=True,
+                              ignore=shutil.ignore_patterns(".git", "__pycache__",
+                                                           "dist", "runs", ".eval-fixtures"))
+              add_lowercase_todo(clean)
+              proc = subprocess.run(
+                  [sys.executable, str(clean / VALIDATE), "--strict"],
+                  capture_output=True, text=True, cwd=clean)
+              if proc.returncode != 0 and "triage.md" in proc.stdout + proc.stderr:
+                  failures.append("lowercase todo: reported, but it is a noun and a filename")
+              else:
+                  print("  caught  lowercase todo correctly ignored")
+
+          def add_uppercase_todo(s):
+              p = s / S / "references" / "triage.md"
+              p.write_text(p.read_text() + "\n// T" + "ODO: wire the retry\n")
+
+          case("uppercase marker in prose", VALIDATE, ["--strict"], add_uppercase_todo)
+
           case("agent role count does not match disk", VALIDATE, ["--strict"],
                edit(f"{S}/SKILL.md", "286 role files", "999 role files"))
           case("non-role file sitting in agents/", VALIDATE, ["--strict"],
