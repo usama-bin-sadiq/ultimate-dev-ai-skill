@@ -194,6 +194,17 @@ jobs:
           python ultimate-dev/tools/test-workflow-auth.py
           python ultimate-dev/tools/check-workflow-auth.py
 
+      # The release changelog entry was a hardcoded placeholder. Every release
+      # this repository has ever made shipped "_No summary recorded._", and the
+      # `release_notes` output computed one step earlier was read by nothing --
+      # the notes were computed in one step and written in another, and only the
+      # writer survived. These cases run the generator's own logic, lifted from
+      # the workflow rather than copied, against real temporary git histories:
+      # a range of ordinary commits, a human's typed notes, whitespace-only
+      # notes, a merge-only range, and an empty range.
+      - name: Changelog generator, against real git histories
+        run: python ultimate-dev/tools/test-changelog-generator.py
+
       # Sixteen cases name a file the run is meant to read, and the corpus
       # states exact answers about them: 968 refunds against a naive count of
       # 1,204, one 18,422 ms row, a EUR 56,500 drop. Those were assertions in
@@ -446,7 +457,34 @@ jobs:
   self-test:
     name: Test the Validators
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # Measured 1,444 s -- about 24 minutes -- to run this suite to completion on
+    # a warm local checkout, against a 10-minute limit. The job was being killed
+    # at 10m16s, every time, and a job killed by its own timeout reports
+    # `cancelled` rather than `failure`, so this did not look like a timeout at
+    # all. It looked like concurrency cancelling a run, and the concurrency
+    # group is `cancel-in-progress: true`, so there was a plausible wrong
+    # explanation sitting right there. The step that was doing the work showed
+    # `completed/cancelled` while every other step in the job succeeded, which
+    # is the only detail that points at the timeout.
+    #
+    # The consequence of the limit was not a slow pipeline. It was that this
+    # suite had never reported a verdict in CI. Every case in it -- each
+    # assertion that a validator rejects what it should reject, and each control
+    # asserting that a clean tree still passes -- was untested as far as CI was
+    # concerned, and the run only looked green because an earlier job failed on
+    # something else first.
+    #
+    # 45 minutes is roughly 1.9x the measured local time, which is headroom for
+    # a slower runner without being unbounded. Raising a bound so a check can
+    # report is not the same as weakening the check: the assertions are
+    # unchanged, and the last line of output is still all-pass or fail.
+    #
+    # The 24 minutes is now the pipeline's dominant cost and is worth attacking
+    # on its own terms. validate-skills.py alone is 42 s, and this suite
+    # invokes it against a fresh copy of the whole 2,086-skill tree roughly
+    # twenty times, which is most of the total. That is a real cost, recorded
+    # here rather than discovered later.
+    timeout-minutes: 45
     permissions:
       contents: read
     steps:

@@ -267,6 +267,14 @@ jobs:
       - name: Prepare changelog
         env:
           NEW_VERSION: ${{ steps.version.outputs.new_version }}
+          # Written by the version step for workflow_dispatch, where a human
+          # typed the notes, and empty for a push. It was exported as a job
+          # output and then read by nothing: the entry below was a hardcoded
+          # placeholder, so every release in this repository's history shipped
+          # "_No summary recorded._" and the GitHub release body, which is
+          # extracted from the changelog, said the same thing. The plumbing was
+          # built and left disconnected.
+          RELEASE_NOTES: ${{ steps.check.outputs.release_notes }}
         run: |
           set -euo pipefail
           date_str=$(date +%Y-%m-%d)
@@ -275,7 +283,9 @@ jobs:
             exit 0
           fi
           python3 - CHANGELOG.md "$NEW_VERSION" "$date_str" <<'PY'
+          import os
           import re
+          import subprocess
           import sys
           from pathlib import Path
 
@@ -287,13 +297,65 @@ jobs:
           if re.search(rf"^## \[{re.escape(version)}\]", text, re.MULTILINE):
               raise SystemExit(f"changelog already has an entry for {version}")
 
+          # A human's notes win. They were typed for this release and are the
+          # most accurate description of it available.
+          notes = (os.environ.get("RELEASE_NOTES") or "").strip()
+
+          if not notes:
+              # Otherwise describe what is actually being released: the commits
+              # between the previous version tag and this commit. A push release
+              # is exactly that set of commits, so the changelog entry is
+              # derived from the same range the tag is about to be cut from.
+              # The new tag does not exist yet -- this step runs before the tag
+              # is cut -- so the range has to be anchored on HEAD, not on
+              # f"{version}^". That form is fatal: "Not a valid object name
+              # v4.0.26^". Anchoring on HEAD is also what we actually want: the
+              # most recent tag reachable from here is the previous release,
+              # because the one being cut is not on the branch yet.
+              previous = subprocess.run(
+                  ["git", "describe", "--tags", "--abbrev=0", "HEAD"],
+                  capture_output=True, text=True, check=False,
+              )
+              if previous.returncode == 0 and previous.stdout.strip():
+                  span = f"{previous.stdout.strip()}..HEAD"
+              else:
+                  span = "HEAD"
+              log = subprocess.run(
+                  ["git", "log", "--no-merges", "--format=%s", span],
+                  capture_output=True, text=True, check=False,
+              )
+              if log.returncode == 0:
+                  subjects = [s for s in (x.strip() for x in log.stdout.split("\n")) if s]
+                  if subjects:
+                      notes = "\n".join(f"- {s}" for s in subjects)
+                  else:
+                      # Only merge commits in range: list them, since a release
+                      # that changed something is a release worth naming.
+                      merged = subprocess.run(
+                          ["git", "log", "--merges", "--format=- %s", span],
+                          capture_output=True, text=True, check=False,
+                      )
+                      notes = merged.stdout.strip() if merged.returncode == 0 else ""
+
+          if not notes:
+              # Last resort. This is the one case where the old placeholder was
+              # honest, and it now says so -- as a fact about the run rather
+              # than as the output of a generator that never tried.
+              notes = "_No commits or notes to summarise for this release._"
+
+          entry = f"{header}\n\n{notes}\n"
           # Insert directly beneath the H1 so newest-first order is preserved.
           match = re.search(r"^# .*$", text, re.MULTILINE)
           if not match:
               raise SystemExit("CHANGELOG.md has no H1 heading")
 
-          entry = f"{header}\n\n_No summary recorded. Review the comparison for details._\n"
-          updated = f"{text[:match.end()]}\n\n{entry}{text[match.end():].lstrip(chr(10))}"
+          # The blank line after the entry is load-bearing for readability, and
+          # the placeholder version did not emit one: every entry in the file
+          # ran straight into the next `## [` heading with no separation. It
+          # still renders, because a heading starts a block, but every entry
+          # reads as one undifferentiated wall. One newline more, deliberately.
+          tail = text[match.end():].lstrip("\n")
+          updated = f"{text[:match.end()]}\n\n{entry}\n{tail}"
           path.write_text(updated, encoding="utf-8")
           PY
 
