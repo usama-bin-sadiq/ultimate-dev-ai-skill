@@ -31,7 +31,9 @@ Documentation is part of delivery. If the code, API, setup, workflow, or behavio
 Documentation at this level should usually include most or all of these surfaces:
 
 - `README.md` for the current product story, setup, quickstart, and top-level links.
-- `docs/README.md` or equivalent index that maps the full documentation set.
+- the documentation index the project already has, e.g. `docs/README.md`, mapping
+  the full documentation set. That is a path in the reader's own repository, not
+  a file this skill ships.
 - Guide pages for how to build, use, run, or operate the system.
 - Reference pages for public APIs, endpoints, tools, config fields, schema shapes, environment variables, and commands.
 - Internal architecture or subsystem pages for maintainers.

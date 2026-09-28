@@ -133,7 +133,8 @@ and follow it. The two triggers that bring you here:
 ## The model in one screen (so you don't re-derive it)
 
 - **Cooled material goes to `docs/`**, one file per item, in category subfolders:
-  `docs/decisions/`.
+  `docs/decisions/` — a folder in the reader's own repository, not a directory this
+  skill ships.
 - **Questions & parking-lot are born as pointers**: PLAN.md shows the *heading* (the item
   itself, one line) + a link; the file holds the discussion. No classification needed.
 - **Decisions stay whole and inline while hot**; when one cools it collapses to a

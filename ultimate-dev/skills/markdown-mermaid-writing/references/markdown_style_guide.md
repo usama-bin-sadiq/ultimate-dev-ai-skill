@@ -624,7 +624,7 @@ Some templates produce documents that accumulate over time. Use these directory 
 
 | Document type    | Directory              | Naming pattern                              |
 | ---------------- | ---------------------- | ------------------------------------------- |
-| Decision records | `docs/decisions/`      | `NNN-{slug}.md`                             |
+| Decision records | the reader's `docs/decisions/` | `NNN-{slug}.md`                   |
 
 ### Choosing a template
 

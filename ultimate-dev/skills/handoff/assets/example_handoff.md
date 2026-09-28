@@ -100,7 +100,8 @@ nothing asserts that a save with a finding in it is actually refused.
 - Branch: `feature/redaction-lint-wiring`
 - Draft PR: not yet opened. Create it against `main` with the title
   `handoff: refuse save on redaction findings in strict mode`.
-- Pattern list owed by the user: `docs/redaction-patterns.md`
+- Pattern list owed by the user, at `docs/redaction-patterns.md` in their own
+  repository
 - Test command: `pytest src/handoff/tests -q`
 - Prior discussion this references rather than repeats: the config-loader
   decision is recorded as `ADR-0007-config-precedence`; the save-location

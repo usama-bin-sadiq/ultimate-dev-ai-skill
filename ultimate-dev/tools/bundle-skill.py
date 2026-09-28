@@ -58,6 +58,7 @@ Exit status is 0 on success, 1 on any failed check.
 from __future__ import annotations
 
 import argparse
+
 import json
 import os
 import re
@@ -65,6 +66,23 @@ import shutil
 import subprocess
 import sys
 import zipfile
+# The declaration rules live in tools/text_rules.py because two validators need
+# them and a second copy is how they came to disagree. That module is classified
+# as a runtime tool, so it ships in the bundle; this one does not, which is why
+# the dependency runs this way round and not the other. text_rules is
+# importable by name -- bundle-skill.py has a hyphen and is run as a script, so
+# nothing can import it, and a module that tried would fail inside a bundle.
+sys.path.insert(0, str(os.path.dirname(os.path.abspath(__file__))))
+sys.dont_write_bytecode = True  # do not leave a .pyc beside a maintenance tool
+
+from text_rules import (  # noqa: E402
+    NOT_THIS_REPOSITORY,
+    OUTPUT_DECLARATION,
+    OUTPUT_LABEL,
+    line_declares_output,
+    without_emphasis,
+)
+
 from pathlib import Path
 
 SKILL_ROOT = Path(__file__).resolve().parent.parent
@@ -196,56 +214,20 @@ def declared_paths(text: str) -> set[str]:
 # delete an instruction that is working exactly as intended. The two were being
 # conflated because declared_paths() throws away the line a path was found on,
 # and the verb is the only thing that distinguishes them.
-OUTPUT_DECLARATION = re.compile(
-    r"(?i)\b(save as|saved as|create|creates|creating|write|writes|writing|"
-    r"add|adds|maintain|maintains|update|updates|generate|generates|emit|"
-    r"emits|store|stores|place|places|put|puts|output to|new file|"
-    # A path that names where a tool will put something, rather than a file in
-    # this repository. "output directory", "cache directory", "loader default"
-    # and "state lives at" all describe a location that will exist because the
-    # skill made it, so a bundle that omits them is correct rather than broken.
-    # Kept deliberately tight: a looser set that included "manifest", "config
-    # file" and "copy" would exempt real references to files that do not exist,
-    # which is the failure this rule exists to prevent.
-    r"output directory|cache directory|cacheDir|loader default|"
-    r"relative to (?:the )?current directory|state lives at|"
-    r"lives at|video_folder|path-resolution)\b"
-)
-
-# A bolded field label introducing what a command produced. "**Output:** MP4
-# videos in `./videos/`" is a declaration in exactly the way "**Default:**
-# `./.mcp.json`" already was, and NOT_THIS_REPOSITORY exempts that one. This is
-# the same class of prose, so it gets the same treatment.
-#
-# It has to be matched against the raw line, not the de-emphasised one: the
-# asterisks are what make it a label. Requiring the closing pair keeps it from
-# firing on a stray bold mid-sentence.
-OUTPUT_LABEL = re.compile(r"(?i)\*\*output:?\*\*")
-
-# A dot-relative path in a document that is describing something other than this
-# repository: the reader's own project, a third party's defaults, or an attack
-# string. These are the last thirteen and each says so in its own line -- "(e.g.
-# `../other-project`)", "The path is relative to", "Tested with adversarial
-# inputs". A path in an example is sample text, and a path in a security
-# checklist is a payload; rewording either to satisfy a checker would make the
-# documentation worse.
-NOT_THIS_REPOSITORY = re.compile(
-    r"(?i)(\be\.g\.|\bfor example\b|\bas an example\b|adversarial|path traversal|"
-    r"the user'?s|reader'?s|is relative to|path is relative|from `|"
-    r"in your (?:own )?(?:project|repo)|example of|illustrat|"
-    # a documented default of some other system: "**Default**: `./.mcp.json`",
-    # "uses `./oracle` internally", "imports only `../index`", and a shell
-    # command that copies files *into* a directory it is about to create
-    r"\*\*default\*\*|\bdefault:|uses `.*` internally|imports? only|"
-    r"video_folder|>\s*\./|\bcp \")"
-)
-
-
 def declared_output_paths(text: str) -> set[str]:
-    """Paths this document declares as something to produce, not to read."""
+    """Paths this document declares as something to produce, not to read.
+
+    Delegates the per-line decision to line_declares_output(), which is the
+    single implementation of that judgement. This function used to run
+    OUTPUT_DECLARATION over the raw line while check_relative_links ran
+    line_declares_output() over a de-emphasised one, so the two agreed on some
+    documents and not others -- and a path declared as an output in one check
+    was still reported as a dangling reference by the other. One rule, both
+    callers.
+    """
     out: set[str] = set()
     for line in strip_fenced_code(text).splitlines():
-        if not OUTPUT_DECLARATION.search(line):
+        if not line_declares_output(line):
             continue
         for match in PATH_PATTERN.finditer(line):
             out.update(g for g in match.groups() if g and NOT_A_PATH.search(g))
@@ -378,6 +360,14 @@ def check_references() -> list[str]:
         text = path.read_text(encoding="utf-8", errors="replace")
         outputs = declared_output_paths(text)
         for ref in sorted(declared_paths(text) - outputs):
+            # A document that says its paths are not the bundle's to carry is
+            # stating a fact, not depending on a missing file. Both check sites
+            # need this; the first version applied it only in
+            # check_relative_links, so the same three documents were reported by
+            # check_references and cleared by the other function, and the bundle
+            # still would not build.
+            if _declares_omissions(text, ref):
+                continue
             if not would_survive(ref, path.parent):
                 top = ref.split("/")[0]
                 reason = (
@@ -425,41 +415,6 @@ def check_orphans() -> list[str]:
                 f"{skill_md.relative_to(SKILL_ROOT)}"
             )
     return problems
-
-
-def without_emphasis(line: str) -> str:
-    """Strip markdown emphasis, leaving the text a reader actually reads.
-
-    The declaration rules below are written in prose, and prose gets emphasised:
-    "imports **only** `../index`" says exactly what "imports only `../index`"
-    says, but the second matches NOT_THIS_REPOSITORY and the first does not. That
-    is a bug in the matcher, not a property of the document -- an author bolding
-    a word should not decide whether their sentence counts as a declaration.
-
-    Bold and italic markers are removed; the words between them are kept. Note
-    this is the opposite of what a label rule needs: "**Output:**" is *only*
-    recognisable as a field label while the asterisks are still there, so
-    OUTPUT_LABEL is matched against the raw line and the prose rules against
-    this. One pass, two views, because the two are looking for different things.
-    """
-    return re.sub(r"\*\*(.+?)\*\*", r"\1", re.sub(r"(?<!\*)\*([^*]+)\*(?!\*)", r"\1", line))
-
-
-def line_declares_output(line: str) -> bool:
-    """Does this line say the paths in it are produced rather than read?
-
-    Three views, because the rules were written against three shapes of prose:
-    the raw line for a bolded field label, the de-emphasised line for the prose
-    rules, and the raw line again because NOT_THIS_REPOSITORY contains one
-    pattern -- the shell continuation ">" followed by a dot-relative path -- that
-    de-emphasis would leave intact but that a stripped `**default**` would have
-    destroyed.
-    """
-    return bool(
-        OUTPUT_LABEL.search(line)
-        or OUTPUT_DECLARATION.search(without_emphasis(line))
-        or NOT_THIS_REPOSITORY.search(line)
-    )
 
 
 def declared_output_relatives(text: str) -> set[str]:
@@ -538,10 +493,73 @@ def check_relative_links() -> list[str]:
                 continue
             top = str(inside).split("/")[0]
             if top in EXCLUDED_DIRS or top == "evals":
+                # A document that says what it omits is naming them, not
+                # depending on them. references/README.md carries a section
+                # headed "What is not here" listing ../knowledge/, ../examples/
+                # and the rest, precisely so a reader of a pruned install knows
+                # what they are missing and where to find it in the full
+                # repository. The bundler reported all three as broken
+                # pointers, which is the opposite of that sentence's purpose.
+                #
+                # The test is the heading, scoped to the section it introduces,
+                # not a list of permitted paths: a list needs one entry per
+                # omission and is wrong the first time a tree is added.
+                if _declares_omissions(text, target):
+                    continue
                 problems.append(
                     f"{rel}: {target} points into {top}/, which the bundle omits"
                 )
     return problems
+
+
+OMISSION_HEADING = re.compile(
+    r"^#{2,3}\s*(?:what is not (?:here|included|shipped|bundled)|not bundled|"
+    r"omitted from the bundle|excluded from the bundle)\b",
+    re.IGNORECASE,
+)
+
+
+def _declares_omissions(text: str, target: str) -> bool:
+    """Does this document already say its paths are not the bundle's to carry?
+
+    Two forms, and both are the document stating the fact rather than the
+    checker granting an exception.
+
+    A *section heading* that says what is not here. references/README.md has
+    one listing ../knowledge/ and ../examples/, so a reader of a pruned install
+    knows what they are missing.
+
+    A *preamble sentence* saying the paths belong elsewhere.
+    skills/handoff/assets/example_handoff.md opens with "Every path below
+    belongs to the reader's own repository, not to this skill, so none of them
+    resolve here" -- a statement about every path in the file, made before the
+    first one appears. Scoped to the opening paragraph, because a claim made
+    about a document's paths is a claim about the whole document, and a document
+    that says so is not shipping broken pointers.
+    """
+    body = strip_fenced_code(text)
+
+    preamble = "\n".join(body.split("\n\n")[:4])
+    if DECLARES_ELSEWHERE.search(preamble):
+        return True
+
+    in_omission = False
+    for line in body.split("\n"):
+        if line.startswith("#"):
+            in_omission = bool(OMISSION_HEADING.match(line.strip()))
+            continue
+        if in_omission and target in line:
+            return True
+    return False
+
+
+DECLARES_ELSEWHERE = re.compile(
+    r"(?i)\b(?:every|each|all)\s+path\s+(?:below|above|here|on this line)"
+    r".{0,120}?\b(?:belongs?|belong)\b"
+    r"|\bpaths?\s+(?:below|above|here)\b.{0,120}?\b(?:own repository|"
+    r"reader'?s|the user'?s|not (?:shipped|included|part of this))"
+    r"|\bnone of them resolve\b"
+)
 
 
 def check_escapes() -> list[str]:

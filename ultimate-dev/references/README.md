@@ -47,6 +47,12 @@ reached when a specific stage or decision needs it. Total: 54 files.
 
 ## What is not here
 
+The paths in this section are the ones a bundle omits. Naming them is how a
+reader of a pruned install knows what they are missing and where to find it in
+the full repository; the bundler is told so by this heading rather than by an
+exemption list, because a list would need one entry per omission and the next
+omission would not be on it.
+
 - **The kernel itself** — `../SKILL.md`.
 - **Skill creation** — `../skills/skill-creator/`, which owns the capability
   expansion lifecycle and its gates.

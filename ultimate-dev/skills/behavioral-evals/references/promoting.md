@@ -29,7 +29,8 @@ to stable suites.
     ```typescript
     evalTest('ALWAYS_PASSES', { ... })
     ```
-3.  **Targeting**: Follow guidelines in `evals/README.md` regarding stable suite
+3.  **Targeting**: Follow the guidelines in the reader's own `evals/README.md`
+    regarding stable suite
     organization.
 4.  **Constraint**: Your final change must be **minimal and targeted** strictly
     to promoting the test status. Do not refactor the test or setup fixtures.
