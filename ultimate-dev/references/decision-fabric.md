@@ -13,6 +13,9 @@ them by name. The mapping, so none of them looks missing:
 | Spec boundary | Named here | Where |
 |---|---|---|
 | Task understanding | task interpretation | `task-model.md` |
+| Coordination mode | coordination mode | `coordination-modes.md` |
+| Reasoning effort | reasoning effort, the rung applied to a step | `reasoning-system.md` |
+| Workflow selection | workflow selection | `runtime-portability.md` |
 | Decomposition | decomposition | `planning-system.md` |
 | Context retrieval | context depth | `context-system.md` |
 | Context depth | context depth | `context-compiler.md` |

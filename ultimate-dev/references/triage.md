@@ -178,4 +178,3 @@ reading task.
 - **Never de-escalating.** Getting the rung right at the start and then never
   lowering it as evidence arrives.
 
-## 🚀 Heading

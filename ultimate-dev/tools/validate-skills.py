@@ -517,10 +517,19 @@ def validate_agent_role(role: Path) -> dict[str, Any]:
     # not a safety gap, and the content test above already proves they are
     # there. A warning that fires on 192 correct roles trains people to ignore
     # warnings.
+    # The leading skip matters. 257 role files put an emoji between the hashes
+    # and the words -- "## Critical Rules" with a marker in front -- and a
+    # regex anchored on \s* reported them as having no prohibitions section
+    # while reading the heading a reader sees immediately. The skip is
+    # punctuation and symbols, not letters, so it cannot walk past a real word.
     PROHIBITION_SECTION = re.compile(
-        r"^#{2,3}\s*(?:critical\s+rules?|hard\s+rules?|rules?|constraints?|"
+        r"^#{2,3}[^\w\n]{0,4}(?:"
+        r"critical\s+rules?|hard\s+rules?|non-?negotiable|rules?|constraints?|"
         r"boundaries|limits?|prohibitions?|guardrails?|"
-        r"what you (?:must|should) not|when you must not)\b",
+        r"what (?:you )?(?:not|never)|what (?:you )?(?:must|should) not|"
+        r"when (?:you )?must not|when not to|"
+        r"(?:never|do not|don'?t|avoid)\b"
+        r")\b",
         re.IGNORECASE | re.M,
     )
     if (
@@ -1008,6 +1017,109 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
                 f"{rel_md}: an unclosed {open_fence!r} fence; every fence-aware "
                 f"check after it reads this document wrongly"
             )
+
+    # ARCHITECTURE.md states numbers about the specification: how many decision
+    # boundaries it has, and how many cross-cutting systems it has. It was wrong
+    # on both -- 17 against 18, 4 against 8 -- while pointing at a superseded
+    # specification by name, and nothing noticed because a plausible pointer and
+    # an unverified number both look fine.
+    #
+    # The counts are derived from the specification rather than trusted, so a
+    # revision that adds a boundary cannot leave the design document describing
+    # the previous one. This is the structural fix ADR 0012 named as missing.
+    # Both paths are relative to repo_root, which is the argument this function
+    # is called with. The first version used SKILL_ROOT and a path one level
+    # above it, which happens to be the same directory in a normal checkout --
+    # and is not the same directory when the validator is run from elsewhere, or
+    # against a bundle. It then found no specification and skipped the check
+    # silently, which is the failure mode this check exists to prevent.
+    spec = repo_root / "new-arch-updated.md"
+    architecture = repo_root / "ultimate-dev" / "ARCHITECTURE.md"
+    if not architecture.is_file():
+        architecture = repo_root / "ARCHITECTURE.md"
+    if spec.is_file() and architecture.is_file():
+        spec_text = spec.read_text(encoding="utf-8", errors="replace")
+        arch_text = architecture.read_text(encoding="utf-8", errors="replace")
+
+        # Boundaries: the spec states the count in prose beside the diagram.
+        # Both documents may spell it -- "18 boundaries" and "eighteen" -- so
+        # both are read. The first version matched only digits on both sides and
+        # therefore compared nothing to anything: it passed on a document that
+        # said seventeen, which is the exact drift it was written to catch.
+        def as_number(word: str) -> int | None:
+            w = word.lower().strip("*,.")
+            if w.isdigit():
+                return int(w)
+            table = {
+                "two": 2, "three": 3, "four": 4, "five": 5, "six": 6,
+                "seven": 7, "eight": 8, "nine": 9, "ten": 10,
+                "fifteen": 15, "seventeen": 17, "eighteen": 18,
+                "nineteen": 19, "twenty": 20,
+            }
+            return table.get(w)
+
+        NUM = r"(\d+|two|three|four|five|six|seven|eight|nine|ten|" \
+              r"fifteen|seventeen|eighteen|nineteen|twenty)"
+
+        # Both documents are read with newlines folded to spaces. ARCHITECTURE.md
+        # hard-wraps at ~80 columns, so it says "All eighteen\nare now in it" and
+        # a regex that does not fold lines sees no number at all. That was the
+        # bug in the first version of this check: it silently compared nothing to
+        # nothing and passed on a document that had the wrong count in it.
+        spec_flat = " ".join(spec_text.split())
+        arch_flat = " ".join(arch_text.split())
+
+        m = re.search(rf"{NUM}\s+boundaries", spec_flat, re.IGNORECASE)
+        if m:
+            declared = as_number(m.group(1))
+            # A design document may mention several counts while discussing the
+            # history, so it is wrong only if none of them matches. The number
+            # need not sit next to the word "boundaries" -- the sentence that
+            # carries it here is "All eighteen are now in it" -- so the window is
+            # the whole document rather than an adjacent pair.
+            stated = {
+                as_number(x)
+                for x in re.findall(rf"\b{NUM}\b", arch_flat, re.IGNORECASE)
+            }
+            stated.discard(None)
+            if declared is not None and stated and declared not in stated:
+                errors.append(
+                    f"{architecture.name}: never states {declared} decision "
+                    f"boundaries, which is what {spec.name} specifies. The design "
+                    f"document is describing a different revision of the "
+                    f"specification."
+                )
+
+        # Cross-cutting systems: the spec draws them as a 2x4 grid, with each
+        # box's name on its own line inside the frame. Counting the borders
+        # found 0 -- four of them share a line -- and counting top borders alone
+        # found 0 too. The names are the stable thing.
+        # The spec draws the systems as a 2x4 grid, and two of the eight names
+        # wrap onto a second line -- "Evidence / Provenance" and "Error /
+        # Recovery State" each occupy two. So counting boxed names gives six, not
+        # eight, and the first version of this check reported the design
+        # document as wrong for a number the specification never drew.
+        #
+        # Count the boxes instead: every system is one top-left corner, and each
+        # is on its own line.
+        grid = re.search(
+            r"CROSS-CUTTING CONTROL PLANE(.*?)\n\s*└",
+            spec_text,
+            re.S,
+        )
+        if grid:
+            boxes = len(re.findall(r"[┌└][─]+┐", grid.group(1)))
+            if boxes:
+                m2 = re.search(
+                    rf"{NUM}\s+cross-cutting systems", arch_text, re.IGNORECASE
+                )
+                stated_n = as_number(m2.group(1)) if m2 else None
+                if stated_n is not None and stated_n != boxes:
+                    errors.append(
+                        f"{architecture.name}: says {stated_n} cross-cutting "
+                        f"systems, but {spec.name} draws {boxes}. Either the "
+                        f"count is stale or the specification changed."
+                    )
 
     consumed_stems = _consumed_by_script(repo_root)
     for path in sorted(repo_root.rglob("*.md")):

@@ -29,6 +29,11 @@ collection of small tools wearing a trench coat.
 
 ## The shape
 
+Revision 2 adds one box and renumbers one stage. The new box is
+**COORDINATION MODE**, and it sits *between* triage and the decision fabric,
+which is the only place it can go: it decides how many contexts exist, and
+nothing downstream can be chosen until that is settled.
+
 ```text
 USER OBJECTIVE
       ↓
@@ -36,6 +41,8 @@ USER OBJECTIVE
       ↓               unknowns, assumptions, success criteria
    TRIAGE             complexity, uncertainty, consequence,
       ↓               reversibility → rung R0–R4, scale L1–L7
+COORDINATION MODE     ← new in revision 2: inline · delegate · route · handoff
+      ↓
   ┌───────────────────────────────────────────┐
   │              JEv DECISION FABRIC          │
   │  decides at every boundary that matters   │
@@ -67,8 +74,63 @@ USER OBJECTIVE
                   DELIVERY
 ```
 
-Four cross-cutting systems govern all of it: state, budget, evidence and
-provenance, and security and trust. See `docs/architecture/`.
+Eight cross-cutting systems govern all of it — four in revision 1, and four
+more that revision 2 needs because coordination mode exists. See
+`docs/architecture/` and the table below.
+
+**Revision 2 has eight, not four**, and three of the four new ones exist
+because coordination mode does. They are not tidying:
+
+| System | Why revision 2 needs it |
+|---|---|
+| State Management | now carries `coordination` and `active_agent` — a handoff has to survive the move |
+| Budget Manager | must charge per mode: inline costs nothing, each delegate is a call |
+| Evidence / Provenance | unchanged, and now has to follow a decision across a boundary |
+| Security / Trust | unchanged |
+| **Observability** | must record mode changes, or a run cannot report what shape it took |
+| Cache / Reuse | unchanged |
+| Policy / Constraints | unchanged |
+| **Error / Recovery State** | may revert the mode — a failed handoff is a real recovery case |
+
+The four that were already here did not change what they do. The reason this
+document said "four" is that it was written against revision 1, where four was
+the whole list.
+
+**The boundary count moved, and the numbers disagreed three ways.** Revision 1
+named seventeen. Revision 2 names **eighteen** — it adds coordination mode as
+its own boundary, because it is the one choice that determines whether the other
+seventeen are even reachable, and it also un-folds workflow selection from
+capability resolution order.
+
+`references/decision-fabric.md` was the third number and the worst: its table
+enumerated fifteen. Coordination mode, reasoning effort and workflow selection
+appeared in its prose but had no row, so the table a reader would use to check
+whether a boundary was handled said three boundaries did not exist. All eighteen
+are now in it.
+
+## Two divergences I am recording rather than resolving
+
+Both are cases where the specification and the kernel disagree, and in each the
+kernel is what runs. Silently editing either document would make the tree look
+consistent while leaving the disagreement in place, which is the failure ADR
+0009 exists to prevent.
+
+**The triage axes are different sets.** The specification's five are
+complexity, risk, uncertainty, time/cost, and consequence. `SKILL.md` Step 0
+asks four: complexity, uncertainty, consequence, and reversibility. These are
+not a reordering — the kernel dropped *risk* and *time/cost* and added
+*reversibility*, and it says why: reversibility is the strongest signal for
+whether a human checkpoint is required, and a rung is a cost decision, so an
+explicit time/cost axis double-counts what the budget manager already holds.
+The specification still carries the revision-1 axes.
+
+**R0 has two names.** The specification says `R0 Minimal`; `SKILL.md` and every
+reference in the tree say `R0 Immediate`. Same rung, and the difference is not
+cosmetic in one direction: "Minimal" describes effort, "Immediate" describes
+what the rung *is for* — act now, verify the output. Picking one is a content
+decision, so both are recorded and neither document is quietly changed.
+
+See ADR 0012.
 
 ## The five decisions that shaped everything
 

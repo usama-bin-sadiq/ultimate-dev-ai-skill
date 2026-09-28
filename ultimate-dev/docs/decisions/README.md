@@ -90,6 +90,7 @@ superseded number is retired permanently, so links never change meaning.
 | [0009](0009-new-arch-divergences.md) | Two divergences from new-arch.md that were never decided | Accepted | The triage axes were swapped and five JEv fields dropped, with no record of the decision |
 | [0010](0010-on-demand-boundary-is-enforced-by-tools.md) | The on-demand boundary is a property of the tools, not of the prose | Accepted | A search for "rotate a pdf" returned all 2,397 catalogue entries, so "do not read it, search it" was not executable |
 | [0011](0011-audit-findings-and-validator-incentives.md) | Audit findings, and what a validator that is wrong costs | Accepted | 224 of the 923→299 reduction was the validator correcting itself, not the tree improving |
+| [0012](0012-architecture-reconciled-with-revision-2.md) | Reconciling ARCHITECTURE.md with specification revision 2 | Accepted | The design document described a superseded specification: 4 cross-cutting systems instead of 8, 17 boundaries instead of 18, and a 15-row table in `decision-fabric.md` that said three boundaries did not exist |
 
 ## Reviewing an ADR
 
