@@ -63,10 +63,15 @@ WORKTREE=""
 cleanup() { [ -n "$WORKTREE" ] && git -C "$REPO_ROOT" worktree remove --force "$WORKTREE" >/dev/null 2>&1; }
 trap cleanup EXIT
 
-# validate <skill-root> -> prints "errors warnings", echoes the report to a file
+# validate <skill-root> <report-out> -> echoes "errors warnings"
+#
+# The first parameter is the tree to check. It was accepted and then ignored in
+# favour of the hardcoded $SKILL_DIR, so every "baseline" was really a second
+# reading of the working tree -- which means the gate was comparing the tree
+# against itself, and the difference was always zero.
 validate() {
   local root="$1" out="$2"
-  ( cd "$SKILL_DIR" && python3 tools/validate-skills.py --strict ) >"$out" 2>&1
+  ( cd "$root" && python3 tools/validate-skills.py --strict ) >"$out" 2>&1
   local e w
   e=$(grep -cE '^[[:space:]]*error' "$out" || true)
   w=$(grep -c 'warning:' "$out" || true)
@@ -84,22 +89,50 @@ echo
 HEAD_SHA=$(git -C "$REPO_ROOT" rev-parse HEAD 2>/dev/null || echo none)
 CUR_OUT="$(mktemp)"; read -r CUR_E CUR_W <<<"$(validate "$SKILL_DIR" "$CUR_OUT")"
 
-BASE_E=0; BASE_W=0
+BASE_E=""; BASE_W=""
 if [ "$HEAD_SHA" != "none" ]; then
   CACHE_E="$CACHE_DIR/$HEAD_SHA.errors"
   CACHE_W="$CACHE_DIR/$HEAD_SHA.warnings"
   if [ -f "$CACHE_E" ] && [ -f "$CACHE_W" ]; then
     BASE_E=$(cat "$CACHE_E"); BASE_W=$(cat "$CACHE_W")
   else
-    WORKTREE="$(mktemp -d)/head"
-    if git -C "$REPO_ROOT" worktree add --detach -q "$WORKTREE" HEAD >/dev/null 2>&1 \
-       && [ -d "$WORKTREE/ultimate-dev" ]; then
-      BASE_OUT="$(mktemp)"
-      read -r BASE_E BASE_W <<<"$(validate "$WORKTREE/ultimate-dev" "$BASE_OUT")"
-      printf '%s' "$BASE_E" > "$CACHE_E"; printf '%s' "$BASE_W" > "$CACHE_W"
-      rm -f "$BASE_OUT"
+    # git archive, not git worktree add.
+    #
+    # A worktree needs the index, and a pre-commit hook runs while the commit
+    # that invoked it holds the index lock, so the worktree command failed and
+    # the baseline silently stayed at its initial value of zero. The gate then
+    # compared the tree against nothing, printed "39 warnings, 0 at HEAD (+39)",
+    # and would have blocked every commit for as long as the backlog existed.
+    #
+    # git archive reads committed objects and never touches the index, so it
+    # works under the lock.
+    SNAP="$(mktemp -d)"
+    if git -C "$REPO_ROOT" archive HEAD 2>/dev/null | tar -x -C "$SNAP" 2>/dev/null; then
+      if [ -d "$SNAP/ultimate-dev" ]; then
+        BASE_OUT="$(mktemp)"
+        read -r BASE_E BASE_W <<<"$(validate "$SNAP/ultimate-dev" "$BASE_OUT")"
+        printf '%s' "$BASE_E" > "$CACHE_E"
+        printf '%s' "$BASE_W" > "$CACHE_W"
+        rm -f "$BASE_OUT"
+      fi
     fi
+    rm -rf "$SNAP"
   fi
+else
+  BASE_E=0; BASE_W=0   # first commit; there is nothing to compare against
+fi
+
+# A baseline that could not be read means the gate cannot tell a new problem
+# from an existing one, and a gate that cannot tell the difference is noise.
+# Say so rather than quietly comparing against zero.
+if [ -z "$BASE_E" ]; then
+  echo "${RED}  FAIL${OFF}  could not read the baseline at HEAD (${HEAD_SHA:0:9})"
+  echo "          Without it this gate cannot separate a new error from an"
+  echo "          existing warning, so the comparison did not run."
+  echo "          Commit with --no-verify once, or remove .git/pre-commit-baseline"
+  echo "          and try again."
+  rm -f "$CUR_OUT"
+  exit 1
 fi
 
 if [ "$BASELINE_ONLY" = 1 ]; then
