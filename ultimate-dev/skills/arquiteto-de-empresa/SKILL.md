@@ -27,7 +27,7 @@ Conformance rules you **never** break (full detail in [`references/okf_conforman
 
 1. **Bundle = directory of `.md`.** Each file is **one concept**; its identity is the path without `.md`.
 2. **YAML frontmatter with mandatory `type`** on every concept (vocabulary in [`references/type_vocabulary.md`](references/type_vocabulary.md)).
-3. **Relations = markdown links in the body** (`[Identity](../00-fundacao/identidade.md)`), forming a graph — not arrays in the frontmatter.
+3. **Relations = markdown links in the body** (e.g. `[Identity](00-fundacao/identidade.md)`), forming a graph — not arrays in the frontmatter.
 4. **`index.md` and `log.md` are reserved** (folder listing / decision history) and do **not** carry `type`.
 5. **Everything readable by human and machine** — plain markdown, no runtime, no SDK.
 

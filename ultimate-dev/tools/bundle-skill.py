@@ -117,6 +117,12 @@ PATH_PATTERN = re.compile(
 # repository, and prose about an MCP server mentions them constantly. A
 # declared path must carry a file extension or a trailing separator to count.
 NOT_A_PATH = re.compile(r"\.(md|py|sh|json|toml|ya?ml|txt|csv|js|ts)$|/$")
+# A markdown link or backticked span whose target is dot-relative. PATH_PATTERN
+# cannot match these: it requires a known top-level directory to start with.
+RELATIVE_LINK = re.compile(
+    r"\]\(\s*(\.{1,2}/[A-Za-z0-9_.\-/]+?)\s*(?:#[^)]*)?\)|"
+    r"`(\.{1,2}/[A-Za-z0-9_.\-/]+?)`"
+)
 # a path that leaves this repository: home-anchored or absolute
 OUT_OF_SKILL = re.compile(
     r"(?:~|\$HOME|~/|/home/|/Users/|%[A-Z]+%\\)[A-Za-z0-9_./\\-]*"
@@ -193,7 +199,17 @@ def declared_paths(text: str) -> set[str]:
 OUTPUT_DECLARATION = re.compile(
     r"(?i)\b(save as|saved as|create|creates|creating|write|writes|writing|"
     r"add|adds|maintain|maintains|update|updates|generate|generates|emit|"
-    r"emits|store|stores|place|places|put|puts|output to|new file)\b"
+    r"emits|store|stores|place|places|put|puts|output to|new file|"
+    # A path that names where a tool will put something, rather than a file in
+    # this repository. "output directory", "cache directory", "loader default"
+    # and "state lives at" all describe a location that will exist because the
+    # skill made it, so a bundle that omits them is correct rather than broken.
+    # Kept deliberately tight: a looser set that included "manifest", "config
+    # file" and "copy" would exempt real references to files that do not exist,
+    # which is the failure this rule exists to prevent.
+    r"output directory|cache directory|cacheDir|loader default|"
+    r"relative to (?:the )?current directory|state lives at|"
+    r"lives at|video_folder|path-resolution)\b"
 )
 
 
@@ -383,6 +399,26 @@ def check_orphans() -> list[str]:
     return problems
 
 
+def declared_output_relatives(text: str) -> set[str]:
+    """Dot-relative paths this document declares as something to produce.
+
+    Same rule as declared_output_paths(), but extracted with the *relative* link
+    pattern. Using declared_output_paths() here was a structural bug: that
+    function extracts with PATH_PATTERN, which only matches a path beginning with
+    a known top-level directory, so it can never contain "./out/" or "./data" --
+    which are exactly the paths the output rule exists to exempt. Every relative
+    output path was therefore reported as dangling, and 19 of them blocked the
+    bundle from building at all.
+    """
+    out: set[str] = set()
+    for line in strip_fenced_code(text).splitlines():
+        if not OUTPUT_DECLARATION.search(line):
+            continue
+        for match in RELATIVE_LINK.finditer(line):
+            out.add(match.group(1) or match.group(2))
+    return out
+
+
 def check_relative_links() -> list[str]:
     """Every parent-relative or dot-relative link must resolve on disk.
 
@@ -405,16 +441,12 @@ def check_relative_links() -> list[str]:
     agent to write is not a path it expects to find.
     """
     problems: list[str] = []
-    link = re.compile(
-        r"\]\(\s*(\.{1,2}/[A-Za-z0-9_.\-/]+?)\s*(?:#[^)]*)?\)|"
-        r"`(\.{1,2}/[A-Za-z0-9_.\-/]+?)`"
-    )
     for path in iter_runtime_files():
         if path.suffix != ".md":
             continue
         text = path.read_text(encoding="utf-8", errors="replace")
-        outputs = declared_output_paths(text)
-        for match in link.finditer(strip_fenced_code(text)):
+        outputs = declared_output_relatives(text)
+        for match in RELATIVE_LINK.finditer(strip_fenced_code(text)):
             target = match.group(1) or match.group(2)
             if target in outputs:
                 continue
