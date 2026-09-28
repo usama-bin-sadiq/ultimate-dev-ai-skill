@@ -1,5 +1,9 @@
 # Changelog
 
+## [4.0.26] — 2026-09-28
+
+- fix: the validator suite has never reported a verdict, and no release has ever had a changelog
+
 ## [4.0.25] — 2026-09-28
 
 _No summary recorded. Review the comparison for details._
