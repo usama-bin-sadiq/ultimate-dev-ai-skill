@@ -1,0 +1,121 @@
+{
+  "_note": "Synthetic process-documentation checklist for the responsible privacy reviewer. check_deidentification.py verifies that the required process fields are documented; it deliberately does not scan free text, does not output detected identifiers, and does not label a document COMPLIANT, SAFE, or DEIDENTIFIED. The strongest successful result is PROCESS_DOCUMENTED_REVIEW_REQUIRED. Authored as a reconstruction from SKILL.md and references/privacy_and_deidentification.md.",
+  "artifact": "deidentification-process-documentation",
+  "schema_version": "1.0",
+  "draft_status": "DRAFT_NOT_FOR_CLINICAL_USE",
+  "not_for_use": "DRAFT - NOT FOR CLINICAL USE, SIGNATURE, FILING, OR SUBMISSION. This file documents a review process. It is not legal advice, not a technical de-identification service, and not evidence of HIPAA compliance.",
+  "data_class": null,
+  "review_owner": null,
+  "check_result": null,
+  "strongest_permitted_result": "PROCESS_DOCUMENTED_REVIEW_REQUIRED",
+  "scope": {
+    "purpose": null,
+    "recipient": null,
+    "authority": null,
+    "jurisdiction": null,
+    "data_class": null
+  },
+  "minimum_necessary": {
+    "fields_needed_for_purpose": [],
+    "fields_excluded": [],
+    "exception_claimed": null,
+    "exception_reviewed_by_role": null
+  },
+  "method": {
+    "selected": null,
+    "selected_methods": [
+      "expert_determination",
+      "safe_harbor",
+      "documented_synthetic_or_aggregate_rationale"
+    ],
+    "selected_by_role": null,
+    "reference": "45 CFR 164.514(b)",
+    "expert_determination": {
+      "required": false,
+      "expert_role": null,
+      "statistical_and_scientific_principles_applied": null,
+      "anticipated_conditions": null,
+      "documented_reference": null
+    },
+    "safe_harbor": {
+      "required": false,
+      "categories_reviewed": [
+        "names",
+        "geographic subdivisions smaller than a state, subject to the specific ZIP-code rule",
+        "date elements more specific than year directly related to an individual, plus the age rule for persons over 89",
+        "telephone numbers",
+        "fax numbers",
+        "email addresses",
+        "social security numbers",
+        "medical record numbers",
+        "health-plan beneficiary numbers",
+        "account numbers",
+        "certificate or license numbers",
+        "vehicle identifiers and serial numbers",
+        "device identifiers and serial numbers",
+        "URLs",
+        "IP addresses",
+        "biometric identifiers",
+        "full-face photographs and comparable images",
+        "other unique identifying numbers, characteristics, or codes"
+      ],
+      "actual_knowledge_reviewed": null,
+      "actual_knowledge_reviewed_by_role": null
+    }
+  },
+  "review_surface": {
+    "structured_fields": null,
+    "free_text": null,
+    "attachments": null,
+    "images": null,
+    "headers_and_filenames": null,
+    "metadata": null,
+    "linked_data": null,
+    "note": "Removal of obvious patterns is insufficient. Initials, partial identifiers, metadata, free text, rare events, small cells, unusual dates, images, and combined quasi-identifiers may still identify a person."
+  },
+  "residual_risk": {
+    "combinations_reviewed": null,
+    "small_cell_or_rare_case_risk": null,
+    "residual_risk_conclusion": null,
+    "residual_risk_reviewed_by_role": null
+  },
+  "consent_and_authorization": {
+    "publication_consent": null,
+    "research_consent": null,
+    "hipaa_authorization": null,
+    "irb_or_privacy_board_waiver": null,
+    "image_use_permission": null,
+    "note": "These are distinct controls. Do not infer one from another and do not generate a stock assertion."
+  },
+  "controls": {
+    "access_control": null,
+    "storage": null,
+    "transmission": null,
+    "retention": null,
+    "deletion": null,
+    "verified_by_role": null
+  },
+  "rereview": {
+    "required_on_change": true,
+    "re_reviewed_on": null,
+    "reason": null
+  },
+  "approvals": [
+    {
+      "role": "privacy_legal_institutional_reviewer",
+      "scope": "intended disclosure",
+      "status": "pending",
+      "reviewed_on": null,
+      "signoff_record_reference": null
+    }
+  ],
+  "prohibited_claims": [
+    "COMPLIANT",
+    "SAFE",
+    "DEIDENTIFIED",
+    "HIPAA-safe",
+    "expert determination complete",
+    "ready to file",
+    "ready to submit"
+  ]
+}

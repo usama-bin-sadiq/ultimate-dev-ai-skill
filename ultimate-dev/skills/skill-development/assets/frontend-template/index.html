@@ -1,0 +1,82 @@
+<!doctype html>
+<!--
+  index.html — the page shell for assets/frontend-template/.
+
+  Copy this directory into a project, then replace the title, the meta
+  description, and everything inside <main>. Delete the sample content rather
+  than leaving it: a template that ships with placeholder copy ships the
+  placeholder copy.
+
+  The structure is here for a reason. The skip link, the landmarks, and the
+  single h1 are not decoration — a page without them is harder to navigate by
+  keyboard and harder for a screen reader to make sense of, and a template that
+  omits them teaches the wrong default.
+
+  PROVENANCE
+    Reconstructed as the assets/frontend-template/ example in this skill's
+    SKILL.md (Step 2: boilerplate HTML/CSS that would otherwise be rewritten for
+    every project). Plain HTML and CSS, no build step, no dependencies.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Replace this title</title>
+  <meta name="description" content="One sentence: what this page is and who it is for.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="stylesheet" href="styles/tokens.css">
+  <link rel="stylesheet" href="styles/base.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <nav aria-label="Main">
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
+        <span class="nav-toggle__bars" aria-hidden="true"></span>
+        Menu
+      </button>
+      <ul id="nav-links" class="nav-links">
+        <li><a href="#main" aria-current="page">Home</a></li>
+        <li><a href="#section">Section</a></li>
+        <li><a href="#footer">About</a></li>
+      </ul>
+    </nav>
+    <button class="theme-toggle" type="button" aria-pressed="false">
+      <span data-theme-label>Dark</span>
+    </button>
+  </header>
+
+  <main id="main">
+    <h1>The one heading this page has</h1>
+
+    <p class="lede">
+      One or two sentences saying what this is and who it is for. If the reader
+      cannot tell from this alone what they should do next, the page has not
+      said enough.
+    </p>
+
+    <section id="section">
+      <h2>A section</h2>
+      <p>Body copy at the base size, max about 70 characters a line.</p>
+    </section>
+
+    <section>
+      <h2>Copy something</h2>
+      <p>
+        <code id="copy-value" data-copy="npm run build">npm run build</code>
+      </p>
+      <button class="copy-button" type="button" data-copy-target="copy-value">
+        Copy
+      </button>
+      <p class="status" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <footer id="footer">
+    <p>Replace this with the real footer.</p>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

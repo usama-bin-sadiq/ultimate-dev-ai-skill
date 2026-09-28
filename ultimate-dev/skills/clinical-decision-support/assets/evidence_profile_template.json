@@ -1,0 +1,119 @@
+{
+  "_provenance": {
+    "what_this_is": "GRADE evidence profile template, one profile per important outcome. Copy it, complete the question and sources, and have a human panel record every domain judgment. The checker validates completeness and citation links only.",
+    "status_default": "Distributed unresolved on purpose. A non-zero validator result is expected until qualified humans complete it.",
+    "reconstruction": "Reconstructed from the Required Profile Fields, Certainty Domains, and Quality-Control Checklist in references/evidence_profiles.md.",
+    "non_automation_rule": "Certainty is never inferred from keywords, abstracts, p-values, journal name, or study design alone, and is never computed by counting checklist items. The 1A/2B shorthand is not universal GRADE output."
+  },
+
+  "question": {
+    "population": "unresolved",
+    "intervention_or_exposure": "unresolved",
+    "comparator_or_reference": "unresolved",
+    "outcomes_and_horizons": "unresolved",
+    "setting_and_decision_context": "unresolved",
+    "question_type": "unresolved - descriptive, prognostic, predictive, diagnostic-accuracy, or causal"
+  },
+
+  "outcome_profiles": [
+    {
+      "outcome": "unresolved - name one important outcome; a separate profile is required for every critical or important outcome",
+      "outcome_importance": "unresolved - critical or important",
+      "effect_direction": "unresolved - desirable or undesirable",
+      "time_horizon": "unresolved",
+
+      "effect": {
+        "measure": "unresolved - relative or absolute risk difference, hazard ratio, mean difference, or other",
+        "absolute_effect": "unresolved",
+        "relative_effect": "unresolved",
+        "interval": "unresolved - confidence or credible interval, and its level",
+        "participants": "unresolved",
+        "studies": "unresolved",
+        "follow_up": "unresolved",
+        "missingness": "unresolved",
+        "adjusted": "unresolved - state whether the estimate is adjusted and for what",
+        "applicability_limits": "unresolved"
+      },
+
+      "domains": {
+        "risk_of_bias": {
+          "judgment": "unresolved - serious or not serious",
+          "tool": "unresolved - the design-appropriate risk-of-bias tool used",
+          "rationale": "unresolved - how the limitations could change the estimated effect",
+          "source_ids": []
+        },
+        "inconsistency": {
+          "judgment": "unresolved - serious or not serious",
+          "rationale": "unresolved - direction, magnitude, interval overlap, heterogeneity, and plausible explanations",
+          "source_ids": []
+        },
+        "indirectness": {
+          "judgment": "unresolved - serious or not serious",
+          "rationale": "unresolved - compare population, exposure, comparator, outcome, horizon, and setting with the framed question",
+          "source_ids": []
+        },
+        "imprecision": {
+          "judgment": "unresolved - serious or not serious",
+          "decision_relevant_thresholds": "unresolved",
+          "range_compatible_with_interval": "unresolved",
+          "rationale": "unresolved",
+          "source_ids": []
+        },
+        "publication_bias": {
+          "judgment": "unresolved - detected or undetected, or suspected",
+          "rationale": "unresolved - missing studies or results, selective reporting, small-study effects, sponsorship, registrations",
+          "source_ids": []
+        },
+        "upgrading": {
+          "applicable": "unresolved - whether the selected GRADE approach permits upgrading here",
+          "considerations": "unresolved - large effect, dose-response gradient, or plausible residual confounding; each needs explicit methodology",
+          "statistical_significance_is_not_a_reason": true,
+          "source_ids": []
+        }
+      },
+
+      "final_certainty": {
+        "label": "unresolved - high, moderate, low, or very low",
+        "judgment": "unresolved - the human panel's judgment",
+        "reviewer_role": "unresolved - named role, not a tool name",
+        "review_date": "unresolved",
+        "domain_to_final_rationale": "unresolved",
+        "dissent_or_unresolved_issues": "unresolved",
+        "source_ids": []
+      }
+    }
+  ],
+
+  "sources": [
+    {
+      "source_id": "unresolved - stable ID referenced by domain source_ids",
+      "full_citation": "unresolved",
+      "url_or_doi": "unresolved",
+      "publication_type": "unresolved",
+      "version_or_date": "unresolved",
+      "access_date": "unresolved - required when the content is living"
+    }
+  ],
+
+  "quality_control": {
+    "search_and_selection_documented": "unresolved",
+    "outcome_definitions_match_question": "unresolved",
+    "benefits_and_harms_represented": "unresolved",
+    "effect_estimates_include_uncertainty": "unresolved",
+    "each_domain_has_human_judgment_and_rationale": "unresolved",
+    "every_rationale_links_to_source_ids": "unresolved",
+    "final_certainty_is_outcome_specific": "unresolved",
+    "conflicts_of_interest_and_panel_roles_recorded": "unresolved",
+    "disagreements_and_updates_versioned": "unresolved",
+    "no_patient_specific_or_treatment_directive": "unresolved"
+  },
+
+  "evidence_to_decision": {
+    "in_scope_for_this_helper": false,
+    "note": "Recommendation development is outside this helper. A qualified panel using an applicable Evidence-to-Decision framework must consider priority of the problem, desirable and undesirable effects, certainty, values and variability, resources and cost effectiveness, equity, acceptability, and feasibility. Keep that record separate and traceable from this profile."
+  },
+
+  "conflicts_of_interest": "unresolved - record panel roles and conflicts of interest",
+
+  "boundary_statement": "This profile records human judgments about a body of evidence. It is not a recommendation, does not imply safety, effectiveness, or authorization, and is not for patient care or live clinical use."
+}

@@ -1,0 +1,124 @@
+{
+  "_provenance": {
+    "what_this_is": "Statistical analysis plan shell for time-to-event research. The validator checks that the planning fields are defined and internally consistent. It does not read time-to-event rows, fit models, or produce an individual prognosis.",
+    "status_default": "Distributed unresolved on purpose; a non-zero validator result is expected until completed.",
+    "reconstruction": "Reconstructed from references/survival_analysis.md and the estimand framing in ICH E9(R1)."
+  },
+
+  "plan_metadata": {
+    "plan_id": "unresolved",
+    "version": "0.1",
+    "status": "draft",
+    "owner": "unresolved",
+    "statistician": "unresolved",
+    "date": "unresolved - ISO-8601",
+    "change_summary": "unresolved",
+    "source_ids": []
+  },
+
+  "estimand": {
+    "population": "unresolved - eligibility and analysis set",
+    "condition_or_comparison": "unresolved - intervention, exposure, or groups contrasted",
+    "variable_or_endpoint": "unresolved - event definition and ascertainment",
+    "intercurrent_event_strategy": "unresolved - how discontinuation, rescue therapy, switching, and competing events relate to the question",
+    "population_level_summary": "unresolved - risk, survival probability, restricted mean survival time, hazard contrast, or quantile",
+    "time_horizon": "unresolved - clinically and statistically justified",
+    "time_zero": "unresolved",
+    "time_scale": "unresolved",
+    "delayed_entry": "unresolved - yes or no, and the entry rule",
+    "follow_up_end_rule": "unresolved",
+    "calendar_data_cut_date": "unresolved"
+  },
+
+  "endpoint": {
+    "exact_event": "unresolved",
+    "competing_events": "unresolved",
+    "recurrent_events": "unresolved - relevant or not",
+    "ascertainment_schedule_and_adjudication": "unresolved",
+    "censoring_rules": "unresolved - including loss to follow-up and administrative censoring",
+    "tied_and_same_day_events": "unresolved",
+    "endpoint_changes_and_versioning": "unresolved",
+    "note": "Do not treat a competing event as ordinary independent censoring when the target is absolute event probability."
+  },
+
+  "descriptive_estimation": {
+    "primary_method": "unresolved - Kaplan-Meier, cumulative incidence, or other",
+    "numbers_at_risk": true,
+    "events_and_censoring_reported": true,
+    "prespecified_estimate_times": "unresolved",
+    "median_reported_only_if_estimable": true,
+    "follow_up_distribution_method": "unresolved",
+    "truncation_where_risk_sets_uninformative": "unresolved",
+    "competing_event_method": "unresolved - state whether cumulative incidence is used and why"
+  },
+
+  "group_comparison": {
+    "primary_test_or_model": "unresolved - log-rank, Cox, RMST, or other",
+    "power_or_sample_size_basis": "unresolved",
+    "proportional_hazards_assessment": "unresolved - graphical and analytic, pre-specified",
+    "alternatives_if_ph_doubtful": "unresolved - time-varying coefficients, piecewise, landmark, RMST, differences at prespecified times, AFT or flexible parametric",
+    "why_the_summary_answers_the_question": "unresolved",
+    "no_hr_as_risk_reduction": "Avoid interpreting 1 - HR as a reduction in cumulative risk."
+  },
+
+  "competing_risks": {
+    "applicable": "unresolved",
+    "question_type": "unresolved - cause-specific hazard, cumulative incidence / absolute risk, or subdistribution hazard",
+    "method_matches_question": "unresolved",
+    "coherence_check_across_event_types": "unresolved",
+    "note": "A subdistribution hazard ratio is not directly a risk ratio. Naively censoring competing events in Kaplan-Meier can overestimate absolute incidence."
+  },
+
+  "bias_and_missingness": {
+    "informative_censoring": "unresolved",
+    "delayed_entry_or_left_truncation": "unresolved",
+    "immortal_time": "unresolved",
+    "time_dependent_confounding": "unresolved",
+    "interval_censoring": "unresolved",
+    "outcome_misclassification": "unresolved",
+    "missing_covariates": "unresolved",
+    "informative_visit_schedule": "unresolved",
+    "treatment_switching_and_rescue": "unresolved",
+    "site_and_calendar_effects": "unresolved",
+    "sensitivity_analyses": "unresolved - tied to plausible departures from assumptions; a best/worst case alone is rarely sufficient"
+  },
+
+  "prediction_model_element": {
+    "applies": "unresolved",
+    "locked_model_and_horizon": "unresolved",
+    "calibration_at_prespecified_times": "unresolved",
+    "time_dependent_discrimination_with_uncertainty": "unresolved",
+    "censoring_handling": "unresolved",
+    "external_validation": "unresolved",
+    "reporting_guideline": "TRIPOD+AI and PROBAST+AI"
+  },
+
+  "biomarker_element": {
+    "applies": "unresolved",
+    "prognostic_or_predictive": "unresolved",
+    "continuous_form_preserved": "unresolved",
+    "transformation_and_threshold_prespecified": "unresolved - no minimum-p-value cut-point search",
+    "assay_and_specimen_handling": "unresolved",
+    "adjustment_for_established_prognostic_factors": "unresolved",
+    "interaction_estimate_for_predictive": "unresolved",
+    "external_validation": "unresolved",
+    "reporting_guideline": "REMARK for tumor prognostic markers"
+  },
+
+  "uncertainty_and_multiplicity": {
+    "confidence_intervals_for_every_primary_effect": "unresolved",
+    "prespecified_alpha": "unresolved",
+    "multiplicity_strategy": "unresolved - across outcomes, times, subgroups, models",
+    "bootstrap_or_cross_validation": "unresolved",
+    "model_optimism_and_overfitting": "unresolved",
+    "note": "Do not turn a threshold-crossing p-value into clinical importance."
+  },
+
+  "human_review": {
+    "required_roles": ["methodologist_or_statistician", "domain_expert", "authorized_governance_owner"],
+    "status": "unresolved",
+    "approval_boundary": "unresolved"
+  },
+
+  "boundary_statement": "This is a statistical analysis plan for research. It analyzes no individual and forecasts no individual's course. Not for patient care or live clinical use."
+}

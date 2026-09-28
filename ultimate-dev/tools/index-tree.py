@@ -206,7 +206,23 @@ def main() -> int:
     OUT.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
     if args.search:
-        term = args.search.lower().split()
+        # Query words are dropped if they are not discriminative, and the test is
+        # on length. Matching is substring, so a 1-2 character word matches inside
+        # ordinary tokens: "a" is in "abstract", "validate", "parse" and "data",
+        # so keeping it scored every one of the 2,397 entries and the search
+        # reported the entire catalogue as a match for a four-word query. The
+        # answer was not wrong, it was useless -- and a search that returns
+        # everything has silently become "load the catalogue", which is the exact
+        # failure the on-demand instruction in SKILL.md forbids.
+        #
+        # Three characters is the threshold because tokens are built with
+        # [a-z][a-z0-9-]{2,}, so no token is shorter than 3. Below that a word
+        # cannot discriminate between tokens at all.
+        term = [w for w in args.search.lower().split() if len(w) >= 3]
+        if not term:
+            print("  no searchable words in that query; words of 1-2 characters "
+                  "match almost every entry", file=sys.stderr)
+            return 1
         hits = []
         for e in entries:
             score = 0

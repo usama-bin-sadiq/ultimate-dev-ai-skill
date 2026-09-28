@@ -1,0 +1,153 @@
+/*
+ * tokens.css — the one file to edit to re-theme this template.
+ *
+ * Every colour, size, radius, and duration in the project comes from a custom
+ * property declared here. Rules elsewhere reference the property and never the
+ * value. That is the whole reason this file exists: re-theming becomes an edit
+ * to one block rather than a search across every stylesheet.
+ *
+ * Both colour schemes are declared, with light as the default. A dark-only
+ * template makes the decision for you, and a project that needs light then has
+ * to undo it by hand.
+ *
+ * PROVENANCE
+ *   Part of assets/frontend-template/ in this skill's assets, reconstructed from
+ *   the SKILL.md example of HTML/CSS boilerplate. The token names and values are
+ *   this file's own.
+ */
+
+:root {
+  /* --- Colour: light is the default scheme -------------------------------- */
+  --color-bg: #ffffff;
+  --color-surface: #f6f6f4;
+  --color-surface-raised: #ffffff;
+  --color-border: #dcdcd6;
+  --color-text: #16161a;
+  --color-text-muted: #55555f;
+  --color-text-inverse: #ffffff;
+  --color-accent: #3050c8;
+  --color-accent-hover: #243f9e;
+  --color-accent-contrast: #ffffff;
+  --color-focus: #3050c8;
+  --color-selection: #3050c8;
+  --color-selection-text: #ffffff;
+
+  /* --- Type --------------------------------------------------------------- */
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-heading: var(--font-body);
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* A modular scale. The ratio is the one knob; the steps follow from it. */
+  --type-ratio: 1.25;
+  --text-xs: 0.8rem;
+  --text-sm: 0.9rem;
+  --text-base: 1rem;
+  --text-lg: 1.563rem;
+  --text-xl: 1.953rem;
+  --text-2xl: 2.441rem;
+  --text-3xl: 3.052rem;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  --leading-tight: 1.15;
+  --leading-heading: 1.25;
+  --leading-body: 1.6;
+
+  /* --- Space -------------------------------------------------------------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+  --space-10: 4rem;
+  --space-12: 6rem;
+
+  /* A measure, not a width: 70 characters a line is the readability ceiling. */
+  --measure: 70ch;
+  --page-max: 72rem;
+
+  /* --- Shape -------------------------------------------------------------- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+  --border-width: 1px;
+
+  /* --- Elevation ---------------------------------------------------------- */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
+
+  /* --- Motion ------------------------------------------------------------- */
+  --duration-fast: 140ms;
+  --duration-base: 220ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/*
+ * Dark scheme. Declared under a media query so it follows the OS setting, and
+ * the values are chosen against the same surfaces as light — a dark scheme built
+ * by inverting the light one is a dark scheme nobody checked for contrast.
+ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #101014;
+    --color-surface: #17171d;
+    --color-surface-raised: #1e1e26;
+    --color-border: #33333f;
+    --color-text: #f0f0f4;
+    --color-text-muted: #a4a4b4;
+    --color-text-inverse: #101014;
+    --color-accent: #93a8ff;
+    --color-accent-hover: #b4c2ff;
+    --color-accent-contrast: #101014;
+    --color-focus: #93a8ff;
+    --color-selection: #3050c8;
+    --color-selection-text: #ffffff;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.55);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
+  }
+}
+
+/*
+ * Manual override. The theme toggle in app.js sets data-theme on <html>, and this
+ * comes after the media query so an explicit choice wins over the OS setting.
+ * The class is set on load from localStorage, so the choice survives a reload
+ * without a flash of the wrong scheme.
+ */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-bg: #ffffff;
+  --color-surface: #f6f6f4;
+  --color-surface-raised: #ffffff;
+  --color-border: #dcdcd6;
+  --color-text: #16161a;
+  --color-text-muted: #55555f;
+  --color-text-inverse: #ffffff;
+  --color-accent: #3050c8;
+  --color-accent-hover: #243f9e;
+  --color-accent-contrast: #ffffff;
+  --color-focus: #3050c8;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-bg: #101014;
+  --color-surface: #17171d;
+  --color-surface-raised: #1e1e26;
+  --color-border: #33333f;
+  --color-text: #f0f0f4;
+  --color-text-muted: #a4a4b4;
+  --color-text-inverse: #101014;
+  --color-accent: #93a8ff;
+  --color-accent-hover: #b4c2ff;
+  --color-accent-contrast: #101014;
+  --color-focus: #93a8ff;
+}

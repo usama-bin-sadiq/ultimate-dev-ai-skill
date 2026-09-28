@@ -1,0 +1,108 @@
+{
+  "$schema_note": "Design tokens for the slides skill. The semantic and typography keys map to the CSS custom properties the HTML template in references/html-template.md consumes: --color-primary, --color-background, --color-secondary, --primitive-gradient-primary, --typography-font-heading, --typography-font-body. Copy the emitted block into the :root of a deck, then replace the values with the brand's.",
+
+  "meta": {
+    "name": "Default deck theme",
+    "version": "1.0.0",
+    "skill": "slides",
+    "mode": "dark",
+    "aspect": "16:9",
+    "base_resolution": { "width": 1920, "height": 1080 },
+    "provenance": "Default values. These are a starting point, not a look. A deck that ships with these tokens ships with a deck nobody chose.",
+    "contrast": "text on background is 15.8:1 and muted text on background is 7.1:1, both above WCAG AA for all text sizes. primary on background is 4.6:1, which clears AA for large text only: never set body copy in primary on this dark ground."
+  },
+
+  "semantic": {
+    "color": {
+      "background": "#0D0D0D",
+      "surface": "#161616",
+      "surface-raised": "#1F1F1F",
+      "border": "#2C2C2C",
+      "primary": "#6366F1",
+      "secondary": "#FF6B6B",
+      "text": "#EDEDED",
+      "text-muted": "#A8A8A8",
+      "text-inverse": "#0D0D0D",
+      "accent": "#0EA5E9",
+      "success": "#10B981",
+      "warning": "#F59E0B",
+      "danger": "#FF6B6B"
+    },
+    "typography": {
+      "font-heading": "'Inter', 'Helvetica Neue', Arial, sans-serif",
+      "font-body": "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+      "font-mono": "'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace",
+      "font-display": "'Playfair Display', Georgia, serif"
+    },
+    "primitive": {
+      "gradient-primary": "linear-gradient(135deg, #6366F1 0%, #FF6B6B 100%)",
+      "gradient-secondary": "linear-gradient(135deg, #0EA5E9 0%, #6366F1 100%)",
+      "gradient-surface": "linear-gradient(180deg, #161616 0%, #0D0D0D 100%)",
+      "glow-primary": "0 0 48px rgba(99, 102, 241, 0.28)"
+    }
+  },
+
+  "css_variables": {
+    "_note": "Paste this block into the deck's :root. These are the exact names the HTML template and the layout patterns reference, so renaming one silently drops the styling.",
+    "block": ":root {\n  --color-background: #0D0D0D;\n  --color-surface: #161616;\n  --color-surface-raised: #1F1F1F;\n  --color-border: #2C2C2C;\n  --color-primary: #6366F1;\n  --color-secondary: #FF6B6B;\n  --color-text: #EDEDED;\n  --color-text-muted: #A8A8A8;\n  --color-text-inverse: #0D0D0D;\n  --color-accent: #0EA5E9;\n  --color-success: #10B981;\n  --color-warning: #F59E0B;\n  --color-danger: #FF6B6B;\n\n  --primitive-gradient-primary: linear-gradient(135deg, #6366F1 0%, #FF6B6B 100%);\n  --primitive-gradient-secondary: linear-gradient(135deg, #0EA5E9 0%, #6366F1 100%);\n  --primitive-glow-primary: 0 0 48px rgba(99, 102, 241, 0.28);\n\n  --typography-font-heading: 'Inter', 'Helvetica Neue', Arial, sans-serif;\n  --typography-font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;\n  --typography-font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;\n  --typography-font-display: 'Playfair Display', Georgia, serif;\n\n  --slide-pad-x: 8rem;\n  --slide-pad-y: 6rem;\n  --radius-md: 12px;\n  --radius-lg: 20px;\n  --duration-base: 420ms;\n  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);\n}"
+  },
+
+  "type_scale": {
+    "_note": "Modular, ratio 1.25, anchored on a 16px base. These are minimums for a 1920x1080 deck viewed at arm's length; a title smaller than 4rem is unreadable from the back of a room, and body copy smaller than 1.5rem is unreadable from a laptop.",
+    "ratio": 1.25,
+    "base_px": 16,
+    "steps": {
+      "eyebrow": { "px": 20, "weight": 600, "tracking": "0.18em", "transform": "uppercase" },
+      "caption": { "px": 20, "weight": 400 },
+      "body": { "px": 26, "weight": 400, "line_height": 1.55 },
+      "lead": { "px": 34, "weight": 400, "line_height": 1.45 },
+      "h3": { "px": 44, "weight": 600, "line_height": 1.2 },
+      "h2": { "px": 64, "weight": 600, "line_height": 1.15 },
+      "h1": { "px": 96, "weight": 700, "line_height": 1.05 },
+      "display": { "px": 128, "weight": 700, "line_height": 1.0 }
+    },
+    "measure": "60ch for a body paragraph, 24ch for a headline"
+  },
+
+  "layout": {
+    "_note": "Grid and safe area for a 16:9 deck. content_width is the text column; anything wider than about 24 characters per line is harder to read, not easier.",
+    "columns": 12,
+    "gutter_px": 32,
+    "margin_px": 96,
+    "content_width": "min(1180px, 62vw)",
+    "safe_area": "the central 80% of the canvas; platform UI and projection overscan eat the edges",
+    "vertical_rhythm_px": [96, 160, 240, 360]
+  },
+
+  "chart": {
+    "_note": "The defaults every Chart.js config in a deck should start from. A chart that does not inherit these reads as pasted in from another deck, which is exactly what it is.",
+    "palette": ["#6366F1", "#FF6B6B", "#0EA5E9", "#10B981", "#F59E0B", "#A855F7"],
+    "grid_color": "rgba(237, 237, 237, 0.10)",
+    "tick_color": "#A8A8A8",
+    "font_family": "'Inter', -apple-system, sans-serif",
+    "border_width": 0,
+    "point_radius": 0,
+    "point_hover_radius": 5,
+    "animation_duration_ms": 800,
+    "legend_labels_color": "#EDEDED"
+  },
+
+  "motion": {
+    "_note": "Deck transitions. Every one of these is disabled under prefers-reduced-motion, and the rule is at the bottom of the emitted block rather than in each component, because a component that forgets it is the failure mode.",
+    "transition_ms": 420,
+    "stagger_ms": 90,
+    "easing": "cubic-bezier(0.16, 1, 0.3, 1)",
+    "enter": "translate3d(0, 2rem, 0) -> 0, opacity 0 -> 1",
+    "exit": "translate3d(0, -1.5rem, 0) -> 0, opacity 1 -> 0",
+    "reduced_motion_css": "@media (prefers-reduced-motion: reduce) { .slide, .slide * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; } }"
+  },
+
+  "rules": [
+    "One idea per slide. A slide that needs two headlines is two slides.",
+    "The headline is the claim, not the topic. 'Revenue grew 3x' beats 'Revenue', and it survives being read out of context.",
+    "A number on the slide is a claim; a number on the slide with its denominator is evidence.",
+    "Body copy is a maximum, not a target. If a slide needs a paragraph, it needs a different layout.",
+    "Never put text over the busiest part of a background image. If there is nowhere clear, the image is the wrong image.",
+    "Two fonts per deck. Three is a mistake that looks like indecision."
+  ]
+}

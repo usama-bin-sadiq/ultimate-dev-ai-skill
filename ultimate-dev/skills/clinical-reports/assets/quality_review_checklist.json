@@ -1,0 +1,156 @@
+{
+  "_note": "Synthetic review record for the human sign-off that no local script can perform. Record a reviewer role, never a fabricated name, and never a signature, license number, direct contact detail, or copied approval document. Authored as a reconstruction from SKILL.md, references/professional_review.md, and references/case_report_guidelines.md.",
+  "artifact": "quality-review-record",
+  "schema_version": "1.0",
+  "draft_status": "DRAFT_NOT_FOR_CLINICAL_USE",
+  "not_for_use": "DRAFT - NOT FOR CLINICAL USE, SIGNATURE, FILING, OR SUBMISSION. Populate only from verified authorized source records. Qualified review and sign-off are required.",
+  "artifact_under_review": null,
+  "data_class": null,
+  "route_status": "BLOCKED_UNRESOLVED",
+  "allowed_decisions": [
+    "approved",
+    "approved_with_conditions",
+    "rejected",
+    "blocked_pending_human_review"
+  ],
+  "reviews": [
+    {
+      "domain": "Clinical case facts",
+      "reviewer_responsibility": "Verify facts, uncertainty, chronology, and interpretation.",
+      "reviewer_role": null,
+      "status": "pending",
+      "scope_reviewed": null,
+      "source_version_and_data_cut": null,
+      "unresolved_conflicts_and_limitations": null,
+      "reviewed_on": null,
+      "decision": null,
+      "signoff_record_reference": null
+    },
+    {
+      "domain": "Radiology",
+      "reviewer_responsibility": "Author findings and impression; own communication status.",
+      "reviewer_role": null,
+      "status": "pending",
+      "scope_reviewed": null,
+      "source_version_and_data_cut": null,
+      "unresolved_conflicts_and_limitations": null,
+      "reviewed_on": null,
+      "decision": null,
+      "signoff_record_reference": null
+    },
+    {
+      "domain": "Pathology",
+      "reviewer_responsibility": "Select protocol and version; author diagnosis.",
+      "reviewer_role": null,
+      "status": "pending",
+      "scope_reviewed": null,
+      "source_version_and_data_cut": null,
+      "unresolved_conflicts_and_limitations": null,
+      "reviewed_on": null,
+      "decision": null,
+      "signoff_record_reference": null
+    },
+    {
+      "domain": "Laboratory",
+      "reviewer_responsibility": "Verify released result, method, status, and corrections.",
+      "reviewer_role": null,
+      "status": "pending",
+      "scope_reviewed": null,
+      "source_version_and_data_cut": null,
+      "unresolved_conflicts_and_limitations": null,
+      "reviewed_on": null,
+      "decision": null,
+      "signoff_record_reference": null
+    },
+    {
+      "domain": "Statistics",
+      "reviewer_responsibility": "Verify analysis set, estimand, method, denominator, missingness, and output.",
+      "reviewer_role": null,
+      "status": "pending",
+      "scope_reviewed": null,
+      "source_version_and_data_cut": null,
+      "unresolved_conflicts_and_limitations": null,
+      "reviewed_on": null,
+      "decision": null,
+      "signoff_record_reference": null
+    },
+    {
+      "domain": "Safety",
+      "reviewer_responsibility": "Verify coding, seriousness, severity, causality, expectedness, and reportability.",
+      "reviewer_role": null,
+      "status": "pending",
+      "scope_reviewed": null,
+      "source_version_and_data_cut": null,
+      "unresolved_conflicts_and_limitations": null,
+      "reviewed_on": null,
+      "decision": null,
+      "signoff_record_reference": null
+    },
+    {
+      "domain": "Privacy and legal",
+      "reviewer_responsibility": "Verify data use, consent or authorization, disclosure, de-identification method, and jurisdiction.",
+      "reviewer_role": null,
+      "status": "pending",
+      "scope_reviewed": null,
+      "source_version_and_data_cut": null,
+      "unresolved_conflicts_and_limitations": null,
+      "reviewed_on": null,
+      "decision": null,
+      "signoff_record_reference": null
+    },
+    {
+      "domain": "Regulatory",
+      "reviewer_responsibility": "Verify adopted guidance, regional requirements, format, and submission process.",
+      "reviewer_role": null,
+      "status": "pending",
+      "scope_reviewed": null,
+      "source_version_and_data_cut": null,
+      "unresolved_conflicts_and_limitations": null,
+      "reviewed_on": null,
+      "decision": null,
+      "signoff_record_reference": null
+    },
+    {
+      "domain": "Publication",
+      "reviewer_responsibility": "All accountable authors verify content and current journal instructions.",
+      "reviewer_role": null,
+      "status": "pending",
+      "scope_reviewed": null,
+      "source_version_and_data_cut": null,
+      "unresolved_conflicts_and_limitations": null,
+      "reviewed_on": null,
+      "decision": null,
+      "signoff_record_reference": null
+    }
+  ],
+  "authorship_note": "The ICMJE Recommendations, updated January 2026, retain four authorship criteria: substantive contribution; drafting or critical review; final approval; and accountability for accuracy and integrity. Writing assistance alone does not confer authorship, and an automated system cannot be an author or approve a manuscript.",
+  "authorship_criteria": [
+    { "criterion": "substantive_contribution", "met": null, "basis": null },
+    { "criterion": "drafting_or_critical_review", "met": null, "basis": null },
+    { "criterion": "final_approval", "met": null, "basis": null },
+    { "criterion": "accountability_for_accuracy_and_integrity", "met": null, "basis": null }
+  ],
+  "research_ethics": {
+    "declaration_of_helsinki_version": "2024",
+    "ethics_review_reference": null,
+    "informed_consent_reference": null,
+    "note": "This skill neither performs ethics review nor determines whether an activity is research, exempt, or authorized."
+  },
+  "conflicts_and_corrections": {
+    "conflicts_open": [],
+    "original_records_preserved": true,
+    "recheck_after_correction_required": true
+  },
+  "prohibited_claims": [
+    "clinical correctness verified by a script",
+    "HIPAA compliance",
+    "GCP compliance",
+    "CARE, CONSORT, SPIRIT, ICH, ACR, CAP, or CLIA compliance",
+    "ethics approval or informed consent obtained",
+    "regulatory reportability determined",
+    "ready for signature",
+    "ready for filing",
+    "ready for publication",
+    "ready for submission"
+  ]
+}

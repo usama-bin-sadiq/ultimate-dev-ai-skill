@@ -1,0 +1,73 @@
+{
+  "_provenance": {
+    "what_this_is": "Template for an aggregate cohort table shell. Input is aggregate cells only; row-level data must never be supplied to the generator. Copy it, declare the disclosure policy, and fill the aggregate cell counts.",
+    "status_default": "Distributed unresolved on purpose; a non-zero validator result is expected until the disclosure policy and the aggregate cells are supplied.",
+    "reconstruction": "Reconstructed from references/cohort_evaluation.md and references/privacy_and_disclosure.md.",
+    "threshold_note": "The default minimum cell size is a conservative operational safeguard, not a HIPAA rule and not a guarantee. It does not address differencing, linkage, longitudinal, geographic, genomic, or rare-combination risk. The data steward selects the policy."
+  },
+
+  "table_metadata": {
+    "title": "unresolved",
+    "design": "unresolved - cohort, case-control, or cross-sectional",
+    "population": "unresolved",
+    "data_cut_date": "unresolved",
+    "reporting_guideline": "unresolved - STROBE, plus RECORD for routinely collected data",
+    "denominator_definition": "unresolved - how the analysis denominator was arrived at",
+    "exclusions": "unresolved",
+    "missingness_handling": "unresolved"
+  },
+
+  "disclosure_policy": {
+    "minimum_cell_size": 11,
+    "primary_suppression": true,
+    "complementary_suppression": true,
+    "group_level_suppression": true,
+    "policy_source": "unresolved - the approved disclosure policy this threshold comes from",
+    "approved_by": "unresolved - data steward or privacy officer"
+  },
+
+  "groups": ["unresolved_group_a", "unresolved_group_b"],
+  "characteristics": [
+    {
+      "name": "unresolved",
+      "type": "unresolved - continuous summarized, or categorical",
+      "unit": "unresolved - for continuous summaries",
+      "categories": ["unresolved_category_1", "unresolved_category_2"]
+    }
+  ],
+
+  "cells": [
+    {
+      "characteristic": "unresolved",
+      "category": "unresolved",
+      "group": "unresolved_group_a",
+      "n": 0,
+      "denominator": 0
+    }
+  ],
+
+  "reporting_labels": {
+    "unresolved": "Use one of: adjusted, unadjusted, prespecified, exploratory. Label every result.",
+    "no_baseline_significance_testing": "Do not use baseline significance testing as a balance diagnostic. Report standardized differences where a balance summary is wanted."
+  },
+
+  "interpretation": {
+    "template": "In this aggregate [design] evaluation, [effect/summary] was estimated as [value and interval] for [defined outcome and horizon]. The analysis is [prespecified/exploratory] and is limited by [bias, missingness, precision, transportability]. It does not establish causality, clinical utility, or an action for any person.",
+    "filled": "unresolved"
+  },
+
+  "limitations": "unresolved - bias, missingness, precision, transportability, and suppression effects on the released table",
+
+  "human_review": {
+    "required_roles": [
+      "methodologist_or_statistician",
+      "domain_expert",
+      "privacy_officer_or_qualified_expert",
+      "authorized_governance_owner"
+    ],
+    "status": "unresolved",
+    "approval_boundary": "unresolved - the table is not released until the privacy decision is recorded"
+  },
+
+  "boundary_statement": "This artifact is an aggregate research table subject to disclosure control. It supports no action for any person. Not for patient care or live clinical use."
+}

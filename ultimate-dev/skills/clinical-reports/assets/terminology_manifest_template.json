@@ -1,0 +1,87 @@
+{
+  "_note": "Synthetic manifest of coded items for local schema and syntax checking only. terminology_validator.py confirms that required fields are present and that a code is syntactically well formed; without a supplied dictionary the strongest result is SCHEMA_VALID_SYNTAX_ONLY_REVIEW_REQUIRED. It never confirms that a code exists, is current, matches its display, or is clinically appropriate. Authored as a reconstruction from SKILL.md and references/medical_terminology.md.",
+  "artifact": "terminology-manifest",
+  "schema_version": "1.0",
+  "draft_status": "DRAFT_NOT_FOR_CLINICAL_USE",
+  "not_for_use": "DRAFT - NOT FOR CLINICAL USE, SIGNATURE, FILING, OR SUBMISSION. Populate only from verified authorized source records. Qualified review and sign-off are required.",
+  "data_class": null,
+  "review_owner": null,
+  "allowed_coding_status": [
+    "verified_by_qualified_reviewer",
+    "unverified"
+  ],
+  "local_dictionary": {
+    "supplied": false,
+    "path": null,
+    "authorized_bounded_json": false,
+    "note": "A match against a supplied dictionary means only 'matched this supplied dictionary'. It does not prove the dictionary is official, complete, current, or licensed for the use."
+  },
+  "coded_items": [
+    {
+      "item_id": null,
+      "system": null,
+      "system_uri": null,
+      "code": null,
+      "display": null,
+      "version": null,
+      "language": null,
+      "source_fact_id": null,
+      "coding_status": "unverified",
+      "verified_by_role": null,
+      "verified_at": null
+    }
+  ],
+  "units": [
+    {
+      "item_id": null,
+      "original_unit_exact": null,
+      "ucum_expression": null,
+      "conversion_applied": false,
+      "conversion_rule": null,
+      "conversion_rule_version": null,
+      "original_value": null,
+      "converted_value": null,
+      "rounding_rule": null,
+      "source_fact_id": null,
+      "reviewer_role": null
+    }
+  ],
+  "known_systems": {
+    "MedDRA": {
+      "current_release_observed": "29.0 (released March 2026, transition date 4 May 2026)",
+      "rules": "Multiaxial hierarchy with version-specific currency and relationships. Use the study or sponsor-authorized version and the official licensed files, plus the current Points to Consider."
+    },
+    "LOINC": {
+      "current_release_observed": "2.82 (released 24 February 2026)",
+      "rules": "A valid-looking number-checkdigit string is only syntactic evidence. Method, property, timing, system or specimen, scale, and version can change meaning."
+    },
+    "SNOMED_CT": {
+      "rules": "Use the applicable international edition, national extension, and effective date. Verify activity, module, description, and reference-set membership. Do not embed or redistribute licensed terminology content through this skill."
+    },
+    "ICD-10-CM": {
+      "rules": "Record the exact release and applicable jurisdiction. A syntax match cannot establish billability, specificity, sequencing, or clinical correctness. This skill does not support billing or reimbursement decisions."
+    },
+    "UCUM": {
+      "rules": "Record the original unit exactly and the verified UCUM expression separately. Do not automatically convert units in a report draft."
+    }
+  },
+  "check_result": null,
+  "strongest_permitted_result": "SCHEMA_VALID_SYNTAX_ONLY_REVIEW_REQUIRED",
+  "pending_human_reviews": [
+    {
+      "domain": "coding accuracy, currency, and clinical appropriateness",
+      "reviewer_role": "qualified_clinical_reviewer",
+      "status": "pending",
+      "reviewed_on": null,
+      "signoff_record_reference": null
+    }
+  ],
+  "prohibited_claims": [
+    "compliant",
+    "HIPAA-safe",
+    "validated clinically",
+    "approved",
+    "ready to file",
+    "ready to submit"
+  ]
+}

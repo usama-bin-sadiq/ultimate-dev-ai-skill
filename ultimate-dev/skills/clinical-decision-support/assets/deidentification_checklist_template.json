@@ -1,0 +1,114 @@
+{
+  "_provenance": {
+    "what_this_is": "Documentation checklist for a de-identification process. The helper inventories documented human work; it never reads a dataset. Copy it, complete the human review, and escalate every unresolved item to qualified privacy review.",
+    "status_default": "Distributed unresolved by design. Do not paste sensitive information into a template to see whether it passes.",
+    "reconstruction": "Reconstructed from references/privacy_and_disclosure.md, which lists the two HHS methods, the eighteen Safe Harbor categories, the Expert Determination record fields, and the allowed output language."
+  },
+
+  "method": {
+    "selected": "unresolved - expert_determination or safe_harbor",
+    "why_selected": "unresolved",
+    "covered_entity_or_association_status": "unresolved - the checklist cannot determine this",
+    "note": "The checklist cannot determine whether an organization is a covered entity or business associate, whether information is PHI, or whether a method was correctly applied."
+  },
+
+  "safe_harbor_categories": {
+    "_status_values": [
+      "not_present - documented inventory confirms absence",
+      "removed - documented transformation confirms removal",
+      "generalized - allowed generalization documented and approved",
+      "expert_reviewed - addressed under the referenced Expert Determination",
+      "unresolved - not complete"
+    ],
+    "_evidence_rule": "Every status other than unresolved needs evidence text. Never include an example identifier in evidence.",
+    "names": {"status": "unresolved", "evidence": "unresolved"},
+    "geographic_subdivisions_smaller_than_state": {"status": "unresolved", "evidence": "unresolved", "note": "ZIP-code rules apply"},
+    "date_elements_more_specific_than_year": {"status": "unresolved", "evidence": "unresolved", "note": "The age-90 rule applies"},
+    "telephone_numbers": {"status": "unresolved", "evidence": "unresolved"},
+    "fax_numbers": {"status": "unresolved", "evidence": "unresolved"},
+    "email_addresses": {"status": "unresolved", "evidence": "unresolved"},
+    "social_security_numbers": {"status": "unresolved", "evidence": "unresolved"},
+    "medical_record_numbers": {"status": "unresolved", "evidence": "unresolved"},
+    "health_plan_beneficiary_numbers": {"status": "unresolved", "evidence": "unresolved"},
+    "account_numbers": {"status": "unresolved", "evidence": "unresolved"},
+    "certificate_or_license_numbers": {"status": "unresolved", "evidence": "unresolved"},
+    "vehicle_identifiers_and_serial_numbers": {"status": "unresolved", "evidence": "unresolved"},
+    "device_identifiers_and_serial_numbers": {"status": "unresolved", "evidence": "unresolved"},
+    "web_urls": {"status": "unresolved", "evidence": "unresolved"},
+    "ip_addresses": {"status": "unresolved", "evidence": "unresolved"},
+    "biometric_identifiers": {"status": "unresolved", "evidence": "unresolved"},
+    "full_face_photographs_and_comparable_images": {"status": "unresolved", "evidence": "unresolved"},
+    "other_unique_identifying_numbers_characteristics_or_codes": {"status": "unresolved", "evidence": "unresolved"},
+    "free_text_review": {"status": "unresolved", "evidence": "unresolved", "note": "Free text is not exempt and can contain listed identifiers or identifying context."},
+    "parts_and_derivatives": {"status": "unresolved", "evidence": "unresolved"}
+  },
+
+  "expert_determination_record": {
+    "applies": "unresolved",
+    "expert_qualifications_and_independence": "unresolved",
+    "data_context_and_recipients": "unresolved",
+    "anticipated_linkages_and_attacker_knowledge": "unresolved",
+    "methods_and_assumptions": "unresolved",
+    "risk_threshold_and_rationale": "unresolved",
+    "mitigation_and_residual_risk": "unresolved",
+    "validity_period_and_change_triggers": "unresolved",
+    "documentation_location_and_approval": "unresolved",
+    "not_sufficient_alone": [
+      "hashing",
+      "pseudonymization",
+      "encryption",
+      "a data-use agreement",
+      "a low cell count"
+    ]
+  },
+
+  "aggregate_disclosure_review": {
+    "risk_vectors_reviewed": [
+      "small cells",
+      "row and column totals",
+      "differencing across releases",
+      "rare combinations",
+      "nested geographies",
+      "longitudinal patterns",
+      "extreme values",
+      "genomics",
+      "external linkage"
+    ],
+    "controls_applied": "unresolved - minimum cell thresholds, primary and complementary suppression, category aggregation, top/bottom coding, approved rounding or perturbation, release coordination, query budgets, access controls, secure enclaves, expert review",
+    "approved_policy": "unresolved",
+    "note": "There is no universal small-cell threshold that proves HIPAA de-identification."
+  },
+
+  "actual_knowledge_and_residual_risk": {
+    "free_text": "unresolved",
+    "derived_fields": "unresolved",
+    "linkage_and_differencing": "unresolved",
+    "unusual_occupations_or_events": "unresolved",
+    "rare_diseases_or_combinations": "unresolved",
+    "dates_and_ages": "unresolved",
+    "geography": "unresolved",
+    "longitudinal_uniqueness": "unresolved",
+    "recipient_context": "unresolved",
+    "prior_releases": "unresolved",
+    "residual_identifiers": "unresolved"
+  },
+
+  "escalations_to_qualified_privacy_review": "unresolved - list every item escalated; an empty list is not evidence that none exist",
+
+  "review": {
+    "privacy_officer_or_qualified_expert": "unresolved",
+    "review_date": "unresolved",
+    "status": "unresolved"
+  },
+
+  "output_language": {
+    "allowed": "Documentation checklist complete for the selected method. This output is not a HIPAA compliance or de-identification determination.",
+    "not_allowed": [
+      "HIPAA compliant",
+      "Safe to publish",
+      "Anonymous"
+    ]
+  },
+
+  "boundary_statement": "Passing this checklist records a documented human process only. It is not a de-identification determination and not a HIPAA compliance claim. Not for patient care or live clinical use."
+}

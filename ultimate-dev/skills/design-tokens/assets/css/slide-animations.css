@@ -1,0 +1,218 @@
+/*
+ * slide-animations.css — the animation library the slide system applies.
+ *
+ * A slide picks up its motion by adding one class per element. Pair the
+ * classes with assets/design-tokens.css: nothing here hardcodes a colour, and
+ * every duration and curve comes from the --slide-duration / --slide-easing
+ * tokens so a deck stays consistent.
+ *
+ *     <section class="slide" data-animate="rise">…</section>
+ *
+ *   Staging   .anim-fade-in .anim-fade-up .anim-fade-down .anim-scale-in
+ *             .anim-slide-in-left .anim-slide-in-right .anim-stagger
+ *   Emphasis  .anim-pulse-once .anim-highlight .anim-draw-line
+ *   Exit      .anim-fade-out
+ *   Motion    [data-animate] applies the staging class on slide entry
+ *   Reduced   .anim-reset clears every class; honours prefers-reduced-motion
+ *
+ * A deck alternates emotion rather than repeating one entrance — the "What Is"
+ * and "What Could Be" beats of the Duarte sparkline are a change of treatment,
+ * not a change of slide class — so the staging classes are deliberately few
+ * and composable.
+ *
+ * Authored as a reconstruction. SKILL.md names this file as the slide system's
+ * animation library and says the layout data supplies the class, but it does not
+ * name the classes, so the names below are this file's own, chosen to be short
+ * and to compose. Replace them wholesale if an upstream class list resurfaces.
+ */
+
+@import url("design-tokens.css");
+
+:root {
+  --anim-duration: var(--slide-duration);
+  --anim-duration-fast: 240ms;
+  --anim-duration-slow: 900ms;
+  --anim-stagger-step: 90ms;
+}
+
+/* ---------------------------------------------------------------------------
+ * Staging — the entrance of slide content.
+ * ------------------------------------------------------------------------ */
+
+.anim-fade-in {
+  animation: slide-fade-in var(--anim-duration) var(--slide-easing) both;
+}
+
+.anim-fade-up {
+  animation: slide-fade-up var(--anim-duration) var(--slide-easing) both;
+}
+
+.anim-fade-down {
+  animation: slide-fade-down var(--anim-duration) var(--slide-easing) both;
+}
+
+.anim-scale-in {
+  animation: slide-scale-in var(--anim-duration) var(--slide-easing) both;
+}
+
+.anim-slide-in-left {
+  animation: slide-slide-in-left var(--anim-duration) var(--slide-easing) both;
+}
+
+.anim-slide-in-right {
+  animation: slide-slide-in-right var(--anim-duration) var(--slide-easing) both;
+}
+
+/*
+ * Stagger a group's children. Applied to the container; each child is delayed
+ * by one step, so a three-point list arrives as three beats rather than one.
+ */
+.anim-stagger > * {
+  animation: slide-fade-up var(--anim-duration) var(--slide-easing) both;
+}
+
+.anim-stagger > *:nth-child(1) { animation-delay: 0ms; }
+.anim-stagger > *:nth-child(2) { animation-delay: var(--anim-stagger-step); }
+.anim-stagger > *:nth-child(3) { animation-delay: calc(var(--anim-stagger-step) * 2); }
+.anim-stagger > *:nth-child(4) { animation-delay: calc(var(--anim-stagger-step) * 3); }
+.anim-stagger > *:nth-child(5) { animation-delay: calc(var(--anim-stagger-step) * 4); }
+.anim-stagger > *:nth-child(n + 6) { animation-delay: calc(var(--anim-stagger-step) * 5); }
+
+/* ---------------------------------------------------------------------------
+ * Emphasis — a beat inside a slide that is already on screen.
+ * ------------------------------------------------------------------------ */
+
+.anim-pulse-once {
+  animation: slide-pulse var(--anim-duration) var(--slide-easing) 1 both;
+}
+
+.anim-highlight {
+  animation: slide-highlight var(--anim-duration-slow) var(--slide-easing) both;
+}
+
+.anim-draw-line {
+  transform-origin: left center;
+  animation: slide-draw-line var(--anim-duration-slow) var(--slide-easing) both;
+}
+
+/* ---------------------------------------------------------------------------
+ * Exit — used when a slide leaves without an immediate successor.
+ * ------------------------------------------------------------------------ */
+
+.anim-fade-out {
+  animation: slide-fade-out var(--anim-duration-fast) var(--slide-easing) both;
+}
+
+/* ---------------------------------------------------------------------------
+ * Motion driver — [data-animate] is the hook a generated slide uses, so the
+ * generator emits one attribute instead of a class list that can drift.
+ * ------------------------------------------------------------------------ */
+
+[data-animate="fade"] { animation: slide-fade-in var(--anim-duration) var(--slide-easing) both; }
+[data-animate="up"] { animation: slide-fade-up var(--anim-duration) var(--slide-easing) both; }
+[data-animate="down"] { animation: slide-fade-down var(--anim-duration) var(--slide-easing) both; }
+[data-animate="scale"] { animation: slide-scale-in var(--anim-duration) var(--slide-easing) both; }
+[data-animate="left"] { animation: slide-slide-in-left var(--anim-duration) var(--slide-easing) both; }
+[data-animate="right"] { animation: slide-slide-in-right var(--anim-duration) var(--slide-easing) both; }
+
+/* A slide that has not been entered yet stays hidden rather than flashing. */
+[data-animate]:not(.is-active) {
+  visibility: hidden;
+}
+
+[data-animate].is-active {
+  visibility: visible;
+}
+
+/* ---------------------------------------------------------------------------
+ * Keyframes.
+ * ------------------------------------------------------------------------ */
+
+@keyframes slide-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-fade-up {
+  from { opacity: 0; transform: translate3d(0, 1.5rem, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes slide-fade-down {
+  from { opacity: 0; transform: translate3d(0, -1.5rem, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes slide-scale-in {
+  from { opacity: 0; transform: scale3d(0.94, 0.94, 1); }
+  to { opacity: 1; transform: scale3d(1, 1, 1); }
+}
+
+@keyframes slide-slide-in-left {
+  from { opacity: 0; transform: translate3d(-2.5rem, 0, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes slide-slide-in-right {
+  from { opacity: 0; transform: translate3d(2.5rem, 0, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes slide-pulse {
+  0% { transform: scale3d(1, 1, 1); }
+  40% { transform: scale3d(1.04, 1.04, 1); }
+  100% { transform: scale3d(1, 1, 1); }
+}
+
+@keyframes slide-highlight {
+  0%, 100% { color: inherit; }
+  30% { color: var(--slide-accent); }
+}
+
+@keyframes slide-draw-line {
+  from { transform: scale3d(0, 1, 1); }
+  to { transform: scale3d(1, 1, 1); }
+}
+
+@keyframes slide-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* ---------------------------------------------------------------------------
+ * Reduced motion — remove travel and delay, keep the state change legible.
+ * ------------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-fade-in,
+  .anim-fade-up,
+  .anim-fade-down,
+  .anim-scale-in,
+  .anim-slide-in-left,
+  .anim-slide-in-right,
+  .anim-pulse-once,
+  .anim-highlight,
+  .anim-draw-line,
+  .anim-fade-out,
+  .anim-stagger > *,
+  [data-animate] {
+    animation-duration: 1ms;
+    animation-delay: 0ms;
+    animation-iteration-count: 1;
+  }
+
+  .anim-draw-line {
+    transform: scale3d(1, 1, 1);
+  }
+}
+
+/*
+ * .anim-reset is the escape hatch a deck uses to strip motion entirely, for
+ * a print stylesheet or a static export.
+ */
+.anim-reset,
+.anim-reset * {
+  animation: none !important;
+  transition: none !important;
+  visibility: visible;
+}

@@ -287,7 +287,7 @@ See `references/observability.md`.
 
 ### Delegated roles
 
-Of the 291 role files in `agents/`, nineteen carry a dispatch condition in
+Of the 286 role files in `agents/`, nineteen carry a dispatch condition in
 `references/delegation.md`; each has a procedure, output contract, and
 prohibitions. That file is the index — role, trigger, and what it must not do.
 **A role with no dispatch condition is not available**, however good it is.
@@ -489,7 +489,7 @@ and reasoning** · **planning, execution, verification** · **recovery** · **le
 `references/coordination-modes.md`.
 
 **Elsewhere** — `skills/skill-creator/SKILL.md` owns capability creation,
-validation, security review, promotion, and deprecation. `agents/` holds 291 role
+validation, security review, promotion, and deprecation. `agents/` holds 286 role
 files, of which 19 carry a dispatch condition. `references/maturity.md` records
 which prd.md §24 level this claims and what is missing to reach the next.
 `tools/` holds the runtime validators: `validate-skills.py` for structure,

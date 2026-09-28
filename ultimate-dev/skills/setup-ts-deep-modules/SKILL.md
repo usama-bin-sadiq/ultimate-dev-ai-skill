@@ -66,11 +66,11 @@ Set `PACKAGES_ROOT` to the root detected in step 1. The rules are path-depth bas
 
 ### 5. Scaffold the example package
 
-Create a committed `<packages-root>/example/` as a copy-me template:
+Create a committed `<packages-root>/example/` as a copy-me template. These paths are relative to the user's own monorepo, not to this skill:
 
 - `index.ts` is an entry point. Export one function that delegates to an internal file (so the package is visibly *deep*, not a pass-through).
 - `lib/impl.ts`: an internal file in a **subfolder**, imported by `index.ts`, not reachable from outside.
-- `tests/example.test.ts` imports **only** `../index` (an entry point) and asserts against the public function.
+- `tests/example.test.ts` imports **only** `../index` — a path relative to the user's own monorepo, not to this skill — and asserts against the public function.
 
 Tell the user this is a starter template to copy or delete.
 

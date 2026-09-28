@@ -608,6 +608,20 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
 
     # Unfilled placeholders in maintained documentation.
     #
+    # Fenced code is exempt, and that is the single largest correction this check
+    # has had. A role file that shows the report it produces carries the shape of
+    # that report inside a ```markdown fence, and the shape is full of XXX and
+    # X.X -- "GRE XXX / GMAT XXX", "GPA: X.XX / 4.0". Those are a template for
+    # the agent to fill, which is the opposite of an unfinished document. Reading
+    # them as unfilled slots reported 449 errors of which the large majority were
+    # a validator objecting to correct work, and an error count that is mostly
+    # wrong trains people to ignore the count.
+    #
+    # This is the same exemption every other content check in this file already
+    # applies. The placeholder check was the one that read raw lines, so it was
+    # the one that saw inside fences. Inconsistent treatment of a fence is how
+    # "the validator says so" stops being a reason to believe it.
+    #
     # A line that forbids placeholders is not itself a placeholder, and the rule
     # that says so must not fail the rule that checks for them. Lines carrying a
     # prohibition marker are therefore exempt.
@@ -616,6 +630,40 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
         r"instead of|rather than|is not|are not|grep|pattern)",
         re.IGNORECASE,
     )
+    # A second copy of the fence rule, on purpose.
+    #
+    # bundle-skill.py has the authoritative implementation and this file must not
+    # grow a second one: the marker rule already has a check that fails if a
+    # duplicate implementation appears, and two subtly-different fence parsers
+    # would be exactly that failure wearing a different hat. Rather than
+    # reimplement CommonMark's closing rule here, the fence state is computed by
+    # the same helper -- imported, not copied -- and the reasoning lives in one
+    # place.
+    #
+    # A fence closes on a run of the same character at least as long as the one
+    # that opened it, carrying no info string. Treating any fence marker as a
+    # closer gets documents with a ```bash inside a ```markdown block wrong, and
+    # gets them wrong silently, in whichever direction flips them into prose.
+    fence_chars = {"`": "`", "~": "~"}
+
+    def in_fenced_code(md_path: Path, upto_line: int) -> bool:
+        """Is line `upto_line` (1-based) inside a fenced block?"""
+        fence_char = ""
+        fence_len = 0
+        try:
+            text = md_path.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            return False
+        for line in text.split("\n")[:upto_line]:
+            m = re.match(r"^(\s*)(`{3,}|~{3,})(.*)$", line)
+            if not m:
+                continue
+            token, info = m.group(2), m.group(3).strip()
+            if not fence_char:
+                fence_char, fence_len = token[0], len(token)
+            elif token[0] == fence_char and len(token) >= fence_len and not info:
+                fence_char, fence_len = "", 0
+        return bool(fence_char)
     for path in sorted(repo_root.rglob("*.md")):
         rel = path.relative_to(repo_root)
         # .eval-fixtures/ is generated input data, not maintained documentation.
@@ -631,6 +679,8 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
             if not PLACEHOLDER_PATTERN.search(line):
                 continue
             if prohibition.search(line):
+                continue
+            if in_fenced_code(path, lineno):
                 continue
             errors.append(f"{rel}:{lineno}: unfilled placeholder: {line.strip()[:80]!r}")
 
@@ -1015,6 +1065,24 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
         roles = sorted(r for r in agents_dir.glob("*.md") if r.stem.islower())
         if not roles:
             errors.append(f"{agents_dir}: contains no agent role definitions")
+        # Files in agents/ that are not roles are skipped by every check here --
+        # the role loop above filters to lowercase names, so a PULL_REQUEST_
+        # TEMPLATE or a SECURITY policy in this directory is invisible to all of
+        # them. There are four, and they are documentation. They were never
+        # wrong so much as unexamined: a directory of delegated roles is read as
+        # containing delegated roles, and the four that are not simply have never
+        # been looked at by a validator that could not see them.
+        non_roles = sorted(
+            p for p in agents_dir.glob("*.md")
+            if not p.stem.islower() and p.stem != "README"
+        )
+        for stray in non_roles:
+            errors.append(
+                f"{stray.relative_to(SKILL_ROOT)}: not a role (a role name is "
+                f"lowercase), and not an index either. It is skipped by every "
+                f"agent check in this validator, so nothing verifies it. Move it "
+                f"to docs/ if it is documentation."
+            )
         for role in roles:
             lines = len(role.read_text(encoding="utf-8").splitlines())
             if lines < 40:
@@ -1030,6 +1098,23 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
                     f"{AGENTS_DIR}/: not mentioned in SKILL.md, so the kernel will not "
                     f"know to delegate to them: {', '.join(unreferenced)}"
                 )
+            # A count written in prose goes stale the moment a file is added, and
+            # it goes stale silently: nothing about "290" stops being true on its
+            # own. It read 291 for several commits after agents/README.md was
+            # added, because it was counting the index as a role, so the kernel
+            # claimed one more delegated role than exists. A number a reader will
+            # rely on is checked against disk rather than trusted.
+            #
+            # Only counts of the form "N role files" are checked. Anything else
+            # numeric in the kernel is prose, and a validator that second-guessed
+            # prose would be a validator that got itself ignored.
+            for match in re.finditer(r"(\d[\d,]*) role\s*\n?files", kernel_body):
+                claimed = match.group(1).replace(",", "")
+                if claimed != str(len(roles)):
+                    errors.append(
+                        f"{kernel.name}: claims {match.group(1)} role files, but "
+                        f"{AGENTS_DIR}/ holds {len(roles)}"
+                    )
         # A role named in SKILL.md but absent from the dispatch table is
         # unreachable. The kernel would load it and then have no condition under
         # which to call it, which is the decision-record defect one level up:

@@ -1,0 +1,235 @@
+/*
+ * design-tokens.css — CSS custom properties for slides and components.
+ *
+ * Import this file; use var() exclusively. A hardcoded hex in a slide is a
+ * defect, and assets/css/slide-animations.css is the other half of the system.
+ *
+ * Three layers, then a slide layer:
+ *   primitive  --color-coral-500     #FF6B6B
+ *   semantic   --color-primary       var(--color-coral-500)
+ *   component  --button-bg           var(--color-primary)
+ *   slide      --slide-bg            var(--color-background)
+ *
+ * Authored as a reconstruction rendered from this skill's design-tokens.json,
+ * from the variable names SKILL.md uses in its own examples (--color-primary,
+ * --slide-bg, --typography-font-heading). It is not a recovered original.
+ */
+
+:root {
+  /* ---------------------------------------------------------------------
+   * Primitive — raw values. Do not reference these from a component.
+   * ------------------------------------------------------------------ */
+
+  --color-coral-50: #FFF0F0;
+  --color-coral-100: #FFE1E1;
+  --color-coral-200: #FFC4C4;
+  --color-coral-300: #FFA6A6;
+  --color-coral-400: #FF8989;
+  --color-coral-500: #FF6B6B;
+  --color-coral-600: #D95B5B;
+  --color-coral-700: #B34B4B;
+  --color-coral-800: #8C3B3B;
+  --color-coral-900: #662B2B;
+
+  --color-teal-50: #E8F8F6;
+  --color-teal-100: #D0F1ED;
+  --color-teal-200: #A1E3DB;
+  --color-teal-300: #72D4CA;
+  --color-teal-400: #43C6B8;
+  --color-teal-500: #14B8A6;
+  --color-teal-600: #119C8D;
+  --color-teal-700: #0E8174;
+  --color-teal-800: #0B655B;
+  --color-teal-900: #084A42;
+
+  --color-ink-50: #E7E7E7;
+  --color-ink-100: #CFCFCF;
+  --color-ink-200: #9E9E9E;
+  --color-ink-300: #6E6E6E;
+  --color-ink-400: #3D3D3D;
+  --color-ink-500: #0D0D0D;
+  --color-ink-600: #0B0B0B;
+  --color-ink-700: #090909;
+  --color-ink-800: #070707;
+  --color-ink-900: #050505;
+
+  --color-slate-50: #F4F6F8;
+  --color-slate-100: #EAEDF1;
+  --color-slate-200: #D4DAE3;
+  --color-slate-300: #BFC8D4;
+  --color-slate-400: #A9B5C6;
+  --color-slate-500: #94A3B8;
+  --color-slate-600: #7E8B9C;
+  --color-slate-700: #687281;
+  --color-slate-800: #515A65;
+  --color-slate-900: #3B414A;
+
+  /* Typography */
+  --font-heading: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --text-slide-title: 3.052rem;
+  --text-slide-subtitle: 1.563rem;
+  --text-body-lg: 1.125rem;
+  --text-body: 1rem;
+  --text-caption: 0.875rem;
+
+  --font-regular: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  --leading-tight: 1.1;
+  --leading-heading: 1.25;
+  --leading-body: 1.6;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+
+  --slide-duration: 600ms;
+  --slide-easing: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* ---------------------------------------------------------------------
+   * Semantic — purpose aliases. This is what a component consumes.
+   * ------------------------------------------------------------------ */
+
+  --color-primary: var(--color-coral-500);
+  --color-primary-hover: var(--color-coral-600);
+  --color-primary-active: var(--color-coral-700);
+  --color-primary-muted: var(--color-coral-800);
+
+  --color-accent: var(--color-teal-500);
+  --color-accent-muted: var(--color-teal-800);
+
+  --color-background: var(--color-ink-500);
+  --color-surface: var(--color-ink-600);
+  --color-text: var(--color-ink-50);
+  --color-text-muted: var(--color-slate-400);
+  --color-border: var(--color-ink-300);
+
+  --color-success: var(--color-teal-500);
+  --color-warning: var(--color-coral-400);
+  --color-error: var(--color-coral-600);
+
+  --typography-font-heading: var(--font-heading);
+  --typography-font-body: var(--font-body);
+  --typography-font-mono: var(--font-mono);
+  --typography-size-slide-title: var(--text-slide-title);
+  --typography-size-slide-subtitle: var(--text-slide-subtitle);
+  --typography-size-body: var(--text-body);
+  --typography-leading-tight: var(--leading-tight);
+  --typography-leading-body: var(--leading-body);
+
+  /* ---------------------------------------------------------------------
+   * Slide — the deck's own slots.
+   * ------------------------------------------------------------------ */
+
+  --slide-bg: var(--color-background);
+  --slide-bg-emphasis: var(--color-ink-400);
+  --slide-fg: var(--color-text);
+  --slide-fg-muted: var(--color-text-muted);
+  --slide-accent: var(--color-primary);
+  --slide-rule: var(--color-border);
+  --slide-padding-x: var(--space-12);
+  --slide-padding-y: var(--space-8);
+
+  /* ---------------------------------------------------------------------
+   * Component — per-component slots.
+   * ------------------------------------------------------------------ */
+
+  --button-bg: var(--color-primary);
+  --button-bg-hover: var(--color-primary-hover);
+  --button-text: var(--color-ink-500);
+  --button-border: var(--color-primary);
+  --button-radius: var(--radius-md);
+
+  --card-bg: var(--color-surface);
+  --card-border: var(--color-border);
+  --card-radius: var(--radius-lg);
+  --card-padding: var(--space-6);
+
+  --chart-series-primary: var(--color-primary);
+  --chart-series-secondary: var(--color-accent);
+  --chart-grid: var(--slide-rule);
+  --chart-label: var(--slide-fg-muted);
+
+  --progress-track: var(--color-border);
+  --progress-fill: var(--color-primary);
+}
+
+/*
+ * Slide scaffold. Slides centre their content, carry navigation, and read as
+ * one system; the per-slide entrance classes live in assets/css/slide-animations.css.
+ */
+
+.slide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--slide-padding-y) var(--slide-padding-x);
+  background: var(--slide-bg);
+  color: var(--slide-fg);
+  font-family: var(--typography-font-body);
+  font-size: var(--typography-size-body);
+  line-height: var(--typography-leading-body);
+  text-align: center;
+}
+
+.slide__title {
+  margin: 0 0 var(--space-6);
+  font-family: var(--typography-font-heading);
+  font-size: var(--typography-size-slide-title);
+  line-height: var(--typography-leading-tight);
+  font-weight: var(--font-bold);
+  color: var(--slide-fg);
+}
+
+.slide__subtitle {
+  margin: 0 0 var(--space-8);
+  font-family: var(--typography-font-body);
+  font-size: var(--typography-size-slide-subtitle);
+  color: var(--slide-fg-muted);
+}
+
+.slide__accent {
+  color: var(--slide-accent);
+}
+
+.slide__rule {
+  width: 4rem;
+  height: 2px;
+  border: 0;
+  background: var(--slide-accent);
+}
+
+.slide__progress {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 0;
+  background: var(--progress-fill);
+  transition: width var(--slide-duration) var(--slide-easing);
+}
+
+/*
+ * Charts are drawn with Chart.js, not CSS bars. The tokens below are the
+ * palette a chart configuration reads; read them from CSS at runtime rather
+ * than repeating the hex in a script.
+ */
+.slide canvas {
+  max-width: 100%;
+}

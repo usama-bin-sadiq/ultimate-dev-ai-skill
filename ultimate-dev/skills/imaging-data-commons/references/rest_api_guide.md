@@ -496,8 +496,10 @@ s5cmd --no-sign-request --endpoint-url https://storage.googleapis.com run s5cmd_
 ```
 
 `s5cmd run` expects one *command* per line, which is why the bare URLs are rewritten as `cp`
-commands; drop the `$4` segment to land every file flat in `./idc-data/`. `aws s3 cp
---no-sign-request --recursive` works the same way per URL.
+commands; drop the `$4` segment to land every file flat in `./idc-data/`.
+**Output directory:** this is relative to your current directory, the one
+`idc download --download-dir` created above, and is not part of this skill.
+`aws s3 cp --no-sign-request --recursive` works the same way per URL.
 
 What you give up by bypassing `idc-index` is convenience, not data: files are laid out under
 CRDC UUIDs instead of `%collection_id/%PatientID/%Modality`, and there is no local size or

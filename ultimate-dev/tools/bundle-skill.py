@@ -212,6 +212,16 @@ OUTPUT_DECLARATION = re.compile(
     r"lives at|video_folder|path-resolution)\b"
 )
 
+# A bolded field label introducing what a command produced. "**Output:** MP4
+# videos in `./videos/`" is a declaration in exactly the way "**Default:**
+# `./.mcp.json`" already was, and NOT_THIS_REPOSITORY exempts that one. This is
+# the same class of prose, so it gets the same treatment.
+#
+# It has to be matched against the raw line, not the de-emphasised one: the
+# asterisks are what make it a label. Requiring the closing pair keeps it from
+# firing on a stray bold mid-sentence.
+OUTPUT_LABEL = re.compile(r"(?i)\*\*output:?\*\*")
+
 # A dot-relative path in a document that is describing something other than this
 # repository: the reader's own project, a third party's defaults, or an attack
 # string. These are the last thirteen and each says so in its own line -- "(e.g.
@@ -417,6 +427,41 @@ def check_orphans() -> list[str]:
     return problems
 
 
+def without_emphasis(line: str) -> str:
+    """Strip markdown emphasis, leaving the text a reader actually reads.
+
+    The declaration rules below are written in prose, and prose gets emphasised:
+    "imports **only** `../index`" says exactly what "imports only `../index`"
+    says, but the second matches NOT_THIS_REPOSITORY and the first does not. That
+    is a bug in the matcher, not a property of the document -- an author bolding
+    a word should not decide whether their sentence counts as a declaration.
+
+    Bold and italic markers are removed; the words between them are kept. Note
+    this is the opposite of what a label rule needs: "**Output:**" is *only*
+    recognisable as a field label while the asterisks are still there, so
+    OUTPUT_LABEL is matched against the raw line and the prose rules against
+    this. One pass, two views, because the two are looking for different things.
+    """
+    return re.sub(r"\*\*(.+?)\*\*", r"\1", re.sub(r"(?<!\*)\*([^*]+)\*(?!\*)", r"\1", line))
+
+
+def line_declares_output(line: str) -> bool:
+    """Does this line say the paths in it are produced rather than read?
+
+    Three views, because the rules were written against three shapes of prose:
+    the raw line for a bolded field label, the de-emphasised line for the prose
+    rules, and the raw line again because NOT_THIS_REPOSITORY contains one
+    pattern -- the shell continuation ">" followed by a dot-relative path -- that
+    de-emphasis would leave intact but that a stripped `**default**` would have
+    destroyed.
+    """
+    return bool(
+        OUTPUT_LABEL.search(line)
+        or OUTPUT_DECLARATION.search(without_emphasis(line))
+        or NOT_THIS_REPOSITORY.search(line)
+    )
+
+
 def declared_output_relatives(text: str) -> set[str]:
     """Dot-relative paths this document declares as something to produce.
 
@@ -427,13 +472,26 @@ def declared_output_relatives(text: str) -> set[str]:
     which are exactly the paths the output rule exists to exempt. Every relative
     output path was therefore reported as dangling, and 19 of them blocked the
     bundle from building at all.
+
+    Scope is the paragraph, not the line. A declaration and the path it governs
+    are one sentence, and Markdown hard-wraps a sentence across lines, so
+    scoping to the line meant an author had to compress their prose to satisfy a
+    checker -- which is how a reference document ends up shaped by a regex
+    rather than by what it has to say. Paragraph is the narrowest scope that
+    survives a line wrap.
+
+    It is not the document. Document-wide scoping was measured and rejected: it
+    would have exempted 35 further lines, and those are real links. A
+    Cloudflare reference declares an output path in one section, and a later
+    section's `[patterns.md](./patterns.md)` is a genuine pointer to a file in
+    the tree that happens to share the name. Blank lines and headings end a
+    paragraph, so a declaration cannot leak across a section boundary.
     """
     out: set[str] = set()
-    for line in strip_fenced_code(text).splitlines():
-        if not OUTPUT_DECLARATION.search(line) and not NOT_THIS_REPOSITORY.search(line):
-            continue
-        for match in RELATIVE_LINK.finditer(line):
-            out.add(match.group(1) or match.group(2))
+    for paragraph in re.split(r"\n\s*\n", strip_fenced_code(text)):
+        if any(line_declares_output(line) for line in paragraph.splitlines()):
+            for match in RELATIVE_LINK.finditer(paragraph):
+                out.add(match.group(1) or match.group(2))
     return out
 
 

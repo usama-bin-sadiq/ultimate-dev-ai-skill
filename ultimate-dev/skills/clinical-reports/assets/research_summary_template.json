@@ -1,0 +1,77 @@
+{
+  "_note": "Synthetic, fail-closed structure for an aggregate research summary. State population, estimand, denominator, missingness, and limitations exactly as verified; do not imply clinical applicability. Authored as a reconstruction from SKILL.md and references/report_type_routing.md.",
+  "artifact": "aggregate-research-summary",
+  "schema_version": "1.0",
+  "draft_status": "DRAFT_NOT_FOR_CLINICAL_USE",
+  "not_for_use": "DRAFT - NOT FOR CLINICAL USE, SIGNATURE, FILING, OR SUBMISSION. Populate only from verified authorized source records. Qualified review and sign-off are required.",
+  "data_class": null,
+  "review_owner": null,
+  "route": {
+    "reporting_guideline_for_the_actual_design": null,
+    "verified_source": "protocol and statistical analysis plan",
+    "do_not_imply": "clinical applicability",
+    "source_ledger_checked": "2026-07-23",
+    "route_status": "BLOCKED_UNRESOLVED"
+  },
+  "population": {
+    "description": null,
+    "denominators": [],
+    "inclusion_and_exclusion_source": null
+  },
+  "estimand": {
+    "attribute": null,
+    "population": null,
+    "variable": null,
+    "population_level_summary": null,
+    "intercurrent_events_and_strategy": null
+  },
+  "outcomes": [
+    {
+      "outcome": null,
+      "measure": null,
+      "time_point_or_window": null,
+      "units": null,
+      "summary_statistic": null,
+      "denominator": null,
+      "value": null,
+      "uncertainty": null,
+      "missingness": "missing",
+      "source_fact_ids": []
+    }
+  ],
+  "missingness": {
+    "mechanism_state": "unknown",
+    "states_in_use": [
+      "missing",
+      "not_collected",
+      "not_assessed",
+      "unknown",
+      "not_applicable",
+      "suppressed_for_privacy",
+      "zero"
+    ],
+    "note": "Never convert a blank to zero."
+  },
+  "prespecified_versus_post_hoc": null,
+  "multiplicity_status": null,
+  "limitations": [],
+  "conclusion_supportable_from_verified_output": null,
+  "pending_human_reviews": [
+    {
+      "domain": "population, estimand, denominators, missingness, statistics",
+      "reviewer_role": "qualified_statistician",
+      "status": "pending",
+      "reviewed_on": null,
+      "signoff_record_reference": null
+    }
+  ],
+  "structural_check_result": null,
+  "prohibited_claims": [
+    "compliant",
+    "HIPAA-safe",
+    "validated clinically",
+    "approved",
+    "ready to file",
+    "ready to submit"
+  ]
+}

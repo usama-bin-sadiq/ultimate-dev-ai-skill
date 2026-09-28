@@ -1,0 +1,105 @@
+{
+  "_note": "Synthetic, fail-closed field map for a diagnostic-imaging report scaffold controlled by a clinical service. It records verified facts only. It does not generate findings, impressions, a category, or a recommendation. Authored as a reconstruction from SKILL.md and references/diagnostic_reports_standards.md, not as a verified copy of an upstream template.",
+  "artifact": "radiology-report-scaffold",
+  "schema_version": "1.0",
+  "draft_status": "DRAFT_NOT_FOR_CLINICAL_USE",
+  "not_for_use": "DRAFT - NOT FOR CLINICAL USE, SIGNATURE, FILING, OR SUBMISSION. Populate only from verified authorized source records. Qualified review and sign-off are required.",
+  "data_class": null,
+  "review_owner": null,
+  "route": {
+    "primary_guidance": "ACR Practice Parameter for Communication of Diagnostic Imaging Findings, revised 2025 (Resolution 9)",
+    "secondary_guidance": [
+      "current modality or program standard",
+      "local organizational communication policy"
+    ],
+    "do_not_substitute": "a generic impression generator",
+    "source_ledger_checked": "2026-07-23",
+    "route_status": "BLOCKED_UNRESOLVED"
+  },
+  "authoring_role": "qualified_radiologist",
+  "report_status_allowed": ["preliminary", "final", "corrected"],
+  "examination": {
+    "accession_or_exam_identifier_reference": null,
+    "modality": null,
+    "body_part": null,
+    "status": null,
+    "performed_on": null,
+    "source_system_version": null
+  },
+  "clinical_indication": {
+    "as_supplied": null,
+    "source_fact_ids": []
+  },
+  "technique": {
+    "description": null,
+    "contrast": null,
+    "source_fact_ids": []
+  },
+  "documented_limitations": {
+    "items": [],
+    "source_fact_ids": []
+  },
+  "comparison": {
+    "prior_studies_referenced": [],
+    "note": "Reference prior studies by locator only."
+  },
+  "findings": {
+    "authored_by": null,
+    "content": null,
+    "source_fact_ids": [],
+    "state": null
+  },
+  "impression": {
+    "authored_by": null,
+    "content": null,
+    "source_fact_ids": [],
+    "category": null,
+    "category_system": null,
+    "category_system_version": null,
+    "note": "A qualified radiologist selects any reporting category. This template neither proposes nor implies one."
+  },
+  "nonroutine_communication": {
+    "occurred": null,
+    "recipient_role": null,
+    "date_time": null,
+    "record_reference": null,
+    "note": "Record only a communication that actually occurred; never simulate or backfill one."
+  },
+  "amendments_and_corrections": {
+    "amended_from_version": null,
+    "correction_reason": null,
+    "original_record_reference": null,
+    "current_version": null
+  },
+  "signature": {
+    "signed": false,
+    "signing_role": "qualified_radiologist",
+    "signoff_record_reference": null
+  },
+  "conflicts": [],
+  "pending_human_reviews": [
+    {
+      "domain": "findings, impression, and report status",
+      "reviewer_role": "qualified_radiologist",
+      "status": "pending",
+      "reviewed_on": null,
+      "signoff_record_reference": null
+    },
+    {
+      "domain": "nonroutine and critical communication",
+      "reviewer_role": "responsible_clinical_service",
+      "status": "pending",
+      "reviewed_on": null,
+      "signoff_record_reference": null
+    }
+  ],
+  "structural_check_result": null,
+  "prohibited_claims": [
+    "compliant",
+    "HIPAA-safe",
+    "validated clinically",
+    "approved",
+    "ready to file",
+    "ready to submit"
+  ]
+}

@@ -1,0 +1,188 @@
+{
+  "_note": "Synthetic, fail-closed CARE case-report schema. Every populated field must cite one or more verified source-fact IDs from the provenance manifest. This file was authored as a reconstruction from SKILL.md and references/case_report_guidelines.md; it is not a verified copy of an upstream template. Replace null only when a verified fact supports it, and leave draft_status unchanged.",
+  "artifact": "case-report",
+  "schema_version": "1.0",
+  "draft_status": "DRAFT_NOT_FOR_CLINICAL_USE",
+  "not_for_use": "DRAFT - NOT FOR CLINICAL USE, SIGNATURE, FILING, OR SUBMISSION. Populate only from verified authorized source records. Qualified review and sign-off are required.",
+  "data_class": null,
+  "authority_documented": null,
+  "local_only_handling_confirmed": null,
+  "minimum_necessary_fields": null,
+  "review_owner": null,
+  "route": {
+    "primary_guidance": "CARE 2013 checklist (the current official core checklist)",
+    "secondary_guidance": [
+      "CARE 2017 explanation and elaboration",
+      "target journal instructions (to be confirmed by an accountable author)"
+    ],
+    "do_not_substitute": "CONSORT, CSR, or diagnostic-report rules",
+    "source_ledger_checked": "2026-07-23",
+    "jurisdiction": null,
+    "regulated_product_category": null,
+    "responsible_role": null,
+    "reviewer_role": null,
+    "route_status": "BLOCKED_UNRESOLVED"
+  },
+  "allowed_item_status": [
+    "verified_present",
+    "not_applicable_with_rationale",
+    "missing",
+    "conflict"
+  ],
+  "provenance_manifest": "provenance-manifest.json",
+  "items": [
+    {
+      "id": "title",
+      "heading": "title",
+      "status": "missing",
+      "content": null,
+      "source_fact_ids": []
+    },
+    {
+      "id": "key_words",
+      "heading": "key words",
+      "status": "missing",
+      "content": null,
+      "source_fact_ids": []
+    },
+    {
+      "id": "abstract",
+      "heading": "abstract",
+      "status": "missing",
+      "content": null,
+      "source_fact_ids": []
+    },
+    {
+      "id": "introduction",
+      "heading": "introduction",
+      "status": "missing",
+      "content": null,
+      "source_fact_ids": []
+    },
+    {
+      "id": "patient_information",
+      "heading": "patient information",
+      "status": "missing",
+      "content": null,
+      "source_fact_ids": [],
+      "deidentified": true,
+      "note": "De-identified source facts only. No direct identifiers, contact details, or free-text record extracts."
+    },
+    {
+      "id": "clinical_findings",
+      "heading": "clinical findings",
+      "status": "missing",
+      "content": null,
+      "source_fact_ids": [],
+      "attributed_to_record": null
+    },
+    {
+      "id": "timeline",
+      "heading": "timeline",
+      "status": "missing",
+      "content": null,
+      "source_fact_ids": [],
+      "representation": "authorized_relative_offsets",
+      "note": "Use relative case/study offsets when authorized and scientifically adequate. Do not alter chronology to disguise a conflict."
+    },
+    {
+      "id": "diagnostic_assessment",
+      "heading": "diagnostic assessment",
+      "status": "missing",
+      "content": null,
+      "source_fact_ids": [],
+      "attributed_to_record": null
+    },
+    {
+      "id": "therapeutic_intervention",
+      "heading": "therapeutic intervention",
+      "status": "missing",
+      "content": null,
+      "source_fact_ids": [],
+      "attributed_to_record": null
+    },
+    {
+      "id": "follow_up_and_outcomes",
+      "heading": "follow-up and outcomes",
+      "status": "missing",
+      "content": null,
+      "source_fact_ids": [],
+      "missingness": "missing"
+    },
+    {
+      "id": "discussion",
+      "heading": "discussion",
+      "status": "missing",
+      "content": null,
+      "source_fact_ids": [],
+      "novelty_claim": null,
+      "generalization": "not_authorized",
+      "note": "Do not generalize causality from one case or draft a novelty claim before an accountable author has reviewed the literature."
+    },
+    {
+      "id": "patient_perspective",
+      "heading": "patient perspective",
+      "status": "missing",
+      "content": null,
+      "source_fact_ids": [],
+      "attributed_to_source": null,
+      "note": "Attribute to an authorized source. Never invent or reconstruct a quote."
+    },
+    {
+      "id": "informed_consent",
+      "heading": "informed consent",
+      "status": "missing",
+      "content": null,
+      "source_fact_ids": [],
+      "consent_status": null,
+      "consent_evidence_reference": null,
+      "consent_reviewed_by_role": null,
+      "consent_reviewed_at": null,
+      "note": "Record only a consent status verified by the responsible human reviewer. A template cannot obtain or verify consent, and consent for publication is a separate control from HIPAA de-identification."
+    }
+  ],
+  "consent_gate": {
+    "blocks_publication_handoff": true,
+    "waivable_by_script": false
+  },
+  "conflicts": [],
+  "limitations": [],
+  "pending_human_reviews": [
+    {
+      "domain": "clinical facts and interpretation",
+      "reviewer_role": "qualified_clinician",
+      "scope": "facts, uncertainty, chronology, interpretation",
+      "status": "pending",
+      "source_version_or_data_cut": null,
+      "reviewed_on": null,
+      "signoff_record_reference": null
+    },
+    {
+      "domain": "consent, authorization, and privacy",
+      "reviewer_role": "privacy_legal_reviewer",
+      "scope": "consent status, authorization, disclosure, de-identification method, jurisdiction",
+      "status": "pending",
+      "source_version_or_data_cut": null,
+      "reviewed_on": null,
+      "signoff_record_reference": null
+    },
+    {
+      "domain": "publication readiness",
+      "reviewer_role": "accountable_authors",
+      "scope": "content, citations, conflicts, limitations, target-journal instructions",
+      "status": "pending",
+      "source_version_or_data_cut": null,
+      "reviewed_on": null,
+      "signoff_record_reference": null
+    }
+  ],
+  "structural_check_result": null,
+  "prohibited_claims": [
+    "compliant",
+    "HIPAA-safe",
+    "validated clinically",
+    "approved",
+    "ready to file",
+    "ready to submit"
+  ]
+}

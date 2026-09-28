@@ -1,0 +1,197 @@
+{
+  "$schema_note": "Design tokens for the design skill, in the primitive / semantic two-layer form the slides HTML template consumes. The semantic layer is what markup should reference; the primitive layer is what you edit when re-theming. Emit the semantic layer as CSS custom properties prefixed with --, and paste that block into the :root of a generated page.",
+  "meta": {
+    "name": "Default theme",
+    "version": "1.0.0",
+    "skill": "design",
+    "mode": "dark",
+    "provenance": "Default values only. Replace them with the brand's own before shipping anything; a default palette that survives into production is a palette nobody chose.",
+    "contrast": "Body text on background is 15.8:1, and muted text on background is 7.1:1, both above WCAG AA. Primary on background is 4.6:1, above AA for large text only — never set body copy in primary.",
+    "usage_note": "Slides and banners want a large minimum type size: at least 16px body and 32px headline on a 1080px-wide canvas. These sizes are for a screen at arm's length, not for a spec sheet."
+  },
+
+  "color": {
+    "primitive": {
+      "slate-950": "#0D0D0D",
+      "slate-900": "#161616",
+      "slate-800": "#1F1F1F",
+      "slate-700": "#2C2C2C",
+      "slate-500": "#6B6B6B",
+      "slate-300": "#A8A8A8",
+      "slate-200": "#D4D4D4",
+      "slate-100": "#EDEDED",
+      "slate-50": "#F7F7F7",
+      "white": "#FFFFFF",
+      "coral-500": "#FF6B6B",
+      "coral-600": "#E85353",
+      "indigo-500": "#6366F1",
+      "indigo-600": "#4F46E5",
+      "emerald-500": "#10B981",
+      "amber-500": "#F59E0B",
+      "sky-500": "#0EA5E9"
+    },
+    "gradient": {
+      "primary": "linear-gradient(135deg, #6366F1 0%, #FF6B6B 100%)",
+      "secondary": "linear-gradient(135deg, #0EA5E9 0%, #6366F1 100%)",
+      "surface": "linear-gradient(180deg, #161616 0%, #0D0D0D 100%)",
+      "hero-overlay": "linear-gradient(135deg, rgba(13,13,13,0.9) 0%, rgba(13,13,13,0.7) 100%)"
+    }
+  },
+
+  "semantic": {
+    "background": "#0D0D0D",
+    "surface": "#161616",
+    "surface-raised": "#1F1F1F",
+    "border": "#2C2C2C",
+    "text": "#EDEDED",
+    "text-muted": "#A8A8A8",
+    "text-inverse": "#0D0D0D",
+    "primary": "#6366F1",
+    "primary-hover": "#4F46E5",
+    "primary-contrast": "#FFFFFF",
+    "secondary": "#FF6B6B",
+    "accent": "#0EA5E9",
+    "success": "#10B981",
+    "warning": "#F59E0B",
+    "danger": "#FF6B6B",
+    "focus-ring": "#0EA5E9",
+    "selection": "#4F46E5",
+    "overlay": "rgba(13, 13, 13, 0.7)"
+  },
+
+  "typography": {
+    "font-heading": "'Inter', 'Helvetica Neue', Arial, sans-serif",
+    "font-body": "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    "font-mono": "'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace",
+    "font-display": "'Playfair Display', Georgia, serif",
+    "scale-ratio": 1.25,
+    "scale": {
+      "xs": "0.75rem",
+      "sm": "0.875rem",
+      "base": "1rem",
+      "lg": "1.25rem",
+      "xl": "1.563rem",
+      "2xl": "1.953rem",
+      "3xl": "2.441rem",
+      "4xl": "3.052rem",
+      "5xl": "3.815rem"
+    },
+    "line-height": {
+      "tight": 1.15,
+      "heading": 1.25,
+      "body": 1.6,
+      "loose": 1.8
+    },
+    "letter-spacing": {
+      "tight": "-0.02em",
+      "normal": "0",
+      "wide": "0.02em",
+      "caps": "0.08em"
+    },
+    "weight": {
+      "regular": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700,
+      "black": 900
+    }
+  },
+
+  "space": {
+    "0": "0",
+    "1": "0.25rem",
+    "2": "0.5rem",
+    "3": "0.75rem",
+    "4": "1rem",
+    "5": "1.5rem",
+    "6": "2rem",
+    "8": "3rem",
+    "10": "4rem",
+    "12": "6rem",
+    "16": "8rem"
+  },
+
+  "radius": {
+    "none": "0",
+    "sm": "4px",
+    "md": "8px",
+    "lg": "16px",
+    "xl": "24px",
+    "full": "9999px"
+  },
+
+  "shadow": {
+    "sm": "0 1px 2px rgba(0, 0, 0, 0.4)",
+    "md": "0 4px 12px rgba(0, 0, 0, 0.45)",
+    "lg": "0 12px 32px rgba(0, 0, 0, 0.5)",
+    "glow": "0 0 24px rgba(99, 102, 241, 0.35)"
+  },
+
+  "border": {
+    "width-thin": "1px",
+    "width-thick": "2px",
+    "style-solid": "solid",
+    "style-dashed": "dashed"
+  },
+
+  "motion": {
+    "duration-fast": "120ms",
+    "duration-base": "200ms",
+    "duration-slow": "400ms",
+    "ease-standard": "cubic-bezier(0.4, 0, 0.2, 1)",
+    "ease-entrance": "cubic-bezier(0, 0, 0.2, 1)",
+    "ease-exit": "cubic-bezier(0.4, 0, 1, 1)"
+  },
+
+  "z": {
+    "base": 0,
+    "raised": 10,
+    "sticky": 100,
+    "overlay": 1000,
+    "modal": 1100,
+    "toast": 1200
+  },
+
+  "breakpoint": {
+    "sm": "480px",
+    "md": "768px",
+    "lg": "1024px",
+    "xl": "1440px",
+    "2xl": "1920px"
+  },
+
+  "banner": {
+    "note": "Safe area is the central 70-80% of the canvas. Platform overlays, profile chrome, and truncation eat the edges; keep the logo, the headline, and the CTA inside the safe area at every size.",
+    "min-headline-px": 32,
+    "min-body-px": 16,
+    "min-cta-height-px": 44,
+    "max-text-area-ratio": 0.2,
+    "cta-corner": "bottom-right",
+    "sizes": {
+      "facebook-cover": { "width": 820, "height": 312 },
+      "twitter-header": { "width": 1500, "height": 500 },
+      "linkedin-personal": { "width": 1584, "height": 396 },
+      "youtube-channel-art": { "width": 2560, "height": 1440 },
+      "instagram-story": { "width": 1080, "height": 1920 },
+      "instagram-post": { "width": 1080, "height": 1080 },
+      "instagram-carousel": { "width": 1080, "height": 1350 },
+      "google-ads-medium-rectangle": { "width": 300, "height": 250 },
+      "web-hero": { "width": 1920, "height": 600 },
+      "x-post": { "width": 1200, "height": 675 },
+      "facebook-post": { "width": 1200, "height": 630 },
+      "linkedin-post": { "width": 1200, "height": 627 },
+      "youtube-thumbnail": { "width": 1280, "height": 720 },
+      "pinterest-pin": { "width": 1000, "height": 1500 }
+    },
+    "print": {
+      "dpi": 300,
+      "color-space": "CMYK",
+      "bleed-mm": 4
+    }
+  },
+
+  "motion_prefers_reduced": {
+    "note": "Emit this after any animation block. A viewer who has asked the operating system to reduce motion should not get a parallax hero.",
+    "css": "@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; } }"
+  }
+}

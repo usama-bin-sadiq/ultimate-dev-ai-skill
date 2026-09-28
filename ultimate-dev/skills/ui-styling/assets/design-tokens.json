@@ -1,0 +1,224 @@
+{
+  "_note": "Starter design tokens for a shadcn/ui + Tailwind project. Three layers: primitive (raw values) -> semantic (purpose aliases) -> component (per-component slots). The semantic colour names match the shadcn/ui CSS variable names this skill's theming reference uses, so a token here drops straight into a `:root` block or a `@theme inline` mapping. Authored as a reconstruction from SKILL.md and references/shadcn-theming.md, not recovered from upstream; the ramps are computed from one base hue per role rather than copied.",
+  "version": "1.0.0",
+  "layers": ["primitive", "semantic", "component"],
+  "mode": {
+    "note": "Light and dark values are paired. A dark theme swaps the semantic layer's resolved values and never touches the primitive layer, which is the whole point of the three-layer split.",
+    "default": "light"
+  },
+  "primitive": {
+    "color": {
+      "slate": {
+        "50": { "$value": "#F8FAFC", "$type": "color" },
+        "100": { "$value": "#F1F5F9", "$type": "color" },
+        "200": { "$value": "#E2E8F0", "$type": "color" },
+        "300": { "$value": "#CBD5E1", "$type": "color" },
+        "400": { "$value": "#94A3B8", "$type": "color" },
+        "500": { "$value": "#64748B", "$type": "color" },
+        "600": { "$value": "#475569", "$type": "color" },
+        "700": { "$value": "#334155", "$type": "color" },
+        "800": { "$value": "#1E293B", "$type": "color" },
+        "900": { "$value": "#0F172A", "$type": "color" },
+        "950": { "$value": "#020617", "$type": "color" }
+      },
+      "blue": {
+        "50": { "$value": "#EFF6FF", "$type": "color" },
+        "100": { "$value": "#DBEAFE", "$type": "color" },
+        "200": { "$value": "#BFDBFE", "$type": "color" },
+        "300": { "$value": "#93C5FD", "$type": "color" },
+        "400": { "$value": "#60A5FA", "$type": "color" },
+        "500": { "$value": "#3B82F6", "$type": "color" },
+        "600": { "$value": "#2563EB", "$type": "color" },
+        "700": { "$value": "#1D4ED8", "$type": "color" },
+        "800": { "$value": "#1E40AF", "$type": "color" },
+        "900": { "$value": "#1E3A8A", "$type": "color" },
+        "950": { "$value": "#172554", "$type": "color" }
+      },
+      "emerald": {
+        "50": { "$value": "#ECFDF5", "$type": "color" },
+        "100": { "$value": "#D1FAE5", "$type": "color" },
+        "200": { "$value": "#A7F3D0", "$type": "color" },
+        "300": { "$value": "#6EE7B7", "$type": "color" },
+        "400": { "$value": "#34D399", "$type": "color" },
+        "500": { "$value": "#10B981", "$type": "color" },
+        "600": { "$value": "#059669", "$type": "color" },
+        "700": { "$value": "#047857", "$type": "color" },
+        "800": { "$value": "#065F46", "$type": "color" },
+        "900": { "$value": "#064E3B", "$type": "color" },
+        "950": { "$value": "#022C22", "$type": "color" }
+      },
+      "amber": {
+        "50": { "$value": "#FFFBEB", "$type": "color" },
+        "100": { "$value": "#FEF3C7", "$type": "color" },
+        "200": { "$value": "#FDE68A", "$type": "color" },
+        "300": { "$value": "#FCD34D", "$type": "color" },
+        "400": { "$value": "#FBBF24", "$type": "color" },
+        "500": { "$value": "#F59E0B", "$type": "color" },
+        "600": { "$value": "#D97706", "$type": "color" },
+        "700": { "$value": "#B45309", "$type": "color" },
+        "800": { "$value": "#92400E", "$type": "color" },
+        "900": { "$value": "#78350F", "$type": "color" },
+        "950": { "$value": "#451A03", "$type": "color" }
+      },
+      "red": {
+        "50": { "$value": "#FEF2F2", "$type": "color" },
+        "100": { "$value": "#FEE2E2", "$type": "color" },
+        "200": { "$value": "#FECACA", "$type": "color" },
+        "300": { "$value": "#FCA5A5", "$type": "color" },
+        "400": { "$value": "#F87171", "$type": "color" },
+        "500": { "$value": "#EF4444", "$type": "color" },
+        "600": { "$value": "#DC2626", "$type": "color" },
+        "700": { "$value": "#B91C1C", "$type": "color" },
+        "800": { "$value": "#991B1B", "$type": "color" },
+        "900": { "$value": "#7F1D1D", "$type": "color" },
+        "950": { "$value": "#450A0A", "$type": "color" }
+      }
+    },
+    "radius": {
+      "sm": { "$value": "0.25rem", "$type": "dimension" },
+      "md": { "$value": "0.5rem", "$type": "dimension" },
+      "lg": { "$value": "0.75rem", "$type": "dimension" },
+      "xl": { "$value": "1rem", "$type": "dimension" }
+    },
+    "spacing": {
+      "1": { "$value": "0.25rem", "$type": "dimension" },
+      "2": { "$value": "0.5rem", "$type": "dimension" },
+      "3": { "$value": "0.75rem", "$type": "dimension" },
+      "4": { "$value": "1rem", "$type": "dimension" },
+      "5": { "$value": "1.25rem", "$type": "dimension" },
+      "6": { "$value": "1.5rem", "$type": "dimension" },
+      "8": { "$value": "2rem", "$type": "dimension" },
+      "10": { "$value": "2.5rem", "$type": "dimension" },
+      "12": { "$value": "3rem", "$type": "dimension" },
+      "16": { "$value": "4rem", "$type": "dimension" }
+    },
+    "typography": {
+      "font-family": {
+        "sans": { "$value": "system-ui, -apple-system, 'Segoe UI', sans-serif", "$type": "fontFamily" },
+        "mono": { "$value": "ui-monospace, SFMono-Regular, Menlo, monospace", "$type": "fontFamily" }
+      },
+      "font-size": {
+        "xs": { "$value": "0.75rem", "$type": "dimension" },
+        "sm": { "$value": "0.875rem", "$type": "dimension" },
+        "base": { "$value": "1rem", "$type": "dimension" },
+        "lg": { "$value": "1.125rem", "$type": "dimension" },
+        "xl": { "$value": "1.25rem", "$type": "dimension" },
+        "2xl": { "$value": "1.5rem", "$type": "dimension" },
+        "3xl": { "$value": "1.875rem", "$type": "dimension" },
+        "4xl": { "$value": "2.25rem", "$type": "dimension" }
+      }
+    }
+  },
+  "semantic": {
+    "color": {
+      "background": { "$value": "#FFFFFF", "$type": "color", "$dark": "#020617" },
+      "foreground": { "$value": "#0F172A", "$type": "color", "$dark": "#F8FAFC" },
+      "card": { "$value": "#FFFFFF", "$type": "color", "$dark": "#0F172A" },
+      "card-foreground": { "$value": "#0F172A", "$type": "color", "$dark": "#F8FAFC" },
+      "popover": { "$value": "#FFFFFF", "$type": "color", "$dark": "#0F172A" },
+      "popover-foreground": { "$value": "#0F172A", "$type": "color", "$dark": "#F8FAFC" },
+      "primary": { "$value": "{primitive.color.blue.600}", "$type": "color", "$dark": "{primitive.color.blue.500}" },
+      "primary-foreground": { "$value": "#FFFFFF", "$type": "color", "$dark": "#FFFFFF" },
+      "secondary": { "$value": "#F1F5F9", "$type": "color", "$dark": "#1E293B" },
+      "secondary-foreground": { "$value": "#0F172A", "$type": "color", "$dark": "#F8FAFC" },
+      "muted": { "$value": "#F1F5F9", "$type": "color", "$dark": "#1E293B" },
+      "muted-foreground": { "$value": "#64748B", "$type": "color", "$dark": "#94A3B8" },
+      "accent": { "$value": "#F1F5F9", "$type": "color", "$dark": "#1E293B" },
+      "accent-foreground": { "$value": "#0F172A", "$type": "color", "$dark": "#F8FAFC" },
+      "destructive": { "$value": "{primitive.color.red.600}", "$type": "color", "$dark": "{primitive.color.red.500}" },
+      "destructive-foreground": { "$value": "#FFFFFF", "$type": "color", "$dark": "#FFFFFF" },
+      "success": { "$value": "{primitive.color.emerald.600}", "$type": "color", "$dark": "{primitive.color.emerald.500}" },
+      "warning": { "$value": "{primitive.color.amber.500}", "$type": "color", "$dark": "{primitive.color.amber.400}" },
+      "border": { "$value": "#E2E8F0", "$type": "color", "$dark": "#334155" },
+      "input": { "$value": "#E2E8F0", "$type": "color", "$dark": "#334155" },
+      "ring": { "$value": "{primitive.color.blue.500}", "$type": "color", "$dark": "{primitive.color.blue.400}" }
+    },
+    "radius": {
+      "sm": { "$value": "{primitive.radius.sm}", "$type": "dimension" },
+      "md": { "$value": "{primitive.radius.md}", "$type": "dimension" },
+      "lg": { "$value": "{primitive.radius.lg}", "$type": "dimension" },
+      "xl": { "$value": "{primitive.radius.xl}", "$type": "dimension" }
+    },
+    "typography": {
+      "font-sans": { "$value": "{primitive.typography.font-family.sans}", "$type": "fontFamily" },
+      "font-mono": { "$value": "{primitive.typography.font-family.mono}", "$type": "fontFamily" }
+    },
+    "space": {
+      "inline": { "$value": "{primitive.spacing.4}", "$type": "dimension" },
+      "block": { "$value": "{primitive.spacing.8}", "$type": "dimension" },
+      "section": { "$value": "{primitive.spacing.12}", "$type": "dimension" }
+    }
+  },
+  "component": {
+    "button": {
+      "default": {
+        "bg": { "$value": "{semantic.color.primary}", "$type": "color" },
+        "bg-hover": { "$value": "{primitive.color.blue.700}", "$type": "color" },
+        "bg-active": { "$value": "{primitive.color.blue.800}", "$type": "color" },
+        "bg-disabled": { "$value": "{primitive.color.blue.300}", "$type": "color" },
+        "text": { "$value": "{semantic.color.primary-foreground}", "$type": "color" },
+        "text-disabled": { "$value": "#FFFFFF", "$type": "color" },
+        "border": { "$value": "{semantic.color.primary}", "$type": "color" },
+        "ring": { "$value": "{semantic.color.ring}", "$type": "color" }
+      },
+      "outline": {
+        "bg": { "$value": "transparent", "$type": "color" },
+        "bg-hover": { "$value": "{semantic.color.accent}", "$type": "color" },
+        "text": { "$value": "{semantic.color.foreground}", "$type": "color" },
+        "border": { "$value": "{semantic.color.border}", "$type": "color" }
+      },
+      "ghost": {
+        "bg": { "$value": "transparent", "$type": "color" },
+        "bg-hover": { "$value": "{semantic.color.accent}", "$type": "color" },
+        "text": { "$value": "{semantic.color.foreground}", "$type": "color" }
+      },
+      "destructive": {
+        "bg": { "$value": "{semantic.color.destructive}", "$type": "color" },
+        "bg-hover": { "$value": "{primitive.color.red.700}", "$type": "color" },
+        "text": { "$value": "{semantic.color.destructive-foreground}", "$type": "color" }
+      }
+    },
+    "card": {
+      "bg": { "$value": "{semantic.color.card}", "$type": "color" },
+      "text": { "$value": "{semantic.color.card-foreground}", "$type": "color" },
+      "border": { "$value": "{semantic.color.border}", "$type": "color" },
+      "radius": { "$value": "{semantic.radius.lg}", "$type": "dimension" }
+    },
+    "input": {
+      "bg": { "$value": "{semantic.color.background}", "$type": "color" },
+      "text": { "$value": "{semantic.color.foreground}", "$type": "color" },
+      "placeholder": { "$value": "{semantic.color.muted-foreground}", "$type": "color" },
+      "border": { "$value": "{semantic.color.input}", "$type": "color" },
+      "ring": { "$value": "{semantic.color.ring}", "$type": "color" },
+      "invalid": { "$value": "{semantic.color.destructive}", "$type": "color" }
+    },
+    "badge": {
+      "bg": { "$value": "{semantic.color.secondary}", "$type": "color" },
+      "text": { "$value": "{semantic.color.secondary-foreground}", "$type": "color" },
+      "success": { "$value": "{semantic.color.success}", "$type": "color" },
+      "warning": { "$value": "{semantic.color.warning}", "$type": "color" },
+      "destructive": { "$value": "{semantic.color.destructive}", "$type": "color" }
+    },
+    "focus-ring": {
+      "width": { "$value": "2px", "$type": "dimension" },
+      "offset": { "$value": "2px", "$type": "dimension" },
+      "color": { "$value": "{semantic.color.ring}", "$type": "color" },
+      "note": "Never remove a focus ring. Replace it with a stronger one if it clashes."
+    }
+  },
+  "breakpoints": {
+    "sm": "640px",
+    "md": "768px",
+    "lg": "1024px",
+    "xl": "1280px",
+    "2xl": "1536px",
+    "note": "Mobile-first. An unprefixed utility is the small screen."
+  },
+  "accessibility": {
+    "min_contrast_text": 4.5,
+    "min_contrast_large_text": 3,
+    "min_contrast_ui": 3,
+    "min_touch_target_px": 44,
+    "note": "WCAG 2.1 ratios, and a touch target large enough to hit reliably. Radix primitives supply focus management; these values are what the components around them must not violate."
+  }
+}

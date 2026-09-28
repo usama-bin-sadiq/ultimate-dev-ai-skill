@@ -1,0 +1,325 @@
+/*
+ * base.css — reset, typography, and layout primitives.
+ *
+ * Every value here is a token from tokens.css. A hard-coded colour or size in
+ * this file is a defect in this template specifically: it is the thing that
+ * makes re-theming a search instead of an edit.
+ *
+ * The accessibility pieces are kept rather than trimmed, because a template
+ * that drops them teaches the wrong default: the skip link, the focus ring, the
+ * reduced-motion block, and the 44px minimum hit target.
+ *
+ * PROVENANCE
+ *   Part of assets/frontend-template/ in this skill's assets. Reset and
+ *   primitives are standard practice; the token discipline is this file's own.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0 0 var(--space-4);
+  font-family: var(--font-heading);
+  line-height: var(--leading-heading);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+h1 { font-size: var(--text-3xl); font-weight: var(--weight-bold); }
+h2 { font-size: var(--text-2xl); font-weight: var(--weight-semibold); margin-top: var(--space-10); }
+h3 { font-size: var(--text-xl); font-weight: var(--weight-semibold); margin-top: var(--space-8); }
+
+p {
+  margin: 0 0 var(--space-4);
+  max-width: var(--measure);
+  text-wrap: pretty;
+}
+
+a {
+  color: var(--color-accent);
+  text-underline-offset: 0.15em;
+}
+
+a:hover {
+  color: var(--color-accent-hover);
+}
+
+code, pre, kbd, samp {
+  font-family: var(--font-mono);
+  font-size: 0.9375em;
+}
+
+code {
+  padding: 0.1em 0.35em;
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+ul, ol {
+  margin: 0 0 var(--space-4);
+  padding-left: var(--space-5);
+  max-width: var(--measure);
+}
+
+img, svg, video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+::selection {
+  background: var(--color-selection);
+  color: var(--color-selection-text);
+}
+
+/* --- Focus -----------------------------------------------------------------
+   Never removed. A focus ring is the only indication a keyboard user has of
+   where they are, and :focus-visible gives it to keyboard users without adding
+   it to every mouse click.
+   -------------------------------------------------------------------------- */
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* The skip link: invisible until focused, then pinned to the top-left. */
+.skip-link {
+  position: absolute;
+  left: var(--space-2);
+  top: var(--space-2);
+  z-index: 100;
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  /* Moved off-screen rather than hidden, so it is still focusable. */
+  transform: translateY(-200%);
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* --- Buttons ----------------------------------------------------------------
+   44px is the smallest reliably tappable target, and the min-height applies to
+   every button in the project because most of them are the primary action.
+   -------------------------------------------------------------------------- */
+
+button {
+  font: inherit;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out),
+              transform var(--duration-fast) var(--ease-out);
+}
+
+button:hover {
+  background: var(--color-surface);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+button[data-variant="primary"],
+.copy-button {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-accent-contrast);
+}
+
+button[data-variant="primary"]:hover,
+.copy-button:hover {
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* --- Header ---------------------------------------------------------------- */
+
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: var(--border-width) solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.nav-links {
+  display: flex;
+  gap: var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-width: none;
+}
+
+.nav-links a {
+  color: var(--color-text);
+  text-decoration: none;
+  padding: var(--space-2) 0;
+  border-bottom: 2px solid transparent;
+}
+
+.nav-links a:hover,
+.nav-links a[aria-current="page"] {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
+}
+
+.nav-toggle {
+  display: none;
+}
+
+/* The bars are drawn rather than loaded, so there is no icon dependency. */
+.nav-toggle__bars,
+.nav-toggle__bars::before,
+.nav-toggle__bars::after {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: currentColor;
+  position: relative;
+}
+
+.nav-toggle__bars::before,
+.nav-toggle__bars::after {
+  content: "";
+  position: absolute;
+}
+
+.nav-toggle__bars::before { top: -6px; }
+.nav-toggle__bars::after  { top: 6px; }
+
+/* --- Main and footer -------------------------------------------------------- */
+
+main {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: var(--space-10) var(--space-5);
+}
+
+.lede {
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+  max-width: 60ch;
+}
+
+.status {
+  min-height: 1.6em;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.site-footer,
+#footer {
+  padding: var(--space-8) var(--space-5);
+  border-top: var(--border-width) solid var(--color-border);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+/* --- Narrow viewports --------------------------------------------------------
+   Below 48rem the nav collapses behind a disclosure. aria-expanded on the
+   button is what carries the state; the CSS only follows it.
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 48rem) {
+  .site-header { flex-wrap: wrap; }
+
+  .nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    gap: var(--space-1);
+    width: 100%;
+    padding-top: var(--space-3);
+  }
+
+  .nav-toggle[aria-expanded="true"] + .nav-links {
+    display: flex;
+  }
+
+  h1 { font-size: var(--text-2xl); }
+}
+
+/* --- Reduced motion ---------------------------------------------------------
+   A viewer who has asked the system to reduce motion gets none of it. This is
+   WCAG 2.1 SC 2.3.3, and it is the one block in a template that is genuinely
+   required rather than merely good.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .skip-link {
+    transition: none;
+    transform: translateY(0);
+  }
+}
+
+/* --- Print ------------------------------------------------------------------ */
+
+@media print {
+  .site-header,
+  .skip-link,
+  button {
+    display: none;
+  }
+
+  body {
+    background: #ffffff;
+    color: #000000;
+  }
+
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.875em;
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "_provenance": {
+    "what_this_is": "Template for the required artifact header every clinical-decision-support research artifact must carry. Copy it, complete every field, and resolve every 'unresolved' status before review.",
+    "status_default": "The distributed template is intentionally unresolved. It must not pass a validator until qualified humans complete it.",
+    "reconstruction": "Reconstructed from the Required Artifact Header list in SKILL.md and references/privacy_and_disclosure.md, references/safety_and_scope.md, and references/regulatory_and_governance.md. Not a verified original.",
+    "not_a_determination": "Filling this template does not establish study quality, clinical utility, safety, effectiveness, regulatory authorization, HIPAA compliance, or legal compliance."
+  },
+  "artifact_type": "unresolved",
+  "title": "unresolved - state the research artifact title",
+  "version": "0.1",
+  "status": "draft",
+  "owner": "unresolved - name the accountable owner",
+  "date": "unresolved - ISO-8601 date of this revision",
+  "change_summary": "unresolved - what changed in this version and why",
+
+  "intended_purpose": "unresolved - the research, evaluation, documentation, or governance purpose only",
+  "intended_users": [
+    "unresolved - role, for example methodologist, privacy officer, governance owner"
+  ],
+  "aggregate_population_scope": "unresolved - the aggregate population the artifact describes, and the data cut date",
+  "decision_role": "unresolved - state explicitly that the artifact informs research or governance review and does not direct care for any person",
+
+  "prohibited_uses": [
+    "Diagnose or classify a person",
+    "Recommend, select, sequence, start, stop, or modify treatment",
+    "Calculate or communicate a patient-specific dose",
+    "Triage, prioritize, alarm, alert, or determine urgency",
+    "Make or automate a patient-specific clinical decision",
+    "Support bedside, point-of-care, or live clinical operation",
+    "Replace professional judgment or a validated, authorized clinical system",
+    "Claim FDA authorization, regulatory conformity, HIPAA compliance, or legal compliance"
+  ],
+  "not_for_patient_care_or_live_clinical_use": "Not for patient care or live clinical use.",
+
+  "data_level": "unresolved - synthetic or aggregate",
+  "no_phi_confirmation": "unresolved - confirm no PHI, raw rows, free text, person-linked dates, images, waveforms, or genomic sequences were supplied",
+  "provenance": {
+    "source_description": "unresolved",
+    "data_cut_date": "unresolved",
+    "population": "unresolved",
+    "exclusions": "unresolved",
+    "missingness": "unresolved",
+    "transformations": "unresolved"
+  },
+
+  "limitations": "unresolved - uncertainty and foreseeable failure modes",
+  "external_validation_status": "unresolved",
+  "subgroup_applicability_status": "unresolved",
+
+  "human_review": {
+    "required_roles": [
+      "methodologist_or_statistician",
+      "domain_expert",
+      "privacy_officer_or_qualified_expert",
+      "regulatory_or_legal_counsel",
+      "human_factors_specialist",
+      "authorized_governance_owner"
+    ],
+    "status": "unresolved",
+    "reviewers": [],
+    "approval_boundary": "unresolved - outputs remain drafts until the named qualified humans approve them"
+  },
+
+  "sources": [
+    {
+      "source_id": "unresolved",
+      "citation": "unresolved - full citation with version or date",
+      "url_or_doi": "unresolved",
+      "version_or_date": "unresolved"
+    }
+  ],
+
+  "monitoring_and_change_control": {
+    "monitoring_expectations": "unresolved",
+    "change_control": "unresolved",
+    "retirement_criteria": "unresolved",
+    "audit_expectations": "unresolved"
+  }
+}

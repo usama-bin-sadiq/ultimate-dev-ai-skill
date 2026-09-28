@@ -1,0 +1,118 @@
+{
+  "_provenance": {
+    "what_this_is": "Template for aggregate-only model or biomarker performance evaluation. Input is confusion counts and calibration bins, never individual records. Copy it, complete the target definition, and fill the aggregate summaries with values from a validation dataset.",
+    "status_default": "Distributed unresolved on purpose; a non-zero validator result is expected until completed.",
+    "reconstruction": "Reconstructed from references/model_biomarker_evaluation.md.",
+    "helper_limits": "Reports Wilson intervals, a weighted absolute calibration gap, and subgroup differences with explicit suppression. It cannot establish fairness, clinical utility, or fitness for use, does not model clustering, repeated measurements, censoring, or verification bias, and never outputs a person-level class or recommendation."
+  },
+
+  "target": {
+    "evaluation_target_name": "unresolved",
+    "version": "unresolved - immutable model/assay version",
+    "biomarker_category": "unresolved - FDA-NIH BEST terminology",
+    "research_purpose": "unresolved",
+    "target_population": "unresolved",
+    "setting": "unresolved",
+    "prevalence_at_evaluation": "unresolved",
+    "outcome_horizon": "unresolved",
+    "intended_user": "unresolved",
+    "non_clinical_decision_role": "unresolved - state that the evaluation informs research or governance review only",
+    "inputs": "unresolved",
+    "output": "unresolved",
+    "threshold": "unresolved - value locked before evaluation",
+    "threshold_provenance": "unresolved - who set it, from what, and when; never derived on the evaluation cohort"
+  },
+
+  "datasets": {
+    "development": "unresolved",
+    "tuning": "unresolved",
+    "internal_test": "unresolved",
+    "external_validation": "unresolved",
+    "external_validation_type": "unresolved - temporal, geographic, site-based, or population-based",
+    "note": "A random split from one source is not external validation."
+  },
+
+  "analytical_validation": {
+    "measured": "unresolved - accuracy, precision, detection limits, reproducibility, interference, specimen stability",
+    "status": "unresolved",
+    "note": "Report analytical validity before any clinical interpretation. This helper does not assess it."
+  },
+
+  "discrimination": {
+    "prespecified_threshold": "unresolved",
+    "overall": {
+      "n": 0,
+      "tp": 0,
+      "fp": 0,
+      "tn": 0,
+      "fn": 0
+    },
+    "metrics_reported": "unresolved - sensitivity, specificity, predictive values, likelihood ratios, or C statistic with uncertainty",
+    "note": "Do not report accuracy alone when classes are imbalanced."
+  },
+
+  "calibration_bins": [
+    {
+      "_comment": "Aggregate bins only. Replace the placeholder row with the real bins; the helper sums counts and reports a weighted absolute gap.",
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "n": 0,
+      "observed_events": 0
+    }
+  ],
+
+  "subgroups": [
+    {
+      "subgroup_name": "unresolved",
+      "category_provenance": "unresolved - self-reported, assigned, or derived, and its limitations",
+      "n": 0,
+      "tp": 0,
+      "fp": 0,
+      "tn": 0,
+      "fn": 0
+    }
+  ],
+  "subgroup_plan_note": "Groups are identified before analysis, from intended use, evidence, and stakeholder input. No single parity metric establishes fairness; equal metrics can coexist with inequitable outcomes, and unequal metrics may reflect case mix, measurement, structural conditions, or model behaviour that requires investigation. Small groups may require pooling, secure analysis, or non-release rather than unstable estimates.",
+
+  "limitations_and_gaps": {
+    "missingness": "unresolved",
+    "spectrum_or_selection_bias": "unresolved",
+    "dataset_shift": "unresolved",
+    "assay_variability": "unresolved",
+    "model_failures_and_unusable_inputs": "unresolved",
+    "measurement_and_label_validity": "unresolved",
+    "human_ai_interaction": "unresolved - where relevant",
+    "prospective_evaluation": "unresolved"
+  },
+
+  "uncertainty": {
+    "method": "unresolved - Wilson intervals are used for aggregate proportions; state the analytic or resampling approach for anything else",
+    "precision_targets_for_sample_size": "unresolved",
+    "note": "Sample size is justified by precision targets, not a blanket event rule."
+  },
+
+  "monitoring_and_change_control": {
+    "model_version": "unresolved",
+    "data_and_code_versions": "unresolved",
+    "validation_protocol_and_acceptance_criteria": "unresolved",
+    "subgroup_and_calibration_regression_tests": "unresolved",
+    "human_factors_impact": "unresolved",
+    "approval_and_rollback": "unresolved",
+    "monitoring_cadence_and_drift_triggers": "unresolved",
+    "incident_handling_and_retirement": "unresolved",
+    "note": "Never update a threshold or model silently after viewing performance."
+  },
+
+  "human_review": {
+    "required_roles": [
+      "methodologist_or_statistician",
+      "domain_expert",
+      "privacy_officer_or_qualified_expert",
+      "authorized_governance_owner"
+    ],
+    "status": "unresolved",
+    "approval_boundary": "unresolved - outputs remain drafts until qualified humans approve them"
+  },
+
+  "boundary_statement": "This evaluation reports bounded descriptive metrics from aggregate inputs. It does not assign a class to any person, match a person to a test, or state clinical validity, utility, safety, or fitness for deployment. Not for patient care or live clinical use."
+}

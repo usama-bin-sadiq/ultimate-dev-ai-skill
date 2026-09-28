@@ -162,6 +162,15 @@ jobs:
         with:
           python-version: '3.11'
 
+      # 22 skills shipped scripts that could not run. Each imported a sibling
+      # helper -- almost always `import _common as common` -- that was never in
+      # the tree, and nothing noticed: py_compile passes on an unresolved import
+      # because it is a runtime error, and the dangling-reference validator only
+      # looks for paths a SKILL.md names in prose, which a helper never is. This
+      # is the one check that can see it.
+      - name: Every script can import its own siblings
+        run: python ultimate-dev/tools/check-sibling-imports.py ultimate-dev
+
       # The Markdown corpus in evaluation/ is the source of truth. The JSON is a
       # generated projection for tooling that cannot read Markdown, so a stale
       # JSON means every eval result measures cases that no longer exist.
@@ -429,6 +438,7 @@ jobs:
           BUNDLE = f"{S}/tools/bundle-skill.py"
           EVALS = f"{S}/tools/build-evals.py"
           FIXTURES = f"{S}/tools/build-fixtures.py"
+          SIBLING = f"{S}/tools/check-sibling-imports.py"
           failures = []
 
           def run(tool, *extra):
@@ -474,6 +484,51 @@ jobs:
                    "---\nname: verifier\ndescription: " + "x" * 40 + "\n---\n\n## Output\nx\n" * 6))
           case("agent role unreachable from SKILL.md", VALIDATE, ["--strict"],
                edit(f"{S}/SKILL.md", "security-reviewer", "nobody"))
+          # The marker check and fenced code. Both directions matter and the
+          # second is the one that was broken: a role file showing the report it
+          # produces carries a marker inside a ```markdown fence, and reading
+          # that as an unfilled slot reported 449 errors, 180 of which were the
+          # validator objecting to a correct template. The risk of exempting
+          # fences is a real marker hiding in one, so the pair has to be asserted.
+          #
+          # The marker is assembled rather than written out, for the reason the
+          # case below explains: this file is scanned by the very rule it is
+          # testing, so spelling it literally makes the clean tree fail.
+          def add_prose_marker(s):
+              p = s / S / "references" / "triage.md"
+              p.write_text(p.read_text() + "\nSet the model id to T"
+                           + "ODO first.\n")
+
+          case("unfilled marker in prose", VALIDATE, ["--strict"], add_prose_marker)
+
+          def add_fenced_marker(s):
+              p = s / S / "references" / "triage.md"
+              p.write_text(p.read_text() + "\n```\nSet the model id to T"
+                           + "ODO first.\n```\n")
+
+          # This one must NOT fail. It is the control for the case above: if
+          # exempting fences were implemented by exempting the marker outright,
+          # this case would pass and the pair would prove nothing.
+          with tempfile.TemporaryDirectory() as tmp:
+              clean = Path(tmp) / "fenced"
+              shutil.copytree(ROOT, clean, symlinks=True,
+                              ignore=shutil.ignore_patterns(".git", "__pycache__",
+                                                           "dist", "runs", ".eval-fixtures"))
+              add_fenced_marker(clean)
+              proc = subprocess.run(
+                  [sys.executable, str(clean / VALIDATE), "--strict"],
+                  capture_output=True, text=True, cwd=clean)
+              if proc.returncode != 0 and "triage.md" in proc.stdout + proc.stderr:
+                  failures.append("fenced marker: reported, but a fence is a sample")
+              else:
+                  print("  caught  fenced marker correctly ignored")
+              shutil.rmtree(clean, ignore_errors=True)
+
+          case("agent role count does not match disk", VALIDATE, ["--strict"],
+               edit(f"{S}/SKILL.md", "286 role files", "999 role files"))
+          case("non-role file sitting in agents/", VALIDATE, ["--strict"],
+               lambda s: (s / S / "agents" / "NOT-A-ROLE.md").write_text("# doc\n"))
+
           case("unindexed tree", VALIDATE, ["--strict"],
                lambda s: (s / S / "research" / "README.md").unlink())
           case("empty eval set", VALIDATE, ["--strict"],
@@ -514,6 +569,31 @@ jobs:
 
           case("case needs an unbuilt file", VALIDATE, ["--strict"],
                add_unbuildable_case)
+
+          # check-sibling-imports.py. A check that cannot detect a broken tree is
+          # worse than none, because it reports success. Both directions are
+          # asserted: removing a real helper must fail, and a clean tree must
+          # still pass, or the suite would "pass" by failing everything.
+          def drop_helper(s):
+              # Pick a skill that really has one, rather than a hardcoded name
+              # that goes stale the first time a skill is renamed.
+              for scripts in sorted((s / S / "skills").glob("*/scripts")):
+                  for helper in sorted(scripts.glob("_common.py")):
+                      return helper.unlink()
+              raise AssertionError("no _common.py in the tree to remove")
+
+          case("script imports a missing helper", SIBLING, [],
+               drop_helper)
+          # The negative control for the case above: a skill whose helper is a
+          # directory package, not a file, must NOT be reported. Getting this
+          # wrong makes the check cry wolf about a working tree.
+          def remove_package_file(s):
+              for init in sorted((s / S / "skills").glob("*/scripts/*/__init__.py")):
+                  return init.unlink()
+              raise AssertionError("no helper package in the tree to break")
+
+          case("helper package loses its __init__", SIBLING, [],
+               remove_package_file)
 
           # bundle-skill.py
           # A typo in the exclusion list must fail. Without a check the list is
@@ -658,7 +738,8 @@ jobs:
 
           # Controls: a clean tree must pass every tool.
           for tool, extra in ((VALIDATE, ["--strict"]), (EVALS, ["--check"]),
-                              (BUNDLE, ["--check"]), (FIXTURES, [])):
+                              (BUNDLE, ["--check"]), (FIXTURES, []),
+                              (SIBLING, ["ultimate-dev"])):
               proc = run(tool, *extra)
               if proc.returncode != 0:
                   failures.append(f"control: {tool} failed on a clean tree")

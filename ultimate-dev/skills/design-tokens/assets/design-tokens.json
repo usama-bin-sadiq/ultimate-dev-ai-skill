@@ -1,0 +1,163 @@
+{
+  "$schema_note": "Design tokens for the design-tokens skill, in the three-layer form: primitive (raw values) -> semantic (purpose aliases) -> component (per-component slots), plus a slide layer for decks. An alias is written as {primitive.color.<name>.<shade>} and the generator that renders assets/design-tokens.css resolves it. Authored as a reconstruction from SKILL.md rather than recovered, so the shade ramps are computed from the base colours the skill's own examples use (brand coral #FF6B6B, slide ink #0D0D0D) rather than copied from an original.",
+  "brand": "Design System",
+  "version": "1.0.0",
+  "layers": ["primitive", "semantic", "component"],
+  "primitive": {
+    "color": {
+      "coral": {
+        "50": { "$value": "#FFF0F0", "$type": "color" },
+        "100": { "$value": "#FFE1E1", "$type": "color" },
+        "200": { "$value": "#FFC4C4", "$type": "color" },
+        "300": { "$value": "#FFA6A6", "$type": "color" },
+        "400": { "$value": "#FF8989", "$type": "color" },
+        "500": { "$value": "#FF6B6B", "$type": "color" },
+        "600": { "$value": "#D95B5B", "$type": "color" },
+        "700": { "$value": "#B34B4B", "$type": "color" },
+        "800": { "$value": "#8C3B3B", "$type": "color" },
+        "900": { "$value": "#662B2B", "$type": "color" }
+      },
+      "teal": {
+        "50": { "$value": "#E8F8F6", "$type": "color" },
+        "100": { "$value": "#D0F1ED", "$type": "color" },
+        "200": { "$value": "#A1E3DB", "$type": "color" },
+        "300": { "$value": "#72D4CA", "$type": "color" },
+        "400": { "$value": "#43C6B8", "$type": "color" },
+        "500": { "$value": "#14B8A6", "$type": "color" },
+        "600": { "$value": "#119C8D", "$type": "color" },
+        "700": { "$value": "#0E8174", "$type": "color" },
+        "800": { "$value": "#0B655B", "$type": "color" },
+        "900": { "$value": "#084A42", "$type": "color" }
+      },
+      "ink": {
+        "50": { "$value": "#E7E7E7", "$type": "color" },
+        "100": { "$value": "#CFCFCF", "$type": "color" },
+        "200": { "$value": "#9E9E9E", "$type": "color" },
+        "300": { "$value": "#6E6E6E", "$type": "color" },
+        "400": { "$value": "#3D3D3D", "$type": "color" },
+        "500": { "$value": "#0D0D0D", "$type": "color" },
+        "600": { "$value": "#0B0B0B", "$type": "color" },
+        "700": { "$value": "#090909", "$type": "color" },
+        "800": { "$value": "#070707", "$type": "color" },
+        "900": { "$value": "#050505", "$type": "color" }
+      },
+      "slate": {
+        "50": { "$value": "#F4F6F8", "$type": "color" },
+        "100": { "$value": "#EAEDF1", "$type": "color" },
+        "200": { "$value": "#D4DAE3", "$type": "color" },
+        "300": { "$value": "#BFC8D4", "$type": "color" },
+        "400": { "$value": "#A9B5C6", "$type": "color" },
+        "500": { "$value": "#94A3B8", "$type": "color" },
+        "600": { "$value": "#7E8B9C", "$type": "color" },
+        "700": { "$value": "#687281", "$type": "color" },
+        "800": { "$value": "#515A65", "$type": "color" },
+        "900": { "$value": "#3B414A", "$type": "color" }
+      }
+    },
+    "typography": {
+      "font-family": {
+        "heading": { "$value": "'Space Grotesk', system-ui, sans-serif", "$type": "fontFamily" },
+        "body": { "$value": "'Inter', system-ui, sans-serif", "$type": "fontFamily" },
+        "mono": { "$value": "'JetBrains Mono', ui-monospace, monospace", "$type": "fontFamily" }
+      },
+      "font-size": {
+        "slide-title": { "$value": "3.052rem", "$type": "dimension" },
+        "slide-subtitle": { "$value": "1.563rem", "$type": "dimension" },
+        "body-lg": { "$value": "1.125rem", "$type": "dimension" },
+        "body": { "$value": "1rem", "$type": "dimension" },
+        "caption": { "$value": "0.875rem", "$type": "dimension" }
+      },
+      "font-weight": {
+        "regular": { "$value": 400, "$type": "fontWeight" },
+        "medium": { "$value": 500, "$type": "fontWeight" },
+        "semibold": { "$value": 600, "$type": "fontWeight" },
+        "bold": { "$value": 700, "$type": "fontWeight" }
+      },
+      "line-height": {
+        "tight": { "$value": 1.1, "$type": "number" },
+        "heading": { "$value": 1.25, "$type": "number" },
+        "body": { "$value": 1.6, "$type": "number" }
+      }
+    },
+    "space": {
+      "1": { "$value": "0.25rem", "$type": "dimension" },
+      "2": { "$value": "0.5rem", "$type": "dimension" },
+      "3": { "$value": "0.75rem", "$type": "dimension" },
+      "4": { "$value": "1rem", "$type": "dimension" },
+      "6": { "$value": "1.5rem", "$type": "dimension" },
+      "8": { "$value": "2rem", "$type": "dimension" },
+      "12": { "$value": "3rem", "$type": "dimension" },
+      "16": { "$value": "4rem", "$type": "dimension" }
+    },
+    "radius": {
+      "sm": { "$value": "0.25rem", "$type": "dimension" },
+      "md": { "$value": "0.5rem", "$type": "dimension" },
+      "lg": { "$value": "1rem", "$type": "dimension" }
+    }
+  },
+  "semantic": {
+    "color": {
+      "primary": { "$value": "{primitive.color.coral.500}", "$type": "color" },
+      "primary-hover": { "$value": "{primitive.color.coral.600}", "$type": "color" },
+      "primary-active": { "$value": "{primitive.color.coral.700}", "$type": "color" },
+      "primary-muted": { "$value": "{primitive.color.coral.800}", "$type": "color" },
+      "accent": { "$value": "{primitive.color.teal.500}", "$type": "color" },
+      "accent-muted": { "$value": "{primitive.color.teal.800}", "$type": "color" },
+      "background": { "$value": "{primitive.color.ink.500}", "$type": "color" },
+      "surface": { "$value": "{primitive.color.ink.600}", "$type": "color" },
+      "text": { "$value": "{primitive.color.ink.50}", "$type": "color" },
+      "text-muted": { "$value": "{primitive.color.slate.400}", "$type": "color" },
+      "border": { "$value": "{primitive.color.ink.300}", "$type": "color" },
+      "success": { "$value": "{primitive.color.teal.500}", "$type": "color" },
+      "warning": { "$value": "{primitive.color.coral.400}", "$type": "color" },
+      "error": { "$value": "{primitive.color.coral.600}", "$type": "color" }
+    },
+    "typography": {
+      "font-heading": { "$value": "{primitive.typography.font-family.heading}", "$type": "fontFamily" },
+      "font-body": { "$value": "{primitive.typography.font-family.body}", "$type": "fontFamily" },
+      "font-mono": { "$value": "{primitive.typography.font-family.mono}", "$type": "fontFamily" },
+      "size-slide-title": { "$value": "{primitive.typography.font-size.slide-title}", "$type": "dimension" },
+      "size-slide-subtitle": { "$value": "{primitive.typography.font-size.slide-subtitle}", "$type": "dimension" },
+      "size-body": { "$value": "{primitive.typography.font-size.body}", "$type": "dimension" },
+      "leading-tight": { "$value": "{primitive.typography.line-height.tight}", "$type": "number" },
+      "leading-body": { "$value": "{primitive.typography.line-height.body}", "$type": "number" }
+    }
+  },
+  "slide": {
+    "bg": { "$value": "{semantic.color.background}", "$type": "color" },
+    "bg-emphasis": { "$value": "{primitive.color.ink.400}", "$type": "color" },
+    "fg": { "$value": "{semantic.color.text}", "$type": "color" },
+    "fg-muted": { "$value": "{semantic.color.text-muted}", "$type": "color" },
+    "accent": { "$value": "{semantic.color.primary}", "$type": "color" },
+    "rule": { "$value": "{semantic.color.border}", "$type": "color" },
+    "padding-x": { "$value": "{primitive.space.12}", "$type": "dimension" },
+    "padding-y": { "$value": "{primitive.space.8}", "$type": "dimension" },
+    "duration": { "$value": "600ms", "$type": "duration" },
+    "easing": { "$value": "cubic-bezier(0.22, 1, 0.36, 1)", "$type": "cubicBezier" }
+  },
+  "component": {
+    "button": {
+      "bg": { "$value": "{semantic.color.primary}", "$type": "color" },
+      "bg-hover": { "$value": "{semantic.color.primary-hover}", "$type": "color" },
+      "text": { "$value": "{primitive.color.ink.500}", "$type": "color" },
+      "border": { "$value": "{semantic.color.primary}", "$type": "color" },
+      "radius": { "$value": "{primitive.radius.md}", "$type": "dimension" }
+    },
+    "card": {
+      "bg": { "$value": "{semantic.color.surface}", "$type": "color" },
+      "border": { "$value": "{semantic.color.border}", "$type": "color" },
+      "radius": { "$value": "{primitive.radius.lg}", "$type": "dimension" },
+      "padding": { "$value": "{primitive.space.6}", "$type": "dimension" }
+    },
+    "chart": {
+      "series-primary": { "$value": "{semantic.color.primary}", "$type": "color" },
+      "series-secondary": { "$value": "{semantic.color.accent}", "$type": "color" },
+      "grid": { "$value": "{slide.rule}", "$type": "color" },
+      "label": { "$value": "{slide.fg-muted}", "$type": "color" }
+    },
+    "progress": {
+      "track": { "$value": "{semantic.color.border}", "$type": "color" },
+      "fill": { "$value": "{semantic.color.primary}", "$type": "color" }
+    }
+  }
+}

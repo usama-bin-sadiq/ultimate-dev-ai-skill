@@ -1,0 +1,95 @@
+{
+  "_provenance": {
+    "what_this_is": "Traceability matrix for research and governance logic only: evidence inclusion, data-quality gates, validation acceptance criteria, release holds, documentation completeness, change-control approval, human-review checkpoints.",
+    "status_default": "Distributed unresolved on purpose; a non-zero validator result is expected until completed.",
+    "reconstruction": "Reconstructed from references/decision_logic_traceability.md, which defines the allowed node types, output kinds, and required fields.",
+    "prohibition": "Do not encode diagnostic, treatment, dosing, triage, alarm, urgency, bedside, or patient-facing logic. There is deliberately no generic action node type.",
+    "helper_limits": "The helper validates identifiers, allowed node and output types, citations, and required review fields, then emits CSV. It does not parse or execute the logic statement."
+  },
+
+  "matrix_metadata": {
+    "logic_id": "unresolved",
+    "title": "unresolved",
+    "version": "0.1",
+    "status": "draft",
+    "owner": "unresolved",
+    "research_only_intended_use": "unresolved",
+    "prohibited_uses": [
+      "Diagnose or classify a person",
+      "Recommend, select, sequence, start, stop, or modify treatment",
+      "Calculate or communicate a patient-specific dose",
+      "Triage, prioritize, alarm, alert, or determine urgency",
+      "Make or automate a patient-specific clinical decision",
+      "Support bedside, point-of-care, or live clinical operation"
+    ],
+    "data_level": "unresolved - synthetic or aggregate",
+    "source_ledger": "unresolved - path or ledger identifier for the sources referenced by source_ids",
+    "human_review_required": true,
+    "change_summary": "unresolved",
+    "monitoring_criteria": "unresolved",
+    "retirement_criteria": "unresolved"
+  },
+
+  "source_ledger": [
+    {
+      "source_id": "unresolved - stable ID referenced by node source_ids",
+      "citation": "unresolved",
+      "url_or_doi": "unresolved",
+      "version_or_date": "unresolved"
+    }
+  ],
+
+  "nodes": [
+    {
+      "_comment": "Allowed types: input_check, data_quality_gate, evidence_rule, validation_gate, documentation_gate, human_review, release_gate, monitoring_gate. Allowed output kinds: include_evidence, exclude_evidence, flag_for_review, validation_status, documentation_status, release_hold, monitoring_status.",
+      "node_id": "unresolved",
+      "type": "unresolved",
+      "precondition_or_input": "unresolved",
+      "logic_statement": "unresolved - plain language, reproducible by an independent reviewer with no hidden knowledge",
+      "output_kind": "unresolved",
+      "output_value": "unresolved",
+      "source_ids": [],
+      "rationale": "unresolved",
+      "validation_tests": {
+        "positive_case": "unresolved",
+        "negative_case": "unresolved",
+        "boundary_case": "unresolved",
+        "missing_or_invalid_input": "unresolved",
+        "source_or_version_regression": "unresolved",
+        "expected_output": "unresolved",
+        "reviewer": "unresolved",
+        "review_date": "unresolved"
+      },
+      "owner": "unresolved",
+      "reviewer_role": "unresolved",
+      "status": "unresolved",
+      "known_limitations": "unresolved",
+      "change_history": []
+    }
+  ],
+
+  "matrix_level_tests": {
+    "unreachable_or_orphan_nodes": "unresolved",
+    "conflicting_outputs": "unresolved",
+    "cycles": "unresolved",
+    "missing_sources": "unresolved",
+    "stale_versions": "unresolved",
+    "bypass_paths_around_human_review": "unresolved",
+    "rollback_and_retirement_behavior": "unresolved"
+  },
+
+  "change_control": {
+    "reason": "unresolved",
+    "linked_evidence_or_requirement": "unresolved",
+    "affected_nodes_and_downstream_artifacts": "unresolved",
+    "tests_updated": "unresolved",
+    "independent_validation": "unresolved",
+    "approval_recorded": "unresolved",
+    "rollout_and_rollback": "unresolved",
+    "previous_version_retained": "unresolved",
+    "monitoring_updated": "unresolved",
+    "superseded_logic_retired_explicitly": "unresolved"
+  },
+
+  "boundary_statement": "This matrix documents research and governance logic. It is not executable clinical logic and directs no action for any person. Not for patient care or live clinical use."
+}

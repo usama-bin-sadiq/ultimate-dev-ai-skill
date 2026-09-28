@@ -1,0 +1,111 @@
+{
+  "_note": "Synthetic manifest for consistency_checker.py. The checker inspects ISO date and range ordering, unit-label consistency, n/N (%) arithmetic, and component-total arithmetic. It reports mismatches and review needs; it does not change the input, choose the correct source, or validate clinical or statistical meaning. Authored as a reconstruction from SKILL.md and references/data_presentation.md.",
+  "artifact": "consistency-manifest",
+  "schema_version": "1.0",
+  "draft_status": "DRAFT_NOT_FOR_CLINICAL_USE",
+  "not_for_use": "DRAFT - NOT FOR CLINICAL USE, SIGNATURE, FILING, OR SUBMISSION. Populate only from verified authorized source records. Qualified review and sign-off are required.",
+  "data_class": null,
+  "review_owner": null,
+  "table_metadata": {
+    "artifact_and_purpose": null,
+    "data_cut": null,
+    "source_output_version": null,
+    "analysis_population_or_set": null,
+    "group_labels": [],
+    "coding_dictionary_version_and_language": null,
+    "provenance_manifest": "provenance-manifest.json",
+    "reviewer_status": null
+  },
+  "rows": [
+    {
+      "row_id": null,
+      "group": null,
+      "category": null,
+      "value_kind": "subject_count",
+      "value_kind_allowed": [
+        "subject_count",
+        "event_count",
+        "observation_count",
+        "estimate"
+      ],
+      "n": null,
+      "N": null,
+      "reported_percentage": null,
+      "recomputed_percentage": null,
+      "rounding_rule": null,
+      "tolerance": null,
+      "units": null,
+      "time_point_or_window": null,
+      "summary_statistic": null,
+      "missing_state": "missing",
+      "suppressed": false
+    }
+  ],
+  "dates": [
+    {
+      "label": null,
+      "role": "event_date",
+      "role_allowed": [
+        "event_date",
+        "collection_date",
+        "database_cut",
+        "report_date",
+        "verification_date"
+      ],
+      "value_iso8601": null,
+      "timezone_as_source": null,
+      "precision_as_source": null
+    }
+  ],
+  "date_ranges": [
+    {
+      "label": null,
+      "start_iso8601": null,
+      "end_iso8601": null
+    }
+  ],
+  "series": [
+    {
+      "label": null,
+      "unit": null,
+      "unit_must_match_series": null,
+      "conversion_rule_reference": null
+    }
+  ],
+  "totals": [
+    {
+      "label": null,
+      "components": [],
+      "stated_total": null
+    }
+  ],
+  "missing_state_vocabulary": [
+    "missing",
+    "not_collected",
+    "not_assessed",
+    "unknown",
+    "not_applicable",
+    "suppressed_for_privacy",
+    "zero"
+  ],
+  "rules_reminder": [
+    "Show n/N (%), not a percentage alone, unless the governing output specifies another form.",
+    "Require 0 <= n <= N and N > 0.",
+    "Recalculate only for consistency checking; never silently replace the reported percentage.",
+    "Do not add subgroup percentages when the subgroup denominator is unknown.",
+    "Do not infer that denominators are randomized, treated, evaluable, or safety populations.",
+    "Do not sum non-mutually-exclusive categories.",
+    "Never convert a blank to zero.",
+    "Do not impute a missing day, month, timezone, or chronology."
+  ],
+  "check_result": null,
+  "strongest_permitted_result": "STRUCTURE_COMPLETE_REVIEW_REQUIRED",
+  "prohibited_claims": [
+    "compliant",
+    "HIPAA-safe",
+    "validated clinically",
+    "approved",
+    "ready to file",
+    "ready to submit"
+  ]
+}

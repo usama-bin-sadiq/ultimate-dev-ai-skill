@@ -1,0 +1,66 @@
+{
+  "_note": "Synthetic source-fact manifest. Record only local record locators, field paths, verification state, verifier role, verification date, and a SHA-256 value hash. Do not duplicate source content and do not store direct identifiers. Authored as a reconstruction from SKILL.md and references/clinical_trial_reporting.md.",
+  "artifact": "provenance-manifest",
+  "schema_version": "1.0",
+  "draft_status": "DRAFT_NOT_FOR_CLINICAL_USE",
+  "not_for_use": "DRAFT - NOT FOR CLINICAL USE, SIGNATURE, FILING, OR SUBMISSION. Populate only from verified authorized source records. Qualified review and sign-off are required.",
+  "data_class": null,
+  "authority_documented": null,
+  "review_owner": null,
+  "allowed_verification_state": [
+    "verified",
+    "unverified",
+    "conflicted",
+    "superseded"
+  ],
+  "hash_algorithm": "sha256",
+  "source_systems": [
+    {
+      "source_system_id": null,
+      "system_name": null,
+      "version": null,
+      "access_authority_reference": null
+    }
+  ],
+  "facts": [
+    {
+      "fact_id": "F-0001",
+      "description_of_use": null,
+      "source_system_id": null,
+      "record_locator": null,
+      "field_path": null,
+      "value_hash_sha256": null,
+      "verification_state": "unverified",
+      "verified_by_role": null,
+      "verified_at": null,
+      "superseded_by_fact_id": null,
+      "note": "A record locator and a field path, never the content itself."
+    }
+  ],
+  "terminology_bindings": [],
+  "claims": [
+    {
+      "claim_id": "C-0001",
+      "claim_location": null,
+      "claim_text_summary": null,
+      "supporting_fact_ids": [],
+      "status": "unverified"
+    }
+  ],
+  "conflicts": [],
+  "unresolved": {
+    "null_fields": null,
+    "missing_values": null,
+    "conflicts": null,
+    "unsupported_claims": null
+  },
+  "check_result": null,
+  "prohibited_claims": [
+    "compliant",
+    "HIPAA-safe",
+    "validated clinically",
+    "approved",
+    "ready to file",
+    "ready to submit"
+  ]
+}

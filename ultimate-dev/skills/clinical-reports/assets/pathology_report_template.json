@@ -1,0 +1,105 @@
+{
+  "_note": "Synthetic, fail-closed field map for a cancer pathology synoptic scaffold. Applicability depends on the exact current CAP protocol for the organ and specimen, which a qualified pathologist selects. This file was authored as a reconstruction from SKILL.md and references/diagnostic_reports_standards.md; it is deliberately not a generic cancer staging checklist.",
+  "artifact": "pathology-report-scaffold",
+  "schema_version": "1.0",
+  "draft_status": "DRAFT_NOT_FOR_CLINICAL_USE",
+  "not_for_use": "DRAFT - NOT FOR CLINICAL USE, SIGNATURE, FILING, OR SUBMISSION. Populate only from verified authorized source records. Qualified review and sign-off are required.",
+  "data_class": null,
+  "review_owner": null,
+  "route": {
+    "primary_guidance": "current specimen-specific CAP Cancer Protocol (selected by a qualified pathologist)",
+    "secondary_guidance": [
+      "current biomarker protocol",
+      "applicable staging edition",
+      "local laboratory and reporting requirements"
+    ],
+    "do_not_substitute": "a static generic TNM checklist",
+    "cap_template_page_updates_observed": ["2026-06-17", "2026-06-24 (Breast DCIS correction)"],
+    "source_ledger_checked": "2026-07-23",
+    "route_status": "BLOCKED_UNRESOLVED"
+  },
+  "authoring_role": "qualified_pathologist",
+  "protocol_selection": {
+    "organ_site": null,
+    "specimen_procedure": null,
+    "cap_protocol_title": null,
+    "cap_protocol_version": null,
+    "cap_protocol_selected_by_role": "qualified_pathologist",
+    "cap_protocol_selected_at": null,
+    "biomarker_protocol": null,
+    "staging_edition": null,
+    "local_requirements_reference": null,
+    "status": "BLOCKED_UNRESOLVED"
+  },
+  "specimen": {
+    "specimen_identifiers_held_in_authorized_system": null,
+    "collected_on": null,
+    "adequacy": null,
+    "adequacy_basis": "not_inferred"
+  },
+  "synoptic_data_elements": {
+    "note": "Core and conditionally required data elements are represented as data-element / response pairs. The set that applies depends on the exact current protocol above. Populate only from the CAP protocol in force for this specimen.",
+    "elements": [
+      {
+        "data_element": null,
+        "response": null,
+        "response_allowed_values": null,
+        "applicability": "not_assessed",
+        "source_fact_ids": []
+      }
+    ]
+  },
+  "observations": {
+    "gross": null,
+    "microscopic": null,
+    "source_fact_ids": [],
+    "note": "Observations are transcribed as attributed facts. This template never generates a gross or microscopic observation."
+  },
+  "diagnosis": {
+    "text": null,
+    "authored_by": null,
+    "grade": null,
+    "grade_system": null,
+    "stage": null,
+    "staging_system": null,
+    "staging_edition": null,
+    "margins": null,
+    "biomarker_interpretation": null
+  },
+  "indeterminate_values": {
+    "present": false,
+    "values": [],
+    "note": "Do not convert 'cannot be determined' or 'not applicable' into a definitive value."
+  },
+  "signature": {
+    "signed": false,
+    "signing_role": "qualified_pathologist",
+    "signoff_record_reference": null
+  },
+  "conflicts": [],
+  "pending_human_reviews": [
+    {
+      "domain": "protocol selection and version",
+      "reviewer_role": "qualified_pathologist",
+      "status": "pending",
+      "reviewed_on": null,
+      "signoff_record_reference": null
+    },
+    {
+      "domain": "diagnosis, grade, stage, margins, biomarker interpretation",
+      "reviewer_role": "qualified_pathologist",
+      "status": "pending",
+      "reviewed_on": null,
+      "signoff_record_reference": null
+    }
+  ],
+  "structural_check_result": null,
+  "prohibited_claims": [
+    "compliant",
+    "HIPAA-safe",
+    "validated clinically",
+    "approved",
+    "ready to file",
+    "ready to submit"
+  ]
+}

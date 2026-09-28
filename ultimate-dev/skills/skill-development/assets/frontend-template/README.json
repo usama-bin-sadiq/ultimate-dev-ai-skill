@@ -1,0 +1,29 @@
+{
+  "name": "frontend-template",
+  "version": "1.0.0",
+  "_what_this_is": "A minimal, dependency-free single-page frontend project that exists so a new frontend skill has a working starting point instead of re-deriving the same boilerplate. Copy the contents into the project, rename what needs renaming, and delete what the task does not need.",
+  "_why_it_exists": "Step 2 of this skill's process: 'Writing a frontend webapp requires the same boilerplate HTML/CSS each time, so assets/frontend-template/ is the reusable artefact.' This file is that artefact's index.",
+  "_provenance": "Authored from the description of assets/frontend-template/ in this skill's SKILL.md and references; no original copy was recovered. The structure, the three progressive-enhancement behaviours, and the token/base CSS split are a reconstruction chosen to satisfy that description, not a recovered file. Every value in tokens.css is a stand-in to be replaced.",
+  "_how_to_use": "1. Copy this directory's contents into the target project. 2. Open index.html and replace the title, the meta description, and the content in <main>. 3. Open styles/tokens.css and replace the :root block with the project's real tokens — do not style against the placeholders. 4. Open app.js and wire the interactions the task actually needs. 5. Delete anything unused. A template with unused files left in it is a template nobody has read.",
+  "_what_it_is_not": "Not a framework, not a build step, not a component library. It is plain HTML, CSS, and one JavaScript file, so it runs from a file:// URL with nothing installed. That is the point: a template that needs npm install to evaluate is a template nobody evaluates.",
+  "_files": {
+    "index.html": "The page. Semantic landmarks, one h1, skip link, and the token stylesheet already linked.",
+    "styles/tokens.css": "Design tokens as CSS custom properties. The one file to edit to re-theme.",
+    "styles/base.css": "Reset, typography, and the handful of layout primitives.",
+    "app.js": "Progressive enhancement: a theme toggle, a nav disclosure, and a copy-to-clipboard button. Each is guarded, so removing one leaves the page working."
+  },
+  "_conventions": {
+    "tokens": "Every colour, size, and duration comes from a custom property. A hard-coded hex in a rule is a defect in this template specifically.",
+    "units": "rem for type and space, so a browser zoom or a user font-size preference is honoured.",
+    "accessibility": "Landmarks, a skip link, visible focus rings that are not removed, and a reduced-motion block. Kept because a template that drops them teaches the wrong default.",
+    "dark_mode": "Both schemes declared, with light as the default. A dark-only template is a decision the template should not make for you."
+  },
+  "_checks_before_shipping": [
+    "Tab through the page: focus order follows reading order and every control is reachable.",
+    "Zoom to 200% and check nothing is clipped or overlapping.",
+    "Toggle the OS dark-mode setting and re-check contrast in both schemes.",
+    "Run with prefers-reduced-motion: reduce set. Nothing should move.",
+    "Search for a hard-coded colour outside styles/tokens.css. There should be none.",
+    "Delete the sample content. A template with lorem ipsum in it ships lorem ipsum."
+  ]
+}

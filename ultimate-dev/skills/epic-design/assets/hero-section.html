@@ -1,0 +1,143 @@
+<!--
+  hero-section.html — the 2.5D hero boilerplate from the epic-design skill.
+
+  WHAT THIS IS
+    A complete, self-contained hero section: a scene wrapper, the six depth
+    layers, and the semantic content a screen reader and a search crawler need.
+    Pair it with hero-section.css and hero-section.js, which are in the same
+    directory. The three files are meant to be read together; none of them works
+    alone.
+
+  WHAT IT EXPECTS
+    * hero-section.css loaded in <head>.
+    * hero-section.js loaded with `defer` at the end of <body>, or as a module.
+    * Replace every asset path with your own. Run scripts/inspect-assets.py on
+      each image first and decide whether its background should be removed; an
+      asset that is meant to float needs a real alpha channel, and a JPEG can
+      never have one.
+    * Compositional hierarchy: ONE hero asset at 50-80vw on depth-3, companions
+      at 15-25% of the hero's display size on depth-2, tiny accents at 1-5vw on
+      depth-5. Sizing every asset the same is the single most common way these
+      sections end up looking flat.
+
+  PROVENANCE
+    Reconstructed from this skill's SKILL.md "Step 5 — Code Structure" and its
+    depth-system, performance, and accessibility references. It is a working
+    boilerplate, not a copy of any upstream file.
+-->
+
+<section
+  class="scene hero-section"
+  data-scene="hero"
+  style="--scene-height: 200vh;"
+  aria-labelledby="hero-title"
+>
+  <!--
+    DEPTH 0 — far background. 0.10x parallax, 8px blur, 0.70 scale.
+    Decorative: aria-hidden, because a blurred gradient carries no information.
+  -->
+  <div class="layer depth-0" data-depth="0" aria-hidden="true">
+    <div class="bg-gradient"></div>
+    <!-- <img class="bg-image" src="assets/hero-bg.png" alt="" loading="eager" fetchpriority="high" /> -->
+  </div>
+
+  <!-- DEPTH 1 — glow and atmosphere. 0.25x parallax, 4px blur. -->
+  <div class="layer depth-1" data-depth="1" aria-hidden="true">
+    <div class="glow-blob glow-blob--one"></div>
+    <div class="glow-blob glow-blob--two"></div>
+  </div>
+
+  <!--
+    DEPTH 2 — mid decorations, 0.50x parallax, no blur.
+    Companion assets at 15-25% of the hero's display size, positioned relative to
+    the hero with calc() so they hug its edge and scatter when it moves.
+  -->
+  <div class="layer depth-2" data-depth="2" aria-hidden="true">
+    <img class="companion companion--left float-loop" src="assets/companion-left.png" alt="" loading="lazy" />
+    <img class="companion companion--right float-loop" src="assets/companion-right.png" alt="" loading="lazy" />
+  </div>
+
+  <!--
+    DEPTH 3 — the hero asset. 0.80x parallax, 1.05 scale, the star of the show.
+    This is the only layer with meaningful alt text: it is the content.
+  -->
+  <div class="layer depth-3" data-depth="3">
+    <img
+      class="product-hero float-loop"
+      src="assets/product-hero.png"
+      alt="A one-line description of what the product is and what it does."
+      width="1200"
+      height="1200"
+      fetchpriority="high"
+      decoding="async"
+    />
+  </div>
+
+  <!--
+    DEPTH 4 — text and UI, 1.00x parallax, no blur, no shadow.
+    The layer that never moves relative to the page, which is what keeps type
+    readable while everything behind it drifts.
+  -->
+  <div class="layer depth-4" data-depth="4">
+    <div class="content">
+      <!--
+        The heading is real text. Any word-level animation is applied by wrapping
+        existing words in spans, never by replacing them with images or by
+        hiding the text and revealing a duplicate. A screen reader must find the
+        same sentence the eye reads.
+      -->
+      <p class="eyebrow" data-animate="fade-up">Category or product family</p>
+      <h1 id="hero-title" class="headline split-text" data-animate="converge">
+        A headline that states what this is and who it is for
+      </h1>
+      <p class="subhead" data-animate="fade-up">
+        One sentence of supporting copy. Two at most — a hero that has to scroll
+        to finish its sentence has already lost the reader.
+      </p>
+      <div class="actions" data-animate="fade-up">
+        <a class="btn btn--primary" href="/primary-action">Primary action</a>
+        <a class="btn btn--ghost" href="/secondary-action">Secondary action</a>
+      </div>
+    </div>
+  </div>
+
+  <!--
+    DEPTH 5 — foreground particles, 1.20x parallax. Tiny: 1-5vw.
+    aria-hidden, and kept under about twenty elements. A hundred particles is a
+    frame-rate problem and no one can see the difference.
+  -->
+  <div class="layer depth-5" data-depth="5" aria-hidden="true">
+    <div class="particles">
+      <span class="particle"></span>
+      <span class="particle"></span>
+      <span class="particle"></span>
+      <span class="particle"></span>
+    </div>
+    <div class="vignette"></div>
+  </div>
+
+  <!--
+    Scroll affordance. A hero that is 200vh tall with no cue that it scrolls is
+    a hero people bounce off. The cue is real text, not a CSS-only animation, so
+    it does not depend on a keyframe being understood.
+  -->
+  <div class="scroll-cue" data-depth="4">
+    <span class="scroll-cue__label">Scroll</span>
+    <span class="scroll-cue__line" aria-hidden="true"></span>
+  </div>
+</section>
+
+<!--
+  LINK TO WHAT FOLLOWS
+  A sticky section is a 200vh-tall scene with a 100vh pinned panel. The panel
+  holds the content; the extra height is the scroll distance that drives the
+  timeline. Without the pin, the parallax has nothing to scrub against.
+-->
+<section class="scene scene--pinned" data-scene="pinned" style="--scene-height: 300vh;">
+  <div class="pin">
+    <div class="layer depth-0" data-depth="0" aria-hidden="true"></div>
+    <div class="layer depth-3" data-depth="3">
+      <h2 class="headline headline--small" data-animate="fade-up">The next beat</h2>
+    </div>
+  </div>
+</section>

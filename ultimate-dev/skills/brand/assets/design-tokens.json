@@ -1,0 +1,218 @@
+{
+  "$schema_note": "Starter design tokens in the three-layer form the brand skill documents: primitive (raw values) -> semantic (purpose aliases) -> component. An alias is written as {primitive.color.<name>.<shade>}; the generator that renders assets/design-tokens.css resolves those. This file is a seed, not an authority: docs/brand-guidelines.md is the source of truth and `node scripts/sync-brand-to-tokens.cjs` rewrites the primitive and semantic colour layers from it. Authored as a reconstruction of the starter token set, from references/color-palette-management.md and references/typography-specifications.md; the shade ramps are computed, not recovered.",
+  "brand": "Example Brand",
+  "version": "1.0.0",
+  "primitive": {
+    "color": {
+      "blue": {
+        "50": { "$value": "#E9EFFD", "$type": "color" },
+        "100": { "$value": "#D3E0FB", "$type": "color" },
+        "200": { "$value": "#A8C1F7", "$type": "color" },
+        "300": { "$value": "#7CA1F3", "$type": "color" },
+        "400": { "$value": "#5182EF", "$type": "color" },
+        "500": { "$value": "#2563EB", "$type": "color" },
+        "600": { "$value": "#1D4ED8", "$type": "color" },
+        "700": { "$value": "#1A45A5", "$type": "color" },
+        "800": { "$value": "#143681", "$type": "color" },
+        "900": { "$value": "#0F285E", "$type": "color" }
+      },
+      "violet": {
+        "50": { "$value": "#F3EFFE", "$type": "color" },
+        "100": { "$value": "#E8DEFD", "$type": "color" },
+        "200": { "$value": "#D1BEFB", "$type": "color" },
+        "300": { "$value": "#B99DFA", "$type": "color" },
+        "400": { "$value": "#A27DF8", "$type": "color" },
+        "500": { "$value": "#8B5CF6", "$type": "color" },
+        "600": { "$value": "#764ED1", "$type": "color" },
+        "700": { "$value": "#6140AC", "$type": "color" },
+        "800": { "$value": "#4C3387", "$type": "color" },
+        "900": { "$value": "#382562", "$type": "color" }
+      },
+      "emerald": {
+        "50": { "$value": "#E7F8F2", "$type": "color" },
+        "100": { "$value": "#CFF1E6", "$type": "color" },
+        "200": { "$value": "#9FE3CD", "$type": "color" },
+        "300": { "$value": "#70D5B3", "$type": "color" },
+        "400": { "$value": "#40C79A", "$type": "color" },
+        "500": { "$value": "#10B981", "$type": "color" },
+        "600": { "$value": "#0E9D6E", "$type": "color" },
+        "700": { "$value": "#0B825A", "$type": "color" },
+        "800": { "$value": "#096647", "$type": "color" },
+        "900": { "$value": "#064A34", "$type": "color" }
+      },
+      "green": { "$value": "#22C55E", "$type": "color" },
+      "amber": { "$value": "#F59E0B", "$type": "color" },
+      "red": { "$value": "#EF4444", "$type": "color" },
+      "sky": { "$value": "#3B82F6", "$type": "color" },
+      "white": { "$value": "#FFFFFF", "$type": "color" },
+      "gray": {
+        "50": { "$value": "#F9FAFB", "$type": "color" },
+        "100": { "$value": "#F3F4F6", "$type": "color" },
+        "200": { "$value": "#E5E7EB", "$type": "color" },
+        "300": { "$value": "#D1D5DB", "$type": "color" },
+        "400": { "$value": "#9CA3AF", "$type": "color" },
+        "500": { "$value": "#6B7280", "$type": "color" },
+        "600": { "$value": "#4B5563", "$type": "color" },
+        "700": { "$value": "#374151", "$type": "color" },
+        "800": { "$value": "#1F2937", "$type": "color" },
+        "900": { "$value": "#111827", "$type": "color" }
+      }
+    },
+    "typography": {
+      "font-family": {
+        "heading": { "$value": "'Inter', system-ui, -apple-system, sans-serif", "$type": "fontFamily" },
+        "body": { "$value": "'Inter', system-ui, -apple-system, sans-serif", "$type": "fontFamily" },
+        "mono": { "$value": "'JetBrains Mono', 'Fira Code', monospace", "$type": "fontFamily" }
+      },
+      "font-size": {
+        "display": { "$value": "3.815rem", "$type": "dimension" },
+        "h1": { "$value": "3.052rem", "$type": "dimension" },
+        "h2": { "$value": "2.441rem", "$type": "dimension" },
+        "h3": { "$value": "1.953rem", "$type": "dimension" },
+        "h4": { "$value": "1.563rem", "$type": "dimension" },
+        "h5": { "$value": "1.25rem", "$type": "dimension" },
+        "body-large": { "$value": "1.125rem", "$type": "dimension" },
+        "body": { "$value": "1rem", "$type": "dimension" },
+        "small": { "$value": "0.875rem", "$type": "dimension" },
+        "caption": { "$value": "0.75rem", "$type": "dimension" }
+      },
+      "font-weight": {
+        "regular": { "$value": 400, "$type": "fontWeight" },
+        "medium": { "$value": 500, "$type": "fontWeight" },
+        "semibold": { "$value": 600, "$type": "fontWeight" },
+        "bold": { "$value": 700, "$type": "fontWeight" }
+      },
+      "line-height": {
+        "none": { "$value": 1, "$type": "number" },
+        "tight": { "$value": 1.25, "$type": "number" },
+        "snug": { "$value": 1.375, "$type": "number" },
+        "normal": { "$value": 1.5, "$type": "number" },
+        "relaxed": { "$value": 1.625, "$type": "number" },
+        "loose": { "$value": 2, "$type": "number" }
+      },
+      "letter-spacing": {
+        "tighter": { "$value": "-0.02em", "$type": "dimension" },
+        "normal": { "$value": "0", "$type": "dimension" },
+        "wider": { "$value": "0.05em", "$type": "dimension" },
+        "caps": { "$value": "0.1em", "$type": "dimension" }
+      }
+    },
+    "spacing": {
+      "0": { "$value": "0", "$type": "dimension" },
+      "1": { "$value": "0.25rem", "$type": "dimension" },
+      "2": { "$value": "0.5rem", "$type": "dimension" },
+      "3": { "$value": "0.75rem", "$type": "dimension" },
+      "4": { "$value": "1rem", "$type": "dimension" },
+      "5": { "$value": "1.25rem", "$type": "dimension" },
+      "6": { "$value": "1.5rem", "$type": "dimension" },
+      "8": { "$value": "2rem", "$type": "dimension" },
+      "10": { "$value": "2.5rem", "$type": "dimension" },
+      "12": { "$value": "3rem", "$type": "dimension" },
+      "16": { "$value": "4rem", "$type": "dimension" }
+    },
+    "radius": {
+      "none": { "$value": "0", "$type": "dimension" },
+      "sm": { "$value": "0.25rem", "$type": "dimension" },
+      "md": { "$value": "0.5rem", "$type": "dimension" },
+      "lg": { "$value": "0.75rem", "$type": "dimension" },
+      "full": { "$value": "9999px", "$type": "dimension" }
+    },
+    "shadow": {
+      "sm": { "$value": "0 1px 2px rgba(17, 24, 39, 0.06)", "$type": "shadow" },
+      "md": { "$value": "0 4px 8px rgba(17, 24, 39, 0.08)", "$type": "shadow" },
+      "lg": { "$value": "0 12px 24px rgba(17, 24, 39, 0.10)", "$type": "shadow" }
+    }
+  },
+  "semantic": {
+    "color": {
+      "primary": { "$value": "{primitive.color.blue.500}", "$type": "color" },
+      "primary-hover": { "$value": "{primitive.color.blue.600}", "$type": "color" },
+      "primary-active": { "$value": "{primitive.color.blue.700}", "$type": "color" },
+      "primary-light": { "$value": "{primitive.color.blue.400}", "$type": "color" },
+      "primary-lighter": { "$value": "{primitive.color.blue.100}", "$type": "color" },
+      "primary-dark": { "$value": "{primitive.color.blue.600}", "$type": "color" },
+      "secondary": { "$value": "{primitive.color.violet.500}", "$type": "color" },
+      "secondary-hover": { "$value": "{primitive.color.violet.600}", "$type": "color" },
+      "secondary-light": { "$value": "{primitive.color.violet.300}", "$type": "color" },
+      "secondary-dark": { "$value": "{primitive.color.violet.600}", "$type": "color" },
+      "accent": { "$value": "{primitive.color.emerald.500}", "$type": "color" },
+      "accent-hover": { "$value": "{primitive.color.emerald.600}", "$type": "color" },
+      "accent-light": { "$value": "{primitive.color.emerald.300}", "$type": "color" },
+      "success": { "$value": "{primitive.color.green}", "$type": "color" },
+      "success-light": { "$value": "{primitive.color.emerald.300}", "$type": "color" },
+      "warning": { "$value": "{primitive.color.amber}", "$type": "color" },
+      "error": { "$value": "{primitive.color.red}", "$type": "color" },
+      "error-light": { "$value": "{primitive.color.red}", "$type": "color" },
+      "info": { "$value": "{primitive.color.sky}", "$type": "color" },
+      "info-light": { "$value": "{primitive.color.sky}", "$type": "color" },
+      "background": { "$value": "{primitive.color.white}", "$type": "color" },
+      "surface": { "$value": "{primitive.color.gray.50}", "$type": "color" },
+      "text-primary": { "$value": "{primitive.color.gray.900}", "$type": "color" },
+      "text-secondary": { "$value": "{primitive.color.gray.500}", "$type": "color" },
+      "text-inverse": { "$value": "{primitive.color.white}", "$type": "color" },
+      "border": { "$value": "{primitive.color.gray.200}", "$type": "color" }
+    },
+    "typography": {
+      "font-heading": { "$value": "{primitive.typography.font-family.heading}", "$type": "fontFamily" },
+      "font-body": { "$value": "{primitive.typography.font-family.body}", "$type": "fontFamily" },
+      "font-mono": { "$value": "{primitive.typography.font-family.mono}", "$type": "fontFamily" },
+      "text-body": { "$value": "{primitive.typography.font-size.body}", "$type": "dimension" },
+      "leading-body": { "$value": "{primitive.typography.line-height.normal}", "$type": "number" },
+      "measure-body": { "$value": "65ch", "$type": "dimension" }
+    },
+    "space": {
+      "section": { "$value": "{primitive.spacing.16}", "$type": "dimension" },
+      "block": { "$value": "{primitive.spacing.8}", "$type": "dimension" },
+      "inline": { "$value": "{primitive.spacing.4}", "$type": "dimension" },
+      "tight": { "$value": "{primitive.spacing.2}", "$type": "dimension" }
+    }
+  },
+  "component": {
+    "button": {
+      "primary": {
+        "bg": { "$value": "{semantic.color.primary}", "$type": "color" },
+        "bg-hover": { "$value": "{semantic.color.primary-hover}", "$type": "color" },
+        "bg-active": { "$value": "{semantic.color.primary-active}", "$type": "color" },
+        "bg-disabled": { "$value": "{semantic.color.surface}", "$type": "color" },
+        "text": { "$value": "{semantic.color.text-inverse}", "$type": "color" },
+        "text-disabled": { "$value": "{semantic.color.text-secondary}", "$type": "color" },
+        "border": { "$value": "{semantic.color.border}", "$type": "color" },
+        "radius": { "$value": "{primitive.radius.md}", "$type": "dimension" },
+        "padding-x": { "$value": "{primitive.spacing.6}", "$type": "dimension" },
+        "padding-y": { "$value": "{primitive.spacing.3}", "$type": "dimension" },
+        "font": { "$value": "{primitive.typography.font-weight.semibold}", "$type": "fontWeight" }
+      },
+      "secondary": {
+        "bg": { "$value": "{semantic.color.background}", "$type": "color" },
+        "bg-hover": { "$value": "#2563EB1A", "$type": "color" },
+        "text": { "$value": "{semantic.color.primary}", "$type": "color" },
+        "border": { "$value": "{primitive.color.blue.300}", "$type": "color" }
+      }
+    },
+    "card": {
+      "bg": { "$value": "{semantic.color.background}", "$type": "color" },
+      "border": { "$value": "{semantic.color.border}", "$type": "color" },
+      "radius": { "$value": "{primitive.radius.lg}", "$type": "dimension" },
+      "padding": { "$value": "{primitive.spacing.6}", "$type": "dimension" },
+      "shadow": { "$value": "{primitive.shadow.sm}", "$type": "shadow" }
+    },
+    "link": {
+      "color": { "$value": "{semantic.color.primary}", "$type": "color" },
+      "color-hover": { "$value": "{semantic.color.primary-hover}", "$type": "color" },
+      "color-visited": { "$value": "{primitive.color.violet.600}", "$type": "color" },
+      "underline-offset": { "$value": "0.15em", "$type": "dimension" }
+    },
+    "prose": {
+      "max-width": { "$value": "{semantic.typography.measure-body}", "$type": "dimension" },
+      "color": { "$value": "{semantic.color.text-primary}", "$type": "color" }
+    }
+  },
+  "accessibility": {
+    "min-contrast-text": 4.5,
+    "min-contrast-large-text": 3,
+    "min-contrast-ui-component": 3,
+    "min-body-size-px": 16,
+    "min-small-size-px": 14,
+    "note": "WCAG 2.1 ratios. AA is 4.5:1 for normal text, 3:1 for large text and UI components; AAA is 7:1, 4.5:1, and 4.5:1."
+  }
+}
