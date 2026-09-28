@@ -113,7 +113,6 @@ Spawn a background subagent so the main agent doesn't pause:
 > "Read `docs/TC/records/<TC-ID>/tc_record.json`. Update the handoff section with: progress_summary='...'; add next_step '...'; add blocker '...'. Use `tc_update.py` so revision history is appended. Then update `last_active` and write atomically."
 
 ### How the next session reads it
-1. Read `docs/TC/tc_registry.json` and find TCs with status `in_progress` or `blocked`.
 2. Read `tc_record.json` for each.
 3. Display the handoff block to the user.
 4. Ask: "Resume <TC-ID>? (y/n)"

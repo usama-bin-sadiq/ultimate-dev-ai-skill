@@ -34,7 +34,6 @@ If the user wants to **publish results into the community evals workflow**, stop
 | Local `inspect-ai` eval on a Hub model via inference providers | `scripts/inspect_eval_uv.py` |
 | Local GPU eval with `inspect-ai` using `vllm` or Transformers | `scripts/inspect_vllm_uv.py` |
 | Local GPU eval with `lighteval` using `vllm` or `accelerate` | `scripts/lighteval_vllm_uv.py` |
-| Extra command patterns | `examples/USAGE_EXAMPLES.md` |
 
 # Prerequisites
 
@@ -201,7 +200,6 @@ For smoke tests, prefer cheaper local runs plus `--limit` or `--max-samples`.
 # Examples
 
 See:
-- `examples/USAGE_EXAMPLES.md` for local command patterns
 - `scripts/inspect_eval_uv.py`
 - `scripts/inspect_vllm_uv.py`
 - `scripts/lighteval_vllm_uv.py`

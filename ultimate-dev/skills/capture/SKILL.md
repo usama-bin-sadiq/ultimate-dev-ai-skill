@@ -122,8 +122,8 @@ See `references/workspace_detection.md` for the per-context detection-tactic cat
 
 | ✅ Right pattern | ❌ Anti-pattern |
 |---|---|
-| "I can research Consensus MCP integration patterns and give you 3 options. Output: `docs/consensus-options.md`." | "You might want to look into integration approaches." |
-| "I can draft the Q3 launch plan as a 1-pager. Output: chat reply, then `docs/q3-launch.md` if you want it filed." | "Maybe think about Q3 planning." |
+| "I can research Consensus MCP integration patterns and give you 3 options." | "You might want to look into integration approaches." |
+| "I can draft the Q3 launch plan as a 1-pager. Output: chat reply." | "Maybe think about Q3 planning." |
 | "I can scaffold the new auth module with the existing pattern from `src/users/`. Output: 4 files in `src/auth/`." | "We could explore auth options." |
 
 End with the directive question:

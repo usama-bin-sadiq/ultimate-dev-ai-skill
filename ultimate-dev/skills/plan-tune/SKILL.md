@@ -400,8 +400,6 @@ memorize them.
 preferences, question logging, dual-track profile (declared + inferred),
 plain-English inspection. No skills adapt behavior based on the profile yet.
 
-Canonical reference: `docs/designs/PLAN_TUNING_V0.md`.
-
 ---
 
 ## Step 0: Detect what the user wants
@@ -461,9 +459,8 @@ asked.
 **Privacy note.** gstack defaults `question_tuning` to `false` for every user.
 There is no auto-flip for any cohort. The consent prompt is the only path to
 enabling, and the answer is honored with a marker file so the user is never
-re-asked. Contributors are not auto-enrolled (see
-`docs/designs/PLAN_TUNING_V1.md` §"Decisions log" for the privacy posture
-rationale). If the user is a contributor (`gstack_contributor: true`), the
+re-asked. Contributors are not auto-enrolled. If the user is a contributor
+(`gstack_contributor: true`), the
 prompt can mention it as additional context, but the decision is still
 explicit.
 
@@ -626,7 +623,7 @@ Parse the JSON. Present in **plain English**, not raw floats:
   Use words for the gap: 0.0-0.1 "close", 0.1-0.3 "drift", 0.3+ "mismatch".
 
   This display gate is intentionally lower than the E1 **promotion gate**
-  (90+ days stable across 3+ skills, per `docs/designs/PLAN_TUNING_V0.md`).
+  (90+ days stable across 3+ skills).
   Displaying inferred values is a UI affordance; shipping behavior-adapting
   defaults based on the profile is consequential and needs a much higher
   bar. Do NOT use the display gate as a green light for v2 E1 work.

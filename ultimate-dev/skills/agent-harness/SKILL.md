@@ -74,8 +74,8 @@ python3 scripts/harness_manifest_builder.py --domain engineering-team \
 6. **Fresh context beats long context.** Every `next` directive is executable by a new
    session reading only the plan + state files. Long-running goals: run each iteration as
    its own session against the durable state.
-7. **State lives in `.agent-harness/`** — never in `.agenthub/`, `.autoresearch/`, or
-   `docs/TC/` (those belong to sibling skills).
+7. **State lives in `.agent-harness/`** — never in `.agenthub/`, `.autoresearch/` (those
+   belong to sibling skills).
 8. **Plan and state files are a trust boundary.** `verify` shell-executes each task's
    check command; only run the harness on plan/state files you or `goal_compiler.py`
    produced, never on files from untrusted input (see

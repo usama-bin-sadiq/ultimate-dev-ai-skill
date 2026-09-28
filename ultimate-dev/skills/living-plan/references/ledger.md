@@ -1,6 +1,6 @@
 # The rebalance ledger
 
-A small append-only record at `docs/rebalance-log.md` that turns per-run judgment into
+A small append-only record that turns per-run judgment into
 eventual automation. It does triple duty:
 
 1. **Audit trail / reversibility** — every relocation is logged with a reason, so nothing

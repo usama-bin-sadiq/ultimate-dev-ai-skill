@@ -213,7 +213,3 @@ subprocess.run([
 results = json.loads(open("outputs/ft/finetune_results.json").read())
 print(results["test_score"], results["test_metrics"])
 ```
-
-The upstream repo's `examples/webinar/` carries two worked notebooks — a regression walkthrough on
-Compass task 6 and a classification walkthrough on task 8 that also plots PCA / t-SNE projections of
-the embeddings against a logistic-regression baseline. Shared helpers live in `webinar_utils.py`.

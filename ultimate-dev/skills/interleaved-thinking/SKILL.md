@@ -208,8 +208,6 @@ Patterns: None detected
 ## References
 
 - MiniMax M2.1 Documentation: https://platform.minimax.io/docs
-- Interleaved Thinking Guide: See `docs/interleavedthinking.md`
-- Agent Generalization: See `docs/agentthinking.md`
 
 ---
 

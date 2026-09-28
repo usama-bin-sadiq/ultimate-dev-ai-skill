@@ -39,7 +39,6 @@ Parse user input for:
 - **Subject/topic** — what the social photo represents
 - **Target platforms** — which sizes needed (default: Instagram Post 1:1 + Story 9:16)
 - **Visual style** — minimalist, bold, gradient, photo-based, etc.
-- **Brand context** — read from `docs/brand-guidelines.md` if exists
 - **Content elements** — headline, subtext, CTA, images, icons
 - **Quantity** — how many variations (default: 3)
 

@@ -90,8 +90,6 @@ detailed **highlights** section for the release-specific page.
         `<agent-config-dir>/skills/docs-changelog/references/latest_template.md`.
     -   Populate the template with the `version`, `release_date`, generated
         `highlights`, and the processed content from the temporary file.
-    -   **Completely replace** the contents of `docs/changelogs/latest.md` with
-        the populated template.
 
 ### A.2: Preview Release (e.g., `v0.29.0-preview.0`)
 
@@ -102,8 +100,6 @@ detailed **highlights** section for the release-specific page.
         `<agent-config-dir>/skills/docs-changelog/references/preview_template.md`.
     -   Populate the template with the `version`, `release_date`, generated
         `highlights`, and the processed content from the temporary file.
-    -   **Completely replace** the contents of `docs/changelogs/preview.md`
-        with the populated template.
 
 ---
 
@@ -117,8 +113,7 @@ instructions for the other section.
 
 ### B.1: Stable Patch (e.g., `v0.28.1`)
 
-- **Target File**: `docs/changelogs/latest.md`
-- Perform the following edits on the target file:
+- Perform the following edits:
     1.  Update the version in the main header. The line should read,
         `# Latest stable release: {{version}}`
     2.  Update the rease date. The line should read,
@@ -139,8 +134,7 @@ instructions for the other section.
 
 ### B.2: Preview Patch (e.g., `v0.29.0-preview.3`)
 
-- **Target File**: `docs/changelogs/preview.md`
-- Perform the following edits on the target file:
+- Perform the following edits:
     1.  Update the version in the main header. The line should read,
         `# Preview release: {{version}}`
     2.  Update the rease date. The line should read,

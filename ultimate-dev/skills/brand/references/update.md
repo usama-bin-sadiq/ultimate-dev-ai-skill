@@ -5,7 +5,6 @@ Update brand colors, typography, and style - automatically syncs to all design s
 ## Overview
 
 This command systematically updates:
-1. `docs/brand-guidelines.md` - Human-readable brand doc
 2. `assets/design-tokens.json` - Token source of truth
 3. `assets/design-tokens.css` - Generated CSS variables
 
@@ -34,8 +33,6 @@ Use `AskUserQuestion` to collect:
 - Mood keywords (e.g., "professional, trustworthy, premium" or "bold, creative, energetic")
 
 ### Step 2: Update Brand Guidelines
-
-Edit `docs/brand-guidelines.md`:
 
 1. **Quick Reference table** - Update color names and hex codes
 2. **Brand Concept section** - Update theme name and description
@@ -88,7 +85,6 @@ Output summary:
 
 | File | Purpose |
 |------|---------|
-| `docs/brand-guidelines.md` | Human-readable brand documentation |
 | `assets/design-tokens.json` | Token definitions (primitive→semantic→component) |
 | `assets/design-tokens.css` | CSS variables for UI components |
 

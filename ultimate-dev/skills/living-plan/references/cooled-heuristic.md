@@ -6,15 +6,13 @@ category has a different lifecycle, so each gets a different rule.
 ## By category
 
 ### Session-log entries — recency (mechanical, safest)
-Keep the last **N sessions** inline (default N=3). Archive older entries to
-`docs/sessions/` (one file per session, or grouped by range, e.g. `sessions-01-10.md`).
-Leave a one-line pointer in PLAN.md's session-log header: `Sessions 1–17 archived → docs/sessions/`.
+Keep the last **N sessions** inline (default N=3).
 No judgment required. This is usually where most of the bloat is — do it first.
 
 ### Open questions & parking-lot — born as pointers (no classification)
 These don't cool; they're *deferred by nature*. From the moment they're created, PLAN.md
 shows only the heading (the question / the parking-lot hook, one line) + a link to a file
-in `docs/questions/` or `docs/parking-lot/` that holds the discussion. When a question
+that holds the discussion. When a question
 resolves it becomes a decision; when a parking-lot item is picked up it moves into the hot
 flow. Nothing to relocate at rebalance time — they were never carrying their bulk inline.
 
@@ -31,7 +29,7 @@ it is NOT flagged foundational:
    architectural split that a *future* feature depends on). Those carry a `🔒 foundational`
    marker on their heading and **never auto-cool**. Set it once when the decision is made.
 
-Cold decision → collapse to a one-line heading + link, body moved to `docs/decisions/Dxx.md`.
+Cold decision → collapse to a one-line heading + link.
 A **superseded** decision (replaced/revised by a later one) is cold by definition — archive
 it and note the supersession (`[[D19]] supersedes this`).
 

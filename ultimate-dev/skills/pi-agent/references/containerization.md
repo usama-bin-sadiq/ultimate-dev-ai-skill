@@ -6,7 +6,7 @@ Pi runs with all permissions by default. Two general approaches: run the whole `
 
 | Pattern | What is isolated | Best for | Notes |
 |---|---|---|---|
-| Gondolin extension | Built-in tools and `!` commands | Local micro-VM isolation while keeping auth on host | `examples/extensions/gondolin/` |
+| Gondolin extension | Built-in tools and `!` commands | Local micro-VM isolation while keeping auth on host |  |
 | Plain Docker | Whole `pi` process | Simplest local container boundary | Provider API keys enter the container |
 | OpenShell | Whole `pi` process | Local or remote policy-controlled sandbox | Requires an OpenShell gateway |
 

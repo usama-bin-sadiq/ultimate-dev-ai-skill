@@ -50,12 +50,12 @@ Everything is code. PRs, issues, kanban boards — they're all markdown files in
 
 ### How it works
 
-| What                 | Where it lives                                            | What GitHub does                                                                                                                                                   |
-| -------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Pull requests**    | `docs/project/pr/pr-NNNNNNNN-short-description.md`        | GitHub PR is a thin pointer — humans go there to comment on diffs, approve, and watch CI. The record of what changed, why, and what was learned lives in the file. |
-| **Issues**           | `docs/project/issues/issue-NNNNNNNN-short-description.md` | GitHub Issues is a notification and comment layer. Bug reports, feature requests, investigation logs, and resolutions live in the file.                            |
-| **Kanban boards**    | `docs/project/kanban/{scope}-{id}-short-description.md`   | No external board tool needed. Modify the board in your branch, merge it with your PR. The board evolves with the codebase.                                        |
-| **Decision records** | `docs/decisions/NNN-{slug}.md`                            | Not tracked in GitHub at all — purely repo-native.                                                                                                                 |
+| What                 | What GitHub does                                                                                                                                                   |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Pull requests**    | GitHub PR is a thin pointer — humans go there to comment on diffs, approve, and watch CI. The record of what changed, why, and what was learned lives in the file. |
+| **Issues**           | GitHub Issues is a notification and comment layer. Bug reports, feature requests, investigation logs, and resolutions live in the file.                            |
+| **Kanban boards**    | No external board tool needed. Modify the board in your branch, merge it with your PR. The board evolves with the codebase.                                        |
+| **Decision records** | Not tracked in GitHub at all — purely repo-native.                                                                                                                 |
 
 ### The rule
 
@@ -622,13 +622,9 @@ Templates provide pre-built structures for common document types. Copy the templ
 
 Some templates produce documents that accumulate over time. Use these directory conventions:
 
-| Document type    | Directory              | Naming pattern                              | Example                                                                 |
-| ---------------- | ---------------------- | ------------------------------------------- | ----------------------------------------------------------------------- |
-| Pull requests    | `docs/project/pr/`     | `pr-NNNNNNNN-short-description.md`          | `docs/project/pr/pr-00000123-fix-auth-timeout.md`                       |
-| Issues           | `docs/project/issues/` | `issue-NNNNNNNN-short-description.md`       | `docs/project/issues/issue-00000456-add-export-filter.md`               |
-| Kanban boards    | `docs/project/kanban/` | `{scope}-{identifier}-short-description.md` | `docs/project/kanban/sprint-2026-w07-agentic-template-modernization.md` |
-| Decision records | `docs/decisions/`      | `NNN-{slug}.md`                             | `docs/decisions/001-use-postgresql.md`                                  |
-| Status reports   | `docs/status/`         | `status-{date}.md`                          | `docs/status/status-2026-02-14.md`                                      |
+| Document type    | Directory              | Naming pattern                              |
+| ---------------- | ---------------------- | ------------------------------------------- |
+| Decision records | `docs/decisions/`      | `NNN-{slug}.md`                             |
 
 ### Choosing a template
 

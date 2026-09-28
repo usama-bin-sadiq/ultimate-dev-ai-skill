@@ -46,7 +46,7 @@ Do **not** use this skill when:
 
 > **Note on Anomaly Detection**: TimesFM does not have built-in anomaly detection, but you can
 > use the **quantile forecasts as prediction intervals** — values outside the 90% CI (q10–q90)
-> are statistically unusual. See the `examples/anomaly-detection/` directory for a full example.
+> are statistically unusual.
 
 ## ⚠️ Mandatory Preflight: System Requirements Check
 
@@ -226,8 +226,6 @@ point, quantiles = model.forecast_with_covariates(
 - `"xreg + timesfm"` (default): TimesFM forecasts first, then XReg adjusts residuals
 - `"timesfm + xreg"`: XReg fits first, then TimesFM forecasts residuals
 
-> See `examples/covariates-forecasting/` for a complete example with synthetic retail data.
-
 ### Anomaly Detection (via Quantile Intervals)
 
 TimesFM does not have built-in anomaly detection, but the **quantile forecasts naturally provide
@@ -254,8 +252,6 @@ is_critical = anomalies  # outside 90% CI
 | **Normal** | Inside 80% CI | Expected behavior |
 | **Warning** | Outside 80% CI | Unusual but possible |
 | **Critical** | Outside 90% CI | Statistically rare (< 10% probability) |
-
-> See `examples/anomaly-detection/` for a complete example with visualization.
 
 ```python
 # Requires: uv pip install timesfm[xreg]

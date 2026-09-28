@@ -50,7 +50,7 @@ A markdown report with:
 ## Pre-conditions
 
 - Run from a git repository with the source code committed
-- A flag-doc registry exists (default: `docs/feature-flags.md`)
+- A flag-doc registry exists
 - The `feature-flags-architect` skill is installed
 
 ## Post-conditions

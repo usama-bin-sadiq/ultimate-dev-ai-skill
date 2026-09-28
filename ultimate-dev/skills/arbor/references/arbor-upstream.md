@@ -39,7 +39,6 @@ set via environment variables.
    plus an evaluation script (your `E_dev` / `E_test`).
 2. Author a project `research_config.yaml` (task description, coordinator
    settings — max cycles, depth, merge thresholds — executor max turns, UI mode).
-   See `examples/research_config.example.yaml` in the repo.
 3. Start the interactive session:
    ```bash
    arbor

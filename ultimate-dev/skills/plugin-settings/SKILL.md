@@ -95,8 +95,6 @@ if [[ "$STRICT_MODE" == "true" ]]; then
 fi
 ```
 
-See `examples/read-settings-hook.sh` for complete working example.
-
 ### From Commands
 
 Commands can read settings files to customize behavior:

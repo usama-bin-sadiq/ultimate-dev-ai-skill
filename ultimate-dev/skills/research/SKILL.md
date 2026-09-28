@@ -16,7 +16,7 @@ Requires `WebSearch` + `WebFetch` for the fallback workflow; specialist skills (
 
 These two skills share the word "research" but serve **completely different use cases**:
 
-- **`research/research/`** (this skill) — research-query router + fallback workflow ("Research X")
+- **(this skill)** — research-query router + fallback workflow ("Research X")
 - **`engineering/autoresearch-agent/`** — Karpathy's autonomous file-optimization experiment loop ("Make this code faster")
 
 No overlap. They coexist.

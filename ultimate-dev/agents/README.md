@@ -83,5 +83,3 @@ and gain fields that were never written. The validator here requires frontmatter
 on every role, which is stricter than the in-skill convention requires and is
 deliberate: it makes a role self-describing, and it means a lift to a plugin root
 would mostly work rather than silently not.
-
-Verified against the public collections in `../research/skill-ecosystem/`.

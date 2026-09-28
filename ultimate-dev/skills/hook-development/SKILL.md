@@ -261,8 +261,6 @@ Execute when Claude Code session begins. Use to load context and set environment
 echo "export PROJECT_TYPE=nodejs" >> "$CLAUDE_ENV_FILE"
 ```
 
-See `examples/load-context.sh` for complete example.
-
 ### SessionEnd
 
 Execute when session ends. Use for cleanup, logging, and state preservation.

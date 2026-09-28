@@ -195,7 +195,6 @@ Wait a moment and retry - arXiv has rate limits
 
 - Scripts: `scripts/paper_manager.py`
 - Templates: `templates/*.md`
-- Examples: `examples/example_usage.md`
 - This guide: `references/quick_reference.md`
 
 ## Getting Help

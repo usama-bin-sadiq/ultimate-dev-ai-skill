@@ -419,7 +419,7 @@ The strict parser emits versioned, scoped symbol evidence with separate declarat
 
 Source identity is `(file path, symbol kind, owner, name)`. Same-line functions/methods use AST scope instead of inferred line containment. Shadowed/reassigned receiver names are unconfirmed; ordinary reads, strings, and parameters are not declarations. If an old ID is reused for a different current identity, repair must supply distinct descriptors. Unsupported parsing or declaration coverage, empty extraction, ambiguous identities, and stale evidence formats remain blocking. Declaration ownership, reference bindings, and expression value regions all use one lexical scope index.
 
-The decision rules, limits, and cross-product test matrix are documented in `docs/incremental/symbol-loss-validation.md` in the repository. This validation uses structural source identities and recognized declaration/installer syntax; it does not execute programs or perform whole-program metaprogramming/type analysis.
+This validation uses structural source identities and recognized declaration/installer syntax; it does not execute programs or perform whole-program metaprogramming/type analysis.
 
 Go receiver methods, Rust inherent impl methods, and C++ out-of-class definitions retain explicit type ownership and their own source ranges. Their duplicate entries in `classes[].methods` are reconciled without assuming the method body is inside the type declaration. Free functions with the same name stay distinct; unresolved receivers and Rust trait impl identities remain `unknown`. Receiver changes also affect structural fingerprints when the type declaration is in another file.
 

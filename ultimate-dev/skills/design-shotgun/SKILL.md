@@ -450,7 +450,7 @@ Commands:
 
 **CRITICAL PATH RULE:** Design artifacts belong in `$GSTACK_STATE_ROOT/projects/$SLUG/designs/`.
 Use `bin/gstack-paths`: GSTACK_HOME → plugin storage → ~/.gstack. Keep it even if temporary; never substitute
-.context/, docs/designs/ or another directory.
+.context/ or another directory.
 These are user files, not application source.
 
 > **STOP.** Before writing variant concepts or design briefs (Step 3 onward) — the UX-principles doctrine governs every design direction, Read `~/<agent-config-dir>/gstack/design-shotgun/sections/doctrine.md` and execute it
@@ -898,7 +898,7 @@ If standalone, offer next steps via AskUserQuestion:
 
 1. **Use the configured state root.** All design artifacts go to
    `$GSTACK_STATE_ROOT/projects/$SLUG/designs/`, even when that root is temporary.
-   Do not substitute `.context/`, `docs/designs/`, or an arbitrary `/tmp/` path. See DESIGN_SETUP above.
+   Do not substitute `.context/` or an arbitrary `/tmp/` path. See DESIGN_SETUP above.
 2. **Show variants inline before opening the board.** The user should see designs
    immediately in their terminal. The browser board is for detailed feedback.
 3. **Confirm feedback before saving.** Always summarize what you understood and verify.

@@ -46,7 +46,7 @@ that claims the user-facing intent.
 Note also that nested `skills/` has no precedent in the major public collections:
 `skills/` is a collection root, never a child. The layout is legal and the
 marketplace supports deep paths, but it is unusual, so it will not be what a
-reviewer expects to see. The full survey is in `../research/skill-ecosystem/`.
+reviewer expects to see.
 
 ## The boundary
 

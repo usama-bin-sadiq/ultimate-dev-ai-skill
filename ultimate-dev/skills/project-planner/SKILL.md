@@ -29,7 +29,6 @@ Before doing anything, discover the current repo's configuration:
 2. Check for `.project-planner.yml` at the repo root — if it exists, read it and
    use its values for all paths, labels, and conventions
 3. If no config file, fall back to auto-discovery:
-   - Proposal template: look for `docs/proposals/TEMPLATE.md`
    - Issue templates: look in `.github/ISSUE_TEMPLATE/`
    - Docs directory: look for `docs/`, `mkdocs.yml`
    - If nothing found, use the fallback formats bundled with the skill

@@ -127,5 +127,3 @@ Adapt the suites in `packages/ai/test/` for your provider/model pairs: `stream.t
 `ProviderConfig`: `name?`, `baseUrl?`, `apiKey?`, `api?`, `streamSimple?`, `headers?`, `authHeader?`, `models?`, `refreshModels?`, `oauth?`.
 
 `ProviderModelConfig`: `id`, `name`, `api?`, `baseUrl?` (per-model endpoint override), `reasoning`, `thinkingLevelMap?`, `input`, `cost` (`input`, `output`, `cacheRead`, `cacheWrite` per million tokens), `contextWindow`, `maxTokens`, `headers?`, `compat?`.
-
-Example extensions: `examples/extensions/custom-provider-anthropic/` and `examples/extensions/custom-provider-gitlab-duo/`.

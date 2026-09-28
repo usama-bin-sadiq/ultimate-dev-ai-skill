@@ -225,8 +225,6 @@ Return JSON with:
 
 Then convert to agent file format with frontmatter.
 
-See `examples/agent-creation-prompt.md` for complete template.
-
 ### Method 2: Manual Creation
 
 1. Choose agent identifier (3-50 chars, lowercase, hyphens)

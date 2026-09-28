@@ -133,12 +133,12 @@ and follow it. The two triggers that bring you here:
 ## The model in one screen (so you don't re-derive it)
 
 - **Cooled material goes to `docs/`**, one file per item, in category subfolders:
-  `docs/decisions/`, `docs/questions/`, `docs/parking-lot/`, `docs/sessions/`.
+  `docs/decisions/`.
 - **Questions & parking-lot are born as pointers**: PLAN.md shows the *heading* (the item
   itself, one line) + a link; the file holds the discussion. No classification needed.
 - **Decisions stay whole and inline while hot**; when one cools it collapses to a
-  heading + link, body moved to `docs/decisions/Dxx.md`.
-- **Session-log entries** archive by **recency** (keep last N inline, older → `docs/sessions/`).
+  heading + link.
+- **Session-log entries** archive by **recency** (keep last N inline).
   This is usually the heaviest cold mass and the safest move.
 - **Threads ripen along a ladder**: parking lot → open question → decision → task queue.
   Only `grill` moves an item up it, and only propose-then-confirm. Thread files

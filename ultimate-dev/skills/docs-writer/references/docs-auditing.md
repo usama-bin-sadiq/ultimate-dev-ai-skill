@@ -18,10 +18,8 @@ style guide violations and technical inaccuracies.
 ### Steps
 
 1.  **Identify Documentation Scope:**
-    - Read `docs/sidebar.json` to get a list of all viewable documentation
-      pages.
-    - For each entry with a `slug`, convert it into a file path (e.g., `docs` ->
-      `docs/index.md`, `docs/get-started` -> `docs/get-started.md`). Ignore
+    - For each entry with a `slug`, convert it into a file path (e.g.,
+      `docs/get-started` -> `docs/get-started.md`). Ignore
       entries with `link` properties.
 
 2.  **Prepare Audit Results File:**
