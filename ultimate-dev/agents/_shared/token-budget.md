@@ -17,15 +17,15 @@ Goal: accomplish the task with the fewest tokens while maintaining quality.
 Model tiers are NOT hardcoded. Each agent declares a suggested tier in frontmatter, but the orchestrator adapts:
 
 1. **If running a small model** — Use all agents at their default tier. Small models benefit from focused, single-purpose prompts.
-2. **If running a mid-tier model** — Can combine thin agents (merge a11y+i18n+timezone into frontend-reviewer).
+2. **If running a mid-tier model** — Can combine thin agents (merge accessibility-auditor+i18n-engineer into frontend-developer).
 3. **If running a large model** — Can run more agents in parallel, use deeper analysis passes.
 
 The frontmatter `model:` field is advisory. The orchestrator picks based on available compute, not hardcoded names.
 
 ## Smart Dispatch Rules
 
-1. **Never run an agent that returns nothing useful.** If no database, skip database-specialist.
-2. **Never run redundant agents.** If performance-profiler already covers N+1, skip n-plus-one-hunter.
+1. **Never run an agent that returns nothing useful.** If no database, skip database-optimizer.
+2. **Never run redundant agents.** If performance-reviewer already covers N+1, skip database-optimizer.
 3. **Share context efficiently.** Pass stack-detection output once, reference in all agents.
 4. **Parallel when possible.** Independent agents run simultaneously, not sequentially.
 5. **Skip phases that add no value.** Trivial tasks skip exploration, design, and planning.

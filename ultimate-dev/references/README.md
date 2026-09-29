@@ -1,7 +1,9 @@
 # Kernel references
 
 Loaded on demand. `SKILL.md` keeps the always-in-play four; everything else is
-reached when a specific stage or decision needs it. Total: 54 files.
+reached when a specific stage or decision needs it. Every file in this directory
+is loaded this way; the bundler decides which of them survive a pruned install,
+so read the directory rather than a count stated here.
 
 ## The map
 
@@ -47,9 +49,9 @@ reached when a specific stage or decision needs it. Total: 54 files.
 
 ### Quality checklists
 
-Seven references under `quality-checklists/`, each a quick reference rather than
-a system document. They are listed here because this file is the kernel's index
-— `SKILL.md` is at its 500-line ceiling, so it cannot carry them.
+A file per checklist under `quality-checklists/`, each a quick reference rather
+than a system document. They are listed here because this file is the kernel's
+index, and the kernel is deliberately kept short enough to stay always-loaded.
 
 | Situation | Load |
 |---|---|
@@ -72,13 +74,17 @@ omission would not be on it.
 - **The kernel itself** — `../SKILL.md`.
 - **Skill creation** — `../skills/skill-creator/`, which owns the capability
   expansion lifecycle and its gates.
-- **Delegated roles** — `../agents/`, 286 role files with their own procedures
-  and output contracts, 19 of which carry a dispatch condition in
-  `delegation.md`.
+- **Delegated roles** — `../agents/`, each with its own procedure and output
+  contract. Every one of them has a row in `delegation.md`, because a role with
+  no dispatch condition is not available however good it is. The rows are of
+  unequal quality and the split is measured by `tools/index-tree.py` rather than
+  asserted here.
 - **Data contracts** — `../knowledge/schemas/` and `../knowledge/policies/`,
   the record shapes and the rules over them.
-- **Worked runs** — `../examples/`, 27 traces showing the same machinery applied
-  across 13 domains.
+- **Worked runs** — `../examples/`, organised by domain, showing the same
+  machinery applied across the domains the evaluation corpus covers. Each
+  directory carries a README and one or more recorded runs, and both counts grow
+  as runs are recorded, so read the directory rather than a number stated here.
 
 **Catalogue** — `capability-catalogue.md` is the map of every installed
 capability: what exists, what domain it belongs to, and — the field that

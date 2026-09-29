@@ -119,9 +119,9 @@ Maintain a compact dispatch ledger:
 
 ```text
 agent                mode       tools              status
-code-explorer        native     Read,Grep,Glob     executed
+codebase-analyzer        native     Read,Grep,Glob     executed
 security-auditor     fallback   Read,Grep          executed
-database-specialist  —          —                  skipped
+database-optimizer  —          —                  skipped
 ```
 
 The ledger is for orchestration and final reporting; do not dump raw child transcripts.

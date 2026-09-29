@@ -4,8 +4,13 @@ Before launching agents, classify what ROLE(S) the task requires. This replaces 
 
 ## Role Categories
 
+Each row below is a **routing category**, not a role file. The category is what
+you classify; the role you then dispatch is whichever entry in
+`agents/` (via `references/delegation.md`) carries a matching trigger. A category
+that no role covers is a gap worth reporting, not a role you may assume exists.
+
 ### Core Engineering
-| Role | When to invoke |
+| Category | When to invoke |
 |------|----------------|
 | requirements | Gathering, clarifying, or specifying what to build |
 | architecture | System design, tech selection, component boundaries |
@@ -19,14 +24,14 @@ Before launching agents, classify what ROLE(S) the task requires. This replaces 
 | embedded | Firmware, IoT, hardware interfaces, RTOS |
 
 ### Quality & Security
-| Role | When to invoke |
+| Category | When to invoke |
 |------|----------------|
 | testing | Unit, integration, E2E, performance, security testing |
 | review | Code review, bug hunting, security audit |
 | performance | Profiling, optimization, caching, scaling |
 
 ### Infrastructure & Operations
-| Role | When to invoke |
+| Category | When to invoke |
 |------|----------------|
 | devops | CI/CD, containers, orchestration, IaC |
 | database | Schema design, queries, migrations, optimization |
@@ -34,7 +39,7 @@ Before launching agents, classify what ROLE(S) the task requires. This replaces 
 | observability | Logging, metrics, tracing, alerting |
 
 ### Communication & Delivery
-| Role | When to invoke |
+| Category | When to invoke |
 |------|----------------|
 | documentation | Code docs, API docs, READMEs, guides |
 | ux | UI/UX design, accessibility, i18n, user research |
@@ -47,7 +52,7 @@ Before launching agents, classify what ROLE(S) the task requires. This replaces 
 2. **Scale agents to role count.** A single-role task (fix a typo) needs 1 agent. A multi-role task (new feature) needs the full pipeline.
 3. **When ambiguous between roles, ask.** "Does this need database work or just backend logic?" is cheaper than running both.
 4. **Never skip the review role.** Every code change gets at least one review agent.
-5. **Never skip verification.** Every code change gets verification-runner.
+5. **Never skip verification.** Every code change gets verifier.
 
 ## Classification Output
 

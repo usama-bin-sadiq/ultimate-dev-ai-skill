@@ -9,7 +9,9 @@ material that a reader of the skill never loads.
 Standard packaging tools do not know that. They exclude build artefacts and a
 directory literally named ``evals``, so a bundle built by one includes
 ``evaluation/``, ``docs/``, ``examples/``, ``knowledge/``, and ``research/`` in
-full. The result is a 2.5 MB artefact of which 76 files are the skill.
+full. The result is an artefact in which the skill is a small fraction of what a
+packaging tool decided to call "the package" — and the number it would quote for
+"the skill" is whichever subset someone last measured.
 
 This tool produces the part that is actually the skill, and refuses to produce a
 bundle with dangling references. A trimmed bundle that points at files it no

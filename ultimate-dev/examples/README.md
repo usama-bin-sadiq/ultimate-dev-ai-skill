@@ -58,9 +58,38 @@ If you read five, read these.
 4. **[`operating-system/os-capability-benchmark.md`](operating-system/os-capability-benchmark.md)** — how OS-scale is handled as a stress test and delivered in stages, not as a single pass that produces an operating system.
 5. **[`recovery/backfill-oom-resource-failure.md`](recovery/backfill-oom-resource-failure.md)** — a failure classified before it is responded to, with the blind retry named and refused.
 
+## Known debt in these traces, and why it is left visible
+
+Every trace here predates two rules the kernel now enforces on itself, and all
+27 carry both:
+
+- **`confidence` is bare** — `high` rather than `high in <what>`. The kernel
+  requires a named object, because a bare `high` reads as a property of the
+  conclusion and people defer to confident-looking systems instead of checking
+  them.
+- **`evidence` is prose** — a description of what was seen rather than a pointer
+  like `OBS-004`. A prose field cannot be checked for existence, so a fabricated
+  citation is indistinguishable from a real one.
+
+`validate-skills.py` counts these on every run and deliberately does not fail on
+them. They are **historical output, not templates**: rewriting them to satisfy a
+rule they were written before would be falsifying a record of what happened, and
+an example corpus is the one place where doing that destroys the only thing it
+is for. The two runtime exemplars in `references/decision-fabric.md` *are*
+current, and they are clean — which is the copy that changes behaviour, since
+that is the one a run is sent to.
+
+Each trace needs re-derivation or explicit retirement. Re-derivation means
+replaying the run under the current schema and recording what the run would say
+now, keeping the original alongside it as a record of what was observed then.
+Retirement means deleting it and saying so. Either is honest; silently editing
+the confidence field to make a counter fall is not, and the validator is built so
+that this debt stays visible until somebody actually does the work.
+
 ## Cross-references
 
 - `evaluation/benchmark/TRIGGER-NEGATIVES.md` — the tasks that must **not** trigger
   this machinery. Several of them are the inverse of traces here.
 - `evaluation/failure-cases/` — the same failures as gradeable cases
 - `references/anti-patterns.md` — the defects these traces are chosen to avoid
+- `references/decision-fabric.md` — the current exemplars, which conform

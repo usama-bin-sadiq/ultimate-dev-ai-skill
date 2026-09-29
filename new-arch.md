@@ -1,5 +1,13 @@
 # Universal Agent — Complete Architecture
 
+> **Superseded by `new-arch-updated.md` (revision 2).** This document is revision 1.
+> Revision 2 keeps the decision fabric and the context ladder, and unifies the four
+> coordination patterns — inline, delegate, route, handoff — into one decision at JEv.
+> Read `new-arch-updated.md` instead. This file is retained only so revision 2's
+> changes can be read as changes, rather than re-derived. Two divergences between
+> this document and what the kernel runs are recorded in ADR 0009 rather than
+> silently edited here.
+
 ```text
 ┌──────────────────────────────────────────────────────────────────────────────────────────────┐
 │                                      UNIVERSAL AGENT                                           │

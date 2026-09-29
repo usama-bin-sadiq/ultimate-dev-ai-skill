@@ -18,7 +18,7 @@ If **3+ of these are true** → activate Generic Mode.
 
 1. **Ask the user first** — "No project configuration detected. Should I: (a) analyze the code as-is, (b) set up recommended tooling, or (c) create a CLAUDE.md?"
 2. **Use language-agnostic agents** — task-triage, code-reviewer, dead-code-finder, doc-writer, stack-detection work without any framework
-3. **Skip framework-specific agents** — do NOT load framework-specific agents (database-specialist, frontend-reviewer, etc.) unless the code reveals a framework
+3. **Skip framework-specific agents** — do NOT load framework-specific agents (database-optimizer, frontend-developer, etc.) unless the code reveals a framework
 4. **Create inline analysis** — when no agent fits, do the analysis yourself using WebSearch for documentation patterns
 5. **Propose tooling** — suggest (but don't install) what the project should use
 

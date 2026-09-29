@@ -1,5 +1,11 @@
 # Universal Agent — Complete Architecture (revised)
 
+> **This is revision 2 and it supersedes `new-arch.md`.** The four multi-agent
+> coordination patterns are unified into one decision fabric. Where the two
+> documents disagree, this one is the current specification and the kernel is
+> what actually runs; the disagreements that were not resolved are recorded in
+> ADR 0009 rather than edited away.
+
 ```text
 ┌──────────────────────────────────────────────────────────────────────────────────────────────┐
 │                                      UNIVERSAL AGENT                                           │

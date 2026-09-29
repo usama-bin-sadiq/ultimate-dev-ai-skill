@@ -49,7 +49,7 @@ path. It contains the machinery for working out what a domain needs.
 ```bash
 git clone https://github.com/usama-bin-sadiq/ultimate-dev-ai-skill.git
 cd ultimate-dev-ai-skill
-./install.sh                      # install to run it: 76 files
+./install.sh                      # install to run it: prune to the runtime tree
 ./install.sh --bundle             # build a distributable copy, pruned and zipped
 ```
 
@@ -65,14 +65,14 @@ paths, and how to verify the install.
 | Path | What it is |
 |---|---|
 | `SKILL.md` | the kernel: the effort gate, the decision fabric, verification, recovery, delivery |
-| `references/` | 54 references, loaded on demand |
-| `skills/` | 2,112 sub-skills, including `skill-creator`, which creates and retires the others |
-| `agents/` | 286 role files, 19 of which carry a dispatch condition in `references/delegation.md` |
+| `references/` | the corpus, loaded on demand — `references/README.md` is the index |
+| `skills/` | the sub-skills, including `skill-creator`, which creates and retires the others |
+| `agents/` | the delegated roles, each with a row in `references/delegation.md` |
 | `tools/` | the structure validator, the bundler, the doc auditor, and the evaluation harnesses |
 | `knowledge/` | data contracts and the policies governing them |
-| `evaluation/` | 122 benchmark, domain, failure, security, and regression cases |
+| `evaluation/` | benchmark, domain, failure, security, and regression cases |
 | `evals/` | the generated case file those harnesses read |
-| `examples/` | 27 worked kernel runs across 13 domains |
+| `examples/` | worked kernel runs, organised by domain |
 | `docs/` | architecture, concepts, decision records, operations, security |
 | `research/` | what the architecture borrows, and what it does not resolve |
 | `ARCHITECTURE.md` | how the layers fit, and what breaks if one is absent |

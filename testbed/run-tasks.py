@@ -124,8 +124,8 @@ ASK_RECORD = """
 Record the architecture you chose before you start, using the kernel's own
 state tool, and then do the task:
 
-    python3 run-state.py init --rung <R0..R4> --objective "<one line>"
-    python3 run-state.py set-mode --mode <inline|delegate|route|handoff> --why "<why>"
+    python3 ultimate-dev/tools/run-state.py init --rung <R0..R4> --objective "<one line>"
+    python3 ultimate-dev/tools/run-state.py set-mode --mode <inline|delegate|route|handoff> --why "<why>"
 
 Choose both yourself from the task as stated. Do not copy a value from anywhere.
 """

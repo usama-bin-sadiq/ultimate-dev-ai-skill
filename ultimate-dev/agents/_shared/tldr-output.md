@@ -35,44 +35,58 @@ The developer knows what they asked. They can read. They do not need a preamble 
 - No idioms or culture-bound metaphors. "Easy" not "piece of cake". "Just do it" not "bite the bullet".
 - Plain technical words are fine. "Database", "function", "deploy", "API" are normal — don't dumb them down.
 
-## Output shape by phase
+## Output shape by step
 
-### Phase 0 (triage)
-One line: **"Triage: roles [frontend, backend, testing]. Medium complexity. Will run Phases 1-7."**
+The steps are the kernel's, `SKILL.md` Step 0 through Step 10. State the rung and
+the step you are in, and shape the output to match. At R0 and R1 most of these
+are skipped entirely — the kernel forbids narrative where the work is short.
 
-### Phase 1 (discovery)
-One line restating understanding: **"Got it: you want X so that Y. Confirming?"** Stop and wait.
+### Step 0 (bootstrap, then the effort gate)
+One line: **"Rung R2, Steps 4-7. Four parts, the approach is unproven."** Then
+the `run-state.py` record.
 
-### Phase 2 (exploration findings)
-- 3-6 bullets on key patterns found
-- File list with path:line for files the developer should open
+### Step 1 (task model)
+Objective, requirements, constraints, unknowns, assumptions, success criteria —
+at the depth the rung justifies, which at R0 is one line.
 
-### Phase 3 (clarifying questions)
-- Numbered list of concrete questions, <= 5
-- Each question is one sentence, ends with ?
-- No preamble explaining why you're asking
+### Step 2 (a decision worth recording)
+The record itself, with `rejected` and `recovery` filled. Do not narrate the
+reasoning around it.
 
-### Phase 4 (architecture options)
-- One-line headline: which approach you recommend
-- For each option: 1-line summary, 1-line trade-off
-- **Recommendation:** option X because Y. — bold the headline
-- Ask which one to build
+### Step 3 (context)
+Nothing, usually. Say what you loaded only when the choice was contested.
 
-### Phase 5 (implementation progress)
-- One short line per checkpoint: **"Done with the controller. Moving to the service."**
+### Step 4 (capability chosen)
+One line naming what you are using and why not the alternative. This is where
+`rejected` earns its place.
+
+### Step 5 (the plan)
+Numbered work units, each with its precondition and expected result. Ask which to
+build if the choice is real.
+
+### Step 6 (execution progress)
+- One short line per unit: **"Done with the controller. Moving to the service."**
 - Skip silent successes. Update on real progress only.
 
-### Phase 6 / 6.5 / 6.7 (review, verify, critique)
-- One headline: **"Review complete. 2 must-fix, 4 should-fix, 1 deferred."**
+### Step 7 (verification)
+- One headline: **"VERIFIED. 2 must-fix, 4 should-fix, 1 deferred."**
 - Findings as a numbered list, ranked by severity
 - Each finding: path:line, what's wrong (one sentence), suggested fix (one sentence)
+- Checks that did not run are listed as skipped, not omitted
 - Ask the developer what to fix now
 
-### Phase 7 (handoff)
+### Step 8 (recovery)
+What failed, its classification, and what you did about it.
+
+### Step 9 (delivery)
 - One line on what's done
 - Files modified count and a quick git diff --stat
 - Draft commit message and PR body in code blocks for paste
+- What you could not establish
 - Final line: **"Ready for you to commit and push when you're satisfied."**
+
+### Step 10 (learning)
+Only when something was promoted. One line, or nothing.
 
 ## When the developer asks for long form
 

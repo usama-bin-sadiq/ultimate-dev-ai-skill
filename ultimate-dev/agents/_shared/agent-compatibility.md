@@ -73,7 +73,9 @@ A host may expose tools with different names. Resolve them semantically at runti
 
 ## Key Adaptation Rules
 
-1. **The workflows are universal.** Phase 0-7 works the same regardless of tool.
+1. **The loop is universal.** Step 0 through Step 10 work the same regardless of
+   tool. What changes across hosts is how much can run in parallel and how deep a
+   verification is affordable — not which steps exist.
 2. **The agent prompts are standalone.** Each agents/*.md file is a self-contained prompt that works in any chat.
 3. **The shared rules are universal.** stack-detection, output-format, never-commits, tldr-output apply everywhere.
 4. **The frontmatter is advisory.** Fields like `model:` and `color:` are hints for tools that support them. Tools that don't ignore them.

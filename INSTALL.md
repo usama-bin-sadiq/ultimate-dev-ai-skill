@@ -6,12 +6,17 @@ runtime component.
 ```text
 ultimate-dev/
 ├── SKILL.md              required — the kernel
-├── references/           50 files, loaded on demand
-├── skills/skill-creator/ the capability-expansion sub-skill
-├── agents/               7 delegated roles
+├── references/           the corpus, loaded on demand
+├── skills/               installed sub-skills, discovered by description
+├── agents/               delegated roles, dispatched via a row in
+│                         references/delegation.md
 └── tools/                the validator, the bundler, the doc auditor,
                           and the evaluation harnesses
 ```
+
+The counts in this tree are not written down on purpose. Every one of them was
+right when written and wrong within a few commits, and a reader who trusts a
+stale count is worse off than one who is told to look.
 
 Only `SKILL.md`, `references/`, `skills/`, `agents/`, and `tools/` are read at
 runtime. `ARCHITECTURE.md`, `docs/`, `evals/`, `examples/`, `evaluation/`,
@@ -38,13 +43,14 @@ an existing skill directory without confirmation.
 
 ## Two ways to install, for two different reasons
 
-The repository is more than the skill. Alongside the 76 runtime files it carries
-the evaluation corpus, 27 worked examples, architecture documentation, and
-research notes. The bundler reports the split.
+The repository is more than the skill. Alongside the runtime tree it carries the
+evaluation corpus, worked examples, architecture documentation, and research
+notes. The bundler reports the split, and its printed counts are the current
+ones — which is why they are not written down here.
 
 | | Use when | Result |
 |---|---|---|
-| `./install.sh` | You are installing to run the skill | Pruned in place: 76 files |
+| `./install.sh` | You are installing to run the skill | Pruned in place to the runtime tree |
 | `./install.sh --bundle` | You are **distributing** it — a marketplace, a PR, another runtime | A standalone `dist/ultimate-dev/` plus a verified size report |
 
 ```bash
@@ -54,7 +60,7 @@ research notes. The bundler reports the split.
 ```
 
 The bundle contains only what a runtime loads: `SKILL.md`, `references/`,
-`skills/`, `agents/`, `tools/` — the same 76 files as a pruned install.
+`skills/`, `agents/`, `tools/` — the same set a pruned install leaves behind.
 
 Its size, and the fraction it prunes, are computed and printed by the bundler
 rather than fixed here, along with the files it kept and the ones it dropped.

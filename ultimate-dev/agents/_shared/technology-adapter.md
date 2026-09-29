@@ -5,7 +5,7 @@ When this skill encounters a technology, library, or tool that has no dedicated 
 ## Detection
 
 If stack-detection finds an unknown tool/library/framework:
-1. Check if an existing agent covers the domain (e.g., database-specialist covers databases, messaging-specialist covers queues)
+1. Check if an existing agent covers the domain (e.g., database-optimizer covers databases, backend-architect covers queues)
 2. If an existing agent's domain matches, use it with technology-specific guidance from WebSearch
 3. If no domain match exists, proceed to ad-hoc creation
 

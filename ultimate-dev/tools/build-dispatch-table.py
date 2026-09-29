@@ -1,36 +1,47 @@
 #!/usr/bin/env python3
-"""Derive a dispatch condition for every agent role that lacks one.
+"""Derive a dispatch condition for any agent role that lacks one.
 
-Why
----
-286 role files ship in `agents/`. Nineteen have a row in the dispatch table in
-`references/delegation.md`, so 267 are unreachable: the role exists, its
-procedure and output contract are verified, and no decision can ever call it.
-The kernel is explicit that "a role with no dispatch condition is not available,
-however good it is", which makes this the one place in the system where
-machinery is complete and unused.
+What this is for now
+--------------------
+The job this tool was written for is done. All 286 roles have a row in
+`references/delegation.md`: 19 written by hand, 267 derived by an earlier run of
+this script. The kernel's rule -- "a role with no dispatch condition is not
+available, however good it is" -- is now satisfied for every shipped role, and
+`validate-skills.py` fails the build if it stops being true. So this is no longer
+a scaffolding step to run once; it is a repair tool, and it only does anything
+when someone adds a role without a row.
+
+That is the correct steady state for a script that rewrites a hand-maintained
+document. It stays because the failure it repairs is silent and total: a new
+role with no row is a role the kernel will never call, and nothing else in the
+repository notices.
+
+Running it rewrites `references/delegation.md`. Read the diff before committing
+it. Every derived row is visibly mechanical, and the generated block says so, so
+a hand-written condition and a derived one are distinguishable at a glance -- the
+script is meant to be run, reviewed, and then edited.
 
 Why derived, not written
 ------------------------
 A dispatch condition is a claim about when to reach for a role, and a claim
 written without reading the role is a guess with a table row's authority. Each
-condition below is assembled from what the role file already states about
+derived condition is assembled from what the role file already states about
 itself:
 
   * its `description:` frontmatter, which is the role's own one-line purpose
   * the "Delegate when" or equivalent trigger sentence in its body, if it has one
   * its prohibitions, which are the clearest statement of when NOT to use it
 
-The generated text is therefore a compression of the role, not an invention. It
-is also visibly mechanical, and the header of the generated block says so, so a
-reader can tell a derived condition from a considered one and rewrite the ones
-that deserve it.
+The generated text is therefore a compression of the role, not an invention.
 
-What it does not do
--------------------
-It does not claim these conditions are good. A 267-row table derived
-mechanically is a starting point that makes every role reachable; it is not
-267 decisions about when to delegate. The table is written to be edited.
+What it does not claim
+----------------------
+It does not claim these conditions are good. Most of the 267 rows currently in
+the table restate the role's own description rather than deciding anything --
+`index-tree.py` measures that split and reports it as a band, and the band is low.
+A mechanically derived row makes a role *reachable*; it does not make the
+decision about when delegation pays. Those rows are written to be edited, and
+rewriting them is the real remaining work on the dispatch table.
 """
 
 from __future__ import annotations
@@ -42,6 +53,7 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 AGENTS = ROOT / "agents"
 DELEGATION = ROOT / "references" / "delegation.md"
+DERIVED_HEADING = "## Every shipped role"
 
 TRIGGER_HEADINGS = re.compile(
     r"^#{2,3}\s*(delegate when|when to delegate|use when|dispatch when|"
@@ -141,21 +153,52 @@ def main() -> int:
     )
     missing = [r for r in roles if r not in routed]
 
+    # The steady state is an empty `missing`. Appending a second generated block
+    # then would duplicate the section and read as though something new had been
+    # routed, so an unchanged table is reported and left alone. A repair tool that
+    # rewrites a document when there is nothing to repair is a tool that will
+    # eventually rewrite one when there is.
+    if not missing:
+        # Everything has a row, so nothing is written. The useful output is now
+        # how much of the existing table is considered rather than merely derived:
+        # that split is the real remaining work, and it is what this tool used to
+        # be mistaken for having finished.
+        hand, _, derived_block = text.partition(DERIVED_HEADING)
+        hand_written = len(
+            set(re.findall(r"`agents/([a-z0-9_-]+)\.md`", hand))
+        )
+        derived = len(
+            set(re.findall(r"`agents/([a-z0-9_-]+)\.md`", derived_block))
+        )
+        print(
+            f"  every role already has a dispatch row: {len(routed)} of "
+            f"{len(roles)}"
+        )
+        print("  nothing to do; references/delegation.md not modified")
+        print(
+            f"  {hand_written} written by hand, {derived} derived. The derived "
+            "rows are reachable but mostly restate the role's own description; "
+            "rewriting them into conditions that decide is manual work this "
+            "tool will not do for you."
+        )
+        return 0
+
     lines = [
         "",
         "## Every shipped role, and when to call it",
         "",
-        "The nineteen rows above were written by hand and are the ones this",
-        "repository relies on. The rows below cover the remaining",
-        f"{len(missing)} role files so that no shipped role is unreachable: a role",
-        "with no dispatch condition is not available, however good it is.",
+        "The rows above the marker were written by hand and are the ones this",
+        "repository relies on. The rows below cover the",
+        f"{len(missing)} role file(s) that had no dispatch condition, so that no",
+        "shipped role is unreachable: a role with no dispatch condition is not",
+        "available, however good it is.",
         "",
         "**These conditions are derived, not considered.** Each was compressed",
         "from the role file's own `description:` and any trigger sentence it",
-        "wrote about itself. They make every role reachable; they are not 267",
-        "decisions about when delegation pays. Read a row, and rewrite it if the",
-        "role deserves better -- the table is meant to be edited, and a",
-        "mechanically derived row is visibly mechanical on purpose.",
+        "wrote about itself. They make every role reachable; they are not",
+        f"{len(missing)} decisions about when delegation pays. Read a row, and",
+        "rewrite it if the role deserves better -- the table is meant to be",
+        "edited, and a mechanically derived row is visibly mechanical on purpose.",
         "",
         "| Role | Delegate when | Produces |",
         "|---|---|---|",

@@ -96,7 +96,23 @@ COMPATIBILITY_MAX_LENGTH = 500
 # detail moves to references/. Exceeding this is a warning, not an error,
 # because the guidance is about cost and the kernel has a real reason for its
 # length.
-MAX_SKILL_MD_LINES = 500
+#
+# This was 500, which is a ratchet rather than a design budget: it was set to the
+# then-current kernel's length plus one, so it could only ever be met by deleting
+# something. It moved to 600 for one specific reason. The kernel gained a runtime
+# layer it did not have before -- host capability resolution, the execution-mode
+# statement, the dispatch-outcome contract (used / fallback / unavailable /
+# skipped), and the verification gate. Those are behaviour, not detail: a run
+# cannot triage without knowing what the host can do, and cannot report honestly
+# without the outcome vocabulary. Moving them to references/ would leave the
+# kernel asserting a contract it does not carry, which is the failure this
+# validator exists to prevent.
+#
+# So the ceiling rises to accommodate behaviour, and the question it asks is
+# unchanged: has *detail* leaked into the kernel? Detail moves to references/. If
+# a future change needs this raised again, the answer is almost certainly to
+# move something out, not to raise it again.
+MAX_SKILL_MD_LINES = 600
 
 # Directories whose backticked paths inside SKILL.md must resolve on disk.
 REFERENCED_DIRS = ("scripts", "references", "assets", "agents", "evals", "eval-viewer")
@@ -823,6 +839,73 @@ def validate_skill(skill_dir: Path, repo_root: Path) -> dict[str, Any]:
         "lines": line_count,
         "references": len(list(refs_dir.glob("*.md"))) if refs_dir.is_dir() else 0,
     }
+
+
+# A slug-shaped token in prose is almost never a role: a correct kernel is full of
+# load-bearing, capability-system, well-understood. So names are only collected
+# from the three places a role would actually be offered for dispatch.
+_ROLE_SLUG = re.compile(r"`([a-z][a-z0-9]*(?:-[a-z0-9]+)+)`")
+_ROLE_LIST = re.compile(
+    r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)+"
+    r"(?:\s*,\s*[a-z][a-z0-9]*(?:-[a-z0-9]+)+)+$"
+)
+_ROLE_ENUM = re.compile(
+    r"(?:`[a-z][a-z0-9]*(?:-[a-z0-9]+)+`\s*(?:,|and)\s*){1,}"
+    r"`[a-z][a-z0-9]*(?:-[a-z0-9]+)+`"
+)
+_TABLE_ROW = re.compile(r"^\|.*\|$")
+_ROLE_TABLE_HEADER = re.compile(r"\|\s*(?:agent|role)s?\b[^|]*\|", re.IGNORECASE)
+_DISPATCH_PHRASE = re.compile(
+    r"\b(?:dispatch|delegate|call|use|skip|merge|route to|send to|hand)\w*\b"
+    r"[^.\n]{0,40}",
+    re.IGNORECASE,
+)
+# Execution modes, not roles. Named here so the exemption is visible rather than
+# a silent gap in a regex.
+_NOT_ROLES = {"native-subagent", "serial-fallback", "hybrid"}
+
+
+def non_role_names(doc: Path, roles: set[str]) -> list[str]:
+    """Slug-shaped names `doc` offers as roles that are not roles on disk."""
+    try:
+        text = doc.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return []
+    found: set[str] = set()
+
+    for match in _ROLE_ENUM.finditer(text):
+        found.update(s for s in _ROLE_SLUG.findall(match.group(0)) if s not in roles)
+
+    in_roster = False
+    for line in text.splitlines():
+        if not line.startswith("|"):
+            in_roster = False
+            continue
+        is_header = bool(_ROLE_TABLE_HEADER.search(line))
+        if is_header:
+            in_roster = True
+        for cell in line.strip("|").split("|"):
+            value = cell.strip().strip("`")
+            if _ROLE_LIST.match(value):
+                found.update(
+                    s.strip() for s in value.split(",") if s.strip() not in roles
+                )
+            elif in_roster and re.fullmatch(r"[a-z][a-z0-9]*(?:-[a-z0-9]+)+", value):
+                # A single slug in a table that declares itself a role roster is
+                # a role by the document's own claim.
+                found.add(value)
+        if not is_header and all(set(ch) <= set("-: ") for ch in line):
+            in_roster = False
+
+    for match in _DISPATCH_PHRASE.finditer(text):
+        # The named role is usually inside the phrase that matched -- "dispatch
+        # `code-writer`" -- not in the text after it. Searching only the tail
+        # made this rule nearly inert, which is the failure mode of a rule that
+        # looks like it is checking something and is not.
+        window = match.group(0) + text[match.end():match.end() + 40]
+        found.update(s for s in _ROLE_SLUG.findall(window) if s not in roles)
+
+    return sorted(s for s in found if s not in _NOT_ROLES)
 
 
 def validate_repository(repo_root: Path) -> dict[str, Any]:
@@ -1678,6 +1761,70 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
                         f"{kernel.name}: claims {match.group(1)} role files, but "
                         f"{AGENTS_DIR}/ holds {len(roles)}"
                     )
+            # A name that reads like a role but is not one is worse than a
+            # missing name, because a reader has no way to tell. This shipped: a
+            # SKILL.md named 70 agents, 68 of which had no file, and every check
+            # above passed, because each asked a different question. Counting
+            # role files cannot see a wrong name. The dispatch table cannot
+            # either, since a fictional name is absent from it by definition.
+            #
+            # So this asks the question none of them asked: does every name the
+            # kernel or a runtime rule *offers as a role* resolve to one on disk.
+            #
+            # The hard part is "offers as a role" without flagging ordinary
+            # hyphenated prose. Scanning for the shape alone produced 203 hits on
+            # a correct tree -- load-bearing, capability-system, well-understood.
+            # Names are therefore only checked where a name would appear: inside
+            # a backticked enumeration, inside a table whose header declares it a
+            # role roster, or within a dispatch phrase. On a correct tree that is
+            # zero, and against the document that shipped it names all 65
+            # non-existent names in the roster it claimed was authoritative.
+            # A dispatchable name is a role OR a sub-skill. The kernel routes to
+            # both -- "composition and creation are delegated to `skill-creator`"
+            # is correct usage, and skill-creator is a directory under skills/
+            # rather than a file under agents/. Checking only roles flagged it,
+            # which is how a check that is nearly right gets switched off.
+            dispatchable = set(roles) | {
+                d.name
+                for d in (SKILL_ROOT / "skills").iterdir()
+                if d.is_dir() and (d / "SKILL.md").is_file()
+            }
+            for doc in [kernel, *sorted((agents_dir / "_shared").glob("*.md"))]:
+                if not doc.is_file():
+                    continue
+                for bogus in non_role_names(doc, dispatchable):
+                    errors.append(
+                        f"{doc.relative_to(SKILL_ROOT)}: names `{bogus}` for "
+                        f"dispatch, but neither {AGENTS_DIR}/{bogus}.md nor "
+                        f"skills/{bogus}/ exists. A name the kernel offers must "
+                        "resolve, or the run reaches for something never written."
+                    )
+            # The kernel has one stage vocabulary -- Step 0 through Step 10 --
+            # and the 59 reference documents are written against it. A "Phase N"
+            # in SKILL.md is therefore not a synonym for "Step N"; it is the
+            # vocabulary of the pre-kernel document this file replaced, and it
+            # names stages that exist nowhere else in the corpus. A run following
+            # it would look for a Phase 6.5 verification gate that is not
+            # described in the file that defines verification.
+            #
+            # The check is deliberately narrow. Role files use "Phase N" for
+            # their own domain-local plans -- a podcast rollout, a Zhihu column --
+            # and 49 of them do, which is correct usage and must stay legal. Only
+            # the kernel and the runtime rules, which share the reference
+            # corpus's vocabulary, are held to Step N.
+            for doc in [kernel, *sorted((agents_dir / "_shared").glob("*.md"))]:
+                if not doc.is_file():
+                    continue
+                for lineno, line in enumerate(
+                    doc.read_text(encoding="utf-8", errors="replace").splitlines(), 1
+                ):
+                    if re.search(r"\bPhase\s+\d", line):
+                        errors.append(
+                            f"{doc.relative_to(SKILL_ROOT)}:{lineno}: uses 'Phase N'; "
+                            "the kernel's stage vocabulary is Step 0 through Step 10, "
+                            "and every reference document is written against it. A "
+                            "Phase here names a stage no other document defines."
+                        )
         # A role named in SKILL.md but absent from the dispatch table is
         # unreachable. The kernel would load it and then have no condition under
         # which to call it, which is the decision-record defect one level up:

@@ -134,10 +134,17 @@ decision nobody can read back is not a capability — it is an assertion.
 So the rung and the mode are recorded at the moment they are chosen:
 
 ```sh
-python3 run-state.py init --rung R1 --objective "<one line>"
-python3 run-state.py set-mode --mode delegate --why "<what justified isolation>"
-python3 run-state.py set-rung  --rung R2 --why "<what was discovered>"
+python3 tools/run-state.py init --rung R1 --objective "<one line>"
+python3 tools/run-state.py set-mode --mode delegate --why "<what justified isolation>"
+python3 tools/run-state.py set-rung  --rung R2 --why "<what was discovered>"
 ```
+
+The path is `tools/run-state.py`, relative to the skill root. It was written
+without that prefix here and in the kernel, and every run that followed the
+instruction literally wrote no state file — so the harness, which reads the file
+rather than the transcript, scored each of those runs `undecided`. An
+instruction that cannot be executed as written is not a soft version of the
+instruction; it is a different one.
 
 **This was not being asked for, and the measurement caught it.** The first real
 run of the task corpus loaded the kernel, did the work correctly, and recorded
