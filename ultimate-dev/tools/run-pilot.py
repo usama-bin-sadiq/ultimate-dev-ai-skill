@@ -82,7 +82,19 @@ RUN_ROOT = Path(tempfile.gettempdir()) / "ultimate-dev-eval"
 FIXTURE_BUILD_ROOT = RUN_ROOT / "fixtures"
 RUN_TREE = RUN_ROOT / "runs"
 FIXTURE_BUILDER = SKILL_ROOT / "tools/build-fixtures.py"
-AGENT_RUNNER = Path.home() / ".agents/skills/portable-agent-skill-creator/scripts/agent_runner.py"
+
+# Which runtime to invoke, and how, is resolved by one shared module. It used to
+# be decided here as `--agent opencode` with that runtime's flags spelled inline,
+# and the report then recorded `"runtime": "opencode"` whatever actually ran. Two
+# false claims: the hardcoded invocation, and a results file that misattributed
+# its own provenance. tools/agent_invocation.py has no default vendor, so an
+# unconfigured harness is told rather than quietly measuring one.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from agent_invocation import (  # noqa: E402
+    Invocation,
+    InvocationUnconfigured,
+    classify_environment_failure,
+)
 
 # Over-orchestration is decided from the tool-call trace, never from prose.
 #
@@ -208,19 +220,22 @@ ENGAGED_SIGNALS = {
 
 CLASS_ORDER = ["RG", "SC", "FC", "BM", "DM", "NM", "TN"]
 
-# A pool rather than a single model, because a free endpoint rate-limits and a
-# single-model harness reports "unavailable" for reasons that have nothing to do
-# with the skill. The cost of a pool is that results stop being strictly
-# comparable across cases, which is why every case records the model that
-# actually served it and the report flags a mixed-model run.
-DEFAULT_MODEL_POOL = [
-    "opencode/space-bunny-free",
-    "opencode/mimo-v2.6-flash-free",
-    "opencode/nemotron-3.5-lightning-free",
-    "opencode/longcat-2.5-preview-free",
-    "opencode/ling-3.0-flash-fin-free",
-    "console-openrouter/cohere/north-mini-code:free",
-]
+# No default model pool. There was one -- six models, vendor-namespaced, across two
+# providers -- and it decided what the entire evaluation corpus was measured
+# against. A pass rate from that list is a statement about those six models, and
+# the report printed it as a property of the skill. The person who wrote the list
+# was using those endpoints; nothing about the skill made them the right ones.
+#
+# The reasoning that justified a pool is sound and is kept: one endpoint
+# rate-limits, and a single-model harness then reports "unavailable" for reasons
+# that have nothing to do with the kernel. But a pool is caller configuration
+# (--models, or ULTIMATE_DEV_MODEL), not a property of this repository.
+#
+# With nothing configured, a run passes no model and lets the runtime choose its
+# own default. If that endpoint is flaky, supply a pool: the cost is that results
+# stop being strictly comparable across cases, which is why every case records the
+# model that actually served it and the report flags a mixed-model run.
+DEFAULT_MODEL_POOL: list[str] = []
 
 # Environment failures are the runtime's problem, not the kernel's. Counting them
 # as case failures is how a harness invents a measurement: a quota error and an
@@ -235,28 +250,6 @@ RUNTIME_ERROR_TYPES = {
     "provider.unavailable": "unavailable",
     "provider.overloaded": "unavailable",
 }
-
-# Fallback when the runtime emits prose rather than a typed event.
-ENVIRONMENT_ERRORS = {
-    # Credit exhaustion is worded several ways by different gateways, and one
-    # variant is not exhaustion at all -- it is the request asking for more
-    # max_tokens than the remaining credit can afford, which is fixed by funding
-    # or by asking for less, not by retrying.
-    "quota": re.compile(
-        r"exceed your available credits|requires more credits|add credits|"
-        r"can only afford|insufficient_quota|quota", re.I),
-    "rate_limit": re.compile(r"rate.?limit|too many requests|\b429\b", re.I),
-    "auth": re.compile(r"unauthor|not logged in|invalid api key|\b401\b", re.I),
-    "unavailable": re.compile(r"service unavailable|\b502\b|\b503\b|bad gateway|overloaded", re.I),
-}
-
-
-def classify_environment_failure(text: str) -> str | None:
-    """Return the environment failure kind, or None if this looks like a real result."""
-    for kind, pattern in ENVIRONMENT_ERRORS.items():
-        if pattern.search(text):
-            return kind
-    return None
 
 
 def scan_runtime_events(stdout: str) -> tuple[str | None, str]:
@@ -662,7 +655,7 @@ def build_prompt(case: dict, arm: str) -> str:
 
 def run_one(case: dict, timeout: int, attempts: int = 3, backoff: int = 25,
             models: list[str] | None = None, sandbox: Path | None = None,
-            arm: str = "skill") -> dict:
+            arm: str = "skill", invocation: Invocation | None = None) -> dict:
     """Execute one case, working down a pool of models.
 
     A transient quota or rate-limit error is not evidence about the kernel, so it
@@ -672,7 +665,14 @@ def run_one(case: dict, timeout: int, attempts: int = 3, backoff: int = 25,
 
     Which model actually served the case is returned as ``served_by``. Without it
     a mixed-model run silently pools incomparable results.
+
+    ``invocation`` is the resolved target. It is required rather than defaulted,
+    because a default here is how the previous version ended up naming a specific
+    agent in the output of every run.
     """
+    if invocation is None:
+        raise InvocationUnconfigured([
+            "run_one needs a resolved Invocation; there is no default target"])
     prompt = build_prompt(case, arm)
     pool = models or [None]
     started = time.monotonic()
@@ -680,23 +680,17 @@ def run_one(case: dict, timeout: int, attempts: int = 3, backoff: int = 25,
 
     for model in pool:
         for attempt in range(1, attempts + 1):
-            # --auto is required: without it the runtime cannot approve the tool
-            # calls that let the agent actually read the skill, and every run
-            # degenerates into the model narrating that it *would* read the file.
-            # --standalone forces a private server per invocation. Without it the
-            # CLI attaches to a long-lived background service that carries its own
-            # working directory, and the adapter's cwd is silently not the
-            # directory the agent operates in. Every fixture-based case was
-            # affected: runs executed in the repository root, found no fixture,
-            # and correctly reported that the files did not exist -- which the
-            # grader read as a wrong answer.
-            command = [sys.executable, str(AGENT_RUNNER), "--agent", "opencode",
-                       "--extra-args=--auto", "--extra-args=--standalone"]
-            if model:
-                command += ["--model", model]
-            if sandbox is not None:
-                command += ["--cwd", str(sandbox)]
-            command += ["--prompt", prompt, "--timeout", str(timeout)]
+            # The agent-specific flags that used to be spelled inline here are
+            # caller configuration now. Both were added because runs were wrong
+            # without them -- see agent_invocation.RECIPES -- so a caller who
+            # omits them is making a choice this tool will not overrule, and the
+            # resulting report says which flags were in play.
+            per_model = Invocation(
+                runner=invocation.runner, agent=invocation.agent,
+                model=model or invocation.model, agent_args=invocation.agent_args,
+            )
+            command = per_model.command(
+                prompt, timeout=timeout, cwd=sandbox)
 
             try:
                 proc = subprocess.run(
@@ -880,6 +874,29 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
              "harness that gives up is measuring the endpoint, not the skill. "
              "Every result records the model that served it.",
     )
+    parser.add_argument(
+        "--agent", default=None,
+        help="Agent runtime to invoke, passed to the adapter's --agent. There is "
+             "no default: a harness that falls back to one vendor measures that "
+             "vendor and reports it as a property of the skill. Falls back to "
+             "ULTIMATE_DEV_AGENT.",
+    )
+    parser.add_argument(
+        "--runner", default=None,
+        help="Path to the agent adapter script. Falls back to "
+             "ULTIMATE_DEV_AGENT_RUNNER. Previously a hardcoded path into a home "
+             "directory, which meant the harness could not run from a clone.",
+    )
+    parser.add_argument(
+        "--agent-arg", action="append", default=None, metavar="FLAG",
+        help="Agent-specific flag, repeatable. These belong to the runtime, not "
+             "to this script, so they are caller configuration. Use the = form: "
+             "--agent-arg=--auto, not --agent-arg --auto, because the value "
+             "itself starts with a dash and argparse reads the second as another "
+             "option. Falls back to ULTIMATE_DEV_AGENT_ARGS, shell-quoted. See "
+             "tools/agent_invocation.py RECIPES for a configuration that was "
+             "found to be necessary.",
+    )
     parser.add_argument("--dry-run", action="store_true")
     return parser.parse_args(argv)
 
@@ -1042,7 +1059,8 @@ def execute_cases(cases: list[dict], arms: list[str], timeout: int,
                 staged = []
             try:
                 result = run_one(case, timeout, models=models,
-                                 sandbox=REPO_ROOT, arm=arm)
+                                 sandbox=REPO_ROOT, arm=arm,
+                                 invocation=invocation)
                 after = capture_state(staged)
             finally:
                 unstage(staged)
@@ -1130,7 +1148,7 @@ def paired_comparison(graded: list[dict], by_id: dict) -> dict:
 
 def build_report(cases: list[dict], graded: list[dict], by_id: dict,
                  results: list[dict], models: list[str], must_fire: int,
-                 wall: float) -> dict:
+                 wall: float, invocation: Invocation) -> dict:
     """Assemble the machine-readable report.
 
     The summary and per-arm sections are left to the caller, which fills them
@@ -1142,7 +1160,9 @@ def build_report(cases: list[dict], graded: list[dict], by_id: dict,
             "A stratified pilot, not the full evaluation. These numbers are real "
             "but they are not the suite pass rate and must not be reported as one."
         ),
-        "runtime": "opencode",
+        # What actually served this report. Was the literal "opencode",
+        # regardless of the agent, the model, or whether a run happened at all.
+        "runtime": invocation.describe(),
         # A pool, not a model. Each result also carries the model that served it,
         # because results from different models are not strictly comparable and
         # a report that pools them without saying so is misleading.
@@ -1265,20 +1285,50 @@ def print_summary(report: dict, wall: float, out_dir: Path) -> None:
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
 
-    if not AGENT_RUNNER.is_file():
-        print(f"error: runtime adapter not found at {AGENT_RUNNER}", file=sys.stderr)
-        print("The skill-creator bundle provides agent_runner.py. Without it this "
-              "script cannot drive a runtime, and an unrun suite is a checklist.",
-              file=sys.stderr)
+    invocation = Invocation.resolve(runner=args.runner, agent=args.agent,
+                                    model=None, agent_args=args.agent_arg)
+    # Resolved before the dry-run branch so the dry run reports the pool that
+    # would actually be used. It previously printed DEFAULT_MODEL_POOL, which is
+    # the same shape of defect as a report whose "runtime" field was a literal:
+    # printing a constant in place of the resolved value.
+    models = ([m.strip() for m in args.models.split(",") if m.strip()]
+              if args.models else DEFAULT_MODEL_POOL)
+    gaps = invocation.missing()
+
+    if args.dry_run:
+        # Checked before the refusal, and this is deliberate. A dry run exists to
+        # tell you whether the harness is configured, so it must be runnable when
+        # it is not -- otherwise the one command whose purpose is to answer the
+        # question is the one command that cannot.
+        print("  invocation")
+        for key, value in invocation.describe().items():
+            if key != "missing":
+                print(f"    {key:<12} {value}")
+        if gaps:
+            print("\n  would refuse to run, missing:")
+            for gap in gaps:
+                print(f"    - {gap}")
+        print(f"\n  model pool: {', '.join(models) or 'none - the runtime default is used'}")
+        return 0
+
+    if gaps:
+        # Every gap at once. Reporting one per run means discovering a missing
+        # agent on run 14 of 14, having wasted fourteen runs to find out.
+        for gap in gaps:
+            print(f"error: {gap}", file=sys.stderr)
+        print("", file=sys.stderr)
+        print("This script drives a runtime through an adapter and cannot decide "
+              "one for you: which agent, and which adapter, are properties of "
+              "where this is running.", file=sys.stderr)
+        print("An unrun suite is a checklist, so this refuses rather than "
+              "defaulting to a vendor and reporting the result as a property of "
+              "the skill.", file=sys.stderr)
         return 1
 
     selected = resolve_cases(args)
     if selected is None:
         return 1
     cases, must_fire = selected
-
-    if args.dry_run:
-        return 0
 
     if not ensure_fixtures():
         return 1
@@ -1287,10 +1337,8 @@ def main(argv: list[str] | None = None) -> int:
     # background service and fail, and a harness that only works one case at a
     # time is still a usable harness -- parallelism here would trade reliability
     # for speed on a measurement that is already expensive.
-    models = ([m.strip() for m in args.models.split(",") if m.strip()]
-              if args.models else DEFAULT_MODEL_POOL)
-    print(f"running against opencode, serial, timeout {args.timeout}s")
-    print(f"model pool ({len(models)}): {', '.join(models)}")
+    print(f"running against {invocation.agent}, serial, timeout {args.timeout}s")
+    print(f"model pool ({len(models)}): {', '.join(models) or 'the runtime default'}")
     # Arms are interleaved per case, not run as two separate sweeps. A sweep
     # design lets a rate limit or a model change land entirely on one arm, which
     # is indistinguishable from an effect of the skill.
@@ -1304,7 +1352,8 @@ def main(argv: list[str] | None = None) -> int:
 
     out_dir = SKILL_ROOT.parent / args.out
     out_dir.mkdir(parents=True, exist_ok=True)
-    report = build_report(cases, graded, by_id, results, models, must_fire, wall)
+    report = build_report(cases, graded, by_id, results, models, must_fire, wall,
+                          invocation)
     write_run_logs(out_dir, results)
 
     served = {g.get("served_by") for g in graded if g.get("served_by")}

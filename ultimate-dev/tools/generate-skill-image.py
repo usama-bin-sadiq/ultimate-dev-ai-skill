@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Render a skill's workflow as a diagram, via the OpenRouter Image API.
+"""Render a skill's workflow as a diagram, through an image model.
 
 Local repository tooling; not part of any shipped skill.
 
-Two stages, both through OpenRouter on one OPENROUTER_API_KEY:
+Two stages, both against the same API base URL:
 
 1. Read the whole skill -- SKILL.md, everything under references/, and a
    manifest of scripts/ and assets/ -- and have a text model distil it into a
@@ -12,16 +12,34 @@ Two stages, both through OpenRouter on one OPENROUTER_API_KEY:
    before any pixels are requested.
 2. Send that description to the image model.
 
-The image model is fixed to openai/gpt-image-2.5-sunburst, so the parameters
-accepted below are that model's advertised set rather than the API-wide
-superset. It does not accept ``resolution``, ``size``, ``seed``, or
-``output_format``, and OpenRouter rejects unsupported parameters with an
-HTTP 400 rather than ignoring them.
+Provider choice
+---------------
+
+The endpoint defaults to one hosted gateway and is changed with ``--base-url`` or
+``ULTIMATE_DEV_BASE_URL``. It expects the OpenAI-compatible ``/images`` and
+``/chat/completions`` shapes, which is the common denominator across hosted
+providers and local servers. The two models are chosen independently with
+``--prompt-model`` and ``--image-model``; neither is fixed.
+
+This docstring previously said the image model *was* fixed, and that was true:
+it was a module constant with no flag, so the more useful of the two models to
+change was the one that could not be changed. Both the claim and the constant are
+gone.
+
+Parameters
+----------
+
+The optional image parameters are not part of the OpenAI-compatible images
+schema; they are gateway and model extensions, named in VENDOR_PARAMS. They are
+sent only when explicitly requested, so a provider that rejects them fails
+against the caller's own input rather than against a parameter this tool invented.
+A strict provider also rejects unknown parameters with a 400 rather than ignoring
+them, which is why they are opt-in rather than always present.
 
 Standard library only.
 
-    python scripts/generate_skill_image.py --skill scanpy
-    python scripts/generate_skill_image.py --skill scanpy --prompt-only
+    python tools/generate-skill-image.py --skill scanpy
+    python tools/generate-skill-image.py --skill scanpy --prompt-only
 """
 
 from __future__ import annotations
@@ -39,11 +57,25 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
-IMAGE_MODEL = "openai/gpt-image-2.5-sunburst"
-PROMPT_MODEL = "anthropic/claude-opus-5"
+# Defaults, not constants. Both were module constants, so there was no way to
+# point this at a different model without editing the file: --prompt-model
+# existed and was honoured, while the image model was not configurable at all,
+# which is the more useful of the two to change and the one that could not be.
+#
+# The default endpoint is an OpenAI-compatible images+chat gateway. That shape is
+# the common denominator across hosted providers and local servers, so making the
+# base URL configurable covers the rest without a second transport. What remains
+# provider-shaped is named in VENDOR_PARAMS below and is reported rather than
+# sent silently.
+DEFAULT_IMAGE_MODEL = "openai/gpt-image-2.5-sunburst"
+DEFAULT_PROMPT_MODEL = "anthropic/claude-opus-5"
+DEFAULT_BASE_URL = "https://openrouter.ai/api/v1"
 
-IMAGES_URL = "https://openrouter.ai/api/v1/images"
-CHAT_URL = "https://openrouter.ai/api/v1/chat/completions"
+# Request fields that are not part of the OpenAI-compatible images schema. Sent
+# only when the caller explicitly asks for them, and named in --help, so a
+# provider that rejects them fails with the caller's own input visible rather
+# than with a parameter this tool invented.
+VENDOR_PARAMS = ("aspect_ratio", "quality", "background", "output_compression")
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SKILLS_DIR = REPO_ROOT / "skills"
@@ -181,14 +213,23 @@ class ScriptError(RuntimeError):
     """A condition the caller can act on, reported without a traceback."""
 
 
+# The key's environment variable was named after one provider, which made the
+# provider part of the interface: a caller pointed at a different endpoint had to
+# keep exporting a variable named for the old one, or edit this file. The name is
+# now neutral, and the old name still works, because a rename that breaks an
+# existing setup is not a neutralisation.
+API_KEY_VARS = ("ULTIMATE_DEV_API_KEY", "OPENROUTER_API_KEY")
+
+
 def find_api_key(explicit: str | None) -> str:
     """Resolve the key from --api-key, then the environment, then a .env file."""
     if explicit:
         return explicit
 
-    from_env = os.environ.get("OPENROUTER_API_KEY", "").strip()
-    if from_env:
-        return from_env
+    for var in API_KEY_VARS:
+        value = os.environ.get(var, "").strip()
+        if value:
+            return value
 
     for directory in [Path.cwd(), *Path.cwd().parents, REPO_ROOT]:
         env_file = directory / ".env"
@@ -199,17 +240,20 @@ def find_api_key(explicit: str | None) -> str:
             if line.startswith("#") or "=" not in line:
                 continue
             name, _, value = line.partition("=")
-            if name.strip() == "OPENROUTER_API_KEY":
+            if name.strip() in API_KEY_VARS:
                 value = value.strip().strip('"').strip("'")
                 if value:
                     return value
 
+    names = " or ".join(API_KEY_VARS)
     raise ScriptError(
-        "OPENROUTER_API_KEY not found.\n"
-        "  export OPENROUTER_API_KEY=your-key\n"
-        "  or add OPENROUTER_API_KEY=your-key to the repository .env\n"
-        "  or pass --api-key\n"
-        "Keys: https://openrouter.ai/keys"
+        f"no API key found.\n"
+        f"  export {API_KEY_VARS[0]}=your-key\n"
+        f"  or add {API_KEY_VARS[0]}=your-key to the repository .env\n"
+        f"  or pass --api-key\n"
+        f"The key belongs to whatever --base-url points at, so its name is not "
+        f"tied to a provider. {API_KEY_VARS[1]} is still read for existing "
+        f"setups."
     )
 
 
@@ -325,7 +369,8 @@ def chat_completion(
         ],
         "usage": {"include": True},
     }
-    result = post_json(CHAT_URL, api_key, payload, timeout)
+    result = post_json(args.base_url.rstrip('/') + '/chat/completions',
+                      api_key, payload, timeout)
 
     choices = result.get("choices") or []
     if not choices:
@@ -498,9 +543,10 @@ def generate_for_skill(
         f"{subject}\n\n{args.style}" if args.style else subject, args
     )
     if verbose:
-        print(f"Drawing with {IMAGE_MODEL} -> {output}")
+        print(f"Drawing with {args.image_model} -> {output}")
 
-    result = post_json(IMAGES_URL, api_key, payload, args.timeout)
+    result = post_json(args.base_url.rstrip('/') + '/images',
+                      api_key, payload, args.timeout)
     written = save_images(result, output)
 
     return {
@@ -600,7 +646,10 @@ def run_batch(skill_dirs: list[Path], args: argparse.Namespace, api_key: str) ->
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
-            f"Diagram a skill: read it with {PROMPT_MODEL}, draw it with {IMAGE_MODEL}."
+            "Diagram a skill: read it with --prompt-model, draw it with "
+            "--image-model. Both default to the gateway named in --base-url, "
+            "which is an OpenAI-compatible images+chat endpoint and may be "
+            "overridden with ULTIMATE_DEV_BASE_URL."
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
@@ -673,11 +722,32 @@ Examples:
         help='Rendering style appended to the prompt. Pass --style "" to send it verbatim.',
     )
     parser.add_argument(
+        "--image-model",
+        default=os.environ.get("ULTIMATE_DEV_IMAGE_MODEL", "").strip()
+        or DEFAULT_IMAGE_MODEL,
+        metavar="SLUG",
+        help=f"Model that draws the image (default: {DEFAULT_IMAGE_MODEL}). "
+             f"This was a module constant with no flag, so it could only be "
+             f"changed by editing the file. Override with "
+             f"ULTIMATE_DEV_IMAGE_MODEL.",
+    )
+    parser.add_argument(
+        "--base-url",
+        default=os.environ.get("ULTIMATE_DEV_BASE_URL", "").strip()
+        or DEFAULT_BASE_URL,
+        metavar="URL",
+        help="API base URL, without a trailing slash. Any OpenAI-compatible "
+             "images+chat endpoint works: a hosted gateway, a provider's own "
+             "API, or a local server. /images and /chat/completions are "
+             f"appended. Falls back to ULTIMATE_DEV_BASE_URL. "
+             f"(default: {DEFAULT_BASE_URL})",
+    )
+    parser.add_argument(
         "--prompt-model",
-        default=PROMPT_MODEL,
+        default=DEFAULT_PROMPT_MODEL,
         metavar="SLUG",
         help=f"Model that reads the skill and writes the diagram prompt "
-        f"(default: {PROMPT_MODEL})",
+        f"(default: {DEFAULT_PROMPT_MODEL})",
     )
     parser.add_argument(
         "--max-chars",
@@ -713,7 +783,7 @@ Examples:
         help="auto (default), transparent, or opaque.",
     )
     parser.add_argument("--output-compression", type=int, metavar="0-100")
-    parser.add_argument("--api-key", help="Overrides OPENROUTER_API_KEY and any .env file")
+    parser.add_argument("--api-key", help="Overrides ULTIMATE_DEV_API_KEY, OPENROUTER_API_KEY, and any .env file")
     parser.add_argument("--timeout", type=float, default=300.0, help="Seconds (default 300)")
     parser.add_argument(
         "--prompt-only",
@@ -743,7 +813,7 @@ def validate(args: argparse.Namespace) -> None:
         raise ScriptError("--output-compression must be between 0 and 100.")
     if args.input and len(args.input) > MAX_REFERENCES:
         raise ScriptError(
-            f"{IMAGE_MODEL} accepts at most {MAX_REFERENCES} reference images, "
+            f"{args.image_model} accepts at most {MAX_REFERENCES} reference images, "
             f"got {len(args.input)}."
         )
     if args.max_chars < 1_000:
@@ -754,7 +824,7 @@ def validate(args: argparse.Namespace) -> None:
 
 def build_payload(prompt: str, args: argparse.Namespace) -> dict:
     """Assemble the image request, omitting everything the caller left unset."""
-    payload: dict[str, Any] = {"model": IMAGE_MODEL, "prompt": prompt}
+    payload: dict[str, Any] = {"model": args.image_model, "prompt": prompt}
 
     optional = {
         "n": args.n,

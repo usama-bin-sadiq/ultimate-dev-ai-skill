@@ -87,7 +87,7 @@ the work is gone.
 ## What this costs, and when to skip it
 
 Emitting at boundaries costs a line per boundary. At R0 and R1 that is
-disproportionate — the run is short enough to hold — so emit nothing and keep the
+disproportionate — the run is short enough to hold — so emit no narrative and keep the run in your head. The rung is recorded at every rung including R0: it is one field, and a run that escalated and recorded nothing leaves no evidence that it did, which is what makes over-orchestration invisible. What is forbidden at R0 is elaboration, and a rung is not elaboration.
 position in your head. From R2 up, position and intent are worth the lines. Basis
 matters from R3, and at R4 it is what you hand the human who approves the action.
 

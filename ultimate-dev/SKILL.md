@@ -218,11 +218,10 @@ cannot route to is not selectable. `references/coordination-modes.md`.
 4. **Acquire** — install or fetch an external one, then validate it.
 5. **Create** — build a new capability, and only if 1–4 genuinely fail.
 
-**Then invoke it** — a separate step, and one that was unwritten until recently:
-a tool is run, a sub-skill is read into *this* context and stays there, a role is
-dispatched into a context that does not come back. That difference is the whole
-basis of the mode ladder. `references/invocation.md`. A capability with a
-catalogue entry and no invocation path is decoration.
+**Then invoke it** — a separate step, until recently unwritten: a tool runs, a
+sub-skill is read into *this* context and stays there, a role goes to a context that
+does not come back. That difference is the whole basis of the mode ladder, and a
+capability with no invocation path is decoration. See `references/invocation.md`.
 
 Before creating, ask the disqualifying question: *will this be needed again?* A
 one-off is not a skill; it is a step in the plan. Creating a skill per task is
@@ -284,22 +283,24 @@ system, because it is invisible downstream. See `references/execution-system.md`
 
 ### Stay observable
 
-At R2 and above, say where you are at every boundary: the rung, the current work
-unit, its precondition, and what is about to happen. This is what lets a human steer
-or stop you at a meaningful boundary rather than mid-write, and it is what makes
-the run resumable by someone else. From R3, also name the observation behind each
-load-bearing claim. At R0 and R1 the run is short enough to hold in your head;
-emit nothing — the overhead would exceed the work.
-See `references/observability.md`.
+At R2 and above, say where you are at every boundary: the rung, the current work unit,
+its precondition, and what is about to happen. This lets a human steer or stop you at
+a meaningful boundary rather than mid-write, and makes the run resumable by someone
+else. From R3, also name the observation behind each load-bearing claim. At R0 and R1
+the run is short enough to hold in your head, so emit no *narrative* — no plan, no
+ledger, no verification ceremony; the overhead would exceed the work. The rung is the
+one exception: one field, set once, and the only thing that makes over-orchestration
+detectable, since a run that escalated an R0 task and recorded nothing leaves no
+evidence that it did. Elaboration is what R0 forbids, and a rung is not elaboration.
+`references/observability.md` agrees.
 
 ### Delegated roles
 
-All 286 role files in `agents/` have a row in `references/delegation.md`; each has a
-procedure, output contract, and prohibitions. That file is the index — role, trigger,
-and what it must not do. **A role with no dispatch condition is not available**,
-however good it is. Those rows are not equal: 19 were written by hand, and 267 were
-derived mechanically from each role's own `description:`, which makes a role reachable
-but is not 267 judgements about when delegation pays. Rewrite a row that deserves better.
+All 286 role files in `agents/` have a row in `references/delegation.md` — the index:
+role, trigger, and prohibitions. **A role with no dispatch condition is not available**,
+however good it is. The rows are not equal, and the split is measured: 18–9 of 286
+decide when to dispatch, 277 restate the role's own `description:`, and 4 are empty, a
+placeholder, or a leaked table. Rewrite one.
 
 A far larger catalogue is installed alongside these — 2,372 capabilities.
 **Do not read it; search it.** `references/capability-catalogue.md` maps it, and
@@ -493,8 +494,7 @@ and reasoning** · **planning, execution, verification** · **recovery** · **le
 `references/coordination-modes.md` and `references/invocation.md`.
 
 **Elsewhere** — `skills/skill-creator/SKILL.md` owns capability creation and
-promotion. `agents/` holds 286 role files: all 286 have a row in
-`references/delegation.md`, but only 18–9 of those rows state a condition that
-decides when to dispatch. `references/maturity.md` records the claimed prd.md §24
-level. `tools/` holds the validators and the maintenance machinery, which is not
-part of an install.
+promotion. `references/maturity.md` records the claimed prd.md §24 level. `tools/`
+holds the validators and the maintenance machinery, which is not part of an
+install. Which runtime a harness invokes is configuration, not a default: see
+`tools/agent_invocation.py`.
