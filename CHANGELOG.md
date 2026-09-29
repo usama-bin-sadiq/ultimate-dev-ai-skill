@@ -1,5 +1,9 @@
 # Changelog
 
+## [4.0.30] — 2026-09-29
+
+- fix: two CI mutations had stopped breaking the trees they name
+
 ## [4.0.29] — 2026-09-29
 
 - fix: no harness may name a provider, and no report may claim one
