@@ -1,5 +1,9 @@
 # Changelog
 
+## [4.0.29] — 2026-09-29
+
+- fix: no harness may name a provider, and no report may claim one
+
 ## [4.0.28] — 2026-09-29
 
 - feat: measure the cost argument, and stop a release commit from cancelling its own validation
