@@ -8,7 +8,7 @@ the only way to put any number on that is to run some cases.
 
 A pilot, not the full suite, for three reasons:
 
-* Cost. 121 cases across two arms is a large run. A pilot answers "does this
+* Cost. 128 cases across two arms is a large run. A pilot answers "does this
   harness work end to end, and what does the failure profile look like" at a
   fraction of the cost, and tells us whether a full run is worth funding.
 * Selection. A stratified sample across all seven case classes is more

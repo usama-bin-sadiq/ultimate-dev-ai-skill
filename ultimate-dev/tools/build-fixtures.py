@@ -3,7 +3,7 @@
 
 Why this exists
 ---------------
-The evaluation corpus is 121 cases written as prose. Sixteen of them name a file
+The evaluation corpus is 128 cases written as prose. Sixteen of them name a file
 the run is supposed to read -- ``events-2026-04.jsonl``, ``src/report.ts``,
 ``access_log_sample.csv``. None of those files were ever committed. A case that
 says "count the refunds in events-2026-04.jsonl" against a repository with no

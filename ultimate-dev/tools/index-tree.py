@@ -126,11 +126,106 @@ def tokens(name: str, desc: str) -> set[str]:
     return {t for t in raw if t not in STOP}
 
 
-def collect() -> list[dict]:
-    routed = set()
+def dispatch_rows() -> dict[str, str]:
+    """Role name -> its "delegate when" cell, read from delegation.md.
+
+    The condition text is returned, not just the presence of the name, because
+    the distinction that matters is between a row that decides something and a
+    row that was appended to silence a validator. A cell that is empty, or that
+    is a literal `[bracketed placeholder]`, or that is a description truncated
+    with an ellipsis, does not decide anything.
+
+    SKILL.md said for a while that "almost none of the catalogue is routed" and
+    that was measured with a filename-substring test that could not see any of
+    this. The 267 derived rows that closed the gap were produced by appending
+    each role's own `description:`, truncated. references/delegation.md says so
+    itself. Four of them are empty or literal placeholders.
+
+    So the split is computed here from the text, and reported, rather than
+    asserted in prose and overwritten on the next regeneration.
+    """
+    rows: dict[str, str] = {}
     dpath = REFS / "delegation.md"
-    if dpath.is_file():
-        routed = set(re.findall(r"`agents/([a-z0-9_-]+)\.md`", dpath.read_text()))
+    if not dpath.is_file():
+        return rows
+    for line in dpath.read_text(encoding="utf-8").splitlines():
+        m = re.match(r"^\|\s*`agents/([a-z0-9_-]+)\.md`\s*\|(.*)\|\s*$", line)
+        if m:
+            rows[m.group(1)] = m.group(2).strip()
+    return rows
+
+
+_STOPWORDS = {
+    "a", "an", "and", "the", "of", "for", "to", "in", "with", "that", "this",
+    "or", "is", "are", "as", "by", "on", "from", "it", "its", "be", "who",
+    "which", "at", "into", "their", "his", "her", "they", "them", "per",
+    "output", "contract", "used", "use", "using", "provides", "provide",
+}
+
+
+# Two thresholds, and the number is reported as a band rather than a point,
+# because a single threshold would be a hand-set constant deciding a published
+# figure. Measured on this tree: 18 roles at 0.10, 9 at 0.30. The 267 derived
+# rows sit at ~0.00 at every threshold in that range, so the band does not
+# change the finding -- they restate their own description and decide nothing.
+STRICT_NOVEL = 0.30
+LOOSE_NOVEL = 0.10
+
+
+def _content_words(text: str) -> set[str]:
+    return {w for w in re.findall(r"[a-z][a-z0-9-]{2,}", (text or "").lower())
+            if w not in _STOPWORDS}
+
+
+def condition_is_real(condition: str, description: str = "") -> bool:
+    """Does this dispatch cell actually decide anything?
+
+    A dispatch condition has to say something the role's own description does
+    not. A description says what a role IS. A condition says WHEN TO CALL IT.
+    Restating the first in the second column makes every role reachable to a
+    validator that only checks whether the filename appears in the table, and
+    dispatchable to nothing at run time.
+
+    So the test is comparative. A cell that is empty, a literal bracketed
+    placeholder, a leaked markdown table fragment, or a restatement of the
+    role's own description, does not decide anything. The last of those is the
+    common case: 267 rows were appended by truncating each role's `description:`
+    and ending it with "Per its output contract", which made the reachability
+    check pass without making a single role dispatchable.
+
+    Measured as word overlap, because a substring test would flag a condition
+    that quotes the description and then adds a trigger -- which is the shape a
+    good condition should have.
+    """
+    c = (condition or "").strip()
+    if not c:
+        return False
+    if re.search(r"\[[^\]]*\]", c):          # [bracketed placeholder]
+        return False
+    if c.count("|") >= 2:                       # a leaked table row
+        return False
+    if not description:
+        return True
+    cw, dw = _content_words(c), _content_words(description)
+    if not cw:
+        return False
+    # Fraction of the cell's content words that the description does not
+    # already contain. A restatement is near zero; a condition that adds a
+    # trigger is a meaningful fraction.
+    return len(cw - dw) / len(cw) >= STRICT_NOVEL
+
+
+def novel_fraction(condition: str, description: str) -> float | None:
+    """Fraction of the cell's content words the description does not contain."""
+    cw, dw = _content_words(condition), _content_words(description)
+    if not cw:
+        return None
+    return len(cw - dw) / len(cw)
+
+
+def collect() -> list[dict]:
+    rows = dispatch_rows()
+    routed = set(rows)
 
     out: list[dict] = []
     for d in sorted(p for p in SKILLS.iterdir() if p.is_dir()):
@@ -147,7 +242,16 @@ def collect() -> list[dict]:
             "purpose": desc[:220],
             "domain": domain_of(name, desc),
             "tool_bound": bool(TOOLBOUND.search(body)),
-            "routed": d.name in routed,
+            # A sub-skill is not dispatched through delegation.md; the runtime
+            # discovers it from the `description` it puts in a system-reminder
+            # listing, per references/capability-catalogue.md. Marking it routed
+            # only when its directory name happened to match an AGENT filename
+            # made 2,086 of 2,086 skills unrouted by construction, and the
+            # resulting count was then quoted in SKILL.md as evidence that the
+            # catalogue was unreachable. It was measuring a name collision.
+            "dispatched": False,
+            "routed": bool(desc),
+            "condition_real": None,
             "discoverable": bool(desc),
             "has_frontmatter": bool(fm),
             "path": f"skills/{d.name}/SKILL.md",
@@ -165,7 +269,14 @@ def collect() -> list[dict]:
             "purpose": desc[:220],
             "domain": domain_of(name, desc),
             "tool_bound": bool(TOOLBOUND.search(text)),
+            "dispatched": f.stem in routed,
             "routed": f.stem in routed,
+            "condition_real": (condition_is_real(rows[f.stem], desc)
+                               if f.stem in routed else None),
+            "novel": (novel_fraction(rows[f.stem], desc)
+                      if f.stem in routed else None),
+            "condition_structural": (
+                condition_is_real(rows[f.stem]) if f.stem in routed else None),
             "discoverable": bool(desc),
             "has_frontmatter": bool(fm),
             "path": f"agents/{f.stem}.md",
@@ -191,8 +302,36 @@ def main() -> int:
             "total": len(entries),
             "skills": sum(1 for e in entries if e["kind"] == "skill"),
             "agents": sum(1 for e in entries if e["kind"] == "agent"),
-            "routed": sum(1 for e in entries if e["routed"]),
-            "unrouted": sum(1 for e in entries if not e["routed"]),
+            # `routed` alone is not a number worth quoting, because it now
+            # means "reachable by whatever mechanism applies to this kind" --
+            # a description for a sub-skill, a dispatch row for a role. The
+            # three figures below are the ones that can be acted on, and they
+            # are computed from the delegation cells rather than asserted.
+            "reachable": sum(1 for e in entries if e["routed"]),
+            "not_reachable": sum(1 for e in entries if not e["routed"]),
+            "roles_with_dispatch_row": sum(
+                1 for e in entries if e["kind"] == "agent" and e["dispatched"]),
+            "roles_with_a_deciding_condition": sum(
+                1 for e in entries if e["kind"] == "agent"
+                and e["condition_real"] is True),
+            # The band is over STRUCTURALLY VALID rows only. Without that
+            # qualifier the loose figure counted the four rows that are empty,
+            # bracketed placeholders, or a leaked markdown table -- rows that
+            # are not weak conditions but no conditions, and which no threshold
+            # can rescue. They are counted in their own line below.
+            "roles_with_a_deciding_condition_loose": sum(
+                1 for e in entries if e["kind"] == "agent"
+                and e.get("novel") is not None
+                and e["condition_structural"] is not False
+                and e["novel"] >= LOOSE_NOVEL),
+            "roles_with_no_usable_condition": sum(
+                1 for e in entries if e["kind"] == "agent"
+                and e.get("condition_structural") is False),
+            "roles_with_a_derived_row": sum(
+                1 for e in entries if e["kind"] == "agent"
+                and e["dispatched"] and e["condition_real"] is False),
+            "skills_reachable_by_description": sum(
+                1 for e in entries if e["kind"] == "skill" and e["routed"]),
             "discoverable": sum(1 for e in entries if e["discoverable"]),
             "undiscoverable": sum(1 for e in entries if not e["discoverable"]),
             "no_frontmatter": sum(1 for e in entries if not e["has_frontmatter"]),
@@ -255,7 +394,16 @@ def main() -> int:
     print(f"    agents         {c['agents']}")
     print(f"  DISCOVERABLE     {c['discoverable']}   <- has a description; the runtime can find it")
     print(f"  undiscoverable   {c['undiscoverable']}   <- no description; invisible to every runtime")
-    print(f"  roles dispatched {c['routed']}   <- have a condition in delegation.md")
+    print(f"  roles with a dispatch row        {c['roles_with_dispatch_row']}")
+    print(f"  ...whose condition actually decides "
+          f"{c['roles_with_a_deciding_condition_loose']}-"
+          f"{c['roles_with_a_deciding_condition']} of {c['roles_with_dispatch_row']}"
+          f"   <- a band, not a point: the threshold decides it")
+    print(f"  ...row restates the role's own description {c['roles_with_a_derived_row']}")
+    print(f"  ...row is empty, a placeholder, or a leaked table "
+          f"{c['roles_with_no_usable_condition']}")
+    print(f"  skills reachable by description    {c['skills_reachable_by_description']}"
+          f"   <- no dispatch row needed")
     print(f"  tool-bound       {c['tool_bound']}")
     print(f"\n  index: {OUT.relative_to(ROOT)}")
     print("\n  by domain:")
@@ -304,7 +452,9 @@ def write_catalogue(entries: list[dict], payload: dict) -> None:
         f"| roles | {c['agents']} |",
         f"| **discoverable** (has a description) | **{c['discoverable']}** |",
         f"| **undiscoverable** (no description) | **{c['undiscoverable']}** |",
-        f"| roles with a dispatch condition | {c['routed']} |",
+        f"| roles with a dispatch row | {c['roles_with_dispatch_row']} |",
+        f"| ...of which the condition decides something | "
+        f"{c['roles_with_a_deciding_condition']} |",
         f"| tool-bound | {c['tool_bound']} |",
         "",
         "## Two different mechanisms, not one count",
@@ -331,7 +481,9 @@ def write_catalogue(entries: list[dict], payload: dict) -> None:
     L.append("These have a row in `delegation.md`, so a run can select them. They")
     L.append("are the only entries reachable without editing anything.")
     L.append("")
-    for e in sorted((x for x in entries if x["routed"]), key=lambda x: x["name"]):
+    for e in sorted((x for x in entries
+                     if x["routed"] and x.get("condition_real") is not False),
+                    key=lambda x: x["name"]):
         L.append(f"- `{e['name']}` ({e['kind']}) — "
                  f"{e['purpose'][:120] or '(no description)'}")
     L.append("")

@@ -218,6 +218,12 @@ cannot route to is not selectable. `references/coordination-modes.md`.
 4. **Acquire** — install or fetch an external one, then validate it.
 5. **Create** — build a new capability, and only if 1–4 genuinely fail.
 
+**Then invoke it** — a separate step, and one that was unwritten until recently:
+a tool is run, a sub-skill is read into *this* context and stays there, a role is
+dispatched into a context that does not come back. That difference is the whole
+basis of the mode ladder. `references/invocation.md`. A capability with a
+catalogue entry and no invocation path is decoration.
+
 Before creating, ask the disqualifying question: *will this be needed again?* A
 one-off is not a skill; it is a step in the plan. Creating a skill per task is
 skill proliferation, and it is a failure mode, not a feature.
@@ -301,10 +307,19 @@ A far larger catalogue is installed alongside these — 2,372 capabilities.
 keyword. The **routed** / **UNROUTED** flag on each hit means different things for the
 two kinds, and `references/capability-catalogue.md` explains which: sub-skills are
 *discovered*, because the runtime lists every `description:` in a system reminder and
-the model chooses from that, whereas roles are *dispatched* and need a row. The flag is
-computed by matching a skill directory name against the filenames in `delegation.md`,
-so it is 0 for every sub-skill by construction and is **not** a reachability measurement
-for them.
+the model chooses from that, whereas roles are *dispatched* and need a row.
+
+Both figures are computed from disk by `index-tree.py` and reported as a **band**,
+because a single threshold would be a hand-set constant deciding a published number.
+On this tree: **18–9 of the 286** roles have a condition that says something their
+own description does not; 277 restate the description; 4 are empty, a bracketed
+placeholder, or a leaked markdown table. The 277 sit at ~0.00 at every threshold
+that separates the two ends, so the band does not change the finding.
+
+An earlier version of the flag tested a skill directory name against the *agent*
+filenames in `delegation.md`, so it read 0 for all 2,086 sub-skills by
+construction — a name collision reported as a reachability measurement, and then
+quoted as evidence the catalogue was unreachable.
 
 A delegate gets the context it needs and nothing more; a delegate that finds its
 scope was wrong says so rather than widening it. If the runtime offers no dispatch
@@ -457,17 +472,15 @@ See `references/security-and-trust.md` and `references/human-control.md`.
 
 ## Anti-patterns
 
-Real failure modes, not style preferences. The two that govern whether this
-kernel loads at all live in the `description` above, where the host reads them
-before deciding to load, and are not repeated here: a negative constraint
-restated five times stops being a rule and becomes a theme.
+Real failure modes, not style preferences. The two that govern whether this kernel
+loads at all live in the `description` above, where the host reads them first, and
+are not repeated here: a negative constraint restated five times stops being a
+rule and becomes a theme.
 
-The rest are enumerated, with the symptom, the mechanism and the fix for each,
-in `references/anti-patterns.md`. That list is the guarded one: the regression
-suite has a case per entry, and the list previously lived in two places that had
-drifted apart. The kernel's own `Unreviewed coordination` was in the copy here
-and not in the copy there, which meant the only coordination-mode failure mode
-the kernel names had no guard at all.
+The rest are enumerated with symptom, mechanism and fix in
+`references/anti-patterns.md` — the guarded list, one regression case per entry.
+It used to be duplicated here and the copies drifted: this kernel's own
+`Unreviewed coordination` lived only in the copy with no guard.
 
 ## References
 
@@ -476,14 +489,12 @@ governs and which situation loads it. The groups: **core** (operating model, tas
 model, triage, decision fabric and ledger, state, budget, output contract, self-
 evaluation, observability) · **context** · **capability and skills** · **strategy
 and reasoning** · **planning, execution, verification** · **recovery** · **learning**
-· **control and safety** · **breadth**. Coordination mode is
-`references/coordination-modes.md`.
+· **control and safety** · **breadth**. Two sit outside those groups:
+`references/coordination-modes.md` and `references/invocation.md`.
 
-**Elsewhere** — `skills/skill-creator/SKILL.md` owns capability creation, validation,
-security review, promotion, and deprecation. `agents/` holds 286 role files, and all
-286 have a row in `references/delegation.md`. `references/maturity.md` records which
-prd.md §24 level this claims and what is missing to reach the next. `tools/` holds the
-runtime validators: `validate-skills.py` for structure, `run-state.py` for run state,
-`baseline-check.sh` for measuring the tree against a validator this session did not
-write, plus the bundler, eval projector, fixture generator, and pilot runner, which are
-maintenance machinery and not part of an install.
+**Elsewhere** — `skills/skill-creator/SKILL.md` owns capability creation and
+promotion. `agents/` holds 286 role files: all 286 have a row in
+`references/delegation.md`, but only 18–9 of those rows state a condition that
+decides when to dispatch. `references/maturity.md` records the claimed prd.md §24
+level. `tools/` holds the validators and the maintenance machinery, which is not
+part of an install.

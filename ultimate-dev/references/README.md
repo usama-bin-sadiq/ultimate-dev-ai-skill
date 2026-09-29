@@ -9,7 +9,7 @@ reached when a specific stage or decision needs it. Total: 54 files.
 
 **Context** — `context-system.md` · `context-compiler.md` · `context-provenance.md`
 
-**Capability and skills** — `capability-system.md` · `capability-discovery.md` · `capability-acquisition.md` · `capability-validation.md` · `capability-composition.md` · `capability-expansion.md` · `skill-system.md` · `skill-discovery.md` · `skill-selection.md` · `skill-composition.md`
+**Capability and skills** — `capability-system.md` · `capability-discovery.md` · `capability-acquisition.md` · `capability-validation.md` · `capability-composition.md` · `capability-expansion.md` · `skill-system.md` · `skill-discovery.md` · `skill-selection.md` · `skill-composition.md` · `invocation.md`
 
 **Strategy and reasoning** — `strategy-system.md` · `reasoning-system.md` · `model-adaptation.md`
 
