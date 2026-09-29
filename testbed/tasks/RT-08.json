@@ -1,10 +1,9 @@
 {
   "id": "RT-08",
-  "split": "heldout",
-  "repo": "ultimate-dev",
-  "title": "A benchmark must report no accuracy figure at all",
-  "query": "Build a route-accuracy harness that refuses to print an accuracy number until its judge has been shown consistent with itself, and explain what the gate is for.",
+  "split": "dev",
+  "title": "Two CI cases accuse a validator that was right",
+  "query": "In .github/workflows/validate.yml, the case 'colon-space in frontmatter' mutates SKILL.md and expects validate-skills.py to reject it, and the case 'workflow reimplements the marker rule' injects text into a workflow and expects the same. Read both cases and the two checks they exercise. A previous version of each mutation did not break anything, and both cases reported that the validator 'passed a broken tree' when the tree had never been broken. Say what the mutations were, why each was valid, and what a reader should check before believing that failure message.",
   "expected_mode": "inline",
   "expected_rung": "R3",
-  "oracle": "Designing the gate is the work: you have to decide what counts as consistency, choose a metric whose assumptions match the rating design, and pick a floor before you know the answer. Getting a plausible number out is easy and is not the task. R3, unfamiliar territory with a real chance of the harness measuring the wrong construct. Inline: the design is one coherent artefact and splitting it would lose the reasoning that connects the gate to the number it withholds."
+  "oracle": "R3: this needs the workflow file, the validator, and a YAML/Python semantic check — the mutation 'description : Use when' is valid YAML only if you know how block-mapping keys are parsed, which is a real derivation rather than a lookup. The honest rung here is the higher one because being wrong means telling a reader a validator has a bug when it does not. The answer is that one mutation moved to the wrong side of the colon and the other injected a comment, which the check exempts by design, and that a real regression and a stale test emit the same line of output."
 }

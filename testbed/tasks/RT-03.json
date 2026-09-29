@@ -1,10 +1,9 @@
 {
   "id": "RT-03",
-  "split": "heldout",
-  "repo": "ultimate-dev",
-  "title": "The validator self-test reports three validator bugs that are two stale test anchors",
-  "query": "The Test the Validators job fails with three 'validate-skills.py passed a broken tree' messages. Determine which of the three are real validator gaps and which are defects in the test.",
+  "split": "dev",
+  "title": "The route-accuracy gate has never been satisfied by anything",
+  "query": "testbed/measure-judge.py refuses to let run-bench.py print an accuracy figure until the judge has been shown consistent across repeated ratings, and it exits 1 with `not-measured` when no ratings are supplied. Check whether any ratings file or verdict file exists in testbed/, and state what that means for every accuracy number this repository has published. Then say what the honest report is right now.",
   "expected_mode": "inline",
   "expected_rung": "R2",
-  "oracle": "Three cases have to be told apart, and the two stale ones fail for a reason that looks identical to a real gap from the log alone: the mutation helper is shared and its failure mode is silent. That shared-cause reasoning is what makes it R2. It stays inline because the three cases are all in one file and the fix is one helper -- a delegate would have to be handed the whole test to answer a question about three lines of it."
+  "oracle": "R2 because the answer is 'nothing exists, therefore every figure is withheld' and recognising that requires checking two things and reconciling them with a documented rule. Inline. The trap is reporting a number anyway from RESULTS.md, or concluding the gate is broken. It is working exactly as designed: an LLM judge has been observed swinging from 0.167 to 1.00 across seed-only changes, so a rate computed over an unvalidated judge measures the seed."
 }

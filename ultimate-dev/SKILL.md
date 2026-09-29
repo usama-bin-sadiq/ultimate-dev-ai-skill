@@ -298,9 +298,9 @@ evidence that it did. Elaboration is what R0 forbids, and a rung is not elaborat
 
 All 286 role files in `agents/` have a row in `references/delegation.md` — the index:
 role, trigger, and prohibitions. **A role with no dispatch condition is not available**,
-however good it is. The rows are not equal, and the split is measured: 18–9 of 286
-decide when to dispatch, 277 restate the role's own `description:`, and 4 are empty, a
-placeholder, or a leaked table. Rewrite one.
+however good it is. The rows are not equal, and the split is measured: 22–13 of 286
+decide when to dispatch and 273 restate the role's own `description:`. Every row is at
+least well-formed — no empties, placeholders, or leaked tables. Rewrite one.
 
 A far larger catalogue is installed alongside these — 2,372 capabilities.
 **Do not read it; search it.** `references/capability-catalogue.md` maps it, and
@@ -412,10 +412,10 @@ the strategy effective; were the capabilities appropriate; was the verification
 adequate; did the coordination mode fit, or did we pay for isolation nobody
 needed; what failed; what could be reused; what should not be repeated.
 
-Three of those catch waste and are the ones a run skips — context never needed,
-capabilities not needed, an approach that should not be repeated. Ask them anyway,
-and answer with the specific thing rather than an assessment, because a favourable
-review of your own run is worth nothing. `references/self-evaluation.md`.
+An answer counts when a reader who disagrees could show it wrong, so name the
+specific thing rather than assessing it — a favourable review of your own run is
+worth nothing. There is no score, and finding two or three faults in yourself is
+the expected output. `references/self-evaluation.md`.
 
 Deliver in the output contract (`references/output-contract.md`): the outcome
 first, then evidence, assumptions, limitations, confidence, and verification status.

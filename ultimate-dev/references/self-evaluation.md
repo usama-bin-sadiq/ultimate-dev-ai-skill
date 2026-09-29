@@ -37,6 +37,38 @@ Question 10 catches the mode case: loading four skills to answer a one-line
 question, or handing off a thread one agent could have held, is isolation
 nobody needed, and it stays invisible without a question that asks for it.
 
+## What counts as an answer
+
+The table above says what a good answer *names*. It does not say what makes an
+answer good, and without that the layer is unfalsifiable: "the reasoning was
+sufficient" satisfies every question here, and so does the sentence written by a
+run that learned nothing.
+
+An answer counts when it is **falsifiable by a reader who disagrees**. Three
+tests, and an answer needs all three:
+
+1. **It names a specific thing.** Not "the context was mostly necessary" but
+   "thirty of thirty-six files loaded were never read; the decision needed four".
+   A claim with no count, no name, and no consequence is a mood.
+2. **It could come out the other way.** "I did not check whether verification
+   covered the rollback path" is a real answer and may be wrong in the run's
+   favour. "The verification was thorough" cannot be wrong, which is the tell.
+3. **It is separated into what was noticed and what was checked.** An unchecked
+   thing is not a passed thing. Asserting that the untested path was fine is the
+   failure this layer exists to catch, and it is the one an agent is most
+   inclined to produce, because the run feels smooth.
+
+**A run that answers all ten favourably has not passed this layer.** It has
+demonstrated that the questions are easy to satisfy without thinking, which is a
+finding about the layer rather than a result. Two or three findings against your
+own run is the expected output; zero is a signal to look harder, not a
+certificate.
+
+That is the whole criterion, and it is deliberately not a score. There is no
+ten-out-of-ten, and a rubric that rewards a high total rewards the thing this
+layer is trying to prevent: a uniformly positive self-assessment, which trains
+the reader to skip the section and is worthless in a specific way.
+
 ## The three that actually change behaviour
 
 **Question 2 — was the context necessary?** This is the anti-over-orchestration

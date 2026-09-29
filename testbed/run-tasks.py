@@ -124,7 +124,8 @@ def prompt_for(task: dict) -> str:
     return task["query"]
 
 
-def run_one(task: dict, target: Invocation, timeout: int, keep: pathlib.Path) -> dict:
+def run_one(task: dict, target: Invocation, timeout: int, keep: pathlib.Path,
+            model: str | None = None) -> dict:
     root = sandbox_for(task, keep)
     row = {
         "id": task["id"],
@@ -140,10 +141,18 @@ def run_one(task: dict, target: Invocation, timeout: int, keep: pathlib.Path) ->
         "cost": None,
         "answer_chars": 0,
         "environment_failure": None,
+        "served_by": None,
         "note": "",
     }
 
-    command = target.command(prompt_for(task), timeout=timeout, cwd=root)
+    # The model is per-attempt, not per-run: a pool exists so that one
+    # rate-limited endpoint does not decide the whole run. Each row records the
+    # model that actually served it, because results from different models are
+    # not strictly comparable and a rate computed across them is a rate over the
+    # pool rather than over the kernel.
+    attempt = Invocation(runner=target.runner, agent=target.agent,
+                         model=model or target.model, agent_args=target.agent_args)
+    command = attempt.command(prompt_for(task), timeout=timeout, cwd=root)
 
     started = time.monotonic()
     try:
@@ -158,6 +167,7 @@ def run_one(task: dict, target: Invocation, timeout: int, keep: pathlib.Path) ->
         return row
 
     row["elapsed_s"] = round(time.monotonic() - started, 1)
+    row["served_by"] = model or target.model
     out = proc.stdout or ""
     row["answer_chars"] = len(out)
     if proc.returncode != 0:
@@ -228,6 +238,14 @@ def main() -> int:
              "for a configuration that was found to be necessary.")
     ap.add_argument("--model", default=None,
                     help="Model to request, or unset for the runtime's default.")
+    ap.add_argument(
+        "--models", default=None,
+        help="Comma-separated pool, tried in order on an environment failure. "
+             "A single endpoint rate-limits, and a harness that gives up on the "
+             "first quota error is measuring the endpoint rather than the "
+             "kernel. Every row records the model that served it. No default: "
+             "an empty pool means the runtime's own default, which is the "
+             "right answer when you have one and a bad one when you do not.")
     ap.add_argument("--timeout", type=int, default=300)
     ap.add_argument("--out", type=pathlib.Path, default=OUT / "rows.json")
     ap.add_argument("--work", type=pathlib.Path,
@@ -251,6 +269,8 @@ def main() -> int:
         print(f"  no tasks for split={args.split}")
         return 1
 
+    pool = ([m.strip() for m in args.models.split(",") if m.strip()]
+            if args.models else ([args.model] if args.model else [None]))
     target = Invocation.resolve(runner=args.runner, agent=args.agent,
                                 model=args.model, agent_args=args.agent_arg)
 
@@ -267,6 +287,8 @@ def main() -> int:
                 print(f"    {key:<12} {value}")
         for gap in target.missing():
             print(f"    WOULD REFUSE: {gap}")
+        print(f"\n  model pool ({len(pool)}): "
+              f"{', '.join(str(m) for m in pool) or 'the runtime default'}")
         return 0
 
     gaps = target.missing()
@@ -282,7 +304,20 @@ def main() -> int:
     for i, task in enumerate(tasks, 1):
         print(f"  [{i}/{len(tasks)}] {task['id']}  {task['title'][:48]}")
         keep = (args.work or WORK_ROOT) / task["id"]
-        row = run_one(task, target, args.timeout, keep)
+
+        # Walk the pool only on an environment failure. A wrong answer is a
+        # result and is kept: retrying it on another model would be grading the
+        # same task twice and reporting whichever model happened to be second.
+        row = run_one(task, target, args.timeout, keep, model=pool[0])
+        tried = 1
+        while row.get("environment_failure") and tried < len(pool):
+            nxt = pool[tried]
+            print(f"        {row['environment_failure']} on "
+                  f"{row.get('served_by') or 'the default'}; trying {nxt}")
+            row = run_one(task, target, args.timeout, keep, model=nxt)
+            tried += 1
+        row["pool_tried"] = tried
+
         rows.append(row)
         if row.get("environment_failure"):
             status = f"ENVIRONMENT: {row['environment_failure']}"
@@ -291,7 +326,8 @@ def main() -> int:
         else:
             status = "undecided"
         print(f"        mode={row['observed_mode']} rung={row['observed_rung']} "
-              f"-> {status}  ({row.get('elapsed_s', 0)}s)")
+              f"-> {status}  ({row.get('elapsed_s', 0)}s, "
+              f"{row.get('served_by') or 'default'})")
         if row["note"]:
             print(f"        note: {row['note'][:100]}")
         args.out.parent.mkdir(parents=True, exist_ok=True)

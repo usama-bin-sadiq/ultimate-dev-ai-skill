@@ -1,10 +1,9 @@
 {
   "id": "RT-01",
   "split": "dev",
-  "repo": "ultimate-dev",
-  "title": "A 505-line file is 5 lines over the progressive-disclosure ceiling",
-  "query": "skills/senior-secops/SKILL.md is 505 lines and the 500-line ceiling is a warning that --strict turns into a failure. Move the least valuable section into references/ so it passes. Do not rewrite the security content.",
+  "title": "261 dispatch rows restate the role's own description",
+  "query": "references/delegation.md has a row for all 286 files in agents/, and the file's own header says a role with no dispatch condition is not available however good it is. Run `python3 tools/index-tree.py` and read what it reports about how many rows actually decide when to dispatch. Then look at a role whose row does not decide, and say whether the role is reachable at run time. Do not rewrite the rows; the question is what the measurement means.",
   "expected_mode": "inline",
-  "expected_rung": "R1",
-  "oracle": "One file, one mechanical move, reversible with git checkout. No new context is needed to decide it, and re-reading the file to check a line count is cheaper than a second opinion. Over-escalating here is the exact failure SKILL.md warns about: a verification ceremony on a one-line change."
+  "expected_rung": "R2",
+  "oracle": "A measurement plus an interpretation is R2: the tool is deterministic so there is nothing to decompose, but the question is analytical rather than a lookup, so R1 understates it. Inline because it is one tool call and one file read in this context; there is nothing to isolate. The trap is treating '286 rows exist' as '286 roles are available' — that is the exact claim the measurement exists to check, and the answer is that roughly 273 do not decide."
 }

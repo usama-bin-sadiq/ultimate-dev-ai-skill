@@ -1,10 +1,9 @@
 {
   "id": "RT-05",
-  "split": "heldout",
-  "repo": "ultimate-dev",
-  "title": "The routing oracle exists in prose and is deleted on projection",
-  "query": "The corpus states the correct coordination mode for six cases. The grader never receives it. Establish where it is lost and what would have to change for mode accuracy to be measurable at all.",
+  "split": "dev",
+  "title": "The corpus and the grader disagree about who decides the route",
+  "query": "ultimate-dev/evaluation/coordination-modes/CASES.md states the correct coordination mode and rung for each case, build-evals.py projects those labels into evals/evals.json, and run-pilot.py grades against them. Find how many of the 128 cases in evals/evals.json actually carry a `correct mode` label, and check whether the six CM cases carry routing assertions that read run-state.json. Then say what fraction of the corpus can be graded on routing today, and what the rest of the corpus measures instead.",
   "expected_mode": "inline",
-  "expected_rung": "R3",
-  "oracle": "The answer spans three tools and a generated artefact, and the chain has to be followed to its end: a label allowlist in the builder, a field list in the record, and a grader that never looks. Missing any one link produces a confident wrong answer about which layer is at fault. R3 because the claim being tested -- that routing accuracy is unmeasurable -- has to be established, not just the first discrepancy found."
+  "expected_rung": "R2",
+  "oracle": "R2: three files and a count that has to be reconciled against a projection step and an assertion table. Inline. The trap is answering 'all 128' or 'none' — the truth is a partial count, and the non-routing cases measure something else (tool-call traces, artefact presence) which is a legitimate measurement, not a gap. A run that reports the routing fraction without saying what the remainder measures has given half the answer."
 }

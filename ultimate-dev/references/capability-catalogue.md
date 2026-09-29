@@ -32,7 +32,7 @@ hit is **routed** — whether a decision can actually reach it — or
 | **discoverable** (has a description) | **2372** |
 | **undiscoverable** (no description) | **0** |
 | roles with a dispatch row | 286 |
-| ...of which the condition decides something | 9 |
+| ...of which the condition decides something | 13 |
 | tool-bound | 611 |
 
 ## Two different mechanisms, not one count
@@ -259,6 +259,7 @@ are the only entries reachable without editing anything.
 - `bigquery-observability` (skill) — >- Provides data-retrieval best practices, tool selection guidance, and performant SQL query syntax for BigQuery telemet
 - `bigquery-slot-cost-optimizer` (skill) — >- Analyzes Google Cloud BigQuery slot consumption, query costs, and execution bottlenecks using INFORMATION_SCHEMA. Use
 - `bigtable-basics` (skill) — >- Assists in provisioning instances/tables, designing performant schemas, and querying data in Bigtable. Use when desig
+- `bilibili-content-strategist` (agent) — Expert Bilibili marketing specialist focused on UP主 growth, danmaku culture mastery, B站 algorithm optimization, communit
 - `biopython` (skill) — Comprehensive molecular biology toolkit. Use for sequence manipulation, file parsing (FASTA/GenBank/PDB), phylogenetics,
 - `bioservices` (skill) — Unified Python interface to 40+ bioinformatics services. Use when querying multiple databases (UniProt, KEGG, ChEMBL, Re
 - `bitquery-automation` (skill) — Automate Bitquery tasks via Rube MCP (Composio). Always search tools first for current schemas.
@@ -722,6 +723,7 @@ are the only entries reachable without editing anything.
 - `elevenlabs-automation` (skill) — Automate ElevenLabs text-to-speech workflows -- generate speech from text, browse and inspect voices, check subscription
 - `elorus-automation` (skill) — Automate Elorus tasks via Rube MCP (Composio). Always search tools first for current schemas.
 - `email-sequence` (skill) — When the user wants to create or optimize an email sequence, drip campaign, automated email flow, or lifecycle email pro
+- `email-strategist` (agent) — Expert email marketing strategist for CRM-driven campaigns, lifecycle automation, segmentation architecture, and deliver
 - `email-template-builder` (skill) — Build complete transactional email systems: React Email templates, provider integration (Resend, Postmark, SendGrid, AWS
 - `emailable-automation` (skill) — Automate Emailable tasks via Rube MCP (Composio). Always search tools first for current schemas.
 - `emaillistverify-automation` (skill) — Automate Emaillistverify tasks via Rube MCP (Composio). Always search tools first for current schemas.
@@ -1713,6 +1715,7 @@ are the only entries reachable without editing anything.
 - `sage-automation` (skill) — Automate Sage tasks via Rube MCP (Composio). Always search tools first for current schemas.
 - `sales-enablement` (skill) — When the user wants to create sales collateral, pitch decks, one-pagers, objection handling docs, or demo scripts. Also 
 - `sales-engineer` (skill) — Analyzes RFP/RFI responses for coverage gaps, builds competitive feature comparison matrices, and plans proof-of-concept
+- `salesforce-architect` (agent) — Solution architecture for Salesforce platform — multi-cloud design, integration patterns, governor limits, deployment st
 - `salesforce-marketing-cloud-automation` (skill) — Automate Salesforce Marketing Cloud tasks via Rube MCP (Composio). Always search tools first for current schemas.
 - `salesforce-service-cloud-automation` (skill) — Automate Salesforce Service Cloud tasks via Rube MCP (Composio). Always search tools first for current schemas.
 - `salesmate-automation` (skill) — Automate Salesmate tasks via Rube MCP (Composio). Always search tools first for current schemas.
@@ -2111,6 +2114,7 @@ are the only entries reachable without editing anything.
 - `woodpecker-co-automation` (skill) — Automate Woodpecker co tasks via Rube MCP (Composio). Always search tools first for current schemas.
 - `workable-automation` (skill) — Automate Workable tasks via Rube MCP (Composio). Always search tools first for current schemas.
 - `workday-automation` (skill) — Automate HR operations in Workday -- manage workers, time off requests, absence balances, and employee data through natu
+- `workflow-architect` (agent) — Workflow design specialist who maps complete workflow trees for every system, user journey, and agent interaction — cove
 - `workflow-builder` (skill) — Design and write deterministic multi-agent workflow scripts (.js files in .claude/workflows/) for Claude Code's Workflow
 - `workiom-automation` (skill) — Automate Workiom tasks via Rube MCP (Composio). Always search tools first for current schemas.
 - `workload-manager-basics` (skill) — >- Use this skill to manage Google Cloud Workload Manager evaluations, rules, scanned resources, and validation results 

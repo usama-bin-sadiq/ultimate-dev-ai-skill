@@ -1,10 +1,9 @@
 {
   "id": "RT-10",
   "split": "heldout",
-  "repo": "ultimate-dev",
-  "title": "Reconcile a boundary count that five documents state five different ways",
-  "query": "docs/architecture/kernel.md says 17, ARCHITECTURE.md says 18, SKILL.md says 19 and enumerates 15, decision-fabric.md has 20 rows. Make them agree, and say which number is right.",
+  "title": "Reconcile a claim that five documents state differently",
+  "query": "References to how many agent roles exist, and how many have a usable dispatch row, appear in SKILL.md, ARCHITECTURE.md, docs/architecture/kernel.md, agents/README.md and references/delegation.md. Run `python3 tools/index-tree.py` for the measured figures, then find every stated figure across those five files and list which ones the measurement supports and which do not match. Do not correct them; report the disagreement.",
   "expected_mode": "delegate",
   "expected_rung": "R2",
-  "oracle": "The mechanical part -- counting rows -- is trivial; the judgement part is deciding which documents are authoritative and whether the count or the prose enumeration is the thing that is wrong. Six documents must be edited consistently, and a miss in any one leaves the drift check firing. delegate: the bulk is many-file mechanical reconciliation where consistency across edits matters more than holding all six in one head, and the oracle is short enough to hand over. R2, not R3: the failure mode is a missed file, which is mechanical, not a wrong model of the problem."
+  "oracle": "delegate: five files to reconcile plus a tool run is a fan-out — one context per file, merged answer — and the merge is itself the work, so a single context would carry all five for no benefit. R2 because the reconciliation is analytical. The trap is reporting the measured number as the answer; the question asks which stated figures are wrong, and a document can be stale in a way the measurement does not reveal."
 }
