@@ -17,12 +17,27 @@ diligence while they are destroying the work.
 | Unnecessary delegation | Require a separate domain, large context, or isolation |
 | Silent overreach | Name the authorisation, or ask for it |
 | Difficulty worship | Stop at the lowest rung that is adequate |
+| Unreviewed coordination | Record the mode and its reason |
 
 ## Orchestrating a trivial task
 
 - **Symptom:** a plan, a capability search, and a verification ceremony wrapped around a one-step job.
 - **Mechanism:** effort is used as evidence of care. The cost lands on the user's time and attention and buys nothing.
 - **Fix:** run the effort gate honestly. If the next correct action is already determined and failure is cheap, act, verify the output, and stop. See `triage.md`.
+
+## Unreviewed coordination
+
+- **Symptom:** results are assembled by some means nobody recorded, so a mode
+  that cost far more than it bought is indistinguishable from one that was
+  necessary. The run looks the same either way.
+- **Mechanism:** the coordination mode was never written down, so there is
+  nothing to review and nothing to attribute cost to. This is the only failure
+  on the list that the reader cannot detect by looking at the answer -- the
+  answer can be perfectly good and the run can still have been assembled badly.
+- **Fix:** record the mode and its reason. `run-state.py set-mode` keeps the
+  reason and the reversing condition, and `check` refuses a state where the mode
+  has neither. Three changes to the mode in one run is not a hard task; it is a
+  first choice that was wrong.
 
 ## The confident fabrication
 

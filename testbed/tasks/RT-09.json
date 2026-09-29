@@ -1,0 +1,10 @@
+{
+  "id": "RT-09",
+  "split": "dev",
+  "repo": "ultimate-dev",
+  "title": "A job is killed at 10 minutes and reports as cancelled",
+  "query": "A CI job with timeout-minutes: 10 reports 'cancelled' every run, and the workflow has cancel-in-progress: true. Establish which of the two is killing it.",
+  "expected_mode": "inline",
+  "expected_rung": "R2",
+  "oracle": "There is a plausible wrong explanation sitting next to the right one, and telling them apart needs the job's step table rather than its conclusion field. That is a diagnostic with two candidate causes and one discriminating observation. R2. Inline: one job, one log, and the wrong answer is available in the same place as the right one, which is a reason to look harder rather than to bring in help."
+}

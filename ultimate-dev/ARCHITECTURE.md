@@ -105,8 +105,14 @@ capability resolution order.
 `references/decision-fabric.md` was the third number and the worst: its table
 enumerated fifteen. Coordination mode, reasoning effort and workflow selection
 appeared in its prose but had no row, so the table a reader would use to check
-whether a boundary was handled said three boundaries did not exist. All eighteen
-are now in it.
+whether a boundary was handled said three boundaries did not exist.
+
+That table now holds **twenty** rows, which is a third count again and a
+deliberate one. Against the specification's eighteen it adds skill creation,
+skill composition, and model / resource; it has no separate workflow-selection
+row, because one ladder — the capability resolution order — answers that
+question, and splitting it would produce two questions with one answer. All
+eighteen specification boundaries are represented, and none is missing.
 
 ## Two divergences I am recording rather than resolving
 
@@ -137,8 +143,9 @@ See ADR 0012.
 ### 1. JEv is a fabric, not a stage
 
 A stage is a step in a sequence. JEv is the discipline of producing a defensible
-decision at every boundary where the shape of the work could change — seventeen
-named boundaries, from task understanding to learning promotion.
+decision at every boundary where the shape of the work could change — twenty
+boundaries in `references/decision-fabric.md`, from task understanding to
+learning promotion.
 
 The consequence is that the kernel has no fixed stage list every task must walk.
 A rename of a local variable enters at UNDERSTAND, decides, acts, checks the

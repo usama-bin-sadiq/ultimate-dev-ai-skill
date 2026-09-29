@@ -8,10 +8,10 @@ Relates to: `SKILL.md` Step 3 (context on demand), Step 4 (capability acquisitio
 ## Context
 
 `SKILL.md` instructs the agent to search the capability catalogue rather than
-read it: *"A far larger catalogue is installed alongside these — 2,398
+read it: *"A far larger catalogue is installed alongside these — 2,372
 capabilities. **Do not read it; search it.**"* That instruction is correct, and
 it is the load-bearing one. The catalogue is 45,256 words of references plus
-2,112 sub-skills; loading it is the difference between a run that fits in
+2,086 sub-skills; loading it is the difference between a run that fits in
 context and one that does not.
 
 The instruction had been carried for some time without being tested. An audit of

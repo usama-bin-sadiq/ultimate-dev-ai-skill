@@ -30,9 +30,11 @@ it and has to reconstruct it.
 | [author](author.md) | `skill-creator` has decided a new capability is warranted | A **candidate** skill, never an installed one |
 
 The seven above are the kernel's own roles. `agents/` holds 286 role files in
-total: the remaining 285 were adopted from the catalogue and are reachable by
-name but carry no dispatch condition in `references/delegation.md`, so nothing
-decides to call them. Search before assuming a role is missing:
+total, and **all 286 have a row in `references/delegation.md`** — 19 written by
+hand, the other 267 mechanically derived from each role's own `description:` field.
+A derived row makes a role reachable so that no shipped role is unreachable, but it
+is not 267 judgements about when delegation pays: read a row and rewrite it if the
+role deserves better. Search before assuming a role is missing:
 
 ```bash
 python3 tools/index-tree.py --search <term>

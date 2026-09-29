@@ -113,7 +113,7 @@ answers.
 `evaluation/assertions.json` holds the objective assertions. They target observed
 tool output and the filesystem, never the model's narrative, because
 `methodology.md` §7 forbids the latter and asserting on prose is subjective under
-a different name. Three of 121 cases have them.
+a different name. Three of 128 cases have them.
 
 | Arm | Process | Quality |
 |---|---|---|
@@ -187,7 +187,7 @@ a run that writes `plan.md` and dispatches a subagent is.
 
 ## The remaining gap
 
-- **No full-suite run.** 121 cases, 6 attempted. The blocker is rate limiting,
+- **No full-suite run.** 128 cases, 6 attempted. The blocker is rate limiting,
   not the harness: the pool rotates six models and each case still takes 30–600
   seconds with retries.
 - **No second arm.** Every result here is with-skill. `methodology.md` §5 wants
@@ -196,7 +196,7 @@ a run that writes `plan.md` and dispatches a subagent is.
   it produced the recorded behaviour.
 - **Repeated runs.** `n = 1` per case. `pass^k` and clustered standard errors are
   unimplemented, so no variance figure exists.
-- **Four cases remain unmeasured for want of a fixture or a runtime.** 14 of 121
+- **Four cases remain unmeasured for want of a fixture or a runtime.** 27 of 128
   have generated fixtures, verified by `tools/build-fixtures.py`. The rest either
   need no fixture, are exempt by recorded reason, or need an environment this
   repository does not provide — `FC-VER-01` needs a database container, and its

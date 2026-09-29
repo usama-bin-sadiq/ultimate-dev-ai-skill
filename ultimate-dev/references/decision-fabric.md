@@ -6,9 +6,10 @@ boundary where the shape of the work could change.
 
 ## Spec boundaries and where they live
 
-`new-arch.md` names seventeen decision boundaries. Four of them are named
-differently here, and a reader cross-referencing the specification would not find
-them by name. The mapping, so none of them looks missing:
+`new-arch.md` names seventeen decision boundaries. This file enumerates twenty, and
+ten of them are named differently here, so a reader cross-referencing the
+specification would not find them by name. The mapping, so none of them looks
+missing:
 
 | Spec boundary | Named here | Where |
 |---|---|---|
@@ -115,13 +116,13 @@ most of them do. The rung sets the *default* granularity; the cost of being wron
 sets the actual one.
 
 What is **not** negotiable is the shape. Whenever a record is written, `rejected`
-and `recovery` are filled. Making all nineteen mandatory on every run would be
+and `recovery` are filled. Making all twenty mandatory on every run would be
 the most expensive possible assertion of diligence in a kernel whose most common
 defect is doing too much, and agents reliably find valid approaches that a fixed
 checklist did not anticipate — so a mandatory count buys assertion, not quality.
 
 **Coordination mode is the one boundary that gates the others.** It is asked before
-capability selection, because it determines which of the remaining eighteen are even
+capability selection, because it determines which of the remaining nineteen are even
 reachable: a run in mode `inline` has no delegation decision to make, and one in
 mode `handoff` has a different set again. It carries an extra required field —
 `coordination` — plus the condition that would reverse it, so a mode that turns out

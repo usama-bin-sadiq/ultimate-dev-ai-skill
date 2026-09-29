@@ -1,0 +1,10 @@
+{
+  "id": "RT-01",
+  "split": "dev",
+  "repo": "ultimate-dev",
+  "title": "A 505-line file is 5 lines over the progressive-disclosure ceiling",
+  "query": "skills/senior-secops/SKILL.md is 505 lines and the 500-line ceiling is a warning that --strict turns into a failure. Move the least valuable section into references/ so it passes. Do not rewrite the security content.",
+  "expected_mode": "inline",
+  "expected_rung": "R1",
+  "oracle": "One file, one mechanical move, reversible with git checkout. No new context is needed to decide it, and re-reading the file to check a line count is cheaper than a second opinion. Over-escalating here is the exact failure SKILL.md warns about: a verification ceremony on a one-line change."
+}

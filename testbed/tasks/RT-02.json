@@ -1,0 +1,10 @@
+{
+  "id": "RT-02",
+  "split": "dev",
+  "repo": "ultimate-dev",
+  "title": "A release step fails with no credential in its env",
+  "query": "Create GitHub Release fails with 'gh: To use GitHub CLI in a GitHub Actions workflow, set the GH_TOKEN environment variable', exit 4. Find why and fix it.",
+  "expected_mode": "inline",
+  "expected_rung": "R1",
+  "oracle": "The error names the missing variable and the file to look at is found from the log. The diagnosis is one fact from one message. What makes this R1 rather than R0 is that the fix is not obvious until you know gh reads only its own env -- but that is a single lookup, not an interacting set of parts."
+}

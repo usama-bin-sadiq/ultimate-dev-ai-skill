@@ -44,7 +44,7 @@ In order, because each depends on the one before it:
 1. **Execute the security and failure-recovery cases.** `FC-*` and `SC-*` are the
    classes built for the failures the kernel claims to prevent, and they have
    never run. Nothing else on this list matters if they fail.
-2. **Author objective assertions for the classes that run.** 3 of 122 cases have
+2. **Author objective assertions for the classes that run.** 3 of 128 cases have
    them. A case without an assertion scores process, not correctness, and two
    arms can both "pass" while either is wrong — which is exactly what the first
    paired run showed.

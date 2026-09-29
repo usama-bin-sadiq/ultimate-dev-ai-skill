@@ -1,11 +1,11 @@
 {
   "counts": {
-    "total": 2398,
-    "skills": 2112,
+    "total": 2372,
+    "skills": 2086,
     "agents": 286,
-    "routed": 19,
-    "unrouted": 2379,
-    "discoverable": 2398,
+    "routed": 286,
+    "unrouted": 2086,
+    "discoverable": 2372,
     "undiscoverable": 0,
     "no_frontmatter": 0,
     "tool_bound": 614

@@ -545,8 +545,37 @@ jobs:
                       shutil.rmtree(tmp, ignore_errors=True)
 
           def edit(path, old, new):
-              return lambda s: (s / path).write_text(
-                  (s / path).read_text().replace(old, new))
+              """Replace `old` with `new`, and refuse to do nothing.
+
+              str.replace() with no count returns the string unchanged when the
+              needle is absent, so a mutation whose anchor had rotted left the
+              tree valid, the tool correctly exited 0, and the case reported
+
+                  colon-space in frontmatter: validate-skills.py passed a
+                  broken tree
+
+              which is a false accusation: the tree was never broken, and the
+              reader is sent to the validator rather than to the stale test.
+              Two of the three failures in the first completed run of this
+              suite were exactly that, and they had been invisible for as long
+              as the job was being killed by its own timeout before it could
+              report anything at all.
+
+              A mutation that cannot be applied is a broken test. It must say so
+              rather than impersonate a passing one.
+              """
+              def apply(sandbox):
+                  target = sandbox / path
+                  text = target.read_text()
+                  if old not in text:
+                      raise AssertionError(
+                          f"anchor not present in {path}: {old!r}. The tree "
+                          f"moved under this case. Without this check the "
+                          f"mutation is a no-op, the tool passes a tree that "
+                          f"was never broken, and the case blames the tool."
+                      )
+                  target.write_text(text.replace(old, new, 1))
+              return apply
 
           # validate-skills.py
           case("missing reference", VALIDATE, ["--strict"],
@@ -554,14 +583,15 @@ jobs:
           case("orphan reference", VALIDATE, ["--strict"],
                lambda s: (s / S / "references" / "zz-orphan.md").write_text("# o\n"))
           case("colon-space in frontmatter", VALIDATE, ["--strict"],
-               edit(f"{S}/SKILL.md", "description: Solve", "description: Solve: it"))
+               edit(f"{S}/SKILL.md", "description: Use when", "description : Use when"))
           case("broken sub-skill yaml", VALIDATE, ["--strict"],
                edit(f"{S}/skills/skill-creator/SKILL.md", "license: MIT", "license: MIT\nbogus: [x"))
           case("agent role without prohibitions", VALIDATE, ["--strict"],
                lambda s: (s / S / "agents" / "verifier.md").write_text(
                    "---\nname: verifier\ndescription: " + "x" * 40 + "\n---\n\n## Output\nx\n" * 6))
           case("agent role unreachable from SKILL.md", VALIDATE, ["--strict"],
-               edit(f"{S}/SKILL.md", "security-reviewer", "nobody"))
+               edit(f"{S}/references/delegation.md",
+          "`agents/security-reviewer.md`", "`agents/nobody.md`"))
           # The marker check and fenced code. Both directions matter and the
           # second is the one that was broken: a role file showing the report it
           # produces carries a marker inside a ```markdown fence, and reading
@@ -840,8 +870,37 @@ jobs:
                   shutil.rmtree(box.parent, ignore_errors=True)
 
           def edit(path, old, new):
-              return lambda s: (s / path).write_text(
-                  (s / path).read_text().replace(old, new))
+              """Replace `old` with `new`, and refuse to do nothing.
+
+              str.replace() with no count returns the string unchanged when the
+              needle is absent, so a mutation whose anchor had rotted left the
+              tree valid, the tool correctly exited 0, and the case reported
+
+                  colon-space in frontmatter: validate-skills.py passed a
+                  broken tree
+
+              which is a false accusation: the tree was never broken, and the
+              reader is sent to the validator rather than to the stale test.
+              Two of the three failures in the first completed run of this
+              suite were exactly that, and they had been invisible for as long
+              as the job was being killed by its own timeout before it could
+              report anything at all.
+
+              A mutation that cannot be applied is a broken test. It must say so
+              rather than impersonate a passing one.
+              """
+              def apply(sandbox):
+                  target = sandbox / path
+                  text = target.read_text()
+                  if old not in text:
+                      raise AssertionError(
+                          f"anchor not present in {path}: {old!r}. The tree "
+                          f"moved under this case. Without this check the "
+                          f"mutation is a no-op, the tool passes a tree that "
+                          f"was never broken, and the case blames the tool."
+                      )
+                  target.write_text(text.replace(old, new, 1))
+              return apply
 
           def ruin(sandbox):
               for p in ("config/prod.yaml", "config/dev.yaml", "src/parser.py"):

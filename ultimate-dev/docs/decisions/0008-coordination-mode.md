@@ -82,7 +82,7 @@ distinguishes a considered choice from an expensive default.
 error is classifiable as a *mode* error rather than a broken specialist. `RunState` exists,
 so the resumption claims have something to rest on.
 
-**Worse, and accepted:** nineteen boundaries instead of seventeen, and one more field to
+**Worse, and accepted:** twenty boundaries instead of seventeen, and one more field to
 fill at one boundary. The rung still governs how many records are written.
 
 **Not fixed by this decision, and stated so it is not discovered later:**
@@ -98,7 +98,9 @@ fill at one boundary. The rung still governs how many records are written.
   corpus, not one this architecture can make.
 
 **Constraint inherited from 0002, and it bites harder now.** Selection must stay gated on
-reachability. 291 roles ship and nineteen carry a dispatch condition. Adding a mode that
+reachability. 286 roles ship and all 286 now carry a row in `references/delegation.md`,
+19 written by hand and 267 mechanically derived from each role's own `description:`.
+Adding a mode that
 *selects* specialists by description sharpens the trigger-signal split rather than
 solving it: with overlapping descriptions the wrong specialist is chosen as often as the
 right one, and the failure presents as incompetence rather than misconfiguration, so it
@@ -110,4 +112,4 @@ does not get debugged. Unreachable specialists are not spare capacity.
 - `references/coordination-modes.md` — the four modes, costs, selection test
 - `tools/run-state.py` — RunState, including the `check` gate
 - `SKILL.md` Step 4 — the mode step in the kernel
-- `references/decision-fabric.md` — the nineteenth boundary
+- `references/decision-fabric.md` — the twentieth boundary

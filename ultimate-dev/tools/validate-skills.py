@@ -1414,7 +1414,32 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
         for lineno, line in enumerate(
             workflow.read_text(encoding="utf-8", errors="replace").splitlines(), 1
         ):
-            if not PLACEHOLDER_PATTERN.search(line):
+            # A comment is prose about the rule, not the rule. validate.yml
+            # carries a block comment explaining why TODO is matched
+            # case-sensitively -- and the text of that explanation necessarily
+            # contains the word TODO, so checking every line flagged the
+            # documentation of the rule as a reimplementation of it. A comment
+            # cannot execute, so skipping it cannot hide a reimplementation;
+            # it only stops the check from firing on the file that documents it.
+            #
+            # This is the same reasoning as the fence exemption elsewhere in this
+            # file: a line that is a sample is not a declaration.
+            if line.lstrip().startswith("#"):
+                continue
+            # looks_unfilled(), not PLACEHOLDER_PATTERN. This loop is a copy of
+            # the rule it is policing, and the copy was missing an arm: the
+            # case-sensitive markers TODO, FIXME and TBD. So a workflow that
+            # reimplements the unfilled-marker rule using the most common marker
+            # of all passed this check, while the same line in a skill did not.
+            #
+            # The comment directly above says "One rule, one owner", twenty
+            # lines before the code was a second, narrower copy of that rule.
+            # The duplication is what made the drift invisible: there was
+            # nothing to compare the two against, so nobody noticed they
+            # disagreed. The fix is the call above, and the reason it is worth
+            # stating is that the next edit to either side can now only change
+            # one of them.
+            if not looks_unfilled(line):
                 continue
             # This validator's own name in a message is not an implementation.
             if "validate-skills.py" in line:

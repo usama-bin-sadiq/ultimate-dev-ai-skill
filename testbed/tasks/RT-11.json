@@ -1,0 +1,10 @@
+{
+  "id": "RT-11",
+  "split": "dev",
+  "repo": "ultimate-dev",
+  "title": "A metric the repository defines cannot be computed on the class it targets",
+  "query": "Rung accuracy is the repository's own metric 8, and it is null by design at R0 and R1 because the kernel is told to emit nothing there. Establish whether that is a contradiction and which document resolves it.",
+  "expected_mode": "inline",
+  "expected_rung": "R3",
+  "oracle": "The two documents that conflict are both authoritative and both argue well: one says recording anything at R0 is ceremony, the other says an unrecorded R0 is how over-orchestration becomes invisible. Resolving it means deciding which failure is worse, and there is a real argument either way. R3 because the answer is a judgement about the system's purpose, not a fact to be looked up -- and a delegate handed this would either pick a side without seeing the consequences or ask you questions you already know the answer to."
+}

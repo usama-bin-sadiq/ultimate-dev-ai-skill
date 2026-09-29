@@ -1,0 +1,10 @@
+{
+  "id": "RT-06",
+  "split": "dev",
+  "repo": "ultimate-dev",
+  "title": "A state tool silently ignores a documented argument position",
+  "query": "run-state.py documents that --state-dir works before or after the subcommand. One of those positions writes somewhere else. Find which, and why.",
+  "expected_mode": "inline",
+  "expected_rung": "R2",
+  "oracle": "The symptom is that a documented invocation lands in the wrong directory, which points at the filesystem rather than at argparse. The cause is a one-line interaction between a parent and child parser default, and it is not visible from reading either parser alone. R2 rather than R1 because nothing errors and nothing is printed -- you have to reason about argument precedence to see it."
+}

@@ -74,11 +74,13 @@ responses. Blind retry is prohibited. Re-decide at the hub and record it.
 outcome first, then evidence, assumptions, limitations, confidence, verification
 status.
 
-**SELF-EVALUATE.** Nine questions, briefly and without defensiveness: did this
+**SELF-EVALUATE.** Ten questions, briefly and without defensiveness: did this
 solve the task, was the context necessary, was the reasoning sufficient, was the
-strategy effective, was verification adequate, what failed, what is reusable,
-what must not repeat. The "necessary" and "sufficient" questions catch
-over-orchestration, and they are the ones most often skipped.
+strategy effective, were the capabilities appropriate, was verification adequate,
+did the coordination mode fit or did we pay for isolation nobody needed, what
+failed, what could be reused, what should not be repeated. The "necessary" and
+"sufficient" questions catch over-orchestration, and they are the ones most often
+skipped. This list is the one `SKILL.md` Step 9 enumerates.
 
 **LEARN.** Move experience into the gated lifecycle. One instance is a candidate,
 not a rule. Prefer the reversible change: adjust this run, record the candidate,
@@ -115,7 +117,7 @@ fewer tokens, tool calls, or elapsed time. Paying more to avoid a costly failure
 is the correct trade, and a cheap answer that is wrong about an irreversible
 thing is not cheap.
 
-## The 17 decision boundaries
+## The 20 decision boundaries
 
 Every arrow below crosses the fabric. A boundary gets a record when crossing it
 changes the shape of the work, so loading C2 context for a task whose next action
@@ -124,22 +126,29 @@ is already determined does not, because nothing about the shape changed.
 | # | Boundary | The question |
 |---|---|---|
 | 1 | Task understanding | What is actually being asked? |
-| 2 | Decomposition | Is breaking this into units worth it? |
-| 3 | Context retrieval | What do we need to look up, and where? |
-| 4 | Context depth | How deep is enough? |
-| 5 | Capability selection | Which capability does this? |
-| 6 | Capability acquisition | Where does a missing capability come from? |
-| 7 | Strategy selection | Which approach? |
-| 8 | Workflow selection | Sequential, parallel, or iterative? |
-| 9 | Reasoning effort | How much reasoning is justified? |
-| 10 | Specialist delegation | Does specialisation beat one context? |
-| 11 | Parallelisation | What is genuinely independent? |
-| 12 | Research depth | How far outside what we hold do we go? |
-| 13 | Verification depth | Evidence, validation, or independent? |
-| 14 | Retry | Is a second attempt justified, and what is the bound? |
-| 15 | Replanning | Does the plan survive this evidence? |
-| 16 | Escalation | Should a human decide this? |
-| 17 | Learning promotion | Does this generalise enough to keep? |
+| 2 | Coordination mode | How do the pieces come back together? |
+| 3 | Decomposition | Is breaking this into units worth it? |
+| 4 | Context retrieval | What do we need to look up, and where? |
+| 5 | Context depth | How deep is enough? |
+| 6 | Capability selection | Which capability does this? |
+| 7 | Capability acquisition | Where does a missing capability come from? |
+| 8 | Skill creation | Is a new skill justified, or is this a plan step? |
+| 9 | Skill composition | Can existing capabilities be combined? |
+| 10 | Strategy selection | Which approach? |
+| 11 | Reasoning effort | How much reasoning is justified? |
+| 12 | Model / resource | Does this need a different tool or a different rigour? |
+| 13 | Specialist delegation | Does specialisation beat one context? |
+| 14 | Parallelisation | What is genuinely independent? |
+| 15 | Research depth | How far outside what we hold do we go? |
+| 16 | Verification depth | Evidence, validation, or independent? |
+| 17 | Retry | Is a second attempt justified, and what is the bound? |
+| 18 | Replanning | Does the plan survive this evidence? |
+| 19 | Escalation | Should a human decide this? |
+| 20 | Learning promotion | Does this generalise enough to keep? |
+
+Workflow selection has no separate row here, deliberately: one ladder — the
+capability resolution order — answers it, and splitting it would produce two
+questions with one answer. `references/decision-fabric.md` records the mapping.
 
 ## Which boundaries each rung must cross
 
@@ -149,27 +158,30 @@ live, and the decision is "no" unless a stated condition fires.
 | Boundary | R0 | R1 | R2 | R3 | R4 |
 |---|---|---|---|---|---|
 | 1 Task understanding | mandatory | mandatory | mandatory | mandatory | mandatory |
-| 2 Decomposition | no | optional | mandatory | mandatory | mandatory |
-| 3 Context retrieval | no | optional | mandatory | mandatory | mandatory |
-| 4 Context depth | no | optional | mandatory | mandatory | mandatory |
-| 5 Capability selection | no | optional | mandatory | mandatory | mandatory |
-| 6 Capability acquisition | no | no | optional | mandatory | mandatory |
-| 7 Strategy selection | no | optional | mandatory | mandatory | mandatory |
-| 8 Workflow selection | no | no | optional | mandatory | mandatory |
-| 9 Reasoning effort | mandatory | mandatory | mandatory | mandatory | mandatory |
-| 10 Specialist delegation | no | no | optional | optional | record refusals |
-| 11 Parallelisation | no | no | optional | mandatory | mandatory |
-| 12 Research depth | no | no | optional | optional | mandatory |
-| 13 Verification depth | mandatory | mandatory | mandatory | mandatory | plus independent |
-| 14 Retry | no | optional | optional | mandatory | mandatory |
-| 15 Replanning | no | optional | optional | mandatory | mandatory |
-| 16 Escalation | no | optional | optional | mandatory | mandatory |
-| 17 Learning promotion | no | no | optional | mandatory | mandatory |
+| 2 Coordination mode | mandatory | mandatory | mandatory | mandatory | mandatory |
+| 3 Decomposition | no | optional | mandatory | mandatory | mandatory |
+| 4 Context retrieval | no | optional | mandatory | mandatory | mandatory |
+| 5 Context depth | no | optional | mandatory | mandatory | mandatory |
+| 6 Capability selection | no | optional | mandatory | mandatory | mandatory |
+| 7 Capability acquisition | no | no | optional | mandatory | mandatory |
+| 8 Skill creation | no | no | optional | optional | optional |
+| 9 Skill composition | no | no | optional | optional | optional |
+| 10 Strategy selection | no | optional | mandatory | mandatory | mandatory |
+| 11 Reasoning effort | mandatory | mandatory | mandatory | mandatory | mandatory |
+| 12 Model / resource | no | no | optional | optional | optional |
+| 13 Specialist delegation | no | no | optional | optional | record refusals |
+| 14 Parallelisation | no | no | optional | mandatory | mandatory |
+| 15 Research depth | no | no | optional | optional | mandatory |
+| 16 Verification depth | mandatory | mandatory | mandatory | mandatory | plus independent |
+| 17 Retry | no | optional | optional | mandatory | mandatory |
+| 18 Replanning | no | optional | optional | mandatory | mandatory |
+| 19 Escalation | no | optional | optional | mandatory | mandatory |
+| 20 Learning promotion | no | no | optional | mandatory | mandatory |
 
-Three readings matter. **Boundary 9 is mandatory everywhere**: the rung is a
+Three readings matter. **Boundary 11 is mandatory everywhere**: the rung is a
 reasoning-effort decision, so the kernel must at least record that it chose R0,
 and an unrecorded R0 is how over-orchestration becomes invisible, because the
-cost is then a decision nobody can inspect. **Boundary 13 is mandatory
+cost is then a decision nobody can inspect. **Boundary 16 is mandatory
 everywhere**: verification depth is never optional, only its strength varies,
 and a rung that skipped verification would be a different architecture. **R0 is
 not an exemption from the kernel**: it is the kernel with two boundaries crossed

@@ -314,7 +314,7 @@ loses the most informative signal the suite produces.
 
 ## Inventory
 
-121 cases across 83 case files, plus five top-level documents. The counts are
+128 cases across 83 case files, plus five top-level documents. The counts are
 recorded here so a drift between the prose and the directories is detectable.
 
 | Group | Files | Cases | Count rule |
@@ -333,7 +333,7 @@ recorded here so a drift between the prose and the directories is detectable.
 | `failure-cases/` (7 categories) | 17 | 17 | rate, `n`=10 |
 | `security-cases/` (6 categories) | 13 | 13 | invariant, `n`=10 |
 | `regression/regression-suite.md` | 1 | 11 | invariant, `n`=5 |
-| **Total** | **83 files** | **121 cases** | |
+| **Total** | **83 files** | **128 cases** | |
 
 ## Running a case
 

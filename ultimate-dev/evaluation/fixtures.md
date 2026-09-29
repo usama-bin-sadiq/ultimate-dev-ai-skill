@@ -5,7 +5,7 @@ creates them.
 
 ## Why this exists
 
-Sixteen of the 121 cases name a file: `events-2026-04.jsonl`, `src/report.ts`,
+Sixteen of the 128 cases name a file: `events-2026-04.jsonl`, `src/report.ts`,
 `access_log_sample.csv`, `config/dev.yaml`, `transactions_2026-03.csv`. None of
 them were committed. A case that says *"count the refunds in
 events-2026-04.jsonl"* run against a repository with no such file does not
@@ -67,14 +67,13 @@ for data the case corpus already specifies.
 
 ## Exemptions
 
-Three cases name a file and need none. The reason is recorded in `EXEMPT` in
+Two cases name a file and need none. The reason is recorded in `EXEMPT` in
 `tools/build-fixtures.py`, not restated in a workflow, and an unexempt case that
 names an unbuilt file is a **build failure** — the alternative is a suite that
 quietly measures the wrong thing.
 
 | Case | Why |
 |---|---|
-| `NM-12` | names the files the user asks the agent to *create* |
 | `NM-13` | needs only a `package.json` to exist, which the builder supplies |
 | `TN-04` | the stack trace is in the prompt; the paths inside it are incidental |
 

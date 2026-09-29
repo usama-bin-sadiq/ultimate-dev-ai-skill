@@ -1,0 +1,10 @@
+{
+  "id": "RT-10",
+  "split": "heldout",
+  "repo": "ultimate-dev",
+  "title": "Reconcile a boundary count that five documents state five different ways",
+  "query": "docs/architecture/kernel.md says 17, ARCHITECTURE.md says 18, SKILL.md says 19 and enumerates 15, decision-fabric.md has 20 rows. Make them agree, and say which number is right.",
+  "expected_mode": "delegate",
+  "expected_rung": "R2",
+  "oracle": "The mechanical part -- counting rows -- is trivial; the judgement part is deciding which documents are authoritative and whether the count or the prose enumeration is the thing that is wrong. Six documents must be edited consistently, and a miss in any one leaves the drift check firing. delegate: the bulk is many-file mechanical reconciliation where consistency across edits matters more than holding all six in one head, and the oracle is short enough to hand over. R2, not R3: the failure mode is a missed file, which is mechanical, not a wrong model of the problem."
+}

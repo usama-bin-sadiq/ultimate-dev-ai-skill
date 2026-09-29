@@ -6,7 +6,7 @@ cannot tell which is right.
 
 ## What this is
 
-2398 capabilities are installed: 2112 sub-skills and
+2372 capabilities are installed: 2086 sub-skills and
 286 roles. This file is the map, not the territory — it tells
 you a capability exists and where it lives, and it does not load any of
 them. A catalogue printed into context would cost more than the task.
@@ -27,11 +27,13 @@ hit is **routed** — whether a decision can actually reach it — or
 
 | | |
 |---|---|
-| sub-skills | 2112 |
+| sub-skills | 2086 |
 | roles | 286 |
-| **discoverable** (has a description) | **2398** |
+| **discoverable** (has a description) | **2372** |
 | **undiscoverable** (no description) | **0** |
-| roles with a dispatch condition | 19 |
+| roles with a row in `delegation.md` | 286 |
+| ... of which written by hand | 19 |
+| ... of which mechanically derived from the role's own `description:` | 267 |
 | tool-bound | 614 |
 
 ## Two different mechanisms, not one count

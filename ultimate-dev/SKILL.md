@@ -139,16 +139,17 @@ objection. Check the pair, not the field. **Fabrication runs both ways** — the
 symmetric failure is inventing a defence to kill a finding, so refute only with a
 mitigation you located and read.
 
-**The count of records is rung-dependent; the fields are not.** Nineteen records
+**The count of records is rung-dependent; the fields are not.** Twenty records
 on every run is the most expensive possible assertion of diligence, in a kernel
 whose most common defect is doing too much. What is non-negotiable is the *shape*:
 whenever you record a decision, `rejected` and `recovery` are filled. How many you
-record is set by the rung — `references/triage.md`.
+record is set by the rung — `references/decision-ledger.md`.
 
-The boundaries that can require a record: task understanding, **coordination mode**,
-decomposition, context depth, capability choice, capability acquisition, strategy,
-reasoning depth, delegation, parallelisation, verification depth, retry, replan,
-escalation, and learning promotion.
+The twenty boundaries that can require a record: task understanding, **coordination
+mode**, decomposition, context depth, context retrieval, capability choice, capability
+acquisition, skill creation, skill composition, strategy, reasoning depth, model /
+resource, delegation, parallelisation, research depth, verification depth, retry,
+replan, escalation, and learning promotion.
 
 **`rejected` is the field that earns its place.** A decision without a recorded
 alternative is an assertion, not a decision, and cannot be reviewed later. If you
@@ -287,18 +288,23 @@ See `references/observability.md`.
 
 ### Delegated roles
 
-Of the 286 role files in `agents/`, nineteen carry a dispatch condition in
-`references/delegation.md`; each has a procedure, output contract, and
-prohibitions. That file is the index — role, trigger, and what it must not do.
-**A role with no dispatch condition is not available**, however good it is.
+All 286 role files in `agents/` have a row in `references/delegation.md`; each has a
+procedure, output contract, and prohibitions. That file is the index — role, trigger,
+and what it must not do. **A role with no dispatch condition is not available**,
+however good it is. Those rows are not equal: 19 were written by hand, and 267 were
+derived mechanically from each role's own `description:`, which makes a role reachable
+but is not 267 judgements about when delegation pays. Rewrite a row that deserves better.
 
-A far larger catalogue is installed alongside these — 2,398 capabilities.
+A far larger catalogue is installed alongside these — 2,372 capabilities.
 **Do not read it; search it.** `references/capability-catalogue.md` maps it, and
 `python3 tools/index-tree.py --search <term>` finds an entry by name, purpose, or
-keyword. Every hit is marked **routed** or **UNROUTED**: routed means a decision
-can select it, and almost none of the catalogue is routed yet. An installed
-capability that nothing dispatches to is not available, and treating the count as
-availability is the error the catalogue exists to prevent.
+keyword. The **routed** / **UNROUTED** flag on each hit means different things for the
+two kinds, and `references/capability-catalogue.md` explains which: sub-skills are
+*discovered*, because the runtime lists every `description:` in a system reminder and
+the model chooses from that, whereas roles are *dispatched* and need a row. The flag is
+computed by matching a skill directory name against the filenames in `delegation.md`,
+so it is 0 for every sub-skill by construction and is **not** a reachability measurement
+for them.
 
 A delegate gets the context it needs and nothing more; a delegate that finds its
 scope was wrong says so rather than widening it. If the runtime offers no dispatch
@@ -456,27 +462,12 @@ kernel loads at all live in the `description` above, where the host reads them
 before deciding to load, and are not repeated here: a negative constraint
 restated five times stops being a rule and becomes a theme.
 
-- **The confident fabrication.** Reporting a tool result, a citation, or a test
-  outcome that was never observed. Undetectable downstream, therefore worst.
-- **Blind retry.** Repeating a failed action without diagnosing its cause.
-- **Load-everything context.** Reasoning over material that does not bear on the
-  decision.
-- **Under-evidenced certainty.** Stating a claim whose evidence does not reach
-  it, or laundering an assumption into a fact by dropping the qualifier.
-- **Permanent plan commitment.** Defending a plan against contradicting evidence
-  instead of revising it.
-- **Capability proliferation.** Minting a skill per task, so nothing is reused
-  and the trigger signal splits. This is about creation during a run; the roles
-  the kernel ships are a resource set, and each earns its place or goes.
-- **Uncontrolled learning.** Installing a lesson from a single instance as
-  permanent behaviour.
-- **Unnecessary delegation.** Spawning specialists to do what one context does
-  better.
-- **Silent overreach.** Acting destructively because the task implied it rather
-  than because it was authorised.
-- **Unreviewed coordination.** Choosing how results are assembled without saying
-  so, so a mode that cost more than it bought is indistinguishable from one that
-  was necessary.
+The rest are enumerated, with the symptom, the mechanism and the fix for each,
+in `references/anti-patterns.md`. That list is the guarded one: the regression
+suite has a case per entry, and the list previously lived in two places that had
+drifted apart. The kernel's own `Unreviewed coordination` was in the copy here
+and not in the copy there, which meant the only coordination-mode failure mode
+the kernel names had no guard at all.
 
 ## References
 
@@ -488,12 +479,11 @@ and reasoning** · **planning, execution, verification** · **recovery** · **le
 · **control and safety** · **breadth**. Coordination mode is
 `references/coordination-modes.md`.
 
-**Elsewhere** — `skills/skill-creator/SKILL.md` owns capability creation,
-validation, security review, promotion, and deprecation. `agents/` holds 286 role
-files, of which 19 carry a dispatch condition. `references/maturity.md` records
-which prd.md §24 level this claims and what is missing to reach the next.
-`tools/` holds the runtime validators: `validate-skills.py` for structure,
-`run-state.py` for run state, `baseline-check.sh` for measuring the tree against a
-validator this session did not write, plus the bundler, eval projector, fixture
-generator, and pilot runner, which are maintenance machinery and not part of an
-install.
+**Elsewhere** — `skills/skill-creator/SKILL.md` owns capability creation, validation,
+security review, promotion, and deprecation. `agents/` holds 286 role files, and all
+286 have a row in `references/delegation.md`. `references/maturity.md` records which
+prd.md §24 level this claims and what is missing to reach the next. `tools/` holds the
+runtime validators: `validate-skills.py` for structure, `run-state.py` for run state,
+`baseline-check.sh` for measuring the tree against a validator this session did not
+write, plus the bundler, eval projector, fixture generator, and pilot runner, which are
+maintenance machinery and not part of an install.

@@ -1,0 +1,10 @@
+{
+  "id": "RT-05",
+  "split": "heldout",
+  "repo": "ultimate-dev",
+  "title": "The routing oracle exists in prose and is deleted on projection",
+  "query": "The corpus states the correct coordination mode for six cases. The grader never receives it. Establish where it is lost and what would have to change for mode accuracy to be measurable at all.",
+  "expected_mode": "inline",
+  "expected_rung": "R3",
+  "oracle": "The answer spans three tools and a generated artefact, and the chain has to be followed to its end: a label allowlist in the builder, a field list in the record, and a grader that never looks. Missing any one link produces a confident wrong answer about which layer is at fault. R3 because the claim being tested -- that routing accuracy is unmeasurable -- has to be established, not just the first discrepancy found."
+}

@@ -25,7 +25,7 @@ Read in this order if you are new.
   architecture. What each of the fourteen layers is *for*, in the order a run
   passes through them.
 - **[architecture/kernel.md](architecture/kernel.md)** — the execution model:
-  the lifecycle, the JEv fabric, and the seventeen decision boundaries.
+  the lifecycle, the JEv fabric, and the twenty decision boundaries.
 - **[architecture/scalability.md](architecture/scalability.md)** — how the same
   kernel operates from L1 to L7. This is the load-bearing claim of the whole
   repository, so it gets the most careful treatment.

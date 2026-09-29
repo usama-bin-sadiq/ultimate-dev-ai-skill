@@ -128,6 +128,18 @@ STOP_LABELS = {
     "expected output", "pass criteria", "fail criteria", "trap", "naive trigger",
     "why it must not trigger", "fixture", "fixture required",
     "self-contained because", "must not", "steps",
+    # The routing oracle. These four were the strongest labels in the corpus --
+    # a stated, per-case, human-readable correct answer for which coordination
+    # mode and which rung the task warrants -- and none of them survived
+    # projection. An unrecognised label hits `current = None` and is dropped, so
+    # all 128 cases reached the grader carrying no mode and no rung. The corpus
+    # could state which architecture a task warrants and then threw the answer
+    # away on the way to the machine.
+    #
+    # The set is named STOP_LABELS because these are the points at which field
+    # capture restarts, not because the fields are discarded. That misnomer has
+    # already cost this rule once.
+    "correct mode", "rung", "scale", "coordination",
 }
 
 
@@ -271,6 +283,17 @@ def collect_cases() -> tuple[list[dict], list[dict]]:
                 "pass_criteria": fields.get("pass criteria", "").strip(),
                 "fail_criteria": fields.get("fail criteria", "").strip(),
                 "trap": fields.get("trap", "").strip(),
+                # Kept as null when a case states none, so "this case has no
+                # routing oracle" stays distinguishable from "the kernel chose
+                # the right one".
+                # Backticks stripped: the corpus writes them as Markdown, and a
+                # grader comparing "`inline`" to "inline" would report a miss on
+                # a correct answer.
+                "correct_mode": (fields.get("correct mode", "").strip()
+                                 .strip("`").strip() or None),
+                "rung": fields.get("rung", "").strip() or None,
+                "scale": fields.get("scale", "").strip() or None,
+                "primary_metric": fields.get("primary metric", "").strip() or None,
                 "source": str(path.relative_to(SKILL_ROOT)),
             })
 

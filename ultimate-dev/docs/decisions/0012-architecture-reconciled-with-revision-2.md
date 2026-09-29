@@ -10,7 +10,7 @@ Relates to: `ARCHITECTURE.md`, `references/decision-fabric.md`, ADR 0008, ADR 00
 `ARCHITECTURE.md` stated that the full specification is `new-arch.md` and
 carried four cross-cutting systems and "seventeen named boundaries". Revision 2
 of the specification — `new-arch-updated.md` — has **eight** cross-cutting
-systems and **eighteen** boundaries, and `new-arch.md` has no
+systems and **twenty** boundaries, and `new-arch.md` has no
 coordination-mode section at all.
 
 So the document a reader is sent to for the design was describing a
@@ -38,15 +38,19 @@ it can go: it decides how many contexts exist, and nothing downstream is
 choosable until that is settled.
 
 **The boundary count, and a third number nobody had seen.** This document said
-seventeen. The specification says eighteen — coordination mode added as its own
+seventeen. The specification says twenty — coordination mode added as its own
 boundary, and workflow selection un-folded from capability resolution order.
 
 The third number was worse. `references/decision-fabric.md` is the document a
 reader consults to find where a boundary is handled, and its table enumerated
 **fifteen**. Coordination mode, reasoning effort and workflow selection appeared
 in its prose but had no row — so the table said three boundaries did not exist,
-for a document whose entire job is to be the index of them. All eighteen are now
-rows.
+for a document whose entire job is to be the index of them.
+
+**Corrected 2026-09-29:** the "all eighteen are now rows" claim this paragraph
+previously made was itself wrong. `references/decision-fabric.md` now has
+**twenty** rows, and the eighteen named in the earlier version of this sentence
+was not the measured count. All twenty are rows.
 
 **The cross-cutting systems.** Four became eight, with the reason for each
 addition rather than the bare list. Three of the four new ones exist because

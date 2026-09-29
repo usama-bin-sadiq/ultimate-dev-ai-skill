@@ -1,0 +1,10 @@
+{
+  "id": "RT-08",
+  "split": "heldout",
+  "repo": "ultimate-dev",
+  "title": "A benchmark must report no accuracy figure at all",
+  "query": "Build a route-accuracy harness that refuses to print an accuracy number until its judge has been shown consistent with itself, and explain what the gate is for.",
+  "expected_mode": "inline",
+  "expected_rung": "R3",
+  "oracle": "Designing the gate is the work: you have to decide what counts as consistency, choose a metric whose assumptions match the rating design, and pick a floor before you know the answer. Getting a plausible number out is easy and is not the task. R3, unfamiliar territory with a real chance of the harness measuring the wrong construct. Inline: the design is one coherent artefact and splitting it would lose the reasoning that connects the gate to the number it withholds."
+}

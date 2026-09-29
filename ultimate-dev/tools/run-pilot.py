@@ -419,8 +419,40 @@ def changed_files(before: dict[str, str] | None, sandbox: Path | None) -> list[s
                   if before.get(n) != after.get(n) and not _is_artefact(n))
 
 
+def _recorded_mode(sandbox: str | None) -> str | None:
+    """The coordination mode this run actually recorded, or None.
+
+    Read from the run's own state file rather than from the transcript. The
+    transcript contains the kernel *talking about* a mode, which is not the
+    same as having chosen one, and a grep for the word would score narration.
+    """
+    if not sandbox:
+        return None
+    path = Path(sandbox) / ".ultimate-dev" / "run-state.json"
+    try:
+        state = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    mode = (state.get("coordination") or {}).get("mode")
+    return mode if isinstance(mode, str) else None
+
+
+def _recorded_mode_changes(sandbox: str | None) -> int | None:
+    """How many times this run changed its coordination mode."""
+    if not sandbox:
+        return None
+    path = Path(sandbox) / ".ultimate-dev" / "run-state.json"
+    try:
+        state = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    changed = (state.get("coordination") or {}).get("changed")
+    return len(changed) if isinstance(changed, list) else None
+
+
 def apply_assertions(case_id: str, spec: dict, trace: dict,
-                     after: dict | None, before: dict | None) -> dict:
+                     after: dict | None, before: dict | None,
+                     sandbox: str | None = None) -> dict:
     """Run the objective assertions. Returns pass/fail/null with per-assertion detail.
 
     `null` is a real outcome and the most common one: a case with no assertions,
@@ -503,6 +535,64 @@ def apply_assertions(case_id: str, spec: dict, trace: dict,
             results.append({"id": aid, "type": kind, "passed": not offending,
                             "changed": changed, "offending": offending,
                             "why": assertion.get("why", "")})
+
+        elif kind == "coordination_mode":
+            # The routing oracle, graded.
+            #
+            # The first assertion type that can express a statement about how
+            # the run was ASSEMBLED rather than about what it produced. Every
+            # other type grades an artefact -- some output text, some file,
+            # some set of changed paths. A run that chose `handoff` on a task
+            # whose declared correct mode is `inline`, and then produced a
+            # perfectly good answer, passed all of them, because nothing looked
+            # at the choice.
+            #
+            # The corpus has stated the correct mode since it was written:
+            # evaluation/coordination-modes/CASES.md carries `**Correct mode:**`
+            # for CM-01..CM-04. The label was dropped on projection, so the
+            # grader never received it and its only gate for a must-fire case
+            # was that the answer exceeded 120 characters.
+            #
+            # Absence of a state file is UNDECIDABLE, never a pass. A run that
+            # recorded nothing has not demonstrated a correct choice; it has
+            # demonstrated no choice. Scoring that as correct would leave the
+            # metric unfalsifiable in exactly the way the previous grader was.
+            want = assertion.get("mode") or assertion.get("value")
+            observed = _recorded_mode(sandbox)
+            if observed is None:
+                results.append({
+                    "id": aid, "type": kind, "passed": None,
+                    "note": ("no run-state record; the run did not record a "
+                             "coordination mode, so the choice cannot be graded"),
+                })
+                undecidable += 1
+                continue
+            results.append({
+                "id": aid, "type": kind, "passed": observed == want,
+                "expected": want, "observed": observed,
+                "why": assertion.get("why", ""),
+            })
+
+        elif kind == "mode_changes_at_most":
+            # CM-05 and CM-06 have no single correct mode. Their finding is that
+            # the FIRST choice was wrong: repeated mode changes in one run is a
+            # misconfiguration, not a hard task. run-state.py check already
+            # fails at three; this makes it an assertion rather than something
+            # a human has to remember to run.
+            observed = _recorded_mode_changes(sandbox)
+            if observed is None:
+                results.append({
+                    "id": aid, "type": kind, "passed": None,
+                    "note": "no run-state record; mode changes cannot be counted",
+                })
+                undecidable += 1
+                continue
+            limit = int(assertion.get("max", 3))
+            results.append({
+                "id": aid, "type": kind, "passed": observed <= limit,
+                "expected": f"<= {limit}", "observed": observed,
+                "why": assertion.get("why", ""),
+            })
 
         else:
             results.append({"id": aid, "type": kind, "passed": None,
@@ -701,7 +791,8 @@ def grade(case: dict, result: dict, assertion_spec: dict | None = None) -> dict:
         try:
             base["quality"] = apply_assertions(
                 case["id"], assertion_spec, trace,
-                result.get("after"), result.get("before"))
+                result.get("after"), result.get("before"),
+                result.get("sandbox"))
         except HarnessError:
             raise
     else:

@@ -187,6 +187,9 @@ run_step "fixtures"             python3 tools/build-fixtures.py
 run_step "progressive-disclosure self-test" python3 tools/test-progressive-disclosure.py
 run_step "workflow-auth self-test"  python3 tools/test-workflow-auth.py
 run_step "changelog-generator self-test" python3 tools/test-changelog-generator.py
+run_step "routing-assertion self-test" python3 tools/test-routing-assertions.py
+run_step "marker-drift self-test"      python3 tools/test-marker-drift.py
+run_step "run-state self-test"          python3 tools/test-run-state.py
 
 # The guard itself, not just its self-test. A self-test proves the checker
 # works; running the checker proves the workflows are clean. Both, or the

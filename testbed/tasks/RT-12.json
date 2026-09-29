@@ -1,0 +1,10 @@
+{
+  "id": "RT-12",
+  "split": "heldout",
+  "repo": "ultimate-dev",
+  "title": "267 roles made reachable by appending their own descriptions",
+  "query": "references/delegation.md gained 267 rows so a validator would stop erroring. The file says the conditions are mechanically derived. Establish whether the roles are now dispatchable.",
+  "expected_mode": "delegate",
+  "expected_rung": "R3",
+  "oracle": "You have to read a 400-row generated table, sample the conditions, find four that are empty or literal placeholders, and then reason about whether a filename appearing in a table constitutes a dispatch decision. delegate: the bulk reading is exactly the shape a delegate is for -- narrow, mechanical, and answerable in one result -- and the context needed to hand it over is small. R3: the conclusion challenges a decision the repository recorded as fixed, so the risk of being confidently wrong is real."
+}

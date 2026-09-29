@@ -1,0 +1,10 @@
+{
+  "id": "RT-03",
+  "split": "heldout",
+  "repo": "ultimate-dev",
+  "title": "The validator self-test reports three validator bugs that are two stale test anchors",
+  "query": "The Test the Validators job fails with three 'validate-skills.py passed a broken tree' messages. Determine which of the three are real validator gaps and which are defects in the test.",
+  "expected_mode": "inline",
+  "expected_rung": "R2",
+  "oracle": "Three cases have to be told apart, and the two stale ones fail for a reason that looks identical to a real gap from the log alone: the mutation helper is shared and its failure mode is silent. That shared-cause reasoning is what makes it R2. It stays inline because the three cases are all in one file and the fix is one helper -- a delegate would have to be handed the whole test to answer a question about three lines of it."
+}

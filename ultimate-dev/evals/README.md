@@ -1,6 +1,6 @@
 # Evaluation cases
 
-122 cases that exercise the kernel end to end: does the right capability get
+128 cases that exercise the kernel end to end: does the right capability get
 selected, does the wrong one stay untriggered, and does the answer hold up when
 the request is phrased adversarially.
 
@@ -45,5 +45,5 @@ had once. Either build the fixture or declare the case self-contained.
 ## Reporting
 
 Report by `class` and by `family`, never as a single headline number. A rate
-over 122 mixed cases says less than the spread between its two worst families,
+over 128 mixed cases says less than the spread between its two worst families,
 and the spread is the part worth acting on.
