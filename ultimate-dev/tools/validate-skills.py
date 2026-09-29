@@ -909,6 +909,101 @@ def non_role_names(doc: Path, roles: set[str]) -> list[str]:
     return sorted(s for s in found if s not in _NOT_ROLES)
 
 
+# "13 cases across 6 categories; **0 executed**" and "11 cases, a suite,
+# **0 executed**" are the two shapes maturity.md uses. Both put the count
+# immediately before the word, which is what makes the claim easy to lift out
+# and easy to check. Matching the number alone would be looser and would fire on
+# prose like "the 3 of 128 cases that carry an oracle".
+EXECUTED_CLAIM = re.compile(r"(\d+)\s+executed\b", re.IGNORECASE)
+
+# Where a run leaves evidence. results/ and runs/ are gitignored on purpose --
+# a result that cannot be reproduced from the corpus is not committed -- so their
+# absence is the normal state and a claim resting on them has to earn it.
+RESULT_DIRS = ("results", "runs", "testbed/results", "testbed/runs")
+
+
+def _case_results_on_disk(repo_root: Path) -> int:
+    """How many evaluation cases have a *decided* result on disk.
+
+    Counting rows is the mistake this function exists to not make. All four
+    rows in testbed/results/ask-record.json have `actual_mode: None`: two died
+    on an adapter TypeError, two ran and left no state file. Every one of them
+    is a file on disk saying a case was attempted, and none of them is a case
+    that ran to a choice. A check that counted them would pass a claim of
+    "4 executed" on the strength of four crashes.
+
+    So a row counts only when it carries a decision -- a mode or a rung. That is
+    deliberately a floor rather than a count: a case that ran, chose nothing,
+    and recorded nothing is an executed case that produced no evidence, and
+    counting it would let an undecided run stand in for a result. Under-claiming
+    is the safe direction for a check whose subject is unsubstantiated claims.
+    """
+    decided: set[str] = set()
+    for rel in RESULT_DIRS:
+        base = repo_root / rel
+        if not base.is_dir():
+            continue
+        for path in base.rglob("*.json"):
+            try:
+                data = json.loads(path.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                continue
+            rows = data.get("rows") if isinstance(data, dict) else None
+            if not isinstance(rows, list):
+                continue
+            for row in rows:
+                if not isinstance(row, dict):
+                    continue
+                case = str(row.get("id") or "")
+                if not case:
+                    continue
+                if row.get("actual_mode") is None and row.get("actual_rung") is None:
+                    continue
+                decided.add(case)
+    return len(decided)
+
+
+def unsubstantiated_result_claims(repo_root: Path) -> list[tuple[str, str]]:
+    """Documents claiming executed evaluation cases that no run supports.
+
+    The corpus is 128 committed case definitions. Nothing in the repository says
+    how many have been run, because running them needs an agent runtime and
+    credits, so the number lives only in prose. references/maturity.md currently
+    says 0 for all three Level 4 classes, in bold, and that is correct -- but it
+    is correct by hand. Delete the bold and every check in this repository still
+    passes, which is precisely the failure decision 0013 exists to prevent: a
+    claim with no producer behind it.
+
+    So the claim is checked against what is actually on disk. The one thing this
+    does not do is catch a false claim of *zero*: nothing can distinguish "0
+    executed" from "0 executed and nobody looked", and pretending otherwise
+    would be a check that cannot fail.
+    """
+    recorded = _case_results_on_disk(repo_root)
+    out: list[tuple[str, str]] = []
+    # Globbed from the skill root, not the repository root. The documents that
+    # make these claims live under ultimate-dev/, and a glob rooted one level
+    # too high finds nothing -- which is a check that passes on every tree,
+    # including a doctored one. That is how this was caught: the first version
+    # of this function reported zero unsubstantiated claims on a maturity.md
+    # asserting 26 executed cases against zero results.
+    for pattern in ("*.md", "references/*.md", "docs/**/*.md", "evaluation/**/*.md"):
+        for doc in sorted(SKILL_ROOT.glob(pattern)):
+            if ".git" in doc.parts:
+                continue
+            try:
+                text = doc.read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                continue
+            for match in EXECUTED_CLAIM.finditer(text):
+                claimed = int(match.group(1))
+                if claimed == 0 or claimed <= recorded:
+                    continue
+                rel = doc.relative_to(SKILL_ROOT)
+                out.append((str(rel), f"{claimed} executed case(s)"))
+    return out
+
+
 def validate_repository(repo_root: Path) -> dict[str, Any]:
     """Check the repository invariants the convention does not cover.
 
@@ -1877,6 +1972,21 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
                 notes.append(f"all {len(roles)} agent roles are reachable from SKILL.md")
     else:
         warnings.append(f"{AGENTS_DIR}/ does not exist; the kernel has no delegated roles")
+
+    unsubstantiated = unsubstantiated_result_claims(repo_root)
+    for f, claim in unsubstantiated:
+        errors.append(
+            f"{f}: claims {claim} but no run produced it. A count of executed "
+            "cases is a claim about the world, not about the corpus: the corpus "
+            "is committed, the runs are not, and results/ is gitignored, so a "
+            "fresh clone has none. Either run it (testbed/run-tasks.py, then "
+            "run-bench.py) or say 0, which is the honest number until then."
+        )
+    if not unsubstantiated:
+        notes.append(
+            "every executed-case count in the documentation is 0, which is what "
+            "the runs on disk support"
+        )
 
     return {"ok": not errors, "errors": errors, "warnings": warnings, "notes": notes}
 

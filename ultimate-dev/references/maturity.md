@@ -37,6 +37,19 @@ That is the whole distance between 3 and 4, and it is not a code gap — the cod
 is written. It is a measurement gap, and it closes by running the suite rather
 than by writing more of it.
 
+**These zeros are checked, not remembered.** `validate-skills.py` reads every
+executed-case count in this file and the rest of the documentation and compares
+it against the decided results actually on disk. A count above what the runs
+support fails the gate. So the numbers here cannot be quietly improved by
+editing the prose — which is the failure decision 0013 is about, and the reason
+this paragraph exists rather than a promise to keep it honest.
+
+Counting is deliberately a floor. A row in a results file counts only if it
+carries a mode or a rung, so a case that crashed its adapter, or ran and
+recorded nothing, does not stand in for a result. The four rows in
+`testbed/results/` are all of that kind: two died on an adapter `TypeError`, two
+left no state file. Zero of the 128 cases have a decided result.
+
 ## What reaching Level 4 requires
 
 In order, because each depends on the one before it:
