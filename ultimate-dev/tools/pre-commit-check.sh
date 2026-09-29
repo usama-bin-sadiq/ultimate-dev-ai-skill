@@ -192,6 +192,7 @@ run_step "marker-drift self-test"      python3 tools/test-marker-drift.py
 run_step "run-state self-test"          python3 tools/test-run-state.py
 run_step "mode-cost self-test"          python3 tools/test-mode-cost.py
 run_step "provider-neutrality self-test"   python3 tools/test-provider-neutral.py
+run_step "oracle-coverage self-test"      python3 tools/test-oracle-coverage.py
 
 # The guard itself, not just its self-test. A self-test proves the checker
 # works; running the checker proves the workflows are clean. Both, or the

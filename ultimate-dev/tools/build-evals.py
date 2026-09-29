@@ -215,6 +215,65 @@ def parse_case(body: str) -> dict[str, str]:
     return out
 
 
+def _routing_oracle(fields: dict) -> str | None:
+    """The mode a case expects, or None when it states none.
+
+    Two labels carry it. `**Correct mode:**` is the plain form and names one
+    mode. `**Coordination:**` is the failure-recovery form and names a *sequence*
+    -- CM-05 says "delegate -> route (correct recovery)", CM-06 says "unstable" --
+    and neither is a single mode to compare a run against.
+
+    So the second label is read only when it names exactly one mode, and a
+    sequence is left in `expected_mode_sequence` rather than flattened to its first
+    element. Taking the first mode of a transition would score a run correct for
+    stopping at the mode the case names as the *wrong* one, which is the specific
+    mistake CM-05 exists to catch.
+
+    A case that states nothing is None, and None is unscored rather than wrong.
+    """
+    plain = (fields.get("correct mode", "") or "").strip().strip("`").strip()
+    if plain:
+        return plain
+
+    coordination = (fields.get("coordination", "") or "").strip()
+    if not coordination:
+        return None
+    if "→" in coordination or "->" in coordination:
+        return None
+    modes = re.findall(r"\b(inline|delegate|route|handoff)\b", coordination)
+    return modes[0] if len(modes) == 1 else None
+
+
+def _routing_sequence(fields: dict) -> list[str] | None:
+    """The mode sequence a case expects, when it states one.
+
+    Only the *correct recovery* is the expectation. CM-05 writes its `Coordination:`
+    as "delegate -> route (correct recovery) - keep retrying delegate (wrong)", and
+    scanning the whole line picks up the wrong answer's `delegate` as well, giving
+    a three-step sequence whose tail is the behaviour the case fails on. So the
+    scan stops at whichever marker comes first after the arrow: "(correct" or
+    "correct recovery" ends it, and a "wrong" marker ends it too, in which case
+    nothing is returned.
+
+    Reading the whole label would produce an oracle that a run fails by being
+    wrong in the way the case says not to be, which is worse than no oracle.
+    """
+    coordination = (fields.get("coordination", "") or "").strip()
+    if not coordination or ("→" not in coordination and "->" not in coordination):
+        return None
+
+    # The corpus marks the wrong path with a middot or a "wrong" word, not always
+    # with the word itself -- CM-05 writes "delegate -> route (correct recovery) ·
+    # keep retrying delegate (wrong)". Any of those ends the expected chain.
+    tail = re.split(
+        r"\(\s*wrong|\bwrong recovery\b|\(wrong\)|\bwrong\b|·\s*keep\b|·\s*wrong\b",
+        coordination, 1)[0]
+    if not re.search(r"\bcorrect\b", tail):
+        # The arrow chain names only the wrong path, so there is no expectation.
+        return None
+    return re.findall(r"\b(inline|delegate|route|handoff)\b", tail) or None
+
+
 def collect_cases() -> tuple[list[dict], list[dict]]:
     """Return (parsed cases, problems). Never silently drops a case."""
     cases: list[dict] = []
@@ -289,8 +348,8 @@ def collect_cases() -> tuple[list[dict], list[dict]]:
                 # Backticks stripped: the corpus writes them as Markdown, and a
                 # grader comparing "`inline`" to "inline" would report a miss on
                 # a correct answer.
-                "correct_mode": (fields.get("correct mode", "").strip()
-                                 .strip("`").strip() or None),
+                "correct_mode": _routing_oracle(fields),
+                "expected_mode_sequence": _routing_sequence(fields),
                 "rung": fields.get("rung", "").strip() or None,
                 "scale": fields.get("scale", "").strip() or None,
                 "primary_metric": fields.get("primary metric", "").strip() or None,
