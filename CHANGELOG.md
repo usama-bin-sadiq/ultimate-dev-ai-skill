@@ -1,5 +1,9 @@
 # Changelog
 
+## [4.0.33] — 2026-09-29
+
+- fix: the routing oracle is 4 of 128 by construction, so say so instead of looking broken
+
 ## [4.0.32] — 2026-09-29
 
 - fix: the kernel never told a run to record its architecture, and the corpus found it
