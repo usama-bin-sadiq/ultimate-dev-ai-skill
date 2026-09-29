@@ -212,8 +212,12 @@ def looks_like_path(token: str) -> bool:
         return False
     if t.startswith(("http://", "https://", "mailto:")):
         return False
-    if any(c in t for c in "*{}<>"):
+    if any(c in t for c in "*{}<>[]"):
         return False           # glob, placeholder, or ellipsis
+    # Brackets join the glob characters above for the same reason: `docs/intent/
+    # [topic].md` is the shape a template advertises, not a file it claims. A
+    # check that reports a template's own placeholder is reporting the template
+    # working.
     if Path(t).suffix not in DOC_EXTS:
         return False
     # A bare filename carries no directory, so "does this exist" has no single
@@ -221,6 +225,78 @@ def looks_like_path(token: str) -> bool:
     # `CONTRIBUTING.md` cites names as naming examples. Only assert on paths
     # that say which directory they are in.
     return "/" in t
+
+
+# The top-level directories of this repository. A backticked path whose first
+# segment is one of these is a claim that the file is HERE, and if it does not
+# resolve, the claim is false and worth reporting.
+#
+# Everything else is not a broken reference, it is a path in someone else's
+# project. The imported corpus was written for other repositories and says so:
+# `~/notes/x.md`, `.claude/rules/y.md`, `$UA_DIR/z.md`, `shared/notes.md`. Those
+# resolve from no root here, and they are supposed to -- they were never claims
+# about this tree. Unscoped, this check reported 1461 findings of which 1410
+# were of that kind, which buried the 51 that were real. A check whose output is
+# 97% noise gets ignored, and then the 3% goes with it.
+#
+# Twin of _DIRS in bundle-skill.py. Two copies of a rule is how they drift, so
+# they are asserted equal by tools/test-fence-parity.py's sibling check rather
+# than kept in step by hand.
+REPO_TREES = frozenset({
+    "references", "skills", "agents", "tools", "docs", "knowledge",
+    "evaluation", "examples", "research", "evals",
+})
+
+
+def _trees_match_the_bundler() -> str | None:
+    """REPO_TREES and bundle-skill.py's _DIRS must name the same directories.
+
+    Self-check, for the same reason bundle-skill.py checks that every entry in
+    EXCLUDED_TOOL_FILES really is excluded: a constant that quietly stops
+    agreeing with its twin is a check that reports the wrong thing, and nothing
+    else in the repository would notice. Returns a message, or None if they
+    agree.
+    """
+    here = Path(__file__).resolve().parent
+    bundler = here / "bundle-skill.py"
+    if not bundler.is_file():
+        return f"bundle-skill.py is not beside this tool; cannot check {bundler.name}"
+    src = bundler.read_text(encoding="utf-8", errors="replace")
+    # The assignment is wrapped across two lines, so the segments have to be
+    # gathered from the whole parenthesised group rather than matched on one.
+    # A regex that only handled the single-line form reported "the twin has
+    # moved" on a tree where nothing had moved, which is a check that is red for
+    # a reason nobody can act on.
+    # Anchored to the start of a line. Unanchored, it matched RUNTIME_DIRS --
+    # which is also _DIRS-suffixed, sits earlier in the file, and holds exactly
+    # four of the ten directories -- so the comparison reported six phantom
+    # entries on a tree where the two constants agreed perfectly.
+    block = re.search(r"(?ms)^_DIRS\s*=\s*\((.*?)\)", src)
+    if not block:
+        return "could not read _DIRS out of bundle-skill.py; the twin has moved"
+    theirs = {
+        part
+        for segment in re.findall(r'r?"([^"]*)"', block.group(1))
+        for part in segment.split("|")
+        if part
+    }
+    if theirs != set(REPO_TREES):
+        only_here = sorted(set(REPO_TREES) - theirs)
+        only_there = sorted(theirs - set(REPO_TREES))
+        return (
+            f"the tree list has drifted from bundle-skill.py: "
+            f"only here {only_here}, only there {only_there}"
+        )
+    return None
+
+
+def claims_this_repo(token: str) -> bool:
+    """True when the token asserts a file exists in *this* repository."""
+    t = token.strip()
+    if t.startswith(("./", "../")):
+        return True
+    head = t.split("/", 1)[0]
+    return head in REPO_TREES
 
 
 def is_historical(rel: Path) -> bool:
@@ -300,7 +376,7 @@ def check_links_paths(docs: list[Path], out: dict[str, list[str]]) -> None:
             continue
         for lineno, clean in enumerate(prose, 1):
             for token in CODE_SPAN.findall(clean):
-                if not looks_like_path(token):
+                if not looks_like_path(token) or not claims_this_repo(token):
                     continue
                 if any((r / token).exists() for r in roots):
                     continue
@@ -315,7 +391,7 @@ def check_links_paths(docs: list[Path], out: dict[str, list[str]]) -> None:
             if not raw.strip() or raw == prose[lineno - 1]:
                 continue                      # already scanned as prose
             for token in CODE_SPAN.findall(raw):
-                if not looks_like_path(token):
+                if not looks_like_path(token) or not claims_this_repo(token):
                     continue
                 if any((r / token).exists() for r in roots):
                     continue
@@ -576,6 +652,10 @@ def main(argv: list[str] | None = None) -> int:
     for name in ("index", "inventory", "payload", "headings"):
         if name in wanted:
             CHECKS[name](docs, out)
+
+    drift = _trees_match_the_bundler()
+    if drift:
+        out["inventory"].append(f"tools/audit-docs.py: {drift}")
 
     print(f"audited {len(docs)} maintained documents under {REPO_ROOT}")
     print(f"(excluded as describing other trees: "
