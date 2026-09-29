@@ -35,6 +35,27 @@ cheapest per **call** — which is not the same as cheapest per unit of work. A
 mode that is free per call is not free per unit, because ① pays in context
 that every later unit then carries.
 
+## What is measured, and what is not
+
+`python3 tools/measure-mode-cost.py` measures, from disk and without a model
+call, the two things that make the four modes differ:
+
+    kind                         n    median bytes   stays in context?
+    tool                        32          10,205     no
+    sub-skill                 2086           4,637     yes
+    sub-skill+references      2086           5,367     yes  (upper bound)
+    role                       286          14,598     no
+
+That is the whole basis of the ordering, and it is structural rather than
+financial: a sub-skill's text lands in the invoking context and is paid for
+again on every turn it stays resident, while a role's text lands in a context
+that does not come back. The ordering follows from where context goes, so it
+survives the absence of a price list.
+
+Still not measured, and reported `null` rather than estimated: tokens, currency,
+and cost per outcome. The runtime does not report usage for every arm in every
+configuration, and a figure that could not be measured may not be invented.
+
 ## The measurement rule
 
 **A budget figure you could not measure is reported as unmeasured.** Not zero,

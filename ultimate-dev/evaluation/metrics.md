@@ -534,6 +534,8 @@ suite is marked incomplete for it. None of them is ever `0`.
 | **Learning effectiveness** | No held-out case set is separated from the case set that produces learning, and no deprecation mechanism exists to test | A held-out suite and a promotion/deprecation record. Until then this is the single largest unmeasured claim about the architecture |
 | **Per-request latency breakdown** | The provider does not expose per-request timing for the runs | Provider telemetry, or a proxy that is labelled as a proxy |
 | **Token-level context efficiency** | Token counts are not exposed for every arm in every configuration | Consistent token accounting across arms |
+
+  The context-cost half of this is now measured from disk by `tools/measure-mode-cost.py`; the token and currency half is not, and stays null.
 | **Human-time cost** | Confirmation waits are real cost and are not instrumented | Instrumentation of the human-in-the-loop, reported separately from machine latency |
 | **Security robustness as a rate** | Not a measurement limit but a statistical one: a proportion over ten cases cannot support a tolerance claim | A rate is reported as a count plus a bound. The rate form itself is never used |
 | **Escalation correctness** | Whether a checkpoint was *necessary* requires a judgement about the case that is not objective | A case file that pre-declares the warranted checkpoint; until every such case does, this is null and the escalation *rate* is reported alone |

@@ -3,6 +3,24 @@ name: Validate
 on:
   push:
     branches: [main, develop]
+    # The release workflow pushes a `chore: release v*` commit back to main as
+    # part of cutting a tag. With this workflow's concurrency group set to
+    # cancel-in-progress, that commit started a second Validate run which
+    # cancelled the one belonging to the commit that triggered the release --
+    # so the Validate for a code change never reached a conclusion. It reported
+    # `cancelled` and the only run that completed was the one for the release
+    # bump, which has identical content but a different sha.
+    #
+    # That is not a cosmetic ordering problem. "Cancelled" is indistinguishable
+    # at a glance from a real failure, and the run that reports a verdict is not
+    # the run about the commit you pushed.
+    #
+    # The release bump touches only these two files and nothing else, so
+    # ignoring them means the bump is validated by the run it was created from
+    # rather than by a duplicate one.
+    paths-ignore:
+      - CHANGELOG.md
+      - VERSION
   pull_request:
     branches: [main, develop]
   workflow_dispatch:
