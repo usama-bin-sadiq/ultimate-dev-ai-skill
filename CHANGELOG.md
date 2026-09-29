@@ -1,5 +1,9 @@
 # Changelog
 
+## [4.0.32] — 2026-09-29
+
+- fix: the kernel never told a run to record its architecture, and the corpus found it
+
 ## [4.0.31] — 2026-09-29
 
 - feat: the self-eval criterion, four dispatch rows, and a corpus with live premises
