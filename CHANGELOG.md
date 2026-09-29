@@ -1,5 +1,9 @@
 # Changelog
 
+## [4.0.31] — 2026-09-29
+
+- feat: the self-eval criterion, four dispatch rows, and a corpus with live premises
+
 ## [4.0.30] — 2026-09-29
 
 - fix: two CI mutations had stopped breaking the trees they name
