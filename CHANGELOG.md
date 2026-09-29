@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.0.34] — 2026-09-29
+
+- chore: stop tracking a generated run-state file that .gitignore already excludes
+- fix: seven citations pointed at files that were never there, and two had simply moved
+- fix: 1410 of 1461 "unresolvable paths" were paths in other people's projects
+- fix: the maturity claim was honest by hand, and a deleted bold would have passed
+- fix: the issue template pointed at paths that do not resolve from the repo root
+- fix: every release shipped an empty body, and the test only covered the writer
+- fix: the gate ran eight of its checks nowhere, and two required CI checks never existed
+- fix: nine tools nothing referenced, and nine skill pairs nobody could choose between
+- fix: a commit labelled "fixed" had reverted the kernel, and nothing in CI objected
+- fixed
+
 ## [4.0.33] — 2026-09-29
 
 - fix: the routing oracle is 4 of 128 by construction, so say so instead of looking broken
