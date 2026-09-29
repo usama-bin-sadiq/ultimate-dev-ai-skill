@@ -165,6 +165,56 @@ jobs:
           path: validation-report.json
           retention-days: 14
 
+  gate:
+    name: Run the pre-commit gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          # The gate compares the tree against a base ref. A shallow clone does
+          # not contain the merge base, and the gate would exit 2 with a message
+          # about fetching -- a correct diagnosis delivered as a red X.
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # The baseline is the last commit this branch shares with its target, so
+      # the gate answers "did this change introduce a problem" rather than
+      # "is the tree different from itself", which is the only question a
+      # checked-out CI tree can answer about HEAD.
+      - name: Resolve the baseline
+        id: base
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE=$(git merge-base "HEAD" "origin/${{ github.event.pull_request.base.ref }}")
+          else
+            BASE=$(git rev-parse "HEAD^" 2>/dev/null || echo "")
+          fi
+          if [ -z "$BASE" ]; then
+            echo "resolved=" >> "$GITHUB_OUTPUT"
+            echo "  first commit in history; nothing to compare against" >&2
+          else
+            echo "resolved=$BASE" >> "$GITHUB_OUTPUT"
+            echo "  baseline $(git rev-parse --short "$BASE")" >&2
+          fi
+
+      - name: The gate
+        if: steps.base.outputs.resolved != ''
+        run: |
+          set -uo pipefail
+          bash ultimate-dev/tools/pre-commit-check.sh --base "${{ steps.base.outputs.resolved }}"
+
+      - name: The gate was skipped
+        if: steps.base.outputs.resolved == ''
+        run: echo "no parent commit to compare against; nothing for the gate to do"
+
   integrity:
     name: Check Generated Artefacts and References
     runs-on: ubuntu-latest

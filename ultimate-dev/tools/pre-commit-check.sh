@@ -4,10 +4,17 @@
 #
 # Why this exists
 # ---------------
-# Every check here already runs in .github/workflows/validate.yml. What CI does
-# not do is tell you which commit introduced the failure, and by the time a job
-# is red the push is already on the remote. The same 55 seconds spent here turns
-# a rejected push into a rejected commit message.
+# Every check here also runs in .github/workflows/validate.yml, in the `gate`
+# job, which invokes this script with --base set to the merge base. That job did
+# not exist until the checks below were found running nowhere but on a
+# maintainer's machine: CI had been re-listing the underlying tools one by one,
+# and had silently dropped eight of them, including the two that assert this
+# repository has not started naming a specific model provider. A check that runs
+# only when a human remembers it is not a check.
+#
+# What CI does not do is tell you which commit introduced the failure, and by the
+# time a job is red the push is already on the remote. The same 55 seconds spent
+# here turns a rejected push into a rejected commit message.
 #
 # What it blocks on
 # -----------------
@@ -29,6 +36,20 @@
 #   tools/pre-commit-check.sh            # fast gate, what the hook runs
 #   tools/pre-commit-check.sh --full     # adds bundle build and fence parity
 #   tools/pre-commit-check.sh --baseline # print the backlog, block on nothing
+#   tools/pre-commit-check.sh --base <ref>  # compare against <ref>, not HEAD
+#
+# Why --base exists
+# -----------------
+# On a pre-commit hook, HEAD is the right baseline: the question is "did this
+# working tree get worse than the commit I am building on top of". In CI the
+# checkout is already the finished commit, so HEAD *is* the tree under test and
+# comparing it to HEAD is comparing a thing to itself. The gate would report
+# clean on every run forever, which is the shape of a check that looks like it
+# is working.
+#
+# CI therefore passes the merge base -- the last commit the branch shares with
+# its target -- which makes the question the useful one: "did this pull request
+# introduce a new error or warning".
 #
 # Skip once with:  git commit --no-verify
 # Always allowed:  git commit            (with the hook installed)
@@ -43,20 +64,43 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SKILL_DIR="$REPO_ROOT/ultimate-dev"
 MODE="fast"
 BASELINE_ONLY=0
+BASE_REF="HEAD"
 
-for arg in "$@"; do
-  case "$arg" in
-    --full)     MODE="full" ;;
-    --baseline) BASELINE_ONLY=1 ;;
-    -h|--help)  sed -n '2,32p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;;
-    *)          echo "unknown option: $arg" >&2; exit 2 ;;
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --full)     MODE="full"; shift ;;
+    --baseline) BASELINE_ONLY=1; shift ;;
+    --base)     [ $# -ge 2 ] || { echo "--base needs a ref" >&2; exit 2; }
+                BASE_REF="$2"; shift 2 ;;
+    --base=*)   BASE_REF="${1#--base=}"; shift ;;
+    -h|--help)  sed -n '2,47p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    *)          echo "unknown option: $1" >&2; exit 2 ;;
   esac
 done
+
+# A base that does not resolve must fail loudly here, not later as an empty
+# baseline that compares against nothing and reports a clean tree.
+if ! git -C "$REPO_ROOT" rev-parse --verify --quiet "$BASE_REF^{commit}" >/dev/null 2>&1; then
+  echo "cannot resolve baseline ref: $BASE_REF" >&2
+  echo "  In CI this usually means the fetch was shallow. Use:" >&2
+  echo "    git fetch --no-tags --depth=50 origin" >&2
+  exit 2
+fi
 
 RED=$'\033[31m'; GRN=$'\033[32m'; YLW=$'\033[33m'; DIM=$'\033[2m'; OFF=$'\033[0m'
 if [ ! -t 1 ]; then RED=""; GRN=""; YLW=""; DIM=""; OFF=""; fi
 
-CACHE_DIR="$REPO_ROOT/.git/pre-commit-baseline"
+# Resolve the real git directory rather than assuming .git is a directory.
+# In a linked worktree, and in a worktree made by some CI checkout modes, .git
+# is a *file* holding a gitdir: pointer, so the literal path below fails to
+# create, the cache write is lost, and the run continues with a cache that
+# silently never persists -- which looks like a working gate and is not.
+GIT_COMMON="$(git -C "$REPO_ROOT" rev-parse --git-common-dir 2>/dev/null || true)"
+case "$GIT_COMMON" in
+  /*) : ;;
+  *)  GIT_COMMON="$REPO_ROOT/$GIT_COMMON" ;;
+esac
+CACHE_DIR="$GIT_COMMON/pre-commit-baseline"
 mkdir -p "$CACHE_DIR"
 
 WORKTREE=""
@@ -86,13 +130,14 @@ echo "${DIM}pre-commit check${OFF} ${DIM}($MODE)${OFF}"
 echo
 
 # ---- 1. the CI gate: validator --strict, compared against HEAD --------------
-HEAD_SHA=$(git -C "$REPO_ROOT" rev-parse HEAD 2>/dev/null || echo none)
+BASE_SHA=$(git -C "$REPO_ROOT" rev-parse "$BASE_REF^{commit}")
+BASE_LABEL="$BASE_REF (${BASE_SHA:0:9})"
 CUR_OUT="$(mktemp)"; read -r CUR_E CUR_W <<<"$(validate "$SKILL_DIR" "$CUR_OUT")"
 
 BASE_E=""; BASE_W=""
-if [ "$HEAD_SHA" != "none" ]; then
-  CACHE_E="$CACHE_DIR/$HEAD_SHA.errors"
-  CACHE_W="$CACHE_DIR/$HEAD_SHA.warnings"
+if [ -n "$BASE_SHA" ]; then
+  CACHE_E="$CACHE_DIR/$BASE_SHA.errors"
+  CACHE_W="$CACHE_DIR/$BASE_SHA.warnings"
   if [ -f "$CACHE_E" ] && [ -f "$CACHE_W" ]; then
     BASE_E=$(cat "$CACHE_E"); BASE_W=$(cat "$CACHE_W")
   else
@@ -107,7 +152,7 @@ if [ "$HEAD_SHA" != "none" ]; then
     # git archive reads committed objects and never touches the index, so it
     # works under the lock.
     SNAP="$(mktemp -d)"
-    if git -C "$REPO_ROOT" archive HEAD 2>/dev/null | tar -x -C "$SNAP" 2>/dev/null; then
+    if git -C "$REPO_ROOT" archive "$BASE_REF" 2>/dev/null | tar -x -C "$SNAP" 2>/dev/null; then
       if [ -d "$SNAP/ultimate-dev" ]; then
         BASE_OUT="$(mktemp)"
         read -r BASE_E BASE_W <<<"$(validate "$SNAP/ultimate-dev" "$BASE_OUT")"
@@ -126,7 +171,7 @@ fi
 # from an existing one, and a gate that cannot tell the difference is noise.
 # Say so rather than quietly comparing against zero.
 if [ -z "$BASE_E" ]; then
-  echo "${RED}  FAIL${OFF}  could not read the baseline at HEAD (${HEAD_SHA:0:9})"
+  echo "${RED}  FAIL${OFF}  could not read the baseline at $BASE_LABEL"
   echo "          Without it this gate cannot separate a new error from an"
   echo "          existing warning, so the comparison did not run."
   echo "          Commit with --no-verify once, or remove .git/pre-commit-baseline"
@@ -136,7 +181,7 @@ if [ -z "$BASE_E" ]; then
 fi
 
 if [ "$BASELINE_ONLY" = 1 ]; then
-  echo "  baseline at HEAD ($HEAD_SHA): $BASE_E errors, $BASE_W warnings"
+  echo "  baseline at $BASE_LABEL: $BASE_E errors, $BASE_W warnings"
   echo "  working tree:                 $CUR_E errors, $CUR_W warnings"
   echo
   if [ "$CUR_W" -gt 0 ] && [ -s "$CUR_OUT" ]; then
@@ -148,19 +193,19 @@ if [ "$BASELINE_ONLY" = 1 ]; then
 fi
 
 if [ "$CUR_E" -gt "$BASE_E" ]; then
-  note_fail "validator: $CUR_E errors, $BASE_E at HEAD (+$((CUR_E - BASE_E)))"
+  note_fail "validator: $CUR_E errors, $BASE_E at $BASE_REF (+$((CUR_E - BASE_E)))"
   grep -E '^[[:space:]]*error' "$CUR_OUT" | sed -E 's|.*/ultimate-dev/ultimate-dev/||' \
     | head -15 | sed 's/^/          /'
 else
-  note_pass "validator: $CUR_E errors (same as HEAD)"
+  note_pass "validator: $CUR_E errors (same as $BASE_REF)"
 fi
 
 if [ "$CUR_W" -gt "$BASE_W" ]; then
-  note_fail "validator: $CUR_W warnings, $BASE_W at HEAD (+$((CUR_W - BASE_W)))"
+  note_fail "validator: $CUR_W warnings, $BASE_W at $BASE_REF (+$((CUR_W - BASE_W)))"
   grep 'warning:' "$CUR_OUT" | sed -E 's|.*/ultimate-dev/ultimate-dev/||' \
     | head -15 | sed 's/^/          /'
 else
-  note_pass "validator: $CUR_W warnings ($((CUR_W - BASE_W)) vs HEAD)"
+  note_pass "validator: $CUR_W warnings ($((CUR_W - BASE_W)) vs $BASE_REF)"
   if [ "$CUR_W" -gt 0 ]; then
     echo "${DIM}          $CUR_W pre-existing warning(s) carried forward; not introduced here${OFF}"
   fi

@@ -54,6 +54,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path, PurePath
 from typing import Any
@@ -943,18 +944,49 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
             f"exist; the list has drifted from the tree"
         )
 
-    # Build artefacts must never be committed.
+    # Build artefacts must never be committed. An artefact that .gitignore
+    # already covers is handled: git will not take it. Flagging it anyway made
+    # this check fire every time anybody ran a tool, because running a tool is
+    # what creates __pycache__ -- so the tree failed its own validation as a
+    # side effect of being measured, and the fix it asked for ("add it to
+    # .gitignore") was already in .gitignore. A check that reports a solved
+    # problem is worse than no check, because it trains you to ignore it.
+    candidates: list[Path] = []
     for path in repo_root.rglob("*"):
         if ".git" in path.parts:
             continue
         rel = path.relative_to(repo_root)
-        if BUILD_ARTEFACT_PATTERN.search(str(rel)) and (
-            path.is_dir() or path.suffix in {".pyc", ""} or path.name == ".DS_Store"
-        ):
-            if path.is_dir() and BUILD_ARTEFACT_PATTERN.search(path.name):
-                errors.append(f"{rel}: build artefact present; add it to .gitignore")
-            elif path.is_file() and (path.suffix == ".pyc" or path.name == ".DS_Store"):
-                errors.append(f"{rel}: build artefact present; add it to .gitignore")
+        if not BUILD_ARTEFACT_PATTERN.search(str(rel)):
+            continue
+        if path.is_dir() and BUILD_ARTEFACT_PATTERN.search(path.name):
+            candidates.append(rel)
+        elif path.is_file() and (path.suffix == ".pyc" or path.name == ".DS_Store"):
+            candidates.append(rel)
+
+    if candidates:
+        # One process for the whole batch. Asking git per path turns a check that
+        # runs on every commit into a fork storm. If git is missing or the tree
+        # is not a repository -- a bundle extract, a tarball -- there is no
+        # answer to give, so every candidate is reported. Failing closed is the
+        # only safe direction for a check whose whole job is to keep an artefact
+        # out of a commit.
+        try:
+            proc = subprocess.run(
+                ["git", "-C", str(repo_root), "check-ignore", "--stdin"],
+                input="\n".join(str(c) for c in candidates) + "\n",
+                capture_output=True,
+                text=True,
+            )
+            ignored = set(proc.stdout.split())
+        except (OSError, ValueError):
+            ignored = set()
+        for rel in candidates:
+            if str(rel) in ignored:
+                continue
+            errors.append(
+                f"{rel}: build artefact present and not ignored; add it to "
+                ".gitignore, or it will be committed"
+            )
 
     # A document that DEFINES the rule is exempt from the rule.
     #

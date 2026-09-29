@@ -38,10 +38,21 @@ Go to: **Settings → Branches → Add rule**
   - ✅ Require branches to be up to date before merging
   - Required checks:
     - `Validate Skill Structure`
-    - `Check Reference Integrity`
-    - `Test Authoring Tool`
+    - `Run the pre-commit gate`
+    - `Check Generated Artefacts and References`
+    - `Test the Validators`
     - `Check Documentation Hygiene`
     - `PR Quality Check`
+  - Recommended, not required: `Check Release Metadata`. It only matters for a
+    PR carrying a release label, and requiring it would make an unrelated PR wait
+    on a check that has nothing to say about it.
+  - These are the `name:` values of the jobs in `validate.yml`, not their YAML
+    keys. GitHub matches on the display name, and a name that does not exist
+    never reports — so a typo here does not fail loudly, it silently makes the
+    branch unprotectable. Regenerate the list with:
+    ```sh
+    python3 -c "import yaml;[print(f'    - \`{v[\"name\"]}\`') for v in yaml.safe_load(open('.github/workflows/validate.yml'))['jobs'].values()]"
+    ```
 - ✅ Require conversation resolution before merging
 - ✅ Require linear history
 - ✅ Do not allow bypassing the above settings

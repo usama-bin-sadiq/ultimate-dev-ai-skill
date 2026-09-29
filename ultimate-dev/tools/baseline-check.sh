@@ -49,13 +49,25 @@ printf '  %-46s %s\n' "errors, current validator, current tree:" "$CURRENT"
 printf '  %-46s %s\n' "difference attributable to the instrument:" "$(( CURRENT - BASELINE ))"
 
 if [[ "$WITH_TREE" == "1" ]]; then
-  WT="$(mktemp -d)/wt"
+  # A private temp directory, removed on the way out. The previous version wrote
+  # its one line of output to /tmp/.bc_old, so two runs at once -- which is what
+  # happens when you run one while watching CI fail -- read each other's count.
+  # It also created the mktemp directory and then removed only the worktree
+  # inside it, leaving the parent behind on every invocation.
+  SCRATCH="$(mktemp -d)"
+  WT="$SCRATCH/wt"
+  cleanup_scratch() {
+    git -C "$ROOT" worktree remove --force "$WT" 2>/dev/null
+    rm -rf "$SCRATCH"
+  }
+  trap 'cleanup; cleanup_scratch' EXIT
+
   git -C "$ROOT" worktree add -q --detach "$WT" "$PIN" 2>/dev/null
   cp "$PINNED" "$WT/ultimate-dev/tools/.baseline-validator.py"
-  ( cd "$WT/ultimate-dev" && rm -rf tools/__pycache__ \
-    && python3 tools/.baseline-validator.py --strict 2>&1 | grep -cE '^ *error:' ) > /tmp/.bc_old
-  OLD=$(cat /tmp/.bc_old); rm -f /tmp/.bc_old
-  git -C "$ROOT" worktree remove --force "$WT" 2>/dev/null
+  OLD=$( cd "$WT/ultimate-dev" && rm -rf tools/__pycache__ \
+    && python3 tools/.baseline-validator.py --strict 2>&1 | grep -cE '^ *error:' )
+  cleanup_scratch
+  trap cleanup EXIT
   printf '  %-46s %s\n' "errors, pinned validator, tree at $PIN:" "$OLD"
   printf '  %-46s %s\n' "REDUCTION ATTRIBUTABLE TO CONTENT:" "$(( OLD - BASELINE ))"
   printf '\n  Quote the content reduction. The instrument difference (%s) is not a fix.\n' \
