@@ -922,14 +922,57 @@ EXECUTED_CLAIM = re.compile(r"(\d+)\s+executed\b", re.IGNORECASE)
 RESULT_DIRS = ("results", "runs", "testbed/results", "testbed/runs")
 
 
+# The key names a results row carries its decision under. These are not free
+# choices: the producer in testbed/run-tasks.py writes `observed_mode` and
+# `observed_rung`, and testbed/run-bench.py reads the same two. The first
+# version of this file looked for `actual_mode`/`actual_rung` -- names no
+# producer has ever written -- so the function returned 0 for every results
+# file the harness could produce, forever. It passed on every tree, including
+# a doctored one, which is the exact failure it was written to catch.
+#
+# `producer_key_drift` below is the guard that stops that recurring: it reads
+# the key names out of the producer's own source, so a rename on either side
+# turns into a reported error instead of a silent zero.
+DECISION_KEYS = ("observed_mode", "observed_rung")
+_LEGACY_DECISION_KEYS = ("actual_mode", "actual_rung")
+
+
+def producer_key_drift(repo_root: Path) -> list[tuple[str, str]]:
+    """The results producer and this reader must agree on the decision keys.
+
+    A reader that names a key the producer never writes reads zero from every
+    file and reports no problem, because zero is the answer it always gives.
+    That check cannot fail, so it polices nothing, and the claims it exists to
+    police become true by default rather than by evidence.
+
+    So the names are not asserted here. They are read out of the producer.
+    """
+    out: list[tuple[str, str]] = []
+    producer = repo_root / "testbed" / "run-tasks.py"
+    try:
+        source = producer.read_text(encoding="utf-8")
+    except OSError:
+        return out
+    written = {k for k in DECISION_KEYS if f'"{k}"' in source}
+    missing = [k for k in DECISION_KEYS if k not in written]
+    if missing:
+        out.append((
+            str(producer.relative_to(repo_root)),
+            f"no longer writes {', '.join(missing)}; _case_results_on_disk reads "
+            f"{', '.join(DECISION_KEYS)} and would return 0 for every results "
+            f"file this harness produces",
+        ))
+    return out
+
+
 def _case_results_on_disk(repo_root: Path) -> int:
     """How many evaluation cases have a *decided* result on disk.
 
     Counting rows is the mistake this function exists to not make. All four
-    rows in testbed/results/ask-record.json have `actual_mode: None`: two died
-    on an adapter TypeError, two ran and left no state file. Every one of them
-    is a file on disk saying a case was attempted, and none of them is a case
-    that ran to a choice. A check that counted them would pass a claim of
+    rows in testbed/results/ask-record.json have `observed_mode: None`: two
+    died on an adapter TypeError, two ran and left no state file. Every one of
+    them is a file on disk saying a case was attempted, and none of them is a
+    case that ran to a choice. A check that counted them would pass a claim of
     "4 executed" on the strength of four crashes.
 
     So a row counts only when it carries a decision -- a mode or a rung. That is
@@ -957,7 +1000,8 @@ def _case_results_on_disk(repo_root: Path) -> int:
                 case = str(row.get("id") or "")
                 if not case:
                     continue
-                if row.get("actual_mode") is None and row.get("actual_rung") is None:
+                keys = DECISION_KEYS + _LEGACY_DECISION_KEYS
+                if all(row.get(k) is None for k in keys):
                     continue
                 decided.add(case)
     return len(decided)
@@ -1972,6 +2016,11 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
                 notes.append(f"all {len(roles)} agent roles are reachable from SKILL.md")
     else:
         warnings.append(f"{AGENTS_DIR}/ does not exist; the kernel has no delegated roles")
+
+    for f, drift in producer_key_drift(repo_root):
+        errors.append(
+            f"{f}: {drift}. Update DECISION_KEYS in this file in the same commit."
+        )
 
     unsubstantiated = unsubstantiated_result_claims(repo_root)
     for f, claim in unsubstantiated:

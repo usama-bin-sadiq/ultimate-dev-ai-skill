@@ -85,3 +85,41 @@ When results do exist, `references/maturity.md` stops being the only place the
 number lives: `validate-skills.py` compares every executed-case count in the
 documentation against the decided results on disk, and fails the gate on a count
 they do not support.
+
+### The 12-task routing corpus in `testbed/` is a different corpus
+
+`testbed/tasks/RT-01..RT-12` is not a subset of the 128. It is a separate,
+routing-only corpus: every task asks the kernel to classify its own work, and
+`run-bench.py` compares the recorded mode and rung against a declared oracle.
+The "0 of 128" above is unaffected by anything that happens to it.
+
+A local arm over those 12 was run on 2026-09-30, with results in
+`testbed/results/local-run.json` (gitignored, like every other results file):
+
+```
+mode   11 of 12 correct   (RT-10: chose inline, oracle says delegate)
+rung    0 of 12 correct   12 under, 0 over
+```
+
+**This is an upper bound, not a measurement, and the gap to a measurement is
+specific.** The agent that produced these decisions was not spawned cold by the
+harness — it was a session that already had the whole kernel resident, had been
+inside this repository all day, and knew where every file was before the task
+text was read. So it had no discovery cost, no context pressure, and no
+`find-the-kernel` step. A real arm has all three. The uniform one-rung `under`
+result is consistent with the ladder being miscalibrated and is equally
+consistent with a warm reader simply rating cheap work as cheap.
+
+Separating those needs a cold arm, which needs credits. Until then the honest
+statement is that the 12 tasks were classified, that one mode disagreed with its
+oracle, and that the rung direction is unresolved in a way this arm cannot
+resolve.
+
+The one thing this arm did establish is a defect in the checking, not in the
+kernel: `validate-skills.py` counted decided rows by looking for
+`actual_mode`/`actual_rung`, which no producer has ever written — the harness
+writes `observed_mode`/`observed_rung`. The count was therefore 0 for every
+results file the harness can produce, and the "0 executed" claims it policed
+could not have been contradicted by any run, ever. `producer_key_drift` now
+reads the key names out of `testbed/run-tasks.py` and fails the gate if the two
+sides ever diverge again.
