@@ -1,5 +1,9 @@
 # Changelog
 
+## [4.0.28] — 2026-09-29
+
+- feat: measure the cost argument, and stop a release commit from cancelling its own validation
+
 ## [4.0.27] — 2026-09-29
 
 - feat: compute reachability instead of asserting it, and write the invocation contract
