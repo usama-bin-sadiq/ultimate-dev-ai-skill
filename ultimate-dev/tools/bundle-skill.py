@@ -83,6 +83,7 @@ from text_rules import (  # noqa: E402
     OUTPUT_LABEL,
     line_declares_output,
     without_emphasis,
+    output_spans,
 )
 
 from pathlib import Path
@@ -219,20 +220,27 @@ def declared_paths(text: str) -> set[str]:
 def declared_output_paths(text: str) -> set[str]:
     """Paths this document declares as something to produce, not to read.
 
-    Delegates the per-line decision to line_declares_output(), which is the
+    Delegates the per-clause decision to line_declares_output(), which is the
     single implementation of that judgement. This function used to run
     OUTPUT_DECLARATION over the raw line while check_relative_links ran
     line_declares_output() over a de-emphasised one, so the two agreed on some
     documents and not others -- and a path declared as an output in one check
     was still reported as a dangling reference by the other. One rule, both
     callers.
+
+    The unit is a clause rather than a line because a line can hold several
+    instructions. "Score using `references/11-scoring-rubric.md`, then write the
+    report using the template in `references/12-report-template.md`. Before
+    writing, read the worked exemplars in `examples/`" is one line, one
+    declaration, and four paths that are not that declaration's argument. Judged
+    per line the write cleared all of them, which is how a referenced file that
+    does not exist went unreported with the error count reading zero.
     """
     out: set[str] = set()
     for line in strip_fenced_code(text).splitlines():
-        if not line_declares_output(line):
-            continue
-        for match in PATH_PATTERN.finditer(line):
-            out.update(g for g in match.groups() if g and NOT_A_PATH.search(g))
+        for span in output_spans(line):
+            for match in PATH_PATTERN.finditer(span):
+                out.update(g for g in match.groups() if g and NOT_A_PATH.search(g))
     return out
 
 BUILD_ARTEFACT = re.compile(r"(__pycache__|\.pyc$|\.DS_Store)")

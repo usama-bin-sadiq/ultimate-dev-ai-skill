@@ -105,3 +105,17 @@ For "other" issue trackers, write `docs/agents/issue-tracker.md` from scratch us
 ### 5. Done
 
 Tell the user the setup is complete and which engineering skills will now read from these files. Mention they can edit `docs/agents/*.md` directly later — re-running this skill is only necessary if they want to switch issue trackers or restart from scratch.
+
+## What is not here
+
+Every path this skill names is in the reader's own repository, not in this skill,
+so none of them resolve in a bundled install. The ones this document tells the
+agent to *write* -- `docs/agents/*.md`, `docs/adr/`, and so on -- are declared as
+outputs and are exempted for that reason. The rest are read-only references into
+the user's project:
+
+- `docs/adr/` and `src/*/docs/adr/` -- architecture decision records in the
+  reader's repository, cited in Section 1 so the agent can see what already
+  exists before proposing a structure.
+- `docs/agents/*.md` -- the issue-tracker and triage-label documents this skill
+  creates for the user, not files this skill ships.

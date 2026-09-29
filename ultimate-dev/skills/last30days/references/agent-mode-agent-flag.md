@@ -32,3 +32,8 @@ Generated: {date} | Sources: Reddit, X, Bluesky, YouTube, TikTok, HN, Polymarket
 ```
 
 ---
+## What is not here
+
+- `docs/reference/json-export.md` — the field documentation and versioning policy
+  live in the last30days project repository, not in this skill, so the reference
+  above does not resolve in a bundled install.

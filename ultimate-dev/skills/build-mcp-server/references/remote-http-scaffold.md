@@ -209,3 +209,8 @@ Once deployed, users add the URL directly — no install step.
 - [ ] Health check endpoint separate from `/mcp` (hosts poll it)
 - [ ] Secrets from env vars, never hardcoded
 - [ ] If OAuth: CIMD or DCR endpoint implemented — see `auth.md`
+
+## What is not here
+
+- `examples/server/simpleStreamableHttp.ts` — a file in the MCP TypeScript SDK's
+  own repository, cited above as the upstream example. It is not shipped here.

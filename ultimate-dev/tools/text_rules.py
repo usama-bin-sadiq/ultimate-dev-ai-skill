@@ -115,9 +115,145 @@ def line_declares_output(line: str) -> bool:
     """
     return bool(
         OUTPUT_LABEL.search(line)
-        or OUTPUT_DECLARATION.search(without_emphasis(line))
+        or OUTPUT_DECLARATION.search(without_adjunct_gerund(without_emphasis(line)))
         or NOT_THIS_REPOSITORY.search(line)
     )
+
+
+# A gerund with no object is an adjunct, not a declaration. "Before writing,
+# read `references/09-risk-and-macro.md`" is a temporal frame wrapped around a
+# different instruction, and its "writing" was matching OUTPUT_DECLARATION and
+# clearing the reference standing right beside it.
+#
+# A gerund declares only when something follows it that it can take as an
+# object, and the comma is the test: "writing the report to `docs/report.md`"
+# declares, "writing," does not.
+#
+# Only the two -ing forms in OUTPUT_DECLARATION's vocabulary need this -- it has
+# "creating" and "writing" and no other participle, so the other five verbs
+# there ("add", "store", "place", ...) are untouched. Bare imperatives were
+# never at risk: a comma after "Add" is not English.
+_ADJUNCT_GERUND = re.compile(r"(?i)\b(?:writing|creating)\s*(?=,)")
+
+
+def without_adjunct_gerund(text: str) -> str:
+    """Drop participles that carry no object, leaving everything else.
+
+    Removing rather than negating: the alternative is to teach the pattern a
+    negative lookahead, which puts the exception inside the vocabulary where
+    the next person adding a participle will not see it.
+    """
+    return _ADJUNCT_GERUND.sub(" ", text)
+
+
+# Where one instruction can end and the next begin.
+#
+# A Markdown line routinely packs several instructions, and a declaration that
+# governs one of them must not exempt the others. The line that exposed this
+# held a read, a write, and two more reads:
+#
+#   Score using `references/11-scoring-rubric.md` (run `scripts/score.py` for
+#   the arithmetic), then write the report using the template in
+#   `references/12-report-template.md`. Before writing, read the worked
+#   exemplars in `examples/` to calibrate the target quality:
+#   `examples/forensic-analysis-example.md` (a Forensic-mode review ...).
+#
+# Judged per line, the "write" cleared all five paths, so a referenced file that
+# did not exist went unreported and the error count read zero. Scoping the
+# judgement to the clause removes it: the write exempts the template, the reads
+# stay reads, and the missing exemplar is reported.
+#
+# The split is deliberately narrow, because a missed split and a false split are
+# not symmetric. Merging two clauses only re-applies a declaration the author
+# actually wrote -- the old behaviour, and a false negative. Splitting a clause
+# that never ended exempts a reference on the strength of a verb belonging to a
+# neighbouring instruction, and reports a file that exists as missing: a false
+# positive that stops a commit. So this cuts only where an instruction can
+# genuinely end, and leaves a decimal point, a file extension, an initial and
+# an abbreviation intact, because none of those end one.
+_CLAUSE_BOUNDARY = re.compile(
+    # A sentence end. What may precede the full stop: a lowercase letter, digit
+    # or closing mark, or a two-letter-capital token. That last alternative is
+    # what lets "per the AR. The next step" split -- sentences here end in
+    # acronyms constantly -- while still refusing "J. Smith", where the token
+    # before the stop is a single capital. Requiring a full stop to be followed
+    # by whitespace and an opening character is what keeps "18.4%" and the full
+    # stop in "`report.md`." from being read as sentence ends.
+    r"(?:(?<=[a-z0-9`)\]\"'])|(?<=[A-Za-z][A-Z]))\.(?=\s+[A-Z`*])"
+    r"|(?<=[a-z0-9`)\]\"']);(?=\s)"   # a semicolon
+    r"|(?:,|;)\s+then\b"             # a sequencing join
+    r"|\s+—\s+"                     # the em-dash separator
+)
+
+# An abbreviation's full stop ends no instruction, so it is not a boundary.
+# "e.g. `path`" must stay with the sentence it sits in, or the "e.g." that
+# marks a path as belonging to some other repository is cut away from it and
+# the path starts looking like a dangling reference in this one.
+#
+# Case-sensitive on purpose, and matched against the text that ends immediately
+# before the boundary, so there is no trailing full stop to match here. The
+# capitalised entries would fire on ordinary words if this were case-
+# insensitive: "No." would swallow the end of any sentence ending "there is no",
+# and "St." every "st.". Both are misses in the safe direction -- a clause left
+# joined, so a declaration is re-applied -- but there is no reason to take them.
+_ABBREVIATION_TAIL = re.compile(
+    r"(?:\be\.g|\bi\.e|\betc|\bvs|\bpp|\bcf|\bNo|\bFig|\bDr|\bMr|\bMs|\bSt)$"
+)
+
+
+def clauses(line: str) -> list[str]:
+    """Split one line into the spans a single instruction can govern.
+
+    Splitting on the full stop alone would cut a decimal, a file extension, an
+    initial and an abbreviation, so the boundary pattern requires a lowercase
+    letter, digit or closing mark before the full stop and whitespace plus an
+    opening character after it, and the abbreviation guard rejects the rest.
+
+    Returns a single-element list for a line with no boundary, which is the
+    common case and leaves the line-level behaviour unchanged.
+    """
+    out: list[str] = []
+    start = 0
+    for match in _CLAUSE_BOUNDARY.finditer(line):
+        if _ABBREVIATION_TAIL.search(line[start:match.start()]):
+            continue
+        out.append(line[start:match.start()])
+        start = match.end()
+    out.append(line[start:])
+    return [c for c in out if c.strip()]
+
+
+def output_spans(line: str) -> list[str]:
+    """The spans of one line whose paths are declared as outputs, not reads.
+
+    The two rules that match are scoped differently, and deliberately so.
+
+    OUTPUT_DECLARATION names an instruction, and an instruction governs the
+    paths in its own clause only. That is the fix this function exists for: a
+    single "write" in one clause used to clear every other path on the line,
+    including references to files that did not exist.
+
+    NOT_THIS_REPOSITORY makes a claim about where the paths on the line come
+    from -- "a folder in the reader's own repository", "e.g.", "for example" --
+    and a disclaimer is routinely written after the thing it disclaims, in the
+    next clause: "`docs/decisions/` -- a folder in the reader's own repository,
+    not a directory this skill ships." Scoping that to clauses cut the path away
+    from its own justification and reported a file the document had explicitly
+    said was not its to carry.
+
+    So a line matching NOT_THIS_REPOSITORY is exempt whole, which is also the
+    behaviour it had before either scoping existed.
+    """
+    if NOT_THIS_REPOSITORY.search(line):
+        return [line]
+    return [
+        clause
+        for clause in clauses(line)
+        if OUTPUT_LABEL.search(clause)
+        or OUTPUT_DECLARATION.search(
+            without_adjunct_gerund(without_emphasis(clause))
+        )
+    ]
 
 
 __all__ = [
@@ -125,5 +261,8 @@ __all__ = [
     "OUTPUT_LABEL",
     "NOT_THIS_REPOSITORY",
     "without_emphasis",
+    "without_adjunct_gerund",
     "line_declares_output",
+    "clauses",
+    "output_spans",
 ]
