@@ -82,20 +82,55 @@ directory.
 ## Using it
 
 ```sh
-# 1. is the judge consistent? (writes judge-verdict.json)
+# 0. what will it invoke? Works unconfigured, and says what is missing.
+python3 run-tasks.py --dry-run
+
+# 1. produce the rows by running the kernel over tasks/*.json
+python3 run-tasks.py --agent <runtime> --runner <path/to/agent_runner.py> \
+    --agent-arg=--auto --agent-arg=--standalone --split dev
+
+# 2. is the judge consistent? (writes judge-verdict.json)
 python3 measure-judge.py --ratings repeats.json
 
-# 2. grade a results file; accuracy is withheld unless the gate is met
-python3 run-bench.py --from-results results.json
+# 3. grade the rows; accuracy is withheld unless the gate is met
+python3 run-bench.py --from-results results/rows.json
 
-# 3. grade one split, and require the gate
-python3 run-bench.py --from-results results.json --split heldout --require-gate
+# 4. grade one split, and require the gate
+python3 run-bench.py --from-results results/rows.json --split heldout --require-gate
 ```
 
-`run-bench.py` grades results; it does not invoke a model. Producing the rows
-means running the kernel over `tasks/*.json` and recording the run-state each
-run produced — which is the harness wiring `tools/run-pilot.py` has and this
-does not yet. That gap is real and is named here rather than implied away.
+`run-bench.py` grades results; it does not invoke a model. `run-tasks.py` produces
+them, in a sandbox copy of this repository per task, and records the run-state each
+run produced.
+
+## Choosing a runtime
+
+There is no default. `run-tasks.py` refuses to run unconfigured, because a harness
+that falls back to one vendor measures that vendor and reports the result as a
+property of the kernel. Configure it four ways, each with a flag and an
+environment variable:
+
+| | flag | environment |
+|---|---|---|
+| agent runtime | `--agent` | `ULTIMATE_DEV_AGENT` |
+| adapter script | `--runner` | `ULTIMATE_DEV_AGENT_RUNNER` |
+| model | `--model` | `ULTIMATE_DEV_MODEL` |
+| agent-specific flags | `--agent-arg=FLAG` | `ULTIMATE_DEV_AGENT_ARGS` |
+
+Use the `=` form for `--agent-arg`: the value starts with a dash, so
+`--agent-arg --auto` is read as another option. `ULTIMATE_DEV_AGENT_ARGS` is
+shell-quoted, so a flag with a space in it can be expressed there.
+
+The two flags worth knowing about are the ones in the example above. Both were
+added because runs were wrong without them — without the first, the runtime
+cannot approve the tool calls that let the agent read the skill; without the
+second, the CLI's working directory is silently not the one the agent operates
+in. Neither is a default, because they belong to a specific runtime and this
+repository does not know which runtime you have. `tools/agent_invocation.py`
+prints the same recipes, and `RECIPES` there explains each.
+
+Results carry the resolved configuration, so a rate can be attributed to what
+produced it.
 
 ## Task format
 

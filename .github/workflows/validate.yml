@@ -565,22 +565,46 @@ jobs:
           def edit(path, old, new):
               """Replace `old` with `new`, and refuse to do nothing.
 
-              str.replace() with no count returns the string unchanged when the
-              needle is absent, so a mutation whose anchor had rotted left the
-              tree valid, the tool correctly exited 0, and the case reported
+              Two ways a case can accuse a tool that did nothing wrong. The check
+              below catches the first; the second is worth knowing about because
+              it cannot be caught from here.
+
+              **The anchor rotted.** str.replace() with no count returns the
+              string unchanged when the needle is absent, so the mutation left
+              the tree valid, the tool correctly exited 0, and the case reported
+              that the tool "passed a broken tree". Two of the three failures in
+              the first completed run of this suite were exactly that, and they
+              had been invisible for as long as the job was being killed by its
+              own timeout before it could report anything at all.
+
+              **The mutation still applies but no longer creates the defect the
+              case names.** The anchor check cannot see this, because the file
+              really is modified. It is the worse of the two, because the
+              mutation looks like it is doing something and the failure it yields
+              is indistinguishable from a real regression in the tool.
+
+              Two cases in this suite were in that state, and both arrived the
+              same way -- the tool was corrected and the mutation was not. The
+              colon-space case had drifted to a space *before* the key's colon,
+              which is valid YAML and breaks nothing, while the rule it names is
+              about a colon-space in the value. The marker-rule case had drifted
+              to injecting a comment, which the check exempts on purpose, since
+              a comment is prose about the rule rather than the rule.
+
+              Both were reported as
 
                   colon-space in frontmatter: validate-skills.py passed a
                   broken tree
 
-              which is a false accusation: the tree was never broken, and the
-              reader is sent to the validator rather than to the stale test.
-              Two of the three failures in the first completed run of this
-              suite were exactly that, and they had been invisible for as long
-              as the job was being killed by its own timeout before it could
-              report anything at all.
+              and both sent the reader to the validator to fix a validator that
+              was right. So: when a case reports a tool passing its tree, confirm
+              the mutation still breaks the tree before believing it. The tool
+              passing a tree it should reject is a regression; the tool passing a
+              tree the mutation never broke is a stale test, and the two produce
+              the same line of output.
 
-              A mutation that cannot be applied is a broken test. It must say so
-              rather than impersonate a passing one.
+              A mutation that cannot be applied is a broken test, and so is one
+              that no longer breaks anything.
               """
               def apply(sandbox):
                   target = sandbox / path
@@ -600,8 +624,16 @@ jobs:
                lambda s: (s / S / "references" / "triage.md").unlink())
           case("orphan reference", VALIDATE, ["--strict"],
                lambda s: (s / S / "references" / "zz-orphan.md").write_text("# o\n"))
+          # The mutation puts a colon-space in the VALUE, which is what breaks an
+          # unquoted YAML scalar. It used to be `description : Use when` -- a
+          # space before the key's own colon -- and that is valid YAML: PyYAML
+          # reads it as {'description': 'Use when'}. The validator passed the tree,
+          # correctly, and the case reported that the tool "passed a broken tree",
+          # which it was not. The mutation had drifted to the wrong side of the
+          # colon when the anchor below was refreshed; the rule never changed.
           case("colon-space in frontmatter", VALIDATE, ["--strict"],
-               edit(f"{S}/SKILL.md", "description: Use when", "description : Use when"))
+               edit(f"{S}/SKILL.md", "description: Use when",
+                    "description: Use when: it"))
           case("broken sub-skill yaml", VALIDATE, ["--strict"],
                edit(f"{S}/skills/skill-creator/SKILL.md", "license: MIT", "license: MIT\nbogus: [x"))
           case("agent role without prohibitions", VALIDATE, ["--strict"],
@@ -805,9 +837,16 @@ jobs:
           # step lives in a workflow file and the validator it is testing now
           # scans workflow files for a second implementation of the rule. Writing
           # the word literally here made the clean tree fail its own control.
+          #
+          # It is injected as a RUN STEP, not a comment. It used to be a comment,
+          # and the check exempts comments on purpose -- "A comment is prose about
+          # the rule, not the rule" -- so the validator passed, correctly, and the
+          # case reported that the tool "passed a broken tree". Again the mutation
+          # had stopped creating the defect it names. The string is still split, so
+          # that this case's own definition does not trip the rule it tests.
           case("workflow reimplements the marker rule", VALIDATE, ["--strict"],
                edit(".github/workflows/validate.yml", "      - name:",
-                    "      # grep for T" + "ODO markers in docs\n      - name:"))
+                    "      - run: grep -rn '" + "TO" + "DO' docs\n      - name:"))
 
           case("stale tool exclusion", BUNDLE, ["--check"],
                edit(f"{S}/tools/bundle-skill.py",
@@ -886,39 +925,6 @@ jobs:
                                              rp.read_trace(stderr_text), after, before)
               finally:
                   shutil.rmtree(box.parent, ignore_errors=True)
-
-          def edit(path, old, new):
-              """Replace `old` with `new`, and refuse to do nothing.
-
-              str.replace() with no count returns the string unchanged when the
-              needle is absent, so a mutation whose anchor had rotted left the
-              tree valid, the tool correctly exited 0, and the case reported
-
-                  colon-space in frontmatter: validate-skills.py passed a
-                  broken tree
-
-              which is a false accusation: the tree was never broken, and the
-              reader is sent to the validator rather than to the stale test.
-              Two of the three failures in the first completed run of this
-              suite were exactly that, and they had been invisible for as long
-              as the job was being killed by its own timeout before it could
-              report anything at all.
-
-              A mutation that cannot be applied is a broken test. It must say so
-              rather than impersonate a passing one.
-              """
-              def apply(sandbox):
-                  target = sandbox / path
-                  text = target.read_text()
-                  if old not in text:
-                      raise AssertionError(
-                          f"anchor not present in {path}: {old!r}. The tree "
-                          f"moved under this case. Without this check the "
-                          f"mutation is a no-op, the tool passes a tree that "
-                          f"was never broken, and the case blames the tool."
-                      )
-                  target.write_text(text.replace(old, new, 1))
-              return apply
 
           def ruin(sandbox):
               for p in ("config/prod.yaml", "config/dev.yaml", "src/parser.py"):

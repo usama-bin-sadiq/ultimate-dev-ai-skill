@@ -8,13 +8,28 @@ reproducible from the corpus, the fixtures, and a runtime.
 If a number is not in this file, it has not been measured. That is the rule the
 file exists to enforce.
 
+**A note on what a runtime line means here.** The run below records the runtime by
+name because the harness was configured with it, and the report carries the same
+value. It did not used to: `build_report` wrote a fixed string, so every report it
+produced attributed itself to one agent regardless of what actually served the run.
+The runtime is now the resolved configuration — agent, model, adapter, agent flags,
+and whether it was configured at all — and there is no default agent. A harness
+that falls back to one vendor measures that vendor and reports the result as a
+property of the kernel, so an unconfigured one refuses instead. Set `--agent` and
+`--runner`, or `ULTIMATE_DEV_AGENT` and `ULTIMATE_DEV_AGENT_RUNNER`.
+
+The model pool for this run was the repository's former six-model default, and
+that default is now empty for the same reason: a rate over a hardcoded list of
+endpoints is a rate over those endpoints. Any future run must supply its pool with
+`--models`, and the report records which model served each case.
+
 ## Run 1 — 2026-09-27
 
 | | |
 |---|---|
 | Harness | `tools/run-pilot.py` |
-| Runtime | OpenCode, non-interactive |
-| Model pool | 6 free models, rotated on environment failure |
+| Runtime | OpenCode, non-interactive, via `agent_runner.py` |
+| Model pool | 6 models, rotated on environment failure. The default pool is now empty; see the note below |
 | Sample | 6 cases: 2 must-fire, 4 must-not-fire |
 | Cases decided | 2 automated, 3 more after human adjudication |
 | Result | 5 pass, 0 fail |
