@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.0.27] — 2026-09-29
+
+- feat: compute reachability instead of asserting it, and write the invocation contract
+- feat: make the routing claim measurable, and add the gate that measures it
+- docs: ADR 0013, a green result is not evidence unless the producer did the work
+
 ## [4.0.26] — 2026-09-28
 
 - fix: the validator suite has never reported a verdict, and no release has ever had a changelog
