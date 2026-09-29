@@ -40,12 +40,69 @@ RunState
   result              the delivered outcome
 ```
 
-**This structure is now implemented.** `tools/run-state.py` creates, reads, updates and
-checks it — one JSON file per run under `.ultimate-dev/`. It was specified here for the
+**Part of this structure is implemented.** `tools/run-state.py` creates, reads, updates
+and checks it — one JSON file per run under `.memory/`. It was specified here for the
 whole life of the repository with nothing reading or writing it, which meant every claim
 the architecture made about resumption rested on a file that did not exist.
 
-`run-state.py check` is the gate, and it is deliberately strict about the four ways this
+The shape above is the design. What the tool actually carries today is a subset, and the
+honest list matters more than the aspirational one, because a spec that claims more than
+the code delivers is the same defect decision 0013 exists to prevent, one level up:
+
+| Field | Status |
+|---|---|
+| `objective` `coordination` `active_agent` `authority` `assumptions` `verification` `result` | implemented and checked |
+| `steps` `context` `deliverables` | implemented and checked (see below) |
+| `rung` `scale` `rung_triggers` | implemented; constrained vocabularies, triggers required at R2+ |
+| `decisions` `observations` | implemented and checked |
+| `task` `requirements` `constraints` `unknowns` `capabilities` `skills` `strategy` `failures` `learning_candidates` `budget` `provenance` `evidence` | **not implemented** — no field is written, read, or checked |
+
+Nothing in the table above is a promise that the missing fields will arrive. They are
+named so that a reader knows which claims of this document are architectural and which
+are tested.
+
+### Working memory and deliverables are different things
+
+State lives in `.memory/`, and that directory is the agent's private, disposable,
+gitignored working memory. It is **not** where output goes.
+
+`deliver --path <p> --what <w>` records a file the run produced, and refuses any path
+inside `.memory/`. The refusal is the point. A deliverable filed in the memory directory
+is invisible to the person who asked for it, uncommittable, and lost when the directory
+is cleared — and because the directory is gitignored, nothing in the repository ever
+notices the file existed. An agent that has run for a long time has the least context
+left and the strongest incentive to file its work somewhere private and convenient, so
+this is enforced by the tool rather than stated as a convention.
+
+`init --deliverables <path>` records where the user asked output to go. Deciding that
+once, at the start, from the request, is what stops it being re-guessed at the end.
+
+### The step log answers "what is this agent doing right now"
+
+`step --doing <what> --precondition <p> --expect <e>` opens a work unit; opening another
+one supersedes the first, so at most one step is ever current. `show` prints that step
+first, before the run header, because the question a human asks of a running agent is
+"what is it doing" and the answer should not be the fourth line — a transcript answers
+that question worse the longer the run gets.
+
+`--precondition` and `--expect` are required, not optional. Step 5 defines a work unit as
+independently verifiable, and a precondition is what makes it so: it is the condition a
+resuming agent re-checks before repeating the work, and an expected result is the
+observable condition that tells it the step is finished.
+
+`check` refuses an R2-or-higher run with no steps at all, and refuses two steps open at
+once. R0 and R1 are exempt: the kernel calls recording at those rungs ceremony, and a
+gate that fires there is the thing it criticises.
+
+### Context is recorded as loads *and* deliberate drops
+
+`context --ref <r> [--level C0..C6]` records what entered the context;
+`context --ref <r> --drop --why <w>` records what was deliberately left out. Both halves
+are required, and they fail in opposite directions — a record of loads alone is a
+shopping list that never says what was omitted, so the next agent cannot tell an
+intentional omission from an oversight. `check` refuses a drop with no reason.
+
+`run-state.py check` is the gate, and it is deliberately strict about the ways this
 file becomes a decoration:
 
 | Check | Why it exists |
@@ -56,6 +113,12 @@ file becomes a decoration:
 | `evidence` is `OBS-n` or `none`, and resolves | Prose evidence cannot be checked for existence, so fabrication is undetectable |
 | `rejected` and `recovery` are non-empty | A decision with no alternative is an assertion |
 | mode changed 3+ times | That is a signal the first choice was wrong, not that the task is hard |
+| R2+ has at least one step | At R2 and above the current work unit, its precondition, and what is about to happen are stated at every boundary; a run that never says what it is doing cannot be steered or resumed |
+| at most one step is open | "What is the agent doing" with two answers gets answered from the transcript, which is what this file replaces |
+| every step has a precondition and an expected result | A work unit without those is not independently verifiable, so it can only be re-run blind |
+| a context drop has a reason | The next agent cannot otherwise tell an intentional omission from an oversight |
+| no deliverable sits inside `.memory/` | A file filed in gitignored memory is invisible to whoever asked for it and lost when the directory is cleared |
+| a requested deliverable location has something in it | The user named a path; nothing was written there |
 
 ## The fields that earn their keep
 

@@ -6,7 +6,9 @@ repository and nothing has ever read or written it. Every claim the architecture
 about resumption, about work outliving a context window, and about the L4+ rows of the
 scale ladder depends on a file existing -- and none did. That is the gap this closes.
 
-State is a single JSON file, one per run, under `--state-dir` (default `.ultimate-dev/`).
+State is a single JSON file, one per run, under `--state-dir` (default `.memory/`).
+That directory is the agent's private, disposable, gitignored working memory and
+is never where a deliverable goes; `deliver` refuses a path inside it.
 It is small on purpose: `state-system.md` asks for size discipline, and a state file that
 grows without bound is a context problem wearing a different hat.
 
@@ -51,11 +53,21 @@ import datetime as _dt
 import json
 import os
 import re
+import shutil
 import sys
 
-DEFAULT_DIR = ".ultimate-dev"
+# Working memory, not deliverables. `.memory/` was already in .gitignore as
+# "Local agent state" while the tool wrote to `.ultimate-dev/`, so the
+# convention was declared and the implementation ignored it -- and two names for
+# one thing meant a run started by one version could not be read by the other.
+DEFAULT_DIR = ".memory"
+# Where earlier versions wrote. Read once, on load, and migrated rather than
+# silently ignored: a state file the tool cannot find is indistinguishable from
+# a run that never recorded anything, and the second is a finding about the
+# agent while the first is a finding about the tool.
+LEGACY_DIR = ".ultimate-dev"
 STATE_FILE = "run-state.json"
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 
 MODES = ("inline", "delegate", "route", "handoff")
 
@@ -92,7 +104,18 @@ def state_path(args) -> str:
 def load(args) -> dict:
     path = state_path(args)
     if not os.path.isfile(path):
-        die(f"no run state at {path}. Start with:  run-state.py init --objective \"...\"")
+        # A run started by an earlier version wrote to .ultimate-dev/. Migrate it
+        # rather than reporting no state: "no state file" is a finding about the
+        # agent, and reporting one for a run that recorded plenty would send a
+        # reader looking for a missing discipline that is actually a moved path.
+        legacy = os.path.join(LEGACY_DIR, STATE_FILE)
+        if os.path.isfile(legacy) and not args.state_dir_explicit:
+            os.makedirs(args.state_dir, exist_ok=True)
+            shutil.move(legacy, path)
+            print(f"  migrated {legacy} -> {path} (earlier versions wrote to "
+                  f"{LEGACY_DIR}/)", file=sys.stderr)
+        else:
+            die(f"no run state at {path}. Start with:  run-state.py init --objective \"...\"")
     with open(path, encoding="utf-8") as fh:
         return json.load(fh)
 
@@ -147,6 +170,26 @@ def cmd_init(args) -> int:
         },
         "active_agent": None,
         "authority": "inline",
+        # The work units from Step 5 and the compiled context from Step 3, both
+        # of which were specified in references/state-system.md for the whole
+        # life of the repository and had nowhere to live. A plan held only in
+        # prose cannot be resumed, and a context held only in a transcript
+        # cannot be reconstructed without re-reading everything, which is the
+        # cost the state file exists to remove.
+        #
+        # `steps` is an ordered log. At most one is open: the last one without
+        # an `outcome`. That entry is what the agent is doing right now, and it
+        # is the first thing `show` prints, because the question "what is this
+        # agent actually doing" is the one a human supervising a run asks most
+        # often and the one a transcript answers worst.
+        "steps": [],
+        "context": {"loaded": [], "dropped": []},
+        # Where the user said the output goes, if they said. Recorded at init so
+        # the distinction between working memory and a deliverable is decided
+        # once, from the request, rather than re-guessed at the end of the run --
+        # which is the point at which an agent has the least context left and the
+        # strongest incentive to file its work somewhere private and convenient.
+        "deliverables": {"asked_location": args.deliverables or "", "produced": []},
         "decisions": [],
         "observations": [],
         "assumptions": [],
@@ -162,6 +205,28 @@ def cmd_init(args) -> int:
 def cmd_show(args) -> int:
     state = load(args)
     mode = state.get("coordination", {})
+
+    if args.json:
+        print(json.dumps(state, indent=2))
+        return 0
+
+    # The current step is printed first, before the run header, because the
+    # question a human asks of a running agent is "what is it doing right now"
+    # and the answer should not be the fourth line. A transcript answers that
+    # question worse the longer the run gets; this does not get worse.
+    current = _open_step(state)
+    steps = state.get("steps") or []
+    if current:
+        print(f"  ▶ step {current.get('n')} of {len(steps)}   {current.get('doing')}")
+        print(f"      if      {current.get('precondition')}")
+        print(f"      then    {current.get('expect')}")
+    elif steps:
+        last = steps[-1]
+        print(f"  ○ no open step   last was {last.get('n')}: "
+              f"{last.get('doing')} → {last.get('outcome')}")
+    else:
+        print("  ○ no step recorded; the run has not said what it is doing")
+
     print(f"  run       {state.get('run_id')}   rung {state.get('rung')} "
           f"scale {state.get('scale')}")
     print(f"  objective {state.get('objective')}")
@@ -169,8 +234,31 @@ def cmd_show(args) -> int:
     print(f"  until     {mode.get('until')}")
     print(f"  active    {state.get('active_agent') or '(none)'}  "
           f"authority={state.get('authority')}")
-    print(f"  decisions {len(state.get('decisions', []))}   "
+
+    ctx = state.get("context") or {}
+    loaded = ctx.get("loaded") or []
+    dropped = ctx.get("dropped") or []
+    print(f"  context   {len(loaded)} loaded, {len(dropped)} dropped")
+    for entry in loaded[-3:]:
+        lvl = f" [{entry.get('level')}]" if entry.get("level") else ""
+        print(f"      + {entry.get('ref')}{lvl}")
+    for entry in dropped[-3:]:
+        print(f"      - {entry.get('ref')}  ({entry.get('why')})")
+
+    print(f"  steps     {len(steps)}   decisions {len(state.get('decisions', []))}   "
           f"observations {len(state.get('observations', []))}")
+
+    # Working memory and deliverables are different things, so they print
+    # differently: a `>` for something a person will read, and nothing at all
+    # for private notes. A reader who cannot tell which is which will assume
+    # both are notes, and the one that mattered will be the one they skip.
+    dl = state.get("deliverables") or {}
+    produced = dl.get("produced") or []
+    if dl.get("asked_location"):
+        print(f"  asked for output at  {dl.get('asked_location')}")
+    for entry in produced:
+        print(f"  > delivered  {entry.get('path')}"
+              + (f"  ({entry.get('what')})" if entry.get("what") else ""))
     if state.get("result"):
         print(f"  result    {state['result']}")
     return 0
@@ -301,6 +389,175 @@ def cmd_decide(args) -> int:
     return 0
 
 
+def _open_step(state: dict) -> dict | None:
+    """The step with no outcome: what the agent is doing right now."""
+    for step in reversed(state.get("steps") or []):
+        if step.get("outcome") is None:
+            return step
+    return None
+
+
+def cmd_step(args) -> int:
+    """Open, close, or list the work units. One of them is current.
+
+    Opening a step closes the previous one, because leaving two open makes
+    "what is the agent doing now" have two answers and neither of them is
+    checkable. A step that is superseded mid-flight is recorded as such rather
+    than closed silently, because a plan that changed without saying so is
+    indistinguishable from a plan that was abandoned.
+    """
+    state = load(args)
+
+    if args.list:
+        steps = state.get("steps") or []
+        if not steps:
+            print("  no steps recorded")
+            return 0
+        width = max(len(str(s.get("n"))) for s in steps)
+        for step in steps:
+            mark = "open" if step.get("outcome") is None else "done"
+            print(f"  {str(step.get('n')).rjust(width)}  {mark}  {step.get('doing')}")
+        return 0
+
+    if args.close:
+        current = _open_step(state)
+        if current is None:
+            die("no open step to close. `step --doing ...` opens one.")
+        if not (args.outcome or "").strip():
+            die("--outcome is required to close a step. A step that ends with no "
+                "recorded outcome is the same as a step that was never run.")
+        current["outcome"] = args.outcome
+        current["closed_at"] = now()
+        save(args, state)
+        print(f"  step {current.get('n')} closed: {args.outcome}")
+        return 0
+
+    doing = (args.doing or "").strip()
+    if not doing:
+        die("--doing is required. A step with no description cannot be resumed.")
+    if not (args.precondition or "").strip():
+        die("--precondition is required. Step 5 defines a work unit as "
+            "independently verifiable, and a precondition is what makes it so: "
+            "it is the condition a resuming agent re-checks before repeating the work.")
+    if not (args.expect or "").strip():
+        die("--expect is required, for the same reason: it is the observable "
+            "condition that tells the step finished.")
+
+    current = _open_step(state)
+    if current is not None:
+        current["outcome"] = "superseded"
+        current["closed_at"] = now()
+
+    state.setdefault("steps", []).append({
+        "n": len(state.get("steps") or []) + 1,
+        "doing": doing,
+        "precondition": args.precondition,
+        "expect": args.expect,
+        "at": now(),
+        "closed_at": None,
+        "outcome": None,
+    })
+    save(args, state)
+    step = state["steps"][-1]
+    print(f"  step {step['n']} open: {doing}")
+    if current is not None:
+        print(f"  step {current.get('n')} superseded")
+    return 0
+
+
+def cmd_context(args) -> int:
+    """Record what was loaded into context, and what was deliberately left out.
+
+    Both halves matter and they fail in opposite directions. A record of loads
+    only is a shopping list that grows without ever saying what was dropped, so
+    the next agent cannot tell an intentional omission from an oversight. A
+    record of drops only cannot reconstruct the working set. `references/context-system.md`
+    gives a two-line reason why the omission is the more dangerous of the two:
+    dropping too much is recoverable by loading more, and loading too much is
+    not recoverable at all, because the context is already gone.
+    """
+    state = load(args)
+    ctx = state.setdefault("context", {"loaded": [], "dropped": []})
+    ctx.setdefault("loaded", [])
+    ctx.setdefault("dropped", [])
+
+    if args.drop:
+        ref = (args.ref or "").strip()
+        if not ref:
+            die("--ref is required.")
+        if not (args.why or "").strip():
+            die("--why is required for a drop. A context entry removed without a "
+                "reason reads as an oversight on the next pass, and gets re-loaded.")
+        ctx["dropped"].append({"ref": ref, "why": args.why,
+                               "level": args.level or None, "at": now()})
+        save(args, state)
+        print(f"  dropped {ref}  ({args.why})")
+        return 0
+
+    ref = (args.ref or "").strip()
+    if not ref:
+        die("--ref is required: the file, command, or observation the context came from.")
+    entry = {"ref": ref, "level": args.level or None, "why": args.why or "",
+             "fresh": bool(args.fresh), "at": now()}
+    ctx["loaded"].append(entry)
+    save(args, state)
+    print(f"  loaded {ref}" + (f"  [{args.level}]" if args.level else ""))
+    return 0
+
+
+def _is_inside(path: str, root: str) -> bool:
+    """True when `path` sits under `root`, after normalisation.
+
+    Both sides are compared as resolved absolute paths so that `.memory/x`,
+    `./.memory/x` and an absolute path to the same file all agree. A string
+    prefix test would not: `.memory-backup/x` starts with `.memory` and is a
+    different directory that a deliverable may legitimately live in.
+    """
+    try:
+        p = os.path.realpath(os.path.abspath(path))
+        r = os.path.realpath(os.path.abspath(root))
+    except OSError:
+        return False
+    if p == r:
+        return True
+    return p.startswith(r.rstrip(os.sep) + os.sep)
+
+
+def cmd_deliver(args) -> int:
+    """Record a file the run produced, and refuse the ones that belong elsewhere.
+
+    The distinction this enforces: the agent's own working memory is private,
+    disposable, and gitignored; a deliverable the user asked for is none of
+    those things. Filing an audit or a research document into `.memory/` makes
+    it invisible to the person who asked for it, uncommittable, and silently
+    lost when the directory is cleared -- and because `.memory/` is ignored,
+    nothing in the repository ever notices the file existed.
+
+    So the memory directory is refused here rather than warned about. A warning
+    is advice, and advice is what the convention already was.
+    """
+    state = load(args)
+    out = (args.path or "").strip()
+    if not out:
+        die("--path is required: the file this run produced.")
+    if _is_inside(out, DEFAULT_DIR) or _is_inside(out, LEGACY_DIR):
+        die(
+            f"refusing to record {out}: it is inside the agent's working memory, "
+            f"not a deliverable. That directory is gitignored and disposable, so a "
+            f"file filed there is invisible to whoever asked for it, uncommittable, "
+            f"and lost when the directory is cleared. If the user asked for an audit "
+            f"or research output, write it to the path they named."
+        )
+
+    state.setdefault("deliverables", {"asked_location": "", "produced": []})
+    state["deliverables"].setdefault("produced", [])
+    state["deliverables"]["produced"].append({
+        "path": out, "what": args.what or "", "at": now()})
+    save(args, state)
+    print(f"  deliverable recorded: {out}")
+    return 0
+
+
 def cmd_check(args) -> int:
     state = load(args)
     problems: list[str] = []
@@ -426,6 +683,77 @@ def cmd_check(args) -> int:
             f"rung changed {len(rung_changes)} times; re-read the task rather "
             f"than oscillating")
 
+    # --- the step log ---
+    #
+    # Two failure modes, and they are opposite. Zero open steps at R2+ means the
+    # agent is working without saying what it is working on, which is the exact
+    # case the kernel's "Stay observable" section exists for. Two or more open
+    # steps means "what is the agent doing now" has more than one answer, and a
+    # question with several answers gets answered by reading a transcript --
+    # which is the thing this file exists to replace.
+    steps = state.get("steps")
+    if steps is None:
+        steps = []
+    open_steps = [s for s in steps if isinstance(s, dict) and s.get("outcome") is None]
+    if rung_code in {"R2", "R3", "R4"} and not steps:
+        problems.append(
+            f"rung {rung_code} records no steps; at R2 and above the kernel "
+            f"requires the current work unit, its precondition, and what is "
+            f"about to happen to be stated at every boundary")
+    if len(open_steps) > 1:
+        problems.append(
+            f"{len(open_steps)} steps are open at once (numbers "
+            f"{', '.join(str(s.get('n')) for s in open_steps)}); at most one step "
+            f"is current, so `show` cannot answer what the agent is doing")
+    for s in steps:
+        if not isinstance(s, dict):
+            continue
+        n = s.get("n")
+        if not (s.get("doing") or "").strip():
+            problems.append(f"step {n} has no description")
+        if not (s.get("precondition") or "").strip():
+            problems.append(
+                f"step {n} has no precondition; a work unit without one cannot be "
+                f"re-checked on resume, so a resuming agent repeats or skips it blind")
+        if not (s.get("expect") or "").strip():
+            problems.append(
+                f"step {n} has no expected result; a step that does not say how it "
+                f"ends is not independently verifiable")
+
+    # A drop with no reason is the omission that gets silently re-done next pass.
+    ctx = state.get("context") or {}
+    for d in (ctx.get("dropped") or []):
+        if not isinstance(d, dict):
+            continue
+        if not (d.get("why") or "").strip():
+            problems.append(
+                f"context entry {d.get('ref')!r} was dropped with no reason; the "
+                f"next agent cannot tell an intentional omission from an oversight")
+
+    # --- deliverables ---
+    #
+    # `deliver` refuses to record a path inside the memory directory, so a
+    # produced file listed here is one that lives where a person can see it.
+    # This re-checks that invariant rather than trusting it, because the state
+    # file is editable by hand and by earlier versions of the tool.
+    dl = state.get("deliverables") or {}
+    for entry in (dl.get("produced") or []):
+        if not isinstance(entry, dict):
+            continue
+        p = str(entry.get("path") or "")
+        if p and (_is_inside(p, DEFAULT_DIR) or _is_inside(p, LEGACY_DIR)):
+            problems.append(
+                f"deliverable {p!r} is inside the agent's working memory. It is "
+                f"gitignored and disposable, so the person who asked for it cannot "
+                f"see it and git cannot record it. Move it to the path they named.")
+    if dl.get("asked_location") and not (dl.get("produced") or []):
+        # Only a problem when the user named a location: they asked for an
+        # artifact at a path, and none was recorded as written there.
+        problems.append(
+            f"the user asked for output at {dl.get('asked_location')!r} and no "
+            f"deliverable was recorded there. Either write it and `deliver "
+            f"--path ...`, or record why it was not produced.")
+
     for p in problems:
         print(f"  problem: {p}")
     if problems:
@@ -480,6 +808,9 @@ def main() -> int:
 
     s = sub.add_parser("init", help="start a run", parents=[common])
     s.add_argument("--objective", required=True)
+    s.add_argument("--deliverables", default="",
+                   help="where the user asked any output to be written. Working "
+                        "memory always goes to .memory/ and is never a deliverable.")
     # No choices= here on purpose. The case files write the rung as "R2
     # Analytical", and choices=list(RUNGS) would reject the form a reader copies
     # straight out of the corpus while accepting only the bare code. The
@@ -503,7 +834,10 @@ def main() -> int:
     s.add_argument("--force", action="store_true")
     s.set_defaults(fn=cmd_init)
 
-    s = sub.add_parser("show", help="print the current state", parents=[common])
+    s = sub.add_parser("show", help="print the current state, current step first",
+                       parents=[common])
+    s.add_argument("--json", action="store_true",
+                   help="emit the whole state file instead of the summary")
     s.set_defaults(fn=cmd_show)
 
     s = sub.add_parser("set-rung", help="change the effort rung, up or down",
@@ -526,6 +860,40 @@ def main() -> int:
     s.add_argument("--authority", default="delegated", choices=["inline", "delegated"])
     s.add_argument("--why", default="")
     s.set_defaults(fn=cmd_handoff)
+
+    s = sub.add_parser("step", help="open, close, or list work units",
+                       parents=[common])
+    s.add_argument("--doing", default="", help="what this step does")
+    s.add_argument("--precondition", default="",
+                   help="the condition that must hold before it is attempted")
+    s.add_argument("--expect", default="",
+                   help="the observable condition that means it finished")
+    s.add_argument("--close", action="store_true",
+                   help="close the open step instead of opening a new one")
+    s.add_argument("--outcome", default="",
+                   help="how the open step actually ended (with --close)")
+    s.add_argument("--list", action="store_true", help="list every step")
+    s.set_defaults(fn=cmd_step)
+
+    s = sub.add_parser("context", help="record context loaded or deliberately dropped",
+                       parents=[common])
+    s.add_argument("--ref", default="",
+                   help="the file, command, or observation the context came from")
+    s.add_argument("--level", default="", metavar="C0..C6",
+                   help="the context-ladder rung it was loaded at")
+    s.add_argument("--why", default="", help="why it was loaded, or why dropped")
+    s.add_argument("--fresh", action="store_true",
+                   help="confirm it was checked for staleness before loading")
+    s.add_argument("--drop", action="store_true",
+                   help="record a deliberate omission rather than a load")
+    s.set_defaults(fn=cmd_context)
+
+    s = sub.add_parser("deliver", help="record a file this run produced for the user",
+                       parents=[common])
+    s.add_argument("--path", required=True,
+                   help="the file the user asked for; must not be inside .memory/")
+    s.add_argument("--what", default="", help="one line on what it is")
+    s.set_defaults(fn=cmd_deliver)
 
     s = sub.add_parser("record", help="record an observation and get an OBS id",
                        parents=[common])
@@ -551,7 +919,12 @@ def main() -> int:
     s.set_defaults(fn=cmd_list)
 
     args = p.parse_args()
-    if not getattr(args, "state_dir", None):
+    # Whether the caller named a location, or is taking the default. The legacy
+    # migration only applies to the default: moving a file out of a directory
+    # someone explicitly pointed at would be the tool editing a location it was
+    # not given.
+    args.state_dir_explicit = bool(getattr(args, "state_dir", None))
+    if not args.state_dir_explicit:
         args.state_dir = DEFAULT_DIR
     return args.fn(args)
 

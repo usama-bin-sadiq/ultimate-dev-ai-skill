@@ -421,23 +421,38 @@ def _recorded_mode(sandbox: str | None) -> str | None:
     """
     if not sandbox:
         return None
-    path = Path(sandbox) / ".ultimate-dev" / "run-state.json"
-    try:
-        state = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
+    state = _read_sandbox_state(sandbox)
+    if state is None:
         return None
     mode = (state.get("coordination") or {}).get("mode")
     return mode if isinstance(mode, str) else None
+
+
+def _read_sandbox_state(sandbox: str) -> dict | None:
+    """The run's state file, wherever this version of the kernel put it.
+
+    This hardcoded `.ultimate-dev/` once, and when the kernel's default moved to
+    `.memory/` every run that recorded its choice correctly came back as "no
+    run-state record" — scored `undecided` by a harness that was reading the
+    wrong path, not by an agent that failed to choose. A reader that only knows
+    one location cannot tell a missing record from a moved one, so it reads both
+    and prefers the current default.
+    """
+    for rel in (".memory", ".ultimate-dev"):
+        path = Path(sandbox) / rel / "run-state.json"
+        try:
+            return json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+    return None
 
 
 def _recorded_mode_changes(sandbox: str | None) -> int | None:
     """How many times this run changed its coordination mode."""
     if not sandbox:
         return None
-    path = Path(sandbox) / ".ultimate-dev" / "run-state.json"
-    try:
-        state = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
+    state = _read_sandbox_state(sandbox)
+    if state is None:
         return None
     changed = (state.get("coordination") or {}).get("changed")
     return len(changed) if isinstance(changed, list) else None

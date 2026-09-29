@@ -120,6 +120,42 @@ one was wrong for several commits: every run that followed it literally wrote no
 state file, and a harness that reads the file rather than the transcript scored
 each of them `undecided`.
 
+State is written to `.memory/` — the agent's private, disposable, gitignored
+working memory. **It is not where output goes.** If the user named a path for a
+document they want, pass `--deliverables <path>` at `init` and record the file
+when it exists:
+
+```sh
+python3 tools/run-state.py deliver --path docs/audit.md --what "the audit"
+```
+
+`deliver` refuses a path inside `.memory/`. A deliverable filed there is invisible
+to whoever asked for it, uncommittable, and lost when the directory is cleared —
+and nothing notices, because the directory is ignored. Deciding where output goes
+once, at the start, is what stops it being re-guessed at the end, by an agent that
+has run long and has the least context left.
+
+**Then say what you are doing, in the file, not only in prose.** Each work unit
+gets a step, opened as you start it:
+
+```sh
+python3 tools/run-state.py step --doing "<this unit>" \
+  --precondition "<the condition that must hold to begin>" \
+  --expect "<the observable condition that means it is finished>"
+```
+
+Opening a step supersedes the previous one, so exactly one is current. `show`
+prints it first:
+
+```sh
+python3 tools/run-state.py show
+```
+
+At R2 and above, `check` refuses a run with no steps, and refuses two open at
+once — a question with two answers gets answered from the transcript, which is
+what this file exists to replace. R0 and R1 are exempt: recording at those rungs
+is the ceremony the kernel criticises.
+
 This is what makes the choice reviewable, and the evaluation harness reads the
 state file to score whether the rung chosen was the rung warranted. Why this is
 not ceremony at R0 is in `references/state-system.md`.

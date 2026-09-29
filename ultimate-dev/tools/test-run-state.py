@@ -151,11 +151,20 @@ def state_of(path: str) -> dict:
 
 
 BASE = {
-    "schema_version": 1, "run_id": "T", "started": "now", "objective": "o",
+    "schema_version": 3, "run_id": "T", "started": "now", "objective": "o",
     "rung": "R1", "scale": "L1",
     "rung_triggers": {"escalate_on": "", "de_escalate_on": ""},
     "coordination": {"mode": "inline", "why": "w", "until": "u", "changed": []},
     "active_agent": None, "authority": "inline",
+    # A closed step, not an open one: S13 asserts a well-formed R2 state passes,
+    # and R2 now requires a step log. Leaving `steps` out of BASE would have made
+    # that case fail for a reason unrelated to what it is testing -- and the easy
+    # fix, exempting R2 from its own new rule, would have deleted the check.
+    "steps": [{"n": 1, "doing": "the work", "precondition": "it can start",
+               "expect": "it is done", "outcome": "done",
+               "at": "now", "closed_at": "now"}],
+    "context": {"loaded": [], "dropped": []},
+    "deliverables": {"asked_location": "", "produced": []},
     "decisions": [], "observations": [], "assumptions": [],
     "verification": {"criteria": [], "verdicts": []}, "result": None,
 }
@@ -280,6 +289,129 @@ check("S13 and the passing message states the rung",
 d, sp = write_state(dict(BASE))
 code, out = cli("--state-dir", d, "set-mode", "--mode", "teleport")
 check("S14 set-mode with an unknown mode is refused", code != 0, f"exit {code}")
+
+# ---- S15-S18: the step log, and what `show` is for
+#
+# The step log exists so that "what is this agent doing right now" has an
+# answer which survives the run getting long. Every gate below is paired with a
+# negative, because a gate that only ever passes is the failure this file has
+# already caught twice.
+
+_d = tempfile.mkdtemp()
+_sdp = ["--state-dir", _d]
+cli(*_sdp, "init", "--objective", "o", "--rung", "R1")
+code, out = cli(*_sdp, "step", "--doing", "fix it",
+                "--precondition", "it exists", "--expect", "it is fixed")
+check("S15 a step opens with a precondition and an expected result",
+      code == 0, f"exit {code}: {out[:120]}")
+
+code, out = cli(*_sdp, "show")
+check("S15 and `show` leads with the open step",
+      "fix it" in out.splitlines()[0], out.splitlines()[0][:120] if out else "")
+check("S15 and it prints the precondition and the expected result",
+      "it exists" in out and "it is fixed" in out, out[:200])
+
+# Opening a second step supersedes the first, so "current" stays singular.
+cli(*_sdp, "step", "--doing", "second", "--precondition", "p", "--expect", "e")
+_st = state_of(str(pathlib.Path(_d) / "run-state.json"))
+_open = [s for s in _st["steps"] if s.get("outcome") is None]
+check("S16 opening a second step closes the first", len(_open) == 1,
+      f"{len(_open)} still open")
+check("S16 and the superseded step says so, rather than vanishing",
+      _st["steps"][0]["outcome"] == "superseded", str(_st["steps"][0]))
+
+code, out = cli(*_sdp, "step", "--doing", "no precond", "--expect", "e")
+check("S17 a step with no precondition is refused", code != 0, f"exit {code}")
+code, out = cli(*_sdp, "step", "--doing", "no expect", "--precondition", "p")
+check("S17 a step with no expected result is refused", code != 0, f"exit {code}")
+code, out = cli(*_sdp, "step", "--close", "--outcome", "")
+check("S17 a step cannot be closed with no outcome", code != 0, f"exit {code}")
+
+# R2 requires a step log; R0 does not, because the kernel calls recording at R0
+# ceremony, and a gate that fires there is the thing it criticises.
+_d2, _ = write_state({**BASE, "rung": "R2", "steps": [],
+                      "rung_triggers": {"escalate_on": "a", "de_escalate_on": "b"}})
+code, out = cli("--state-dir", _d2, "check")
+check("S18 an R2 state with no steps fails", code != 0, f"exit {code}")
+check("S18 and it names the step log as the reason", "no steps" in out, out[:160])
+
+_d3, _ = write_state({**BASE, "rung": "R0", "steps": []})
+code, out = cli("--state-dir", _d3, "check")
+check("S18 and an R0 state with no steps still passes", code == 0,
+      f"exit {code}: {out[:160]}")
+
+_d4, _ = write_state({**BASE, "steps": [
+    {"n": 1, "doing": "a", "precondition": "p", "expect": "e", "outcome": None},
+    {"n": 2, "doing": "b", "precondition": "p", "expect": "e", "outcome": None}]})
+code, out = cli("--state-dir", _d4, "check")
+check("S18 two steps open at once fails", code != 0, f"exit {code}")
+
+# ---- S19-S21: working memory is not a deliverable
+#
+# `.memory/` is gitignored and disposable. An audit or research document filed
+# there is invisible to whoever asked for it, lost when the directory is
+# cleared, and noticed by nothing -- which is why the refusal lives in the tool
+# rather than in a convention.
+
+_d5 = tempfile.mkdtemp()
+_sd5p = ["--state-dir", _d5]
+cli(*_sd5p, "init", "--objective", "o", "--rung", "R1")
+code, out = cli(*_sd5p, "deliver", "--path", ".memory/audit.md", "--what", "audit")
+check("S19 a deliverable inside the memory directory is refused", code != 0,
+      f"exit {code}")
+check("S19 and the message says where it belongs",
+      "path they named" in out or "where the user asked" in out, out[:200])
+
+# `.memory-backup` begins with the string `.memory` and is a different
+# directory; a prefix test would refuse a legitimate path.
+code, out = cli(*_sd5p, "deliver", "--path", ".memory-backup/audit.md")
+check("S19 and a sibling-prefixed path is not caught by the prefix test",
+      code == 0, f"exit {code}: {out[:160]}")
+
+code, out = cli(*_sd5p, "deliver", "--path", "docs/audit.md", "--what", "audit")
+check("S20 a deliverable at the requested path is recorded", code == 0,
+      f"exit {code}: {out[:120]}")
+_st = state_of(str(pathlib.Path(_d5) / "run-state.json"))
+check("S20 and it is in the state file",
+      any(e.get("path") == "docs/audit.md"
+          for e in _st["deliverables"]["produced"]), str(_st["deliverables"]))
+
+# Hand-edited, or written by an older version: check re-derives the rule rather
+# than trusting whichever tool wrote the file.
+_d6, _ = write_state({**BASE, "deliverables": {
+    "asked_location": "", "produced": [{"path": ".memory/x.md", "what": ""}]}})
+code, out = cli("--state-dir", _d6, "check")
+check("S21 a deliverable inside memory fails check even if hand-written",
+      code != 0, f"exit {code}")
+
+_d7, _ = write_state({**BASE, "deliverables": {
+    "asked_location": "docs/a.md", "produced": []}})
+code, out = cli("--state-dir", _d7, "check")
+check("S21 and an asked-for location with nothing delivered fails", code != 0,
+      f"exit {code}")
+
+# ---- S22: a context drop with no reason
+_d8, _ = write_state({**BASE, "context": {
+    "loaded": [], "dropped": [{"ref": "big.md", "why": ""}]}})
+code, out = cli("--state-dir", _d8, "check")
+check("S22 a context drop with no reason fails", code != 0, f"exit {code}")
+
+_d9 = tempfile.mkdtemp()
+_sd9p = ["--state-dir", _d9]
+cli(*_sd9p, "init", "--objective", "o", "--rung", "R1")
+code, out = cli(*_sd9p, "context", "--ref", "references/x.md", "--level", "C3")
+check("S22 a context load is recorded", code == 0, f"exit {code}: {out[:120]}")
+code, out = cli(*_sd9p, "context", "--drop", "--ref", "big.md")
+check("S22 a drop with no reason is refused at write time too", code != 0,
+      f"exit {code}")
+
+# ---- S23: the default state directory is .memory, and legacy still migrates
+_src = (pathlib.Path(__file__).resolve().parent / "run-state.py").read_text(
+    encoding="utf-8")
+check("S23 the default state directory is .memory",
+      'DEFAULT_DIR = ".memory"' in _src, "DEFAULT_DIR is not .memory")
+check("S23 and the legacy directory is still recognised for migration",
+      'LEGACY_DIR = ".ultimate-dev"' in _src, "LEGACY_DIR missing")
 
 if FAILURES:
     print(f"\nFAIL  {len(FAILURES)} case(s) failed: {', '.join(FAILURES)}")
