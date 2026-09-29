@@ -124,3 +124,52 @@ Summarise the plan; do not summarise the evidence.
 See `budget-system.md` for effort accounting, `observation-system.md` for what
 qualifies as an observation, and `caching-and-reuse.md` for what may be
 recomputed instead of stored.
+
+## Why the record is written before the work, and not after
+
+The kernel's central claim is that the coordination mode and the effort rung
+follow the complexity of the task. That is a claim about a decision, and a
+decision nobody can read back is not a capability — it is an assertion.
+
+So the rung and the mode are recorded at the moment they are chosen:
+
+```sh
+python3 run-state.py init --rung R1 --objective "<one line>"
+python3 run-state.py set-mode --mode delegate --why "<what justified isolation>"
+python3 run-state.py set-rung  --rung R2 --why "<what was discovered>"
+```
+
+**This was not being asked for, and the measurement caught it.** The first real
+run of the task corpus loaded the kernel, did the work correctly, and recorded
+nothing — 0 of 8 rows decidable, every one `undecided`. The transcripts showed
+`Skill "ultimate-dev"` loading, the right tool run, the right files read, and no
+`run-state.json` anywhere. The kernel mentioned `set-mode` exactly once, in a
+sentence explaining what the tool *does*, and nothing told a run *when* to call
+it. Every step where the mode is decided was silent on recording.
+
+The lesson is the shape of the defect rather than the missing line: a tool can be
+documented accurately and still never be invoked, because describing a
+mechanism is not instructing anyone to use it. The fix was in the kernel, at the
+decision point, as an imperative with the command in it.
+
+**The R0 case is the one that gets argued about.** A task model at R0 is one line
+by design, and `references/decision-ledger.md` calls recording ceremony at the
+lower rungs. The reconciliation is that the *rung* is not ceremony. It is a
+single field, set once, and it is the only thing that makes an escalation
+visible: a run that treated an R0 task as R3 and wrote nothing has left no
+evidence that it did, so the failure is invisible rather than correctable. What
+is forbidden at R0 is elaboration — plans, ledgers, verification ceremony — and
+a rung is not elaboration. An unrecorded R0 is precisely the case that would
+otherwise pass silently.
+
+**Undecided is a real outcome, not a soft pass.** A run that recorded nothing is
+scored `undecided` and excluded from every rate, because nothing is known about
+what it would have chosen. Scoring it zero would be a false accusation: the run
+might have chosen correctly and failed to say so. Scoring it one would convert an
+absence into a measurement. Both were available, and the difference between them
+is the whole discipline.
+
+**Nothing here grades the run.** The recorded mode is read by a grader and
+compared against an oracle. That comparison is the only thing in the system that
+speaks about whether the chosen architecture was the warranted one, and it cannot
+exist unless the run wrote something down first.

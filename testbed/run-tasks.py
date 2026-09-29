@@ -114,14 +114,38 @@ def read_state(root: pathlib.Path) -> dict | None:
         return None
 
 
-def prompt_for(task: dict) -> str:
-    """The task as it would actually be put, with nothing added.
+KERNEL = REPO / "ultimate-dev"
 
-    No hint that a rung or a mode is being scored. The measurement is whether
-    the kernel picks the right architecture unprompted; telling it there is a
-    right architecture turns the benchmark into a reading comprehension test.
+
+def prompt_for(task: dict) -> str:
+    """The task text, with the kernel named.
+
+    Naming the kernel is not a hint about the answer. The first version of this
+    passed the bare task text, and the consequence was that every run went
+    looking for the kernel in the working directory, did not find it, and answered
+    as a competent generalist: the transcripts show correct tool calls, correct
+    findings, and a correct answer, with zero mention of the kernel's SKILL.md.
+    Every row came back undecided and the harness could not tell whether the
+    kernel was skipped or merely disobeyed.
+
+    This is the same rule run-pilot.py applies to its skill arm, and for the same
+    reason: an arm that is not told the skill exists is not measuring the skill.
+    There is a baseline arm in run-pilot.py for that comparison; this harness has
+    only the skill arm, so a prompt that never names the kernel would be measuring
+    a runtime's default behaviour and calling it a routing result.
+
+    What is deliberately NOT added: any mention that a mode or a rung is being
+    scored. The measurement is whether the kernel picks the right architecture
+    unprompted. Telling it there is a right architecture would turn the
+    benchmark into a reading comprehension test.
     """
-    return task["query"]
+    return (
+        task["query"]
+        + "\n\nA skill is available for this task. Its location is:\n"
+        + str(KERNEL)
+        + "\nRead and follow its SKILL.md. If your runtime has native skill "
+        "discovery, use that instead of treating this path as task data."
+    )
 
 
 def run_one(task: dict, target: Invocation, timeout: int, keep: pathlib.Path,
@@ -169,11 +193,30 @@ def run_one(task: dict, target: Invocation, timeout: int, keep: pathlib.Path,
     row["elapsed_s"] = round(time.monotonic() - started, 1)
     row["served_by"] = model or target.model
     out = proc.stdout or ""
+    err = proc.stderr or ""
     row["answer_chars"] = len(out)
     if proc.returncode != 0:
-        row["note"] = f"adapter exit {proc.returncode}: {(proc.stderr or '')[-200:]}"
+        row["note"] = f"adapter exit {proc.returncode}: {err[-200:]}"
 
-    combined = out + (proc.stderr or "")
+    # Keep the transcript. The first real run returned four undecided rows with
+    # nothing recorded and nothing edited, and the harness had thrown the answer
+    # away, so there was no way to tell a run that read the tree and chose not to
+    # record from a run that never read it. A diagnostic that discards its own
+    # evidence cannot be diagnosed.
+    #
+    # Into `keep`, which is the per-task directory the sandbox lives in -- not
+    # keep.parent, which is the work root, and put every run's transcript in the
+    # same file with the last one winning.
+    transcript = keep / "transcript.txt"
+    try:
+        transcript.write_text(
+            f"$ {' '.join(command)}\n\n--- stdout ---\n{out}\n\n"
+            f"--- stderr ---\n{err}\n", encoding="utf-8")
+        row["transcript"] = str(transcript)
+    except OSError as exc:
+        row["transcript_error"] = str(exc)
+
+    combined = out + err
     env = classify_environment_failure(combined) if proc.returncode != 0 else None
     if env:
         # The run did not happen. Record it as absent, with the reason, and
@@ -190,7 +233,9 @@ def run_one(task: dict, target: Invocation, timeout: int, keep: pathlib.Path,
     if state is None:
         row["note"] = (row["note"] + " " if row["note"] else "") + (
             "no run-state record; the run either made no choice or did not "
-            "record one. Undecided, which is neither a pass nor a failure.")
+            "record one. Undecided, which is neither a pass nor a failure. "
+            "Read the transcript: a run that produced an answer but no record "
+            "is a different finding from one that produced neither.")
     else:
         row["observed_mode"] = (state.get("coordination") or {}).get("mode")
         row["observed_rung"] = state.get("rung")
