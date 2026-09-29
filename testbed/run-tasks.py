@@ -117,7 +117,21 @@ def read_state(root: pathlib.Path) -> dict | None:
 KERNEL = REPO / "ultimate-dev"
 
 
-def prompt_for(task: dict) -> str:
+ASK_RECORD = """
+
+---
+
+Record the architecture you chose before you start, using the kernel's own
+state tool, and then do the task:
+
+    python3 run-state.py init --rung <R0..R4> --objective "<one line>"
+    python3 run-state.py set-mode --mode <inline|delegate|route|handoff> --why "<why>"
+
+Choose both yourself from the task as stated. Do not copy a value from anywhere.
+"""
+
+
+def prompt_for(task: dict, ask_record: bool = False) -> str:
     """The task text, with the kernel named.
 
     Naming the kernel is not a hint about the answer. The first version of this
@@ -139,17 +153,18 @@ def prompt_for(task: dict) -> str:
     unprompted. Telling it there is a right architecture would turn the
     benchmark into a reading comprehension test.
     """
-    return (
+    base = (
         task["query"]
         + "\n\nA skill is available for this task. Its location is:\n"
         + str(KERNEL)
         + "\nRead and follow its SKILL.md. If your runtime has native skill "
         "discovery, use that instead of treating this path as task data."
     )
+    return base + (ASK_RECORD if ask_record else "")
 
 
 def run_one(task: dict, target: Invocation, timeout: int, keep: pathlib.Path,
-            model: str | None = None) -> dict:
+            model: str | None = None, ask_record: bool = False) -> dict:
     root = sandbox_for(task, keep)
     row = {
         "id": task["id"],
@@ -176,7 +191,8 @@ def run_one(task: dict, target: Invocation, timeout: int, keep: pathlib.Path,
     # pool rather than over the kernel.
     attempt = Invocation(runner=target.runner, agent=target.agent,
                          model=model or target.model, agent_args=target.agent_args)
-    command = attempt.command(prompt_for(task), timeout=timeout, cwd=root)
+    command = attempt.command(prompt_for(task, ask_record), timeout=timeout,
+                            cwd=root)
 
     started = time.monotonic()
     try:
@@ -297,6 +313,15 @@ def main() -> int:
                     help="where sandboxes are built. Defaults to a directory "
                          "OUTSIDE the repository being copied; putting it "
                          "inside makes copytree copy its own destination.")
+    ap.add_argument(
+        "--ask-record", action="store_true",
+        help="Add an explicit instruction to record the chosen rung and mode "
+             "before starting. This measures a DIFFERENT number from the default "
+             "arm and the two must not be added together: the default arm asks "
+             "whether the kernel records its own architecture, and this one asks "
+             "whether it chooses a good architecture once told to write it down. "
+             "A model can pass this one and fail the other, and that is the "
+             "interesting result rather than a contradiction.")
     ap.add_argument("--dry-run", action="store_true",
                     help="list what would run and exit; no model is called")
     args = ap.parse_args()
@@ -353,13 +378,15 @@ def main() -> int:
         # Walk the pool only on an environment failure. A wrong answer is a
         # result and is kept: retrying it on another model would be grading the
         # same task twice and reporting whichever model happened to be second.
-        row = run_one(task, target, args.timeout, keep, model=pool[0])
+        row = run_one(task, target, args.timeout, keep, model=pool[0],
+                          ask_record=args.ask_record)
         tried = 1
         while row.get("environment_failure") and tried < len(pool):
             nxt = pool[tried]
             print(f"        {row['environment_failure']} on "
                   f"{row.get('served_by') or 'the default'}; trying {nxt}")
-            row = run_one(task, target, args.timeout, keep, model=nxt)
+            row = run_one(task, target, args.timeout, keep, model=nxt,
+                          ask_record=args.ask_record)
             tried += 1
         row["pool_tried"] = tried
 

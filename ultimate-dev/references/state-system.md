@@ -149,8 +149,24 @@ it. Every step where the mode is decided was silent on recording.
 
 The lesson is the shape of the defect rather than the missing line: a tool can be
 documented accurately and still never be invoked, because describing a
-mechanism is not instructing anyone to use it. The fix was in the kernel, at the
-decision point, as an imperative with the command in it.
+mechanism is not instructing anyone to use it. The fix was in the kernel, as an
+imperative with the command in it.
+
+**Then the placement was wrong too, and that needed a second pass.** The first
+fix put `init` in Step 1, where the task model is written. A run that has the
+imperative in context still did not call it — and Step 0, thirty lines earlier, is
+where the rung is actually chosen. Two things were wrong: the record was not an
+instruction, and then the instruction was not adjacent to the decision it records.
+A record a screen away from its own decision reads as a different topic, and a
+model given a task does the task.
+
+So the command now sits inside Step 0, immediately after the rung ladder it
+records, and before the four triage questions are even answered. That is the
+whole redesign: the rung decision and its record are one statement, not two
+topics thirty lines apart. Whether it works is a measurement, not an assertion —
+and `testbed/run-tasks.py --ask-record` exists to measure the adjacent thing, which
+is whether a model asked explicitly to record will. Two numbers, and they are
+allowed to disagree.
 
 **The R0 case is the one that gets argued about.** A task model at R0 is one line
 by design, and `references/decision-ledger.md` calls recording ceremony at the
