@@ -9,6 +9,8 @@ assignees: ''
 <!--
 Title convention: <area>: <specific symptom>
   areas: skill (SKILL.md), agents/<name>, skills/<name>, evaluation, docs, arch
+  The project lives under `ultimate-dev/` in this repository, so every path
+  below is written `ultimate-dev/...`. Copy them as-is.
   e.g. triage: assigns R3 to a single-constant change
        verification: reports PARTIAL as VERIFIED
        eval: BM-SIMPLE-01 does not detect the over-orchestration it exists to catch
@@ -29,7 +31,7 @@ sides are bugs. Which one is this?
 
 - [ ] **Over-orchestration** — ceremony on work that did not need it (R3
       reasoning on an R0 task, a plan for a one-line change, a capability
-      search that found nothing). See `evaluation/benchmark/simple/`.
+      search that found nothing). See `ultimate-dev/evaluation/benchmark/simple/`.
 - [ ] **Under-orchestration** — a confident direct answer on work that needed
       more: no plan, no capability check, no verification.
 - [ ] **Wrong effort assignment** — the rung or scale was defensible at
@@ -43,10 +45,10 @@ sides are bugs. Which one is this?
 - [ ] **Capability defect** — wrong tool chosen, or a skill minted for a one-off.
 - [ ] **Security / trust defect** — injection, poisoned capability, unsafe
       action, or evidence accepted that should not have been. Please see
-      `evaluation/security-cases/` and prefer a private report if the
-      disclosure itself is sensitive.
+      `ultimate-dev/evaluation/security-cases/` and prefer a private report if
+      the disclosure itself is sensitive.
 - [ ] **Documentation defect** — the docs are wrong, contradictory, or
-      disagree with `SKILL.md`. Docs are part of the deliverable here.
+      disagree with `ultimate-dev/SKILL.md`. Docs are part of the deliverable here.
 - [ ] **Harness defect** — an eval, fixture, or metric that mismeasures.
 
 ## Where in the loop
@@ -63,11 +65,11 @@ Stage: <!-- e.g. TRIAGE -->
 <!-- Which file's behaviour is wrong. Be specific: the defect is usually in one
      instruction, not in the design as a whole. -->
 
-- [ ] `SKILL.md`
-- [ ] `agents/<name>.md`
-- [ ] `skills/<name>/`
-- [ ] `evaluation/`
-- [ ] `docs/` or `ARCHITECTURE.md`
+- [ ] `ultimate-dev/SKILL.md`
+- [ ] `ultimate-dev/agents/<name>.md`
+- [ ] `ultimate-dev/skills/<name>/`
+- [ ] `ultimate-dev/evaluation/`
+- [ ] `ultimate-dev/docs/` or `ultimate-dev/ARCHITECTURE.md`
 - [ ] Other: <!-- path -->
 
 ## Environment
@@ -78,7 +80,7 @@ missing value block the report.
 
 - Commit / ref: <!-- `git rev-parse --short HEAD` -->
 - opencode version: <!-- `opencode --version` -->
-- Model: <!-- held constant per evaluation/methodology.md; state which -->
+- Model: <!-- held constant per ultimate-dev/evaluation/methodology.md; state which -->
 - Active skill: <!-- e.g. ultimate-dev @ R2 / L3 — the rung and scale the run chose -->
 - Agent used: <!-- e.g. verifier, critic; or "none" -->
 - OS: <!-- `uname -a` -->
