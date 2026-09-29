@@ -441,12 +441,28 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          notes=$(awk -v v="[$NEW_VERSION]" '
-            $0 ~ "^## " v { found = 1; next }
+          # The version is passed bare, not as "[$NEW_VERSION]". awk's `~` takes
+          # a dynamic *regular expression*, so the brackets in an interpolated
+          # value are read as a character class -- the pattern became
+          # `^## [4.0.29]`, which matches one character from the set {4,.,0,2,9}
+          # where the heading has a literal `[`. Nothing matched, `found` was
+          # never set, and every release shipped `--notes ""`. The version is
+          # already validated as digits-and-dots by the step above, so bare with
+          # escaped brackets in the pattern is exact.
+          notes=$(awk -v v="$NEW_VERSION" '
+            $0 ~ "^## \\[" v "\\]" { found = 1; next }
             found && /^## \[/ { exit }
             found { print }
           ' CHANGELOG.md)
           notes=$(printf '%s\n' "$notes" | sed -e '/./,$!d')
+          # An empty body is a failed extraction, not a release with nothing to
+          # say. The verify step already proved the heading exists, so silence
+          # here means the reader broke -- ship a loud failure, not a blank
+          # release page.
+          if [ -z "$notes" ]; then
+            echo "Extracted no release body for v$NEW_VERSION from CHANGELOG.md" >&2
+            exit 1
+          fi
           gh release create "v$NEW_VERSION" \
             --title "v$NEW_VERSION" \
             --notes "$notes" \
