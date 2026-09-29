@@ -249,4 +249,7 @@ These phrases are overused in AI-generated content:
 - "This begs the question..."
 - "Let's delve into..."
 
-See the seo-audit skill's `references/ai-writing-detection.md` for a complete list of AI writing tells.
+The list above is the set this skill flags, and it is deliberately short: these
+are the openings that read as machine-written on their own. A longer catalogue
+of tells belongs to a detector, not to a copywriting guide -- a guide that
+enumerates them ends up teaching them.

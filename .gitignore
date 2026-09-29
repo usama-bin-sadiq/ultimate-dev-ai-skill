@@ -29,6 +29,14 @@ results/
 # Local agent state
 .memory/
 
+# Run state written by the kernel itself. Step 0 opens with
+# `run-state.py init --rung ...`, so following the kernel from the skill root
+# drops a directory here on every run -- which means obeying the kernel dirties
+# the working tree, and the next person cannot tell that from an agent editing
+# files. testbed/.ultimate-dev/run-state.json is already tracked as a fixture
+# and stays tracked: ignoring a directory does not untrack what is in it.
+.ultimate-dev/
+
 # OS
 .DS_Store
 Thumbs.db

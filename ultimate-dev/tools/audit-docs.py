@@ -239,6 +239,13 @@ def looks_like_path(token: str) -> bool:
 # were of that kind, which buried the 51 that were real. A check whose output is
 # 97% noise gets ignored, and then the 3% goes with it.
 #
+# The survivors are still mostly not defects, and were each read rather than
+# counted. What is left is upstream docs/ pages the import never brought, paths
+# in the reader's own project (`.claude/`, `~/`, a skill telling the agent where
+# to keep the user's memory file), and filenames inside fenced template blocks
+# that illustrate the shape of a good SKILL.md rather than claim a file. Fixing
+# those means inventing files or corrupting correct instructions, so they stay.
+#
 # Twin of _DIRS in bundle-skill.py. Two copies of a rule is how they drift, so
 # they are asserted equal by tools/test-fence-parity.py's sibling check rather
 # than kept in step by hand.

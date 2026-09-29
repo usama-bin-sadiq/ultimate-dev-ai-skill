@@ -45,4 +45,4 @@ Keep `.windsurfrules` focused on 2-3 essential skills to stay within context lim
 
 1. **Be selective** — Windsurf's context is limited. Choose skills that address your biggest quality gaps.
 2. **Reference in conversation** — Paste additional skill content into the chat when working on specific phases (e.g., paste `security-and-hardening` when building auth).
-3. **Use references as checklists** — Paste `references/security-checklist.md` and ask Windsurf to verify each item.
+3. **Use references as checklists** — Paste `references/quality-checklists/security-checklist.md` and ask Windsurf to verify each item.
