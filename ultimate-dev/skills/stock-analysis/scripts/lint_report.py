@@ -905,7 +905,10 @@ def sourcing_finding(res: SourcingResult) -> Finding:
         status, note = WARN, (" Below %.0f%% -- too many bare figures; add "
                               "inline sources." % (WARN_THRESHOLD * 100))
     else:
-        status, note = PASS, " At or above the 60%% target."
+        # Not a %-format argument, so `%%` here would print as two characters.
+        # It is the only branch that hardcodes the threshold; the other two read
+        # it, so this one should too or the message drifts when the target moves.
+        status, note = PASS, " At or above the %.0f%% target." % (WARN_THRESHOLD * 100)
     return Finding("figure-sourcing", GROUP_SOURCING, status, base + note,
                    details=details, extra=extra)
 
