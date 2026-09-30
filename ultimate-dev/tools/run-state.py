@@ -17,16 +17,43 @@ grows without bound is a context problem wearing a different hat.
     python3 tools/run-state.py set-mode  --mode route --why "three sources" \
                                          --until "single-source follow-up"
     python3 tools/run-state.py handoff   --to <role> --authority delegated
+    python3 tools/run-state.py step      --doing "..." --precondition "..." --expect "..." \
+                                         --capability "..." --verify "..."
+    python3 tools/run-state.py log       --kind execute --what "..."  [--under P03]
     python3 tools/run-state.py record    --observation "..." 
-    python3 tools/run-state.py decide    --question "..." --selected "..." \
+    python3 tools/run-state.py decide    --question "..." --selected "<an action>" \
                                          --rejected "..." --rationale "..." \
                                          --confidence "high in X" --evidence OBS-1
+    python3 tools/run-state.py context   --ref "..." --why "..." [--enables "..." --scope "..."]
+    python3 tools/run-state.py context   --gap "<what is missing>"   /  --closed "<gap>"
+    python3 tools/run-state.py require   --what "..."
+    python3 tools/run-state.py satisfy   --what "..." --evidence OBS-1
+    python3 tools/run-state.py recover   --class <one of nine> --action "<what was done>" --result "<what it produced>"
+    python3 tools/run-state.py blocked   --what "..." --reason "..." --tried "..." --routes <one of fifteen>
+    python3 tools/run-state.py reflect   --answer "<question>=<answer>"   # all fifteen
+    python3 tools/run-state.py finish    --status completed|partial|blocked|failed
+    python3 tools/run-state.py audit     -            # or --path <file>
     python3 tools/run-state.py check
     python3 tools/run-state.py list
 
 COORDINATION MODE is the field revision 2 added. It is one of inline, delegate, route,
 handoff, and it carries the condition that would change it -- so a mode that turns out to
 be wrong is a recorded fact rather than an invisible one.
+
+THE PROCESS LOG and THE COMPLETION STATUS are revision 3. The log is numbered P01, P02,
+... and never resets, including across a recovery, because a number that restarts at 1
+after a failure produces a log that cannot be read to find out what had already been
+tried -- which is the only reason it is numbered. Its entries that claim something about
+the work are checked against the work: a line saying a specialist was invoked is refused
+unless the dispatch ledger says one was, and `verify` is refused unless something was
+actually verified. `finish` writes the terminal status and refuses `completed` unless all
+four conditions of section 35 hold at once: every work unit closed, at least one
+acceptance criterion and all of them met, and no capability in flight.
+
+`audit` is the complement of every gate here. All of them read the state; `audit` reads
+the delivery. That is the one that matters, because a run can satisfy every gate in this
+file and still hand the user a report describing work it did not do -- the description
+and the state are written by the same judgement and share its blind spot.
 
 Usage notes:
   * `check` is the gate. It exits non-zero on an unknown mode, a mode with no reason, a
@@ -43,8 +70,40 @@ Usage notes:
     schema defines crashed it; a crash exits non-zero, which looks like the gate
     firing rather than the gate being broken.
 
+    Revision 3 found the same class of gap a third time, in the one place the
+    spec is most worried about. The process log and the completion status were
+    both specified -- sections 22-24 name the kinds, section 35 names the four
+    conditions, section 26 names five fields per work unit -- and both were
+    prose. `COMPLETION_STATUSES`, `STEP_FIELDS` and `LOG_KINDS` were declared as
+    constants in this file and read by nothing, which is the same defect as
+    `until` wearing a different hat: a vocabulary that exists and is never
+    consulted constrains nobody.
+
     tools/test-run-state.py asserts every clause of this list in both
     directions, and found the last two of those three.
+
+    Revision 5 took the ratio the other way. check-spec.py measured 17 of 61 spec
+    sections with a command behind them and called the remaining 44 prose; the
+    request was to enforce all of them, and the honest answer turned out to be
+    55 gated, 6 decided prose, and 0 undecided. Thirty-one new refusals landed:
+    the executable-action rule on a decision record, the four parts of a context
+    request, the open context gap, the state-shape report, the orphan checks, the
+    state machine's ordering, the recovery class and its seven fields, the fifteen
+    routes, the handover brief, the handback result, over-delegation, synthesis,
+    the fifteen self-evaluation questions, and the delivery sections.
+
+    Six sections stayed prose, and check-spec now fails on any row that is neither
+    gated nor carries a stated reason. That is the part worth more than the
+    thirty-one: an unclassified row reads as a backlog item somebody forgot, and
+    the table was rewritten once already to stop being that.
+
+    Four of the thirty-one arrived broken and were fixed by being run before their
+    assertions were written, which is the rule the S36 lint exists to enforce:
+    `rung_code` was read above its assignment; an empty process log accepted any
+    stage; the §18 check gated on a field holding a value rather than existing,
+    so a correct early run failed for being early; and two of §45's questions share
+    their first eighteen characters, so one answer silently answered the wrong
+    question.
 """
 from __future__ import annotations
 
@@ -68,7 +127,13 @@ DEFAULT_DIR = ".memory"
 # agent while the first is a finding about the tool.
 LEGACY_DIR = ".ultimate-dev"
 STATE_FILE = "run-state.json"
-SCHEMA_VERSION = 3
+# 4 added `log`, `completion`, `host`, `host_history` and `exceeds_ceiling` at the
+# top level, and `capability` / `verify` on each step. Nothing reads this field, so
+# nothing breaks on the bump -- which is exactly why it needed making: a version
+# number that is allowed to drift is a version number that carries no information,
+# and it was still claiming 3 after the shape had changed. Every added field is
+# read with .get() or setdefault(), so a 3 state file loads unchanged.
+SCHEMA_VERSION = 4
 
 # The capability dispatch contract, from the kernel's "no silent degradation"
 # section. The chain matters in one direction: a capability that was chosen and
@@ -139,6 +204,92 @@ TERMINAL_CLAIMS = (
     re.compile(r"^\W{0,3}i\s+(?:didn't|did\s+not)\s+invoke\b", re.I),
 )
 
+# The four completion statuses (sections 35, 48-51). `completed` is the only one
+# that asserts the objective was met, so it is the only one `check` refuses
+# without every criterion satisfied and no block standing.
+COMPLETION_STATUSES = ("completed", "partial", "blocked", "failed")
+
+# A work unit's declared shape (section 26). `capability` and `verify` are the
+# two that get skipped: a unit worked on with no named capability, and an
+# expected condition with no verification method, are both a wish.
+STEP_FIELDS = ("doing", "precondition", "expect", "capability", "verify")
+
+# The process log (sections 22-24). Every entry names a kind, and the kinds are a
+# closed vocabulary because the specification lists them; a list can be checked,
+# and free text cannot.
+#
+# The value is the *dispatch state the entry claims*. A log line that says a
+# specialist was invoked is refused unless the ledger says one was, which is the
+# dispatch chain's own rule ("a capability at `selected` is not `observed`")
+# applied to the narrative form. This is the whole of section 24: a run can
+# satisfy every state gate and still write a log claiming work it did not do,
+# because the log is prose and the gates are not.
+#
+# `None` means the entry claims nothing about the capability ledger, so it is
+# always accepted. Two claims are not about a capability and are checked against
+# the run instead: `verify` (satisfied by a dispatch at verified, or by a
+# criterion met -- an inline run verifies without ever dispatching) and
+# `complete` (satisfied by a recorded completion status).
+LOG_KINDS = {
+    # Section 25's stage names.
+    "receive": None, "understand": None, "triage": None, "decide": None,
+    "context": None, "plan": None, "execute": "running", "observe": "observed",
+    "verify": "verified", "recover": None, "replan": None, "escalate": None,
+    "synthesize": None, "deliver": None, "complete": None,
+    # The names section 23's worked example uses, kept so a log written by
+    # copying that example is accepted verbatim rather than rejected as a typo.
+    "delegate": "invoked", "dispatch": "invoked", "reachability": None,
+    "recovery": None, "result": "observed", "executed": "running",
+    "observed": "observed", "invoked": "invoked", "verified": "verified",
+    # Found by the gate refusing to log real work. `execute` claims a dispatch is
+    # `running`, because §23's example uses it for the specialist's turn -- so a run
+    # that did its work inline, which is most runs and the cheap-correct case, had
+    # no kind that described what it did. Forcing such a run to either lie about a
+    # dispatch or omit the execution from its own log is the gate punishing the
+    # honest answer. `execute-inline` is the honest answer, and it is also the one
+    # a reader most wants distinguished: work this kernel did, versus work it
+    # bought.
+    "execute-inline": None,
+}
+
+# §25's state machine, as the part of it that can be checked: what has to precede
+# what. `LOG_STAGE_ENTRY` are the kinds a log may open with -- a run may begin
+# work without a recorded plan, and an inline run has no dispatch to be running.
+LOG_STAGE_ENTRY = frozenset({"receive", "understand", "triage", "decide", "plan",
+                             "execute-inline", "reachability", "recover",
+                             "recovery", "replan", "escalate"})
+LOG_STAGE_PREDECESSORS = {
+    "execute": frozenset({"plan", "decide", "delegate", "dispatch", "execute",
+                          "execute-inline", "replan", "recover", "recovery"}),
+    "executed": frozenset({"plan", "decide", "delegate", "dispatch", "execute",
+                           "execute-inline", "replan", "recover", "recovery"}),
+    "delegate": frozenset({"decide", "reachability", "plan", "replan"}),
+    "dispatch": frozenset({"decide", "reachability", "plan", "replan"}),
+    "invoked": frozenset({"decide", "reachability", "plan", "delegate",
+                          "dispatch", "replan"}),
+    "observe": frozenset({"execute", "executed", "execute-inline", "delegate",
+                          "dispatch", "invoked"}),
+    "observed": frozenset({"execute", "executed", "execute-inline", "delegate",
+                           "dispatch", "invoked"}),
+    "result": frozenset({"execute", "executed", "execute-inline", "delegate",
+                         "dispatch", "invoked", "observe", "observed"}),
+    "verify": frozenset({"observe", "observed", "result", "execute-inline",
+                         "decide"}),
+    "verified": frozenset({"observe", "observed", "result", "execute-inline",
+                           "decide"}),
+    "synthesize": frozenset({"verify", "verified", "observe", "observed",
+                             "execute-inline"}),
+    # `deliver` deliberately accepts almost anything before it. It is a terminal
+    # act, and a short run that received, triaged and delivered is legitimate --
+    # demanding an execution entry first punishes a run for being short, which is
+    # the same mistake as gating a field on whether it holds a value rather than
+    # whether it exists. The "a long run delivered having logged no execution at
+    # all" case is real, and it is checked in `check` instead, where the rung and
+    # the work-unit count are both known.
+    "deliver": LOG_STAGE_ENTRY,
+    "complete": frozenset({"deliver", "synthesize", "verify", "verified"}),
+}
+
 DISPATCH_ORDER = ("selected", "invoked", "running", "observed", "verified")
 # `unreachable` and `skipped` are terminal verdicts, not stages of the chain --
 # a capability the host does not expose, or one deliberately passed over.
@@ -147,6 +298,43 @@ DISPATCH_STATES = DISPATCH_ORDER + DISPATCH_TERMINAL
 
 
 MODES = ("inline", "delegate", "route", "handoff")
+
+# The host's capability, as a term in the effort gate.
+#
+# The rung ladder answers "how hard is this task". It has never answered "what can
+# this model actually carry", and that omission is measurable in both directions,
+# which is rare for a design question.
+#
+# Toward dull on a strong host: this repository's own research says step-by-step
+# scripts and stacked MUST/NEVER measurably degrade current-generation model
+# output, and that structured-but-irrelevant context is a distinct risk class --
+# a coherent procedure is worse than none when it is not the one your model needs.
+# A 549-line kernel applied unchanged to a frontier model is spending its
+# attention on form.
+#
+# Toward dull on a weak host: the same research says less-capable models fail to
+# *trigger* loads, so a rule that is only reachable by looking it up is a rule that
+# does not fire. And breadth is the expensive failure -- a small model given twenty
+# work units produces twenty shallow ones, which reads as thorough and is nothing
+# of the kind.
+#
+# So the ceiling is the useful maximum, and it is a ceiling on *procedure*, never on
+# the hard rules. A small host may still decide to run R3 for one focused, hard call;
+# it has to say why. What it may not do is get there by default.
+#
+# Host-derived, never a model name: the tier is read from what the host exposes, the
+# same rule the capability registry already follows. A ladder that named models
+# would be stale the week a model ships.
+HOSTS = ("small", "mid", "frontier")
+HOST_CEILING = {"small": "R2", "mid": "R3", "frontier": "R4"}
+#
+# There is deliberately no HOST_FLOOR. One was written here first, uniform at R0
+# across all three tiers, and it could never fire -- which makes it worse than
+# dead code, because a reader meets a mechanism that expresses no judgement and
+# cannot tell it from one that does. The asymmetry it was reaching for is real and
+# is enforced elsewhere: the under-investment gate keys on the *host being
+# frontier*, not on a floor value, because that is the actual condition. See the
+# frontier de-escalation check in cmd_check.
 
 # The rung and scale vocabularies, as constrained values rather than free text.
 # `--rung` was `default="R1"` with no choices=, so it accepted the string
@@ -168,6 +356,94 @@ SCALES = ("L1", "L2", "L3", "L4", "L5", "L6", "L7")
 EVIDENCE_POINTER = re.compile(r"^(none|OBS-\d+)$", re.IGNORECASE)
 
 REQUIRED = ("objective", "coordination", "decisions", "observations")
+
+# §18's RunState field list, mapped onto where this tool actually keeps each one.
+#
+# The mapping is the point, and it is mostly a record of what is NOT here. §18
+# names 38 fields; this file had somewhere to put about half of them on its own,
+# and the rest either live under a different name (`run_id` for `task_id`,
+# `steps` for `current_step`) or had no home at all (`unknowns`, `dependencies`,
+# `retries`, `escalations`, and a dozen more).
+#
+# Two ways to handle that, and only one of them is honest. The first is to add all
+# 38 fields and refuse a run that leaves them empty -- which would charge every R0
+# and R1 run for ceremony the kernel spends its first page criticising, and would
+# be a gate that fires on bookkeeping rather than on correctness. The second is to
+# name the coverage and let a reader judge it. That is this table, and `check`
+# reports the ratio and fails only where a *mapped* field is actually missing.
+#
+# A `None` target is a field §18 asks for that this tool does not keep. Those are
+# the ones to look at first when deciding what to build next, which is why they
+# are enumerated rather than quietly absent.
+RUNSTATE_FIELDS: tuple[tuple[str, "str | None"], ...] = (
+    ("task_id", "run_id"),
+    ("objective", "objective"),
+    ("status", "completion"),
+    # `status` and `completion_status` are the same field in §18's list, so they
+    # map to the same container. The distinction the specification draws between
+    # them is prose, not shape, and a gate that enforced the difference would be
+    # enforcing a distinction nobody can observe.
+    ("current_stage", None),              # the log's last `kind` is the stage
+    ("current_step", "steps"),
+    ("process_number", "log"),
+    ("requirements", None),
+    ("constraints", None),
+    ("status", "completion"),
+    ("completion_status", "completion"),
+    ("success_criteria", "criteria"),
+    ("assumptions", "assumptions"),
+    ("unknowns", None),
+    ("dependencies", None),
+    ("selected_capabilities", "dispatch"),
+    ("available_capabilities", None),
+    ("reachable_capabilities", None),
+    ("coordination_mode", "coordination.mode"),
+    ("active_agent", "active_agent"),
+    ("authority", "authority"),
+    ("context_loaded", "context.loaded"),
+    ("context_requested", "context.gaps"),
+    ("context_required", "context.loaded"),
+    ("context_reason", "context.why"),
+    ("execution_plan", "steps"),
+    ("atomic_work_units", "steps"),
+    ("completed_work_units", "steps"),
+    ("remaining_work_units", "steps"),
+    ("delegated_tasks", "dispatch"),
+    ("agent_results", None),              # DISPATCH_ORDER is the chain, not a store
+    ("evidence", "observations"),
+    ("verification_status", "verification.verdicts"),
+    ("verification_results", "verification.verdicts"),
+    ("errors", None),
+    ("failures", None),
+    ("recovery_attempts", "recoveries"),
+    ("mode_changes", "coordination.changed"),
+    ("replans", "log"),
+    ("retries", None),
+    ("escalations", "handoffs"),
+    ("final_result", "result"),
+    ("completion_status", "completion"),
+    ("blocker", "blocks"),
+)
+
+# §19: state is updated after every important event. The form that can be checked
+# is not "was the state updated" -- that is unobservable -- but the converse: an
+# event that demonstrably happened must have left a trace. Each pair is (a
+# predicate over the state that means the event happened, the path that must then
+# be non-empty). An orphaned fact is the failure: something occurred, the run
+# knows it, and nothing was recorded about it.
+ORPHAN_CHECKS: tuple[tuple[str, "str | None"], ...] = (
+    ("a capability was invoked", "dispatch.history"),
+    ("a recovery was recorded", "recoveries.result"),
+    ("a block was declared", "blocks.routes"),
+    ("a mode change happened", "coordination.changed"),
+    ("a handoff returned", "handoffs.returned_at"),
+    ("a work unit was opened", "steps"),
+)
+# Read through _has(), so ORPHAN_CHECKS is the single list of what §19 demands a
+# trace for, and the prose above can name each orphan in its own words without the
+# two drifting apart.
+ORPHAN_REASONS = {path: what for what, path in ORPHAN_CHECKS}
+
 
 
 def now() -> str:
@@ -230,6 +506,12 @@ def cmd_init(args) -> int:
         "objective": args.objective,
         "rung": args.rung,
         "scale": args.scale,
+        # What this host can carry, as the second term in the effort gate. The
+        # rung answers how hard the task is; this answers how much procedure the
+        # model can turn into substance, which is a different question and the
+        # one that decides whether a run is thorough or merely long.
+        "host": args.host,
+        "exceeds_ceiling": (args.exceeds_ceiling or "").strip() or None,
         # A rung without the events that would move it cannot be revised by
         # evidence, so the triggers are stored beside it rather than left to
         # prose. Empty is allowed and reported by `check` as a finding.
@@ -260,7 +542,27 @@ def cmd_init(args) -> int:
         # agent actually doing" is the one a human supervising a run asks most
         # often and the one a transcript answers worst.
         "steps": [],
-        "context": {"loaded": [], "dropped": []},
+        # §18's containers, created empty rather than on first use. A state file
+        # that grows keys as commands are run cannot answer "has this event
+        # happened" -- the difference between an empty list and an absent key is
+        # the difference between "no, and here is the run that says so" and "no,
+        # and nothing knows". The full list is RUNSTATE_FIELDS at the top of
+        # this file; these are the ones with somewhere to live.
+        "criteria": [],
+        "dispatch": [],
+        "recoveries": [],
+        "blocks": [],
+        "handoffs": [],
+        # The process log (sections 22-24), numbered and never reset. It is the
+        # one narrative the user reads, so it is the one place a run can assert
+        # something the ledger contradicts without a gate noticing -- every other
+        # list here is a record, and a record cannot assert. `cmd_log` is what
+        # makes it checkable.
+        "log": [],
+        # The terminal status (section 35), written only by `finish`, and only
+        # once the conditions for that status actually hold.
+        "completion": None,
+        "context": {"loaded": [], "dropped": [], "gaps": [], "why": ""},
         # Where the user said the output goes, if they said. Recorded at init so
         # the distinction between working memory and a deliverable is decided
         # once, from the request, rather than re-guessed at the end of the run --
@@ -297,6 +599,10 @@ def cmd_show(args) -> int:
         print(f"  ▶ step {current.get('n')} of {len(steps)}   {current.get('doing')}")
         print(f"      if      {current.get('precondition')}")
         print(f"      then    {current.get('expect')}")
+        if current.get("capability"):
+            print(f"      using   {current.get('capability')}")
+        if current.get("verify"):
+            print(f"      checked {current.get('verify')}")
     elif steps:
         last = steps[-1]
         print(f"  ○ no open step   last was {last.get('n')}: "
@@ -306,6 +612,14 @@ def cmd_show(args) -> int:
 
     print(f"  run       {state.get('run_id')}   rung {state.get('rung')} "
           f"scale {state.get('scale')}")
+    host = state.get("host")
+    if host:
+        ceil = HOST_CEILING.get(str(host), "?")
+        note = ""
+        rung_c = str(state.get("rung") or "").split(" ", 1)[0].upper()
+        if rung_c in RUNGS and rung_c > ceil:
+            note = "  <- above this host's ceiling; set-host --why to record why"
+        print(f"  host      {host}  (procedure ceiling {ceil}){note}")
     print(f"  objective {state.get('objective')}")
     print(f"  mode      {mode.get('mode')}  — {mode.get('why')}")
     print(f"  until     {mode.get('until')}")
@@ -342,6 +656,24 @@ def cmd_show(args) -> int:
 
     print(f"  steps     {len(steps)}   decisions {len(state.get('decisions', []))}   "
           f"observations {len(state.get('observations', []))}")
+
+    # The process log, last three lines. It is the narrative the user reads, so
+    # it prints next to the state rather than only under `--json`: a log that
+    # disagrees with the state is the section-24 failure, and it is invisible to
+    # anyone who only ever looks at one of the two.
+    plog = state.get("log") or []
+    comp = state.get("completion") or {}
+    if comp.get("status"):
+        print(f"  finished  {str(comp.get('status')).upper()}  at {comp.get('finished_at')}")
+    if plog:
+        print(f"  log       {len(plog)} entr{'y' if len(plog) == 1 else 'ies'}"
+              f"  (P{str(plog[0].get('n')).lstrip('P')}.."
+              f"{plog[-1].get('n')})")
+        for e in plog[-3:]:
+            print(f"      {e.get('n'):>6}  {str(e.get('kind')).upper():<12} "
+                  f"{e.get('what')}")
+    else:
+        print("  log       empty; the run has recorded no numbered operation")
 
     # Working memory and deliverables are different things, so they print
     # differently: a `>` for something a person will read, and nothing at all
@@ -452,6 +784,44 @@ def cmd_handoff(args) -> int:
     return 0
 
 
+def cmd_set_host(args) -> int:
+    """Record a change in what this host can carry, and keep the reason.
+
+    Two things make this a record rather than a field. First, the rung is not
+    rewritten for you: a run that has decided it can carry more than its host's
+    ceiling is sometimes right -- one focused, hard call is exactly what a small
+    model is good at -- and the way to be right about that is to say so. Second,
+    the direction is asymmetric. Raising the host mid-run is free. Lowering it
+    carries a reason, because that is the direction the evidence says goes wrong
+    silently.
+    """
+    state = load(args)
+    host = (args.host or "").strip().lower()
+    if host not in HOSTS:
+        print(f"set-host: --host {host!r} is not one of {', '.join(HOSTS)}. The "
+              f"tier is what the host exposes, not a model name -- a ladder that "
+              f"named models would be stale the week one ships.", file=sys.stderr)
+        return 2
+    prior = state.get("host")
+    if prior == host:
+        print(f"  host is already {host!r}")
+        return 0
+    if not (args.why or "").strip():
+        print("set-host: --why is required. A change in what the host can carry "
+              "changes every later rung decision, and an unexplained one cannot be "
+              "reviewed by anyone including you.", file=sys.stderr)
+        return 2
+
+    state.setdefault("host_history", []).append({
+        "from": prior, "to": host, "why": args.why.strip(), "at": now(),
+    })
+    state["host"] = host
+    save(args, state)
+    print(f"  host {prior or '(unset)'} -> {host}  "
+          f"(ceiling {HOST_CEILING[host]})  {args.why}")
+    return 0
+
+
 def cmd_record(args) -> int:
     state = load(args)
     state.setdefault("observations", []).append({
@@ -461,6 +831,97 @@ def cmd_record(args) -> int:
     })
     save(args, state)
     print(f"  recorded OBS-{len(state['observations'])}")
+    return 0
+
+
+# §28's nine failure classes, as a closed vocabulary. Named by the specification,
+# which is what makes them a list rather than a sentiment, and a list can be
+# checked: a recovery that does not say which kind of failure it recovered from
+# cannot be evaluated, because "I fixed it" and "I changed approach" are the same
+# words whether the cause was a missing capability or a bad assumption.
+FAILURE_CLASSES = (
+    "capability", "context", "tool", "input", "execution",
+    "verification", "coordination", "dependency", "resource",
+)
+
+# §30's fifteen routes, in the order the specification lists them, plus §46's
+# "genuinely no executable path remains" as the fifteenth. This is the list that
+# `references/completion-law.md` calls "the route list", and until now it existed
+# in two markdown files that could drift from each other with nothing to notice.
+# It lives here because `blocked --tried` is the only place a run actually walks
+# it, and a route that cannot be named cannot be walked.
+ROUTES = (
+    "retry",
+    "acquire-context",
+    "other-skill",
+    "other-agent",
+    "inline",
+    "delegate",
+    "route",
+    "reorder",
+    "decompose",
+    "other-resource",
+    "replan",
+    "recover",
+    "continue-partially",
+    "reduce-scope",
+    "no-path-remains",
+)
+
+
+
+def cmd_recover(args) -> int:
+    """Record a recovery, and the seven fields §44 says every one must change.
+
+    §28 asks for a classification before a response and §44 for the state to
+    record what changed. Together they are the difference between a run that
+    retried and a run that recovered: a retry with no recorded cause reproduces
+    the failure while producing the appearance of effort, and the appearance is
+    the part a reader can see.
+
+    `--class` is a closed vocabulary for the same reason the process log's kinds
+    are. `--action` is required, because "recovered" is not an action, and
+    `--result` is required because a recovery with no recorded outcome has not
+    been evaluated -- which is the failure the command exists to prevent.
+    """
+    state = load(args)
+    cls = (args.cls or "").strip().lower()
+    if cls not in FAILURE_CLASSES:
+        print(f"recover: --class {cls!r} is not one of "
+              f"{', '.join(FAILURE_CLASSES)}", file=sys.stderr)
+        return 2
+    action = (args.action or "").strip()
+    if not _is_executable_action(action):
+        print("recover: --action is required, and it has to be an action rather "
+              "than a category. 'recovered' records that something happened; "
+              "'invoked the reviewer and recorded what came back' records what.",
+              file=sys.stderr)
+        return 2
+    result = (args.result or "").strip()
+    if not result:
+        print("recover: --result is required. A recovery with no recorded outcome "
+              "has not been evaluated, and a re-plan against an unevaluated "
+              "recovery is a blind retry with a longer log.", file=sys.stderr)
+        return 2
+
+    mode = state.get("coordination") or {}
+    rec = {
+        "n": len(state.get("recoveries") or []) + 1,
+        "class": cls,
+        "reason": (args.reason or "").strip() or None,
+        "action": action,
+        "from_mode": (args.from_mode or "").strip() or None,
+        "to_mode": (args.to_mode or "").strip() or None,
+        "from_capability": (args.from_capability or "").strip() or None,
+        "to_capability": (args.to_capability or "").strip() or None,
+        "result": result,
+        "at": now(),
+    }
+    if mode.get("mode") and not rec["from_mode"]:
+        rec["from_mode"] = mode.get("mode")
+    state.setdefault("recoveries", []).append(rec)
+    save(args, state)
+    print(f"  recovery {rec['n']} recorded: {cls} failure -> {result}")
     return 0
 
 
@@ -538,6 +999,28 @@ def cmd_step(args) -> int:
         die("--expect is required, for the same reason: it is the observable "
             "condition that tells the step finished.")
 
+    # Section 26 gives every work unit five fields, and two of them are the ones
+    # that get skipped: a unit worked on with no named capability, and an
+    # expected condition with no verification method. Both are a wish rather than
+    # a unit -- you cannot tell whether the capability was reachable, and you
+    # cannot tell whether the expectation was ever checked. They are required at
+    # R2 and above, and exempt below it, because at R0 and R1 a work unit is a
+    # sentence and demanding five fields of it is the ceremony the kernel spends
+    # its first page criticising.
+    rung_code = str(state.get("rung") or "").split(" ", 1)[0].upper()
+    if rung_code in {"R2", "R3", "R4"}:
+        # argparse.Namespace has no .get(); getattr with a default is the only
+        # safe read, and it also covers a state dir written by an older schema.
+        missing = [f for f in STEP_FIELDS
+                   if not (getattr(args, f, "") or "").strip()]
+        if missing:
+            die("--" + ", --".join(missing) + " required at " + rung_code +
+                ". Section 26 gives a work unit five fields; `doing`, "
+                "`precondition` and `expect` are the three everyone writes. "
+                "`capability` names what does the work, and `verify` names how "
+                "you will know the expectation held. Without them a unit is a "
+                "wish with a precondition. R0 and R1 are exempt.")
+
     current = _open_step(state)
     if current is not None:
         current["outcome"] = "superseded"
@@ -548,6 +1031,8 @@ def cmd_step(args) -> int:
         "doing": doing,
         "precondition": args.precondition,
         "expect": args.expect,
+        "capability": (getattr(args, "capability", "") or "").strip() or None,
+        "verify": (getattr(args, "verify", "") or "").strip() or None,
         "at": now(),
         "closed_at": None,
         "outcome": None,
@@ -557,6 +1042,259 @@ def cmd_step(args) -> int:
     print(f"  step {step['n']} open: {doing}")
     if current is not None:
         print(f"  step {current.get('n')} superseded")
+    return 0
+
+
+def _at(state: dict, path: "str | None"):
+    """Read a dotted path, returning None for any step that does not exist.
+
+    A state file written by an older schema, or by hand, will not have every path
+    in RUNSTATE_FIELDS. Missing is reported as missing rather than raising, because
+    the caller's question is "is this field here", and an AttributeError answers a
+    different question loudly enough to be mistaken for a gate firing.
+    """
+    if not path:
+        return None
+    cur = state
+    for part in path.split("."):
+        if isinstance(cur, list):
+            if not part.lstrip("-").isdigit():
+                return None
+            try:
+                cur = cur[int(part)]
+            except IndexError:
+                return None
+        elif not isinstance(cur, dict) or part not in cur:
+            return None
+        else:
+            cur = cur[part]
+    return cur
+
+
+def _has(state: dict, path: "str | None") -> bool:
+    """Whether a dotted path EXISTS -- as distinct from whether it holds a value.
+
+    The first version of the §18 check used `_at(...) is None`, which conflates
+    "this field is absent" with "this field is legitimately empty". Those are
+    different, and the second is often correct: `active_agent` is None before any
+    handoff, `completion.status` is None before `finish`, and `criteria` is empty
+    before the first `require`. Gating on truthiness made a correct R0 run fail
+    for being early, which is the exact shape of a gate that punishes honesty.
+
+    Presence is the property §18 actually asks for, so that is what is checked.
+    """
+    if not path:
+        return False
+    cur = state
+    for part in path.split("."):
+        if isinstance(cur, list):
+            if not part.lstrip("-").isdigit():
+                return False
+            try:
+                cur = cur[int(part)]
+            except IndexError:
+                return False
+        elif not isinstance(cur, dict) or part not in cur:
+            return False
+        else:
+            cur = cur[part]
+    return True
+
+
+def _is_executable_action(phrase: str) -> bool:
+    """§5: a JEv record must produce an action, not a paragraph.
+
+    Two mechanical tests, and the first is the one that matters. An empty or
+    whitespace-only `selected` is not an action. A single word is not either --
+    "delegate" names a category, "invoke the reviewer and record what came back"
+    does something. The second test is a proxy for that distinction and it is a
+    proxy, not a proof: a two-word noun phrase still passes. The cost of a false
+    refusal here is a decision record that says what it will do, which is the
+    record's whole purpose, so the test leans strict.
+    """
+    s = (phrase or "").strip()
+    return bool(s) and len(s.split()) >= 2
+
+
+def _dispatch_reached(state: dict) -> int:
+    """How far the capability ledger actually got: an index into DISPATCH_ORDER.
+
+    -1 when nothing has been dispatched, which is the normal state of a run that
+    did all of its work inline. That is not a defect, and nothing here treats it
+    as one -- the check below is only about a log that *claims* a dispatch.
+    """
+    best = -1
+    for d in state.get("dispatch") or []:
+        st = str((d.get("state") if isinstance(d, dict) else d) or "").lower()
+        if st in DISPATCH_ORDER:
+            best = max(best, DISPATCH_ORDER.index(st))
+    return best
+
+
+def _open_criteria(state: dict) -> list[dict]:
+    return [i for i in (state.get("criteria") or [])
+            if isinstance(i, dict) and i.get("status") != "met"]
+
+
+def _in_flight(state: dict) -> list[str]:
+    """Capabilities chosen but not yet terminal -- §35's "no required action remains".
+
+    Every stage of the chain except `verified` counts as in flight. The
+    first version also had a second branch listing those four stages by name,
+    which the first branch already covered, so it could never run.
+    """
+    live = []
+    for d in state.get("dispatch") or []:
+        if not isinstance(d, dict):
+            continue
+        st = str(d.get("state") or "").lower()
+        if st in DISPATCH_ORDER and st != "verified":
+            live.append(f"{d.get('for')} ({st})")
+    return live
+
+
+def _process_seq(n: object) -> int:
+    """The integer in a process number: 'P07' -> 7, 'P03.2' -> 3."""
+    digits = "".join(ch for ch in str(n or "") if ch.isdigit())
+    return int(digits) if digits else 0
+
+
+def _next_process_number(state: dict) -> str:
+    """The next top-level process number, counting from the whole run.
+
+    Section 22 is explicit that numbering is not restarted during recovery,
+    because a number that restarts at 1 after a failure produces a log that
+    cannot be read to find out what had already been tried -- which is the only
+    reason to have a log at all.
+
+    Counted as the highest top-level number rather than the last entry, so a
+    substep does not become the parent of the next top-level step. A log that
+    runs P01, P02, P03.1, P04 is readable; one that runs P01, P02, P03.1, P03.2
+    is a fragment, and the reader cannot tell which.
+    """
+    tops = [_process_seq(e.get("n")) for e in (state.get("log") or [])
+            if isinstance(e, dict) and "." not in str(e.get("n") or "")]
+    return f"P{max(tops) + 1 if tops else 1:02d}"
+
+
+def cmd_log(args) -> int:
+    """Record one line of the process log, numbered, and checked against the state.
+
+    The log is the narrative the user reads, so it is the one place a run can
+    assert something the ledger contradicts without any gate noticing: every
+    other command in this file is a record, and a record cannot assert. So the
+    entries that claim something about the work are checked against the work.
+
+    `verify` and `complete` are the two that a run reaches for when it wants to
+    stop, and they are the two the specification is most worried about -- sections
+    24, 35 and 55 all describe the same failure, arriving in three costumes.
+    """
+    state = load(args)
+    entries = state.setdefault("log", [])
+
+    if args.list:
+        if not entries:
+            print("  process log is empty")
+            return 0
+        for e in entries:
+            print(f"  {e.get('n'):>6}  {str(e.get('kind')).upper():<12}  "
+                  f"{e.get('what')}")
+        return 0
+
+    kind = (args.kind or "").strip().lower()
+    if kind not in LOG_KINDS:
+        print(f"log: --kind {kind!r} is not one of "
+              f"{', '.join(sorted(LOG_KINDS))}", file=sys.stderr)
+        return 2
+    what = (args.what or "").strip()
+    if not what:
+        print("log: --what is required. A log entry with no content records that "
+              "a number was spent, which is the opposite of useful.", file=sys.stderr)
+        return 2
+
+    claim = LOG_KINDS[kind]
+
+    if claim and claim != "verified":
+        reached = _dispatch_reached(state)
+        need = DISPATCH_ORDER.index(claim)
+        if reached < need:
+            if reached < 0:
+                print(f"log: refusing {kind!r}. The run has dispatched nothing, so "
+                      f"there is no {claim!r} to report. If the work was done "
+                      f"inline, say so with a kind that claims nothing about the "
+                      f"ledger.", file=sys.stderr)
+            else:
+                print(f"log: refusing {kind!r}. The capability ledger only reached "
+                      f"{DISPATCH_ORDER[reached]!r}, so a line claiming {claim!r} "
+                      f"contradicts the state. Section 24: the log and the state "
+                      f"must agree.", file=sys.stderr)
+            return 2
+
+    if kind in ("verify", "verified"):
+        met = [i for i in (state.get("criteria") or []) if i.get("status") == "met"]
+        if _dispatch_reached(state) < DISPATCH_ORDER.index("verified") and not met:
+            print("log: refusing a verification entry. Nothing was verified: no "
+                  "capability reached `verified` and no acceptance criterion is "
+                  "met. `RESULT RECEIVED` is not `RESULT VERIFIED`.", file=sys.stderr)
+            return 2
+
+    # §25: the state machine, as an order rather than a diagram. The claim a log
+    # makes is about a stage, and a stage cannot be reached from anywhere. This is
+    # the one place the log can be wrong about *when* rather than about *what* --
+    # the §24 rule catches a false claim, and this catches an impossible one.
+    #
+    # `plan` and `execute-inline` are the two entry points, because a run may
+    # legitimately begin work without a recorded plan at R0/R1, and an inline run
+    # has no dispatch to be running. Everything downstream needs something before
+    # it, and saying so is cheaper than a reader reconstructing the order.
+    prior_kinds = {str(e.get("kind") or "").lower() for e in entries}
+    if kind not in LOG_STAGE_ENTRY:
+        need = LOG_STAGE_PREDECESSORS.get(kind)
+        # An empty log is not a wildcard. The first version guarded this with
+        # `if entries and ...`, which meant a log with nothing in it accepted any
+        # stage at all -- so a run could open straight onto `deliver` and the
+        # state machine was only enforced from the second entry onwards.
+        if need and not (prior_kinds & need):
+            print(f"log: refusing {kind!r}. It follows "
+                  f"{', '.join(sorted(need))} in §25's state machine, and the log "
+                  f"has none of them. A stage that cannot be reached from anywhere "
+                  f"is a claim about a step that was not taken.", file=sys.stderr)
+            return 2
+
+    if kind == "complete":
+        comp = state.get("completion") or {}
+        if not comp.get("status"):
+            print("log: refusing a `complete` entry. The run has recorded no "
+                  "completion status, so the log is claiming an ending the state "
+                  "does not have. Run `finish --status` first.", file=sys.stderr)
+            return 2
+        if comp.get("status") == "completed" and _open_criteria(state):
+            print(f"log: refusing a `complete` entry. The run is recorded as "
+                  f"completed while {len(_open_criteria(state))} acceptance "
+                  f"criterion/criteria are still open.", file=sys.stderr)
+            return 2
+
+    parent = (args.under or "").strip().upper()
+    number = _next_process_number(state)
+    number = _next_process_number(state)
+    if parent:
+        match = [e for e in entries if str(e.get("n")).upper() == parent]
+        if not match:
+            print(f"log: --under {parent} does not name a logged step. Substeps "
+                  f"hang off a step that exists.", file=sys.stderr)
+            return 2
+        kids = [e for e in entries
+                if str(e.get("n")).upper().startswith(f"{parent}.")]
+        number = f"{parent}.{len(kids) + 1}"
+
+    entries.append({
+        "n": number,
+        "kind": kind,
+        "what": what,
+        "at": now(),
+    })
+    save(args, state)
+    print(f"  {number} — {kind.upper():<12} {what}")
     return 0
 
 
@@ -575,6 +1313,47 @@ def cmd_context(args) -> int:
     ctx = state.setdefault("context", {"loaded": [], "dropped": []})
     ctx.setdefault("loaded", [])
     ctx.setdefault("dropped", [])
+    ctx.setdefault("gaps", [])
+
+    # §16: the acquisition loop is gap -> request -> update -> continue. A run that
+    # knows it is missing something and does not say what is missing is stuck, and
+    # the stuckness is invisible because a run reporting a blocker looks exactly
+    # like a run that never noticed. So a gap is recorded and stays open until
+    # something closes it.
+    if args.gap:
+        gap = (args.gap or "").strip()
+        if not gap:
+            print("context: --gap is empty, so it records that something is "
+                  "missing without saying what", file=sys.stderr)
+            return 2
+        gaps = ctx["gaps"]
+        if any(isinstance(g, dict) and (g.get("what") or "").strip().lower() == gap.lower()
+               for g in gaps):
+            print(f"context: {gap!r} is already recorded as an open gap. A second "
+                  f"declaration of the same gap is refused: close it, or say what "
+                  f"is different about this one.", file=sys.stderr)
+            return 2
+        gaps.append({"what": gap, "opened_at": now(), "closed_at": None})
+        save(args, state)
+        print(f"  context gap {len(gaps)} open: {gap}")
+        print("  a gap left open at R2 or above refuses `check`: context that can be "
+              "acquired is route 2 of the gate before you stop, not a terminal state")
+        return 0
+
+    if args.closed:
+        what = (args.closed or "").strip()
+        gap = next((g for g in ctx["gaps"] if isinstance(g, dict)
+                    and (g.get("what") or "").strip().lower() == what.lower()
+                    and not g.get("closed_at")), None)
+        if gap is None:
+            print(f"context: no open gap {what!r}. Record it with `context --gap` "
+                  f"first, or close the right one.", file=sys.stderr)
+            return 2
+        gap["closed_at"] = now()
+        gap["closed_by"] = (args.why or "").strip() or None
+        save(args, state)
+        print(f"  context gap closed: {what}")
+        return 0
 
     if args.drop:
         ref = (args.ref or "").strip()
@@ -593,6 +1372,11 @@ def cmd_context(args) -> int:
     if not ref:
         die("--ref is required: the file, command, or observation the context came from.")
     entry = {"ref": ref, "level": args.level or None, "why": args.why or "",
+             # §15's other two. Not required at write time -- R0 and R1 do not owe
+             # the ceremony -- but `check` asks for them at R2+, which is where the
+             # rule is load-bearing and where nobody was recording them.
+             "enables": (args.enables or "").strip() or None,
+             "scope": (args.scope or "").strip() or None,
              "fresh": bool(args.fresh), "at": now()}
     ctx["loaded"].append(entry)
     save(args, state)
@@ -753,6 +1537,29 @@ def cmd_blocked(args) -> int:
               "you did not find is a hypothesis; list the routes walked before "
               "calling it absent. See references/retry-policy.md.", file=sys.stderr)
         return 2
+    # §30: the routes walked are named from a closed list, in a field of their own.
+    #
+    # The first version drew `--tried` itself from the vocabulary, and that was
+    # wrong: `--tried` is the evidence of what was done ("searched the catalogue
+    # for a local runner"), and reducing it to `other-resource` throws away the
+    # only part a reader can check. So the prose stays prose and the route names
+    # move beside it. Both are required, and neither substitutes for the other --
+    # a block with a route and no detail asserts a category, and a block with
+    # detail and no route asserts that nothing systematic was tried.
+    routes = [r.strip().lower() for r in (args.routes or []) if r and r.strip()]
+    unknown = [r for r in routes if r not in ROUTES]
+    if unknown:
+        print(f"blocked: {unknown[0]!r} is not one of the fifteen routes "
+              f"({', '.join(ROUTES)}). --routes names which of §30's routes were "
+              f"walked; --tried is the prose evidence for each.", file=sys.stderr)
+        return 2
+    if not routes:
+        print("blocked: --routes is required, and must name at least one of §30's "
+              "fifteen routes. --tried records what you did; --routes records that "
+              "you walked the list rather than stopping at the first thing. A "
+              "blocker is valid only when all five conditions hold, and 'no "
+              "alternative capability' is a claim about the list.", file=sys.stderr)
+        return 2
     for t in tried:
         if t.lower() == reason.lower():
             print("blocked: a route listed in --tried is the same as --reason. "
@@ -784,12 +1591,160 @@ def cmd_blocked(args) -> int:
         "what": what,
         "reason": reason,
         "tried": tried,
+        "routes": routes,
         "next_action": (args.next_action or "").strip() or None,
         "declared_at": now(),
     })
     save(args, state)
     print(f"  block {len(blocks)} recorded on {what!r}; "
-          f"{len(tried)} route(s) tried")
+          f"{len(tried)} thing(s) tried across {len(routes)} route(s)")
+    return 0
+
+
+def cmd_finish(args) -> int:
+    """Record the run's terminal status, and refuse the one that is not earned.
+
+    Section 55 allows exactly two ways to stop: verified complete, or a genuine
+    blocker verified after the alternative paths. It names nine phrasings that
+    are not a third option. Those nine are `audit`'s job, because they live in
+    the delivery. This command is the other half: it stops the *state* from
+    recording an ending it has not earned, so the delivery and the record cannot
+    disagree without one of them having been written first.
+
+    `completed` is gated on all four conditions of section 35 at once. Each is
+    checkable, so each is checked:
+
+      * every required work unit complete      -- no step left open
+      * success criteria satisfied            -- at least one, all met
+      * required verification passed           -- the same criteria, with evidence
+      * no required action remains             -- no capability in flight
+
+    The other three statuses each carry the field the specification says they
+    carry. `partial` is only for work that genuinely happened with required work
+    remaining, so it is refused on a run that never started; `blocked` is
+    refused without a block whose routes were actually walked; and `failed` is
+    kept separate from `blocked` because they mean opposite things -- attempted
+    and lost, versus prevented -- and a run that conflates them has not decided
+    which happened.
+    """
+    state = load(args)
+
+    status = (args.status or "").strip().lower()
+    if status not in COMPLETION_STATUSES:
+        print(f"finish: --status {status!r} is not one of "
+              f"{', '.join(COMPLETION_STATUSES)}", file=sys.stderr)
+        return 2
+
+    prior = state.get("completion") or {}
+    if prior.get("status") and not args.replace:
+        print(f"finish: this run already finished as {prior['status']!r}. A run "
+              f"does not get a second ending, and a changed verdict needs the "
+              f"reason recorded: --replace --why \"...\"", file=sys.stderr)
+        return 2
+    if args.replace and not (args.why or "").strip():
+        print("finish: --replace requires --why. Changing a recorded ending is a "
+              "decision, and a decision without a reason is a retraction.",
+              file=sys.stderr)
+        return 2
+
+    criteria = state.get("criteria") or []
+    met = [i for i in criteria if isinstance(i, dict) and i.get("status") == "met"]
+    open_c = _open_criteria(state)
+    open_step = _open_step(state)
+    in_flight = _in_flight(state)
+
+    if status == "completed":
+        blockers: list[str] = []
+        if open_step is not None:
+            blockers.append(
+                f"work unit {open_step.get('n')} ({open_step.get('doing')!r}) is "
+                f"still open. An unclosed unit has an unknown outcome, and an "
+                f"unknown outcome is not a completed one.")
+        if not criteria:
+            blockers.append(
+                "no acceptance criterion was ever recorded. 'Add retries' is a "
+                "requirement; 'the client sees three attempts and one logged "
+                "error' is the criterion that says when to stop. Without one, "
+                "completion is a feeling.")
+        elif open_c:
+            blockers.append(
+                f"{len(open_c)} acceptance criterion/criteria still open: "
+                + "; ".join(str(i.get('what')) for i in open_c[:3]))
+        if in_flight:
+            blockers.append(
+                f"capability/capabilities still in flight: {', '.join(in_flight)}. "
+                f"A capability chosen and never observed is a delegation "
+                f"described rather than performed.")
+        if blockers:
+            print("finish: refusing `completed`.", file=sys.stderr)
+            for b in blockers:
+                print(f"  - {b}", file=sys.stderr)
+            print("\n  Section 35 needs all four conditions, and they fail "
+                  "independently. If the work really did stop short, that is "
+                  "what `partial` is for -- it is not a lesser claim, it is an "
+                  "accurate one.", file=sys.stderr)
+            return 1
+
+    elif status == "partial":
+        if not (state.get("steps") or []):
+            print("finish: `partial` is for work that genuinely happened with "
+                  "required work remaining. No work unit was ever opened, so "
+                  "nothing happened -- that is `failed`, or a run that should "
+                  "have started.", file=sys.stderr)
+            return 2
+        if not (args.remaining or "").strip():
+            print("finish: `partial` requires --remaining. A partial report "
+                  "without the remainder is a complete one with a caveat, which "
+                  "is how an unfinished run gets described as finished.",
+                  file=sys.stderr)
+            return 2
+
+    elif status == "blocked":
+        blocks = state.get("blocks") or []
+        solid = [b for b in blocks
+                 if isinstance(b, dict) and (b.get("tried") or [])]
+        if not solid:
+            print("finish: `blocked` requires a `blocked` record with routes "
+                  "actually walked. A blocker is valid only when there is no "
+                  "reachable capability, no alternative, no context path, no "
+                  "recovery and no replan -- all five, and all five are records "
+                  "rather than conclusions.", file=sys.stderr)
+            return 2
+
+    elif status == "failed":
+        if not (args.attempted or "").strip():
+            print("finish: `failed` requires --attempted. `failed` means execution "
+                  "was attempted and unsuccessful, which is a different claim from "
+                  "`blocked` (a dependency prevented it). Recording which one is "
+                  "the point.", file=sys.stderr)
+            return 2
+        if not (state.get("steps") or []):
+            print("finish: `failed` means execution was attempted. No work unit "
+                  "was ever opened, so nothing was attempted.", file=sys.stderr)
+            return 2
+
+    state["completion"] = {
+        "status": status,
+        "remaining": (args.remaining or "").strip() or None,
+        "attempted": (args.attempted or "").strip() or None,
+        "recovery": (args.recovery or "").strip() or None,
+        "next_action": (args.next_action or "").strip() or None,
+        "criteria_met": len(met),
+        "criteria_open": len(open_c),
+        "replaced_from": prior.get("status"),
+        "why": (args.why or "").strip() or None,
+        "finished_at": now(),
+    }
+    save(args, state)
+
+    print(f"  run finished: {status.upper()}  "
+          f"({len(met)} criterion/criteria met"
+          + (f", {len(open_c)} open" if open_c else "") + ")")
+    if status == "completed":
+        print("  condition A of section 55 holds: verified complete.")
+    else:
+        print("  condition B of section 55 holds: not complete, and the state "
+              "records why. `audit` checks the delivery says the same thing.")
     return 0
 
 
@@ -843,14 +1798,283 @@ def cmd_audit(args) -> int:
                     f"fix; the two conditions of section 55 are.")
                 break
 
+    # --- §47: the delivery format, for a delivery big enough to carry it ---
+    #
+    # Skipped for a short one, and "short" is decided by the caller passing
+    # --trivially rather than by counting lines: whether a report needs five
+    # headings is a judgement about the run, and a line count is a bad proxy for
+    # it. The default is to ask, because the section a run does not write is the
+    # one a reader most needs -- "Remaining" is where the unfinished work goes,
+    # and a delivery that omits the heading also omits the admission.
+    if not getattr(args, "trivially", False):
+        headings = {ln.lstrip("# ").strip().rstrip(":").lower() for ln in lines}
+        missing_sections = [s for s in DELIVERY_SECTIONS
+                            if s.lower() not in headings]
+        if missing_sections:
+            problems.append(
+                f"the delivery has no {'/'.join(missing_sections)} section. §47 asks "
+                f"for {', '.join(DELIVERY_SECTIONS)}; the ones most often missing are "
+                f"the ones a reader most needs -- 'Remaining' is where unfinished work "
+                f"goes, and a report without the heading does without the admission. "
+                f"Pass --trivially for a delivery too short to carry them.")
+
     for pr in problems:
         print(f"  problem: {pr}")
     if problems:
         print(f"\n  {len(problems)} problem(s) in {origin}. A precise account of "
               f"the work you did not do is the failure this is here to catch.")
         return 1
-    print(f"  delivery is clean: no terminal justification and no invented block "
-          f"in {origin}")
+    print(f"  delivery is clean: no terminal justification, no invented block, and "
+          f"the §47 sections are present in {origin}")
+    return 0
+
+
+# §11 / §42: what a delegate is handed, and §12 / §34: what it hands back. The
+# specification names seven fields going out and nine coming back, which makes them
+# a list rather than an instruction, and a list can be required.
+#
+# Required at the two points where the claim changes. `--brief` at `invoked`:
+# before that point nothing has been spent, so recording the handover costs
+# nothing and skipping it is free. `--result` at `observed`: a capability that
+# reached `observed` with nothing to show for it is indistinguishable from one
+# that was never invoked, which is the whole failure `dispatch` exists to catch.
+#
+# The fields are the *names*, not the content. Whether a brief is any good is a
+# judgement no gate can make, and a gate that tried would be enforcing
+# verbosity.
+BRIEF_FIELDS = ("objective", "input", "constraints", "expected output",
+                "success criteria", "verification", "available context")
+RESULT_FIELDS = ("status", "result", "actions", "evidence", "verification",
+                 "assumptions", "remaining work", "errors")
+RESULT_STATUSES = ("completed", "partial", "failed")
+
+
+# §45's fifteen self-evaluation questions, as a closed list. The specification
+# asks them "before delivery", which is a position in a procedure, and a position
+# is not a record. Naming them here makes the set checkable: `reflect` refuses a
+# partial one, and `check` refuses a run at R2+ that finished without one.
+#
+# The list is the whole of the requirement. Whether an answer is any good is not
+# checkable and is not checked -- an answer of "no" to several of these is the
+# expected output, and a gate that rewarded confident answers would be rewarding
+# the one thing §45 says is worth nothing.
+SELF_EVAL_QUESTIONS = (
+    "did we solve the task",
+    "did we execute the required work",
+    "did we use the correct capabilities",
+    "did we invoke selected agents",
+    "did we acquire context only when needed",
+    "was context sufficient",
+    "was verification sufficient",
+    "did we recover from failures",
+    "did we unnecessarily load context",
+    "did we unnecessarily delegate",
+    "did we under-delegate",
+    "did coordination fit the task",
+    "are any required work units incomplete",
+    "is the blocker genuine",
+    "can anything else still be executed",
+)
+
+# §47's delivery sections. Required for a non-trivial delivery, which `audit`
+# cannot tell apart from a trivial one -- so the same exemption the rung carries
+# applies: a one-line answer is not asked to carry five headings.
+DELIVERY_SECTIONS = ("Process", "Result", "Verification", "State", "Remaining")
+
+
+def _match_question(asked: str) -> "str | None":
+    """Resolve a typed question to one of §45's fifteen, or None.
+
+    Exact match first, then a prefix, and the prefix must identify exactly one
+    question. The first version compared an 18-character prefix in both
+    directions with `or`, which is how "did we unnecessarily delegate" and "did we
+    unnecessarily load context" collided -- they agree for 18 characters, so one of
+    the two silently swallowed the other's answer and the run was told it had
+    answered fourteen of fifteen when it had answered fourteen of fifteen *wrong*.
+
+    A unique-prefix fallback keeps the ergonomics of not retyping the whole
+    question while making the collision impossible: two questions sharing a
+    prefix are not usable abbreviations, and the caller gets told which two.
+    """
+    q = (asked or "").strip().lower().rstrip("?").rstrip(".").strip()
+    if not q:
+        return None
+    for k in SELF_EVAL_QUESTIONS:
+        if k == q:
+            return k
+    hits = [k for k in SELF_EVAL_QUESTIONS if k.startswith(q) or q.startswith(k)]
+    if len(hits) == 1:
+        return hits[0]
+    if len(hits) > 1:
+        raise ValueError(
+            f"{asked!r} matches {len(hits)} of §45's questions "
+            f"({'; '.join(hits[:3])}) -- they share a prefix, so it cannot "
+            f"identify one. Type more of it, or the whole question.")
+    return None
+
+
+#: What counts as opening on a negation. Order matters: the list is consumed
+#: first-match, and several of these are prefixes of one another -- `not` is a
+#: prefix of `nothing`, `no` is a prefix of `none`, and `partly` is a prefix of
+#: `partially`. Longest and most specific first, or `not sufficient: ...` gets
+#: read as `no` followed by `t sufficient: ...` and the finding is mismeasured.
+_NEGATION_OPENERS = (
+    "did not", "does not", "was not", "were not", "is not", "are not",
+    "could not", "would not", "cannot", "didn't", "doesn't", "wasn't",
+    "not", "none", "n/a", "false", "no", "partially", "partly",
+)
+
+
+#: Openings that negate the *finding* rather than the verdict. "Nothing to
+#: report" and "nobody did anything wrong" both start on a negation, and both are
+#: the favourable review wearing a negative's clothes -- which is the exact shape
+#: a self-review takes when it has found nothing and wants the gate to think it
+#: was thorough.
+_NON_FINDINGS = ("nothing", "nobody", "no issues", "no problems", "no faults",
+                 "no findings", "nothing wrong", "nothing to report",
+                 "nothing to add", "nothing else", "no complaints")
+
+#: Concessions. A finding does not have to open the sentence -- it very often
+#: does not, because most of what a run did was fine, and the honest shape of
+#: "mostly yes, except for this" is a positive first word and a `but`.
+#:
+#: The floor read only the front, and that was the same defect it had just fixed
+#: pointing the other way. Having concluded that a verdict is not a finding, it
+#: then refused the single most common real finding there is. A gate that pushes a
+#: run to write a false negative in order to satisfy it has replaced one bias
+#: with another, and the substitution is harder to notice because the output
+#: still looks like a self-review.
+_CONCESSIONS = ("but", "however", "although", "though", "except", "except that",
+                "despite", "even so", "that said", "on the other hand",
+                "the problem", "the fault", "went wrong", "should not have",
+                "should have", "over-", "under-")
+
+
+def _names_a_finding(answer: str) -> bool:
+    """Does this answer carry a finding -- a negative claim *and* something said?
+
+    Three conditions, and each is load-bearing against a way this has been wrong.
+
+    A verdict is not a finding. Requiring only a negation accepts fifteen bare
+    "no"s, which is a review that found nothing and dressed it as fifteen
+    findings.
+
+    A finding is not necessarily at the front. Requiring the negation to open
+    refuses "Yes, but the route list is in three files", which is the common
+    shape of an honest self-review, because most of what a run did was fine.
+
+    Something has to be said. Requiring only the marker accepts "Yes, but fine"
+    fifteen times, which is the same fifteen bare verdicts wearing a conjunction.
+
+    So: a finding is either a negation at the front or a concession somewhere in
+    the answer, and in both cases at least eight words have to follow the marker.
+    Eight sits above "no, it was not" and below "no, the route list is in three
+    files and one of them does not contain it".
+    """
+    text = (answer or "").strip().lower()
+    for phrase in _NON_FINDINGS:
+        if text.startswith(phrase):
+            return False
+    # Openers are front-anchored, deliberately. Searching for them anywhere makes
+    # "no, the count was self-reported and nothing tested it" match the "not"
+    # inside "nothing", and then judge three words of remainder instead of the
+    # finding sitting at the front. The first version used `find` for both lists
+    # and refused its own best answer for exactly that reason.
+    for opener in _NEGATION_OPENERS:
+        if text.startswith(opener):
+            return len(text[len(opener):].lstrip(" ,.;:-—").split()) >= 8
+    for concession in _CONCESSIONS:
+        m = re.search(rf"\b{re.escape(concession)}\b", text)
+        if m:
+            return len(text[m.end():].lstrip(" ,.;:-—").split()) >= 8
+    return False
+
+
+def cmd_reflect(args) -> int:
+    """Record §45's self-evaluation before delivery, all fifteen or not at all.
+
+    The kernel already had ten of these in prose in `references/self-evaluation.md`
+    and none of them in the state, which is the same defect the process log had: a
+    list in a document that nothing consults. The value of recording them is not
+    the answers -- it is that "are any required work units incomplete" gets asked
+    at all, and that the answer is next to the state it describes rather than
+    somewhere in a transcript nobody re-reads.
+    """
+    state = load(args)
+
+    if args.list:
+        prior = state.get("self_evaluation") or {}
+        if not prior:
+            print("  no self-evaluation recorded")
+            return 0
+        print(f"  self-evaluation {prior.get('at')}")
+        for q in SELF_EVAL_QUESTIONS:
+            print(f"    {'y' if (q in prior) else 'n'}  {q}: {prior.get(q) or '-'}")
+        return 0
+
+    answers = (args.answer or [])
+    recorded: dict[str, str] = {}
+    for item in answers:
+        if "=" not in item:
+            print(f"reflect: {item!r} is not 'question=answer'. Every answer has to "
+                  f"name the question it answers, or the list cannot be checked for "
+                  f"completeness.", file=sys.stderr)
+            return 2
+        q, a = item.split("=", 1)
+        try:
+            canon = _match_question(q)
+        except ValueError as e:
+            print(f"reflect: {e}", file=sys.stderr)
+            return 2
+        if canon is None:
+            print(f"reflect: {q!r} is not one of §45's fifteen questions. Use "
+                  f"`reflect --list` for the vocabulary.", file=sys.stderr)
+            return 2
+        if canon in recorded:
+            print(f"reflect: {canon!r} answered twice. §45 asks it once, and two "
+                  f"answers to one question is a way of not answering it.",
+                  file=sys.stderr)
+            return 2
+        recorded[canon] = a.strip()
+
+    missing = [q for q in SELF_EVAL_QUESTIONS if q not in recorded]
+    if missing:
+        print(f"reflect: {len(missing)} of {len(SELF_EVAL_QUESTIONS)} questions are "
+              f"unanswered, starting with {missing[0]!r}. §45 asks all fifteen "
+              f"before delivery. An answer of 'no' to several of them is the "
+              f"expected output; silence about them is the problem.", file=sys.stderr)
+        return 2
+    if not (args.why or "").strip():
+        # Not a reason -- a floor on the *content*. A fifteen-word reflection that
+        # answers every question with "yes" is the failure §45 describes as worth
+        # nothing, and the only mechanical proxy for it is whether anything was
+        # found wrong.
+        #
+        # The first version compared the whole answer against a closed list of
+        # bare verdicts -- "no", "none", "n/a", "false" -- and that had it wrong
+        # in both directions at once. It refused `No, and here is the fault: the
+        # route list is in three files and SKILL.md points at a fourth`, which is
+        # the finding the gate exists to produce, while accepting fifteen
+        # consecutive answers of the single word "no", which is the failure it
+        # exists to prevent: fifteen verdicts and not one finding.
+        #
+        # A criticism has to name something. So an answer counts when it opens on
+        # a negation *and carries a finding after it* -- a bare verdict is a label
+        # and labels are what a self-review produces when it has nothing.
+        honest = [q for q, a in recorded.items() if _names_a_finding(a)]
+        if not honest:
+            print("reflect: fifteen answers and not one of them names a fault. "
+                  "§45 says a favourable review of your own run is worth nothing "
+                  "and that finding two or three faults is the expected output. A "
+                  "bare 'no' is a verdict, not a finding, and a finding does not "
+                  "have to open the sentence -- 'Yes, but the count of the gated "
+                  "rows was self-reported' is one. Name the thing that was done "
+                  "badly, or say which question you could not answer.",
+                  file=sys.stderr)
+            return 1
+    state["self_evaluation"] = {**recorded, "at": now()}
+    save(args, state)
+    print(f"  self-evaluation recorded: {len(recorded)} answers")
     return 0
 
 
@@ -912,6 +2136,47 @@ def cmd_dispatch(args) -> int:
     prior = [d for d in records
              if isinstance(d, dict) and (d.get("for") or "") == for_what]
     last = prior[-1] if prior else None
+
+    # §11 / §42: the handover. Required at `invoked`, which is the moment the
+    # context is committed and before anything has been spent on the answer, so
+    # recording it is free and skipping it only shows up later.
+    brief = (args.brief or "").strip()
+    if st == "invoked" and not brief:
+        print("dispatch: `invoked` needs --brief, naming §11's seven fields "
+              f"({', '.join(BRIEF_FIELDS)}) and §42's context package. Nothing has "
+              f"been spent yet, so a missing brief is free to fix now and "
+              f"unrecoverable later -- and a delegate handed three of the seven has "
+              f"had its success criteria invented for it.", file=sys.stderr)
+        return 2
+    if brief:
+        absent = [f for f in BRIEF_FIELDS if f.split()[0] not in brief.lower()]
+        if absent:
+            print(f"dispatch: --brief does not name {absent[0]!r}. §11 lists "
+                  f"{len(BRIEF_FIELDS)} fields and a brief naming fewer is a "
+                  f"paragraph about handing work over. All of them, in any order.",
+                  file=sys.stderr)
+            return 2
+
+    # §12 / §34: the handback. Required at `observed` -- RESULT RECEIVED is not
+    # RESULT VERIFIED, and a capability that reached `observed` carrying no status
+    # and no evidence is exactly the "Done" this kernel refuses to take.
+    rstatus = (args.result_status or "").strip().lower()
+    result = (args.result or "").strip()
+    if st in ("observed", "verified"):
+        if rstatus not in RESULT_STATUSES:
+            print(f"dispatch: `{st}` needs --result-status, one of "
+                  f"{', '.join(RESULT_STATUSES)}. §12 asks the specialist to say "
+                  f"which it is, and a run that never asks cannot tell a completed "
+                  f"delegation from a partial one.", file=sys.stderr)
+            return 2
+        if not result:
+            print(f"dispatch: `{st}` needs --result, and it needs --result-status "
+                  f"beside it. §12 lists {len(RESULT_FIELDS)} fields "
+                  f"({', '.join(RESULT_FIELDS)}). A capability that reached `{st}` "
+                  f"with nothing to show for it is indistinguishable from one that "
+                  f"was never invoked, which is the failure the whole chain exists "
+                  f"to make visible.", file=sys.stderr)
+            return 2
     if last is not None and (last.get("state") or "") in DISPATCH_ORDER \
             and st in DISPATCH_ORDER \
             and DISPATCH_ORDER.index(st) < DISPATCH_ORDER.index(last.get("state")):
@@ -931,6 +2196,9 @@ def cmd_dispatch(args) -> int:
     entry["tried"] = tried or entry.get("tried") or []
     entry["why"] = why or entry.get("why") or ""
     entry["evidence"] = ev or entry.get("evidence") or ""
+    entry["brief"] = brief or entry.get("brief") or ""
+    entry["result_status"] = rstatus or entry.get("result_status") or ""
+    entry["result"] = result or entry.get("result") or ""
     entry["at"] = now()
     if st in DISPATCH_TERMINAL:
         entry["terminal_reason"] = st
@@ -943,6 +2211,15 @@ def cmd_dispatch(args) -> int:
 def cmd_check(args) -> int:
     state = load(args)
     problems: list[str] = []
+
+    # Normalised once, at the top, because a dozen gates below compare the rung
+    # against something -- R2+ exemptions, the host ceiling, the de-escalation
+    # floor. It used to be computed halfway down, which meant the gates added
+    # above it raised UnboundLocalError. Reading a value once and comparing it
+    # everywhere is also what stops two gates comparing a bare code against a
+    # spelled-out one, which is a bug that only fires on the spelling.
+    rung = state.get("rung")
+    rung_code = str(rung or "").split(" ", 1)[0].upper()
 
     for key in REQUIRED:
         if key not in state:
@@ -1007,12 +2284,236 @@ def cmd_check(args) -> int:
             problems.append(
                 f"decision {d.get('question')!r}: `recovery` is empty; nothing says "
                 f"what would reverse this")
+        # §5: JEv must produce an executable next action. A record whose `selected`
+        # is empty, or is a single word, is a paragraph about deciding rather than
+        # a decision -- and a paragraph cannot be executed or reviewed.
+        if not _is_executable_action(d.get("selected") or ""):
+            sel = (d.get("selected") or "").strip()
+            problems.append(
+                f"decision {d.get('question')!r}: `selected` is "
+                f"{sel!r}, which is not an executable action"
+                + ("; it is empty" if not sel else "; it names a category, not a "
+                   "thing to do. 'delegate' is a mode; 'invoke the reviewer and "
+                   "record what came back' is an action."))
 
     changes = mode.get("changed") or []
     if len(changes) >= 3:
         problems.append(
             f"coordination mode changed {len(changes)} times; that is a signal the "
             f"first choice was wrong, not that the task is hard")
+
+    # --- §24: the process log and the state must agree ---
+    #
+    # `cmd_log` refuses a line that claims a dispatch the ledger has not reached,
+    # so a hand-edited state file, or one written by an older version, is the only
+    # way to get here. It is worth catching anyway, and for the same reason the
+    # rest of this function exists: a state file is a claim until something reads
+    # it and disagrees.
+    reached = _dispatch_reached(state)
+    met_criteria = [i for i in (state.get("criteria") or [])
+                    if isinstance(i, dict) and i.get("status") == "met"]
+    for e in state.get("log") or []:
+        if not isinstance(e, dict):
+            continue
+        kind = str(e.get("kind") or "").lower()
+        claim = LOG_KINDS.get(kind)
+        if claim and claim != "verified" \
+                and reached < DISPATCH_ORDER.index(claim):
+            problems.append(
+                f"process log {e.get('n')} says {kind!r}, but the capability ledger "
+                f"only reached {DISPATCH_ORDER[reached] if reached >= 0 else 'nothing'}"
+                f". The log and the state must agree; one of them is a claim.")
+        if kind in ("verify", "verified") \
+                and reached < DISPATCH_ORDER.index("verified") and not met_criteria:
+            problems.append(
+                f"process log {e.get('n')} claims verification, but nothing was "
+                f"verified: no capability reached `verified` and no acceptance "
+                f"criterion is met")
+
+    comp = state.get("completion") or {}
+    comp_status = str(comp.get("status") or "").strip().lower()
+    if comp_status and comp_status not in COMPLETION_STATUSES:
+        problems.append(
+            f"completion.status is {comp_status!r}; must be one of "
+            f"{', '.join(COMPLETION_STATUSES)}")
+
+    # --- §18: the RunState field list, and how much of it this tool keeps ---
+    #
+    # Not every §18 field has a home here, and pretending otherwise would be the
+    # same claim check-spec made before it was rewritten: coverage asserted rather
+    # than counted. So only a field that IS mapped and IS missing fails -- which is
+    # a defect rather than a known gap. The unmapped ones are enumerated as `None`
+    # in RUNSTATE_FIELDS, and they are the list of what to build next.
+    missing_mapped = [name for name, path in RUNSTATE_FIELDS
+                      if path and not _has(state, path)]
+    if missing_mapped:
+        problems.append(
+            f"state is missing {len(missing_mapped)} field(s) §18 requires and this "
+            f"tool claims to keep: {', '.join(missing_mapped[:6])}"
+            + (" ..." if len(missing_mapped) > 6 else ""))
+
+    # --- §19: an event that happened must have left a trace ---
+    #
+    # Not "was the state updated" -- that is unobservable -- but its converse: an
+    # event that demonstrably occurred must have been recorded. The orphan is a
+    # dispatch that reached `invoked` with no result, a block with no named route,
+    # a handoff that never came back and was never marked open.
+    for d in (state.get("dispatch") or []):
+        if not isinstance(d, dict):
+            continue
+        st = str(d.get("state") or "").lower()
+        if st in ("invoked", "running", "observed", "verified") \
+                and not d.get("history"):
+            problems.append(
+                f"capability {d.get('for')!r} is recorded at {st!r} with no history: "
+                f"an invocation that left no trace is §19's orphan, and a run that "
+                f"reached 'invoked' and recorded nothing is indistinguishable from "
+                f"one that never invoked anything")
+    for h in (state.get("handoffs") or []):
+        if isinstance(h, dict) and h.get("returned_at") is None and not h.get("open"):
+            problems.append(
+                f"handoff to {h.get('to')!r} never came back and is not marked open; "
+                f"authority is sitting with nobody")
+
+    for r in (state.get("recoveries") or []):
+        if not isinstance(r, dict):
+            continue
+        if not r.get("result"):
+            problems.append(
+                f"recovery {r.get('n')} records no result; a recovery with no "
+                f"outcome has not been evaluated, which is §28's blind retry "
+                f"arriving late")
+        if str(r.get("class") or "") not in FAILURE_CLASSES:
+            problems.append(
+                f"recovery {r.get('n')} has class {r.get('class')!r}, which is not "
+                f"one of {', '.join(FAILURE_CLASSES)}. A recovery that does not say "
+                f"which kind of failure it recovered from cannot be evaluated.")
+    for b in (state.get("blocks") or []):
+        if isinstance(b, dict) and not (b.get("routes") or []):
+            problems.append(
+                f"block {b.get('n')} on {b.get('what')!r} names no route from §30's "
+                f"fifteen ({ORPHAN_REASONS.get('blocks.routes')}). --tried records "
+                f"what was looked for; a block with detail and no route asserts "
+                f"that nothing systematic was tried.")
+
+    # --- §16: an open context gap is a run that knows it is stuck and stopped ---
+    # --- §15: and a context request names four things, not three ---
+    if rung_code in {"R2", "R3", "R4"}:
+        open_gaps = [g for g in ((state.get("context") or {}).get("gaps") or [])
+                     if isinstance(g, dict) and not g.get("closed_at")]
+        if open_gaps:
+            problems.append(
+                f"{len(open_gaps)} context gap(s) still open: "
+                + "; ".join(str(g.get('what')) for g in open_gaps[:3])
+                + ". Context that can be acquired is route 2 of the gate before you "
+                  "stop, so an open gap and a stopped run are the same claim from "
+                  "two directions. Close it with `context --closed`.")
+        for c in (state.get("context") or {}).get("loaded") or []:
+            if not isinstance(c, dict):
+                continue
+            if not (c.get("enables") or "").strip() \
+                    or not (c.get("scope") or "").strip():
+                problems.append(
+                    f"context {c.get('ref')!r} does not say which action it enables "
+                    f"or what its minimum scope was. §15 asks for four things before "
+                    f"a context request, and only two of them were being recorded.")
+
+    # --- §38: do not over-delegate, checked rather than asserted ---
+    #
+    # The over-delegation rule is one paragraph, and a paragraph is worth exactly
+    # what a model remembers it is worth. The checkable form is narrow: a run that
+    # bought a capability, watched it return, and then did every work unit inline
+    # anyway paid for isolation and got nothing. That is over-delegation, and it is
+    # visible in the ledger without any judgement about whether the delegation was
+    # worth it in principle.
+    used = [d for d in (state.get("dispatch") or [])
+            if isinstance(d, dict)
+            and str(d.get("state") or "") in ("observed", "verified")]
+    steps_list = state.get("steps") or []
+    all_inline = bool(steps_list) and all(
+        str(s.get("capability") or "inline").strip().lower() in ("", "inline")
+        for s in steps_list if isinstance(s, dict))
+    if used and all_inline:
+        problems.append(
+            f"{len(used)} capabilit{'y was' if len(used) == 1 else 'ies were'} "
+            f"dispatched and observed ({', '.join(str(d.get('for')) for d in used)}), "
+            f"and every work unit names inline. That is §38: the run paid for "
+            f"isolation and got the work done in this context anyway. Either the "
+            f"work unit should name the capability, or the dispatch should be "
+            f"marked `skipped --why`.")
+
+    # --- §40: several results require a comparison, not a concatenation ---
+    #
+    # Two or more specialists each returning a result is not a synthesis. The
+    # kernel owns the merge, and the merge is where conflicts get resolved; a run
+    # that appends two outputs has skipped the only part that was the kernel's.
+    # A decision record is where a comparison would be kept, and requiring one is
+    # cheaper than requiring a synthesis document nobody would read.
+    if len(used) >= 2:
+        if not state.get("decisions"):
+            problems.append(
+                f"{len(used)} capabilities were observed and no decision record "
+                f"exists. §40: the kernel compares, resolves conflicts, and "
+                f"synthesises -- a run that concatenates specialist outputs has "
+                f"skipped the only part that was its own. Record the comparison "
+                f"with `decide`.")
+
+    # --- §45: a run that finished at R2+ without asking itself anything ---
+    #
+    # The fifteen questions are in a reference file and, until `reflect` existed,
+    # nowhere else. Ten of them are also in Step 9 of SKILL.md, which means the
+    # kernel asked twice in prose and recorded nothing either time. The gate here
+    # is only on the *recording*, not the quality: a fifteen-answer reflection that
+    # criticises nothing is refused at write time, and a run that never recorded
+    # one at all is refused here.
+    if comp_status and rung_code in {"R2", "R3", "R4"} \
+            and not (state.get("self_evaluation") or {}).get("at"):
+        problems.append(
+            f"the run is recorded {comp_status} at rung {rung_code} with no §45 "
+            f"self-evaluation. `reflect --list` prints the fifteen questions. The "
+            f"one that matters most here is 'are any required work units "
+            f"incomplete', and it is the one a run about to declare itself finished "
+            f"has least reason to ask.")
+
+    # §25 again, from the other side: a run with real work units that reached a
+    # terminal status having logged no execution at all. Short runs are exempt --
+    # that is why the `log` gate lets `deliver` follow anything -- because a run
+    # that did not need a log should not acquire one by being caught out.
+    if comp_status and rung_code in {"R2", "R3", "R4"} \
+            and (state.get("steps") or []):
+        did_work = {"execute", "executed", "execute-inline", "observe",
+                    "observed", "result", "verify", "verified"}
+        logged = {str(e.get("kind") or "").lower() for e in (state.get("log") or [])
+                  if isinstance(e, dict)}
+        if not (logged & did_work):
+            problems.append(
+                f"the run has {len(state.get('steps') or [])} work unit(s) and is "
+                f"recorded {comp_status}, but the log records no execution of any "
+                f"kind. §23's log is of operations, and a run that opens work units "
+                f"and delivers without ever logging having done anything has "
+                f"described a run rather than recorded one.")
+
+    if comp_status == "completed":
+        # `finish` refuses this combination at write time. Re-checked here
+        # because a state file can also be edited, and because the criteria can
+        # be re-opened by a later `require` after the run claimed completion --
+        # which is a real way to produce a contradiction, not a hypothetical.
+        if _open_criteria(state):
+            problems.append(
+                f"run is recorded completed while "
+                f"{len(_open_criteria(state))} acceptance criterion/criteria are "
+                f"open. Section 35 requires the criteria satisfied and no required "
+                f"action remaining, and those cannot both be true.")
+        if _open_step(state) is not None:
+            problems.append(
+                f"run is recorded completed while work unit "
+                f"{_open_step(state).get('n')} is still open")
+
+    if state.get("log") and not str(state["log"][0].get("n") or "").startswith("P01"):
+        problems.append(
+            f"process log starts at {state['log'][0].get('n')!r}, not P01. Numbering "
+            f"that does not start at one cannot be read to find what was already "
+            f"tried, which is the only reason it is numbered")
 
     # --- the three things the documentation says `check` refuses, and did not ---
     #
@@ -1029,8 +2530,7 @@ def cmd_check(args) -> int:
     # produce was neither validated nor mentioned. A rung outside the vocabulary
     # is now rejected at write time by choices=; this catches a state file
     # written by an older version, or edited by hand.
-    rung = state.get("rung")
-    if rung is not None and str(rung).split(" ", 1)[0].upper() not in RUNGS:
+    if rung is not None and rung_code not in RUNGS:
         problems.append(
             f"rung {rung!r} is not one of {', '.join(RUNGS)}; the effort gate "
             f"produces a rung, so an unrecognised one means the gate was skipped")
@@ -1040,12 +2540,56 @@ def cmd_check(args) -> int:
         problems.append(
             f"scale {scale!r} is not one of {', '.join(SCALES)}")
 
+    # --- the host is a term in the effort gate, and the gate is asymmetric ---
+    #
+    # The rung ladder answers how hard the task is. It said nothing about what the
+    # model can carry, so one 549-line procedure was applied unchanged to a 1B model
+    # and a frontier one. This repository's own research says that is measurably
+    # wrong at both ends: over-prescription degrades current-generation output, and
+    # a weak host does not reliably *trigger* the rules it is given.
+    host = state.get("host")
+    if host is not None and str(host) not in HOSTS:
+        problems.append(
+            f"host {host!r} is not one of {', '.join(HOSTS)}; the host is a term in "
+            f"the effort gate, so an unrecognised one means the gate was skipped")
+    ceiling = HOST_CEILING.get(str(host or ""))
+    if ceiling and rung_code in RUNGS and rung_code > ceiling:
+        # Deliberately exceeding the ceiling is legitimate -- one focused hard
+        # call is exactly what a small model is good at, and the ceiling is a
+        # default rather than a law. It has to be said at the moment the effort
+        # gate is made, because afterwards the run has a result and will find a
+        # reason for it, which is the wrong order.
+        if not (state.get("exceeds_ceiling") or "").strip():
+            problems.append(
+                f"rung {rung_code} is above what a {host!r} host can carry "
+                f"(ceiling {ceiling}), with nothing recorded saying why. A weak host "
+                f"given more procedure produces more shallow decisions, which reads "
+                f"as thorough and is not. Exceeding it deliberately is allowed -- "
+                f"init --exceeds-ceiling \"<why>\".")
+
+    # The direction the evidence says fails silently. Capability and budget sense
+    # are different things (measured at r=0.35), so a capable model cannot be
+    # trusted to notice it is under-investing. On a weak host, de-escalating is
+    # free and often correct. On a frontier host it is the documented failure.
+    if host == "frontier":
+        for change in state.get("rung_changed") or []:
+            if not isinstance(change, dict):
+                continue
+            frm = str(change.get("from") or "").split(" ", 1)[0].upper()
+            to = str(change.get("to") or "").split(" ", 1)[0].upper()
+            if frm in RUNGS and to in RUNGS and frm > to and frm >= "R3" \
+                    and not (change.get("why") or "").strip():
+                problems.append(
+                    f"rung dropped {frm} -> {to} on a frontier host with no reason "
+                    f"recorded. The risk here is under-investment, and a capable "
+                    f"model is the one least able to notice it: capability and "
+                    f"budget sense are barely correlated. `set-rung --why`.")
+
     # A rung with no trigger cannot be revised by evidence, which is the
     # difference between a decision and a label. Reported for R2 and above,
     # where the kernel's own rule is that the effort gate is recorded; R0 and
     # R1 are exempt because recording anything at those rungs is itself called
     # ceremony by references/decision-ledger.md.
-    rung_code = str(rung or "").split(" ", 1)[0].upper()
     if rung_code in {"R2", "R3", "R4"}:
         triggers = state.get("rung_triggers") or {}
         if not (triggers.get("escalate_on") or "").strip():
@@ -1229,6 +2773,15 @@ def cmd_check(args) -> int:
         print(f"  problem: {p}")
     if problems:
         print(f"\n  {len(problems)} problem(s). State is a claim until this passes.")
+    else:
+        # §18 coverage, on every clean run rather than only when asked. The number
+        # is small and it is not a failure, but printing it means the gap cannot
+        # quietly become larger while a reader assumes it is the same one.
+        mapped = [n for n, p in RUNSTATE_FIELDS if p]
+        unmapped = [n for n, p in RUNSTATE_FIELDS if not p]
+        print(f"  state: {len(mapped)}/{len(RUNSTATE_FIELDS)} of §18's field list is "
+              f"kept here; {len(unmapped)} have no home in this tool")
+    if problems:
         return 1
     print(f"  run state is coherent: rung={state.get('rung')}, "
           f"mode={mode.get('mode')}, "
@@ -1300,10 +2853,27 @@ def main() -> int:
     s.add_argument("--de-escalate-on", default="",
                    help="the observation that would let the rung drop")
     s.add_argument("--mode", default="inline", choices=list(MODES))
+    s.add_argument("--host", default="mid", choices=list(HOSTS),
+                   help="what this host can carry, as a term in the effort gate. "
+                        "A term, never a model name: the tier is read from what the "
+                        "host exposes, and a ladder that named models would be stale "
+                        "the week one ships. See references/model-adaptation.md.")
+    s.add_argument("--exceeds-ceiling", default="",
+                   help="why this rung is above the host's ceiling. Required when it "
+                        "is, and only then: a weak host given more procedure produces "
+                        "more shallow decisions.")
     s.add_argument("--why", default="")
     s.add_argument("--until", default="")
     s.add_argument("--force", action="store_true")
     s.set_defaults(fn=cmd_init)
+
+    s = sub.add_parser("set-host", help="record a change in what the host can carry",
+                       parents=[common])
+    s.add_argument("--host", required=True, choices=list(HOSTS))
+    s.add_argument("--why", required=True,
+                   help="what changed. A host change moves every later rung "
+                        "decision, so an unexplained one is unreviewable.")
+    s.set_defaults(fn=cmd_set_host)
 
     s = sub.add_parser("show", help="print the current state, current step first",
                        parents=[common])
@@ -1339,12 +2909,26 @@ def main() -> int:
                    help="the condition that must hold before it is attempted")
     s.add_argument("--expect", default="",
                    help="the observable condition that means it finished")
+    s.add_argument("--capability", default="",
+                   help="what does the work (skill, tool, subagent, or 'inline')")
+    s.add_argument("--verify", default="",
+                   help="how you will know the expectation held (required at R2+)")
     s.add_argument("--close", action="store_true",
                    help="close the open step instead of opening a new one")
     s.add_argument("--outcome", default="",
                    help="how the open step actually ended (with --close)")
     s.add_argument("--list", action="store_true", help="list every step")
     s.set_defaults(fn=cmd_step)
+
+    s = sub.add_parser("log", help="append a numbered process-log line",
+                       parents=[common])
+    s.add_argument("--kind", default="",
+                   help="the operation: " + ", ".join(sorted(LOG_KINDS)))
+    s.add_argument("--what", default="", help="what actually happened")
+    s.add_argument("--under", default="",
+                   help="hang this off a logged step as a substep, e.g. P03")
+    s.add_argument("--list", action="store_true", help="print the whole log")
+    s.set_defaults(fn=cmd_log)
 
     s = sub.add_parser("context", help="record context loaded or deliberately dropped",
                        parents=[common])
@@ -1357,7 +2941,39 @@ def main() -> int:
                    help="confirm it was checked for staleness before loading")
     s.add_argument("--drop", action="store_true",
                    help="record a deliberate omission rather than a load")
+    # §15 asks for four things before a context request. `--ref` and `--why` were
+    # the two being recorded; these are the other two, and a rule that says "name
+    # four things" while only storing two is a rule three-quarters stated.
+    s.add_argument("--enables", default="",
+                   help="which action this context enables")
+    s.add_argument("--scope", default="",
+                   help="the minimum scope that would answer it")
+    s.add_argument("--gap", default="",
+                   help="record a context gap: what is missing, left open until "
+                        "`context --closed`. §16's loop, and the thing a run that "
+                        "is stuck has most reason not to write down.")
+    s.add_argument("--closed", default="",
+                   help="close an open context gap, naming it")
     s.set_defaults(fn=cmd_context)
+
+    s = sub.add_parser("recover", help="record a recovery and its failure class",
+                       parents=[common])
+    s.add_argument("--class", dest="cls", required=True,
+                   choices=list(FAILURE_CLASSES),
+                   help="which of §28's nine kinds of failure this was")
+    s.add_argument("--reason", default="", help="what went wrong")
+    s.add_argument("--action", required=True,
+                   help="what was done about it, as an action rather than a category")
+    s.add_argument("--result", default="",
+                   help="what the action produced. Required, but deliberately not "
+                        "required=True at the parser: a missing --result deserves "
+                        "the explanation of why a recovery with no outcome has not "
+                        "been evaluated, not a usage line.")
+    s.add_argument("--from-mode", default="", help="the coordination mode before")
+    s.add_argument("--to-mode", default="", help="the coordination mode after")
+    s.add_argument("--from-capability", default="", help="the capability before")
+    s.add_argument("--to-capability", default="", help="the capability after")
+    s.set_defaults(fn=cmd_recover)
 
     s = sub.add_parser("deliver", help="record a file this run produced for the user",
                        parents=[common])
@@ -1403,10 +3019,28 @@ def main() -> int:
     s.add_argument("--what", required=True, help="the part that is blocked")
     s.add_argument("--reason", required=True, help="why, in one line")
     s.add_argument("--tried", action="append", default=[],
-                   help="a route already walked; repeatable, and required")
+                   help="what was already looked for; repeatable, and required")
+    s.add_argument("--routes", action="append", default=[],
+                   choices=list(ROUTES),
+                   help="which of §30's fifteen routes these cover; repeatable, "
+                        "and required. --tried is the prose evidence, --routes is "
+                        "the part that can be checked.")
     s.add_argument("--next-action", default="",
                    help="what will be executed next; required to continue a block")
     s.set_defaults(fn=cmd_blocked)
+
+    s = sub.add_parser("reflect", help="record §45's self-evaluation", parents=[common])
+    s.add_argument("--answer", action="append", default=[],
+                   metavar="QUESTION=ANSWER",
+                   help=f"repeatable. One of §45's "
+                        f"{len(SELF_EVAL_QUESTIONS)} questions; `reflect --list` "
+                        f"prints the vocabulary. All of them are required.")
+    s.add_argument("--list", action="store_true",
+                   help="print the questions and any recorded answers")
+    s.add_argument("--why", default="",
+                   help="unused by the gate; kept so the flag parses if a run "
+                        "wants to say why the reflection was hard")
+    s.set_defaults(fn=cmd_reflect)
 
     s = sub.add_parser("dispatch", help="record how far a chosen capability got",
                        parents=[common])
@@ -1416,14 +3050,50 @@ def main() -> int:
                    help="|".join(DISPATCH_STATES))
     s.add_argument("--evidence", default="", help="OBS-n; required at `verified`")
     s.add_argument("--tried", action="append", default=[],
-                   help="a route looked for; repeatable, required at `unreachable`")
+                   help="what was actually looked for; repeatable, and required at "
+                        "`unreachable` and at `blocked`")
+    s.add_argument("--routes", action="append", default=[],
+                   choices=list(ROUTES),
+                   help="which of §30's fifteen routes this covers; repeatable. "
+                        "Kept separate from --tried because the prose is the "
+                        "evidence and the route name is the part that can be "
+                        "checked.")
     s.add_argument("--why", default="", help="the reason; required at `skipped`")
+    s.add_argument("--brief", default="",
+                   help="§11's seven fields and §42's context package; required at "
+                        "`invoked`. Names, not prose: the gate checks that the "
+                        "fields are there, not that the brief is any good.")
+    s.add_argument("--result-status", default="",
+                   choices=list(RESULT_STATUSES),
+                   help="§12's STATUS; required at `observed` and `verified`")
+    s.add_argument("--result", default="",
+                   help="§12's RESULT; required at `observed` and `verified`")
     s.set_defaults(fn=cmd_dispatch)
 
     s = sub.add_parser("audit", help="check a delivery for terminal justifications",
                        parents=[common])
     s.add_argument("path", help="the delivery file, or - for stdin")
+    s.add_argument("--trivially", action="store_true",
+                   help="the delivery is too short to carry §47's five sections")
     s.set_defaults(fn=cmd_audit)
+
+    s = sub.add_parser("finish", help="record the run's terminal status",
+                       parents=[common])
+    s.add_argument("--status", required=True, metavar="|".join(COMPLETION_STATUSES),
+                   help="completed | partial | blocked | failed")
+    s.add_argument("--remaining", default="",
+                   help="what is still outstanding (required for `partial`)")
+    s.add_argument("--attempted", default="",
+                   help="what execution was attempted and lost (required for "
+                        "`failed`)")
+    s.add_argument("--recovery", default="",
+                   help="what recovery was attempted, for partial or failed")
+    s.add_argument("--next-action", default="",
+                   help="the next executable action, for partial or failed")
+    s.add_argument("--replace", action="store_true",
+                   help="change a recorded ending; requires --why")
+    s.add_argument("--why", default="", help="why the recorded ending changed")
+    s.set_defaults(fn=cmd_finish)
 
     s = sub.add_parser("list", help="list runs in the state directory", parents=[common])
     s.set_defaults(fn=cmd_list)

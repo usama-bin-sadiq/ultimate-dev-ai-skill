@@ -106,26 +106,43 @@ If the objective is not met, walk these in order and take the first `yes`. It is
 because the classification is what you consult once you have already decided to
 stop.
 
-1. another reachable capability → `dispatch` it and invoke it
-2. context that was never loaded → `context --load`
-3. an agent that failed → re-choose the mode, or a different capability
-4. a tool that failed → fix the cause; retries are bounded, blind retry is not
-5. verification that failed → fix the *work*; the criterion stays open
-6. the strategy was wrong → back to JEv and re-decide
-7. the objective is decomposable → more steps, smaller units
-8. delegable → `set-mode --mode delegate`
-9. spans several sources → `set-mode --mode route`
-10. runnable inline in the context already in hand
-11. needs one owner across stages → `set-mode --mode handoff`
-12. a different order of the same units
-13. **continue partially while resolving the remaining dependency**
-14. any other viable path
+| # | Route | What it means here |
+|---|---|---|
+| 1 | `retry` | The cause is identified and transient; attempt again, bounded |
+| 2 | `acquire-context` | Something needed was never loaded → `context --ref` |
+| 3 | `other-skill` | The capability exists as a skill, not as a tool |
+| 4 | `other-agent` | Another mode or another agent can hold it → `set-mode` |
+| 5 | `inline` | Runnable in the context already in hand, and correctly so |
+| 6 | `delegate` | Specialisation clearly beats doing it → `set-mode --mode delegate` |
+| 7 | `route` | Spans several sources → `set-mode --mode route` |
+| 8 | `reorder` | A different order of the same units |
+| 9 | `decompose` | The objective splits into more, smaller units |
+| 10 | `other-resource` | Something exists that this route did not consider |
+| 11 | `replan` | The strategy was wrong → back to JEv and re-decide |
+| 12 | `recover` | Recover from the failed state rather than restarting it |
+| 13 | `continue-partially` | Do what is possible now, resolving the rest as a dependency |
+| 14 | `reduce-scope` | The objective reduces to what is already done |
+| 15 | `no-path-remains` | Every answer above is `no` — and only now may the run stop |
 
-If every answer is `no`, the blocker is genuine and you say so with the routes
-already walked.
+The names are a closed vocabulary, not prose, because `blocked --routes` draws
+from them and a free-text route would mean whatever the run needed it to mean.
+`tools/test-run-state.py` asserts that this table and the `ROUTES` constant hold
+the same fifteen names in the same order, so the two cannot drift — which is the
+whole reason the list is written down.
+
+```sh
+python3 tools/run-state.py blocked --what "<the blocked part>" --reason "<why>" \
+  --tried "<what you actually looked for>" --routes <one of the fifteen>
+```
+
+`--routes` is the checkable half and `--tried` is the evidence, and they are
+separate because they fail in opposite directions: a block with a route and no
+detail asserts a category without showing any work, and a block with detail and
+no route asserts that nothing systematic was tried — the claim that most needs
+support and is least often given it.
 
 **Two of these are machine-checkable** and `check` decides them alone: route 1 is
-the dispatch gate, and route 5 is the acceptance gate. The other twelve are
+the dispatch gate, and route 5 is the acceptance gate. The other thirteen are
 judgements. A rule that stopped a run on the model's reading of its own list
 would be the self-judgement failure above wearing a different hat, so they are
 written down and reviewed by whoever reads the run.

@@ -34,13 +34,16 @@ so read the directory rather than a count stated here.
 | Situation | Load |
 |---|---|
 | Choosing how much effort this deserves | `triage.md`, then `budget-system.md` |
+| On a small or a frontier host, and unsure how much procedure to apply | `model-adaptation.md` — the host tier and the procedure ceiling |
+| A `run-state.py` command refused something and the message is not enough | `state-system.md` — every gate here, and why each exists |
 | Recording a decision, or unsure what a field means | `decision-fabric.md` |
 | Deciding what context to hold | `context-system.md`, then `context-compiler.md` |
 | Resolving a missing capability | `capability-system.md`, then `../skills/skill-creator/SKILL.md` |
 | Writing or defending a plan | `planning-system.md` |
 | Something went wrong | `recovery-system.md`, then `retry-policy.md` |
+| About to declare a blocker | `retry-policy.md` — the fifteen routes, and what `--routes` is for |
 | About to report a result | `verification-system.md`, `evidence-system.md`, `output-contract.md` |
-| Reviewing how the run went | `self-evaluation.md` |
+| Reviewing how the run went, or writing a delivery | `self-evaluation.md`, then `output-contract.md` |
 | About to be interrupted, or asked what you are doing | `observability.md` |
 | Handling content you did not author | `security-and-trust.md` |
 | Unsure what this runtime can do | `runtime-portability.md` |

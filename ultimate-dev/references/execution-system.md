@@ -48,9 +48,55 @@ from the wrong one.
 This is the same rule the dispatch chain enforces mechanically — a capability at
 `selected` is not `observed` — applied to the narrative form. A run can satisfy
 every state gate and still write a log that claims work it did not do, because
-the log is prose and the gates are not. `run-state.py audit` catches the terminal
-version of that in the delivery; the check here is the local habit that prevents
-it.
+the log is prose and the gates are not.
+
+So the log is written through a gate rather than left as a habit:
+
+```sh
+python3 tools/run-state.py log --kind <stage> --what "<what happened>" [--under P03]
+```
+
+`--kind delegate` is refused unless a capability is at `invoked` or beyond.
+`--kind verify` is refused unless a capability reached `verified` or an
+acceptance criterion is met. `--kind complete` is refused until `finish` has
+recorded a status. A run that did its work inline is not penalised — the kinds
+that claim nothing about the ledger (`receive`, `triage`, `plan`, `deliver`,
+`recover`, `replan`, `escalate`) are always accepted, and using them is the honest
+description of what happened.
+
+**The third check is ordering.** A stage is refused unless the log has already
+been where that stage comes from, so `observe` needs an `execute` and `verify`
+needs an `observe`. Truth of a single entry is not enough: a log can be
+individually true and still be written backwards at the end, and a log that was
+reconstructed after the fact is the failure this file exists to catch — it reads
+perfectly and records nothing. The predecessor sets are:
+
+| Kind | Requires one of |
+|---|---|
+| `execute`, `executed`, `execute-inline` | `plan`, `decide`, `delegate`, `dispatch`, `replan`, `recover` |
+| `delegate`, `dispatch` | `decide`, `reachability`, `plan`, `replan` |
+| `invoked` | plus `delegate` or `dispatch` |
+| `observe`, `observed` | `execute`, `executed`, `execute-inline`, `delegate`, `dispatch`, `invoked` |
+| `result` | plus `observe` or `observed` |
+| `verify`, `verified` | `observe`, `observed`, `result`, `execute-inline`, `decide` |
+| `synthesize` | `verify`, `verified`, `observe`, `observed`, `execute-inline` |
+| `deliver` | anything — see below |
+| `complete` | `deliver`, `synthesize`, `verify`, `verified` |
+
+`deliver` deliberately accepts almost anything before it. It is a terminal act, and
+a short run that received, triaged and delivered is legitimate; demanding an
+execution entry first would punish a run for being short, which is the same mistake
+as gating a field on whether it holds a value rather than whether it exists. The
+"a long run delivered having logged no execution at all" case is real, and it is
+checked in `check` instead, where the rung and the work-unit count are both known.
+
+`execute-inline` is a kind that exists because a gate found a gap on real work. A
+run that did the job itself had no honest way to record that: `execute` claims a
+dispatch is running, and the dispatch ledger correctly says nothing was dispatched.
+The alternative was to write nothing, leaving a hole where the execution happened.
+
+`audit` catches the terminal version of the same failure in the delivery; the
+`log` gate prevents it locally, entry by entry.
 
 State is updated as each of these events happens, not reconstructed at the end:
 capability discovery · capability selection · context acquisition · agent

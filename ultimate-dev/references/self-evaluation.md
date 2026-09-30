@@ -13,29 +13,67 @@ The agent that produced the work is the agent judging the work, and a self-repor
 of "that went well" is worthless. So the output of this layer is not a verdict. It
 is a set of specific answers that a reader can check.
 
-## The ten questions
+## The fifteen questions
 
-Answer all ten at R3 and above. At R2, answer the first three and the last two.
-At R0 and R1, this layer does not run — the process was short and determined.
+These are §45's fifteen, and `reflect` is the same list in state — all fifteen or
+none, recorded before delivery rather than recalled afterwards:
+
+```sh
+python3 tools/run-state.py reflect --list
+python3 tools/run-state.py reflect --answer "<question>=<answer>" --answer ...
+```
+
+The table below says what each one is *for*. It is not a second list to work
+from: the command is the list, and this is the reasoning behind it.
 
 | # | Question | A good answer names |
 |---|---|---|
-| 1 | Did this solve the task? | The criterion that holds, or the one that does not |
-| 2 | Was the context necessary? | What was loaded and never used, and what would have changed without it |
-| 3 | Was the reasoning sufficient? | Whether the rung was right, and what would have needed more or less |
-| 4 | Was the strategy effective? | Whether the approach class was right, or only the execution |
-| 5 | Were the capabilities appropriate? | Whether anything was created, composed, or acquired that was not needed |
-| 6 | Was the verification adequate? | What no check covered, and whether that gap was load-bearing |
-| 7 | What failed? | The failure, its classification, and whether the response was right |
-| 8 | What could be reused? | A pattern worth a learning candidate, with the evidence it would need |
-| 9 | What should not be repeated? | An approach that cost more than it returned |
-| 10 | Did the coordination mode fit, or did we pay for isolation nobody needed? | The mode used, and whether a cheaper one would have done |
+| 1 | Did we solve the task? | The criterion that holds, or the one that does not |
+| 2 | Did we execute the required work? | Which units ran, and which were never opened |
+| 3 | Did we use the correct capabilities? | Whether anything was created or acquired that was not needed |
+| 4 | Did we invoke selected agents? | The capabilities that were selected and never invoked |
+| 5 | Did we acquire context only when needed? | What was loaded and never used, and what would have changed without it |
+| 6 | Was context sufficient? | What was missing, and whether it was a gap or a blocker |
+| 7 | Was verification sufficient? | What no check covered, and whether that gap was load-bearing |
+| 8 | Did we recover from failures? | Each failure, its classification, and whether the response was right |
+| 9 | Did we unnecessarily load context? | The load that bought nothing this run needed |
+| 10 | Did we unnecessarily delegate? | An approach that cost more than it returned |
+| 11 | Did we under-delegate? | A capability the run was built around and stopped using |
+| 12 | Did coordination fit the task? | The mode used, and whether a cheaper one would have done |
+| 13 | Are any required work units incomplete? | The specific open units, by number |
+| 14 | Is the blocker genuine? | Which of the five stop conditions holds, and which do not |
+| 15 | Can anything else still be executed? | The next executable action, or that there is none |
 
-Questions 2, 5, 9, and 10 are the ones that catch waste. They are also the ones
-a run skips, because waste is invisible from inside the run that caused it.
-Question 10 catches the mode case: loading four skills to answer a one-line
-question, or handing off a thread one agent could have held, is isolation
-nobody needed, and it stays invisible without a question that asks for it.
+Questions 9, 10, and 11 are the ones that catch waste, and 10 and 11 catch opposite
+failures. Question 12 catches the mode case: loading four skills to answer a
+one-line question, or handing off a thread one agent could have held, is isolation
+nobody needed — and question 11 is the one that says a run can pay for that and
+then do everything inline anyway, which feels compliant precisely because it is.
+
+`reflect` refuses fifteen answers that name no fault. That is the one property of
+this layer a command can check, and it is the right one: a favourable review of
+your own run is worth nothing, whatever the wording. The rule is narrower than it
+looks, in both directions.
+
+A **verdict is not a finding**. Fifteen answers of the single word "no" are
+fifteen verdicts and not one fault, and the first version of this check accepted
+exactly that. So a finding has to say something: it has to open on a negation
+*and* carry at least eight words after it, or open on a concession — `but`,
+`however`, `although`, `except`, `despite`, `under-delegated` — and carry eight
+words after that.
+
+A **finding need not open the sentence**, and requiring it to was the same
+mistake pointing the other way. Because most of what a run did was fine, the
+honest shape of "mostly yes, except for this" is a positive first word and a
+concession after it, and a floor that only reads a front negation refuses it.
+That does not make a run write a false negative in order to satisfy a gate; it
+makes the gate read what was written. "Yes, but the count of the gated rows was
+self-reported" is a fault, and the check has to be able to see it.
+
+No score is recorded, because a score invites optimisation and the output of
+this layer is faults, not a mark. `--why` is the escape hatch for the run that
+genuinely looked and found nothing: it skips the floor rather than fabricating a
+finding to clear it.
 
 ## What counts as an answer
 
@@ -58,16 +96,16 @@ tests, and an answer needs all three:
    failure this layer exists to catch, and it is the one an agent is most
    inclined to produce, because the run feels smooth.
 
-**A run that answers all ten favourably has not passed this layer.** It has
+**A run that answers all fifteen favourably has not passed this layer.** It has
 demonstrated that the questions are easy to satisfy without thinking, which is a
 finding about the layer rather than a result. Two or three findings against your
 own run is the expected output; zero is a signal to look harder, not a
-certificate.
+certificate. This is the property `reflect` checks.
 
 That is the whole criterion, and it is deliberately not a score. There is no
-ten-out-of-ten, and a rubric that rewards a high total rewards the thing this
-layer is trying to prevent: a uniformly positive self-assessment, which trains
-the reader to skip the section and is worthless in a specific way.
+fifteen-out-of-fifteen, and a rubric that rewards a high total rewards the thing
+this layer is trying to prevent: a uniformly positive self-assessment, which
+trains the reader to skip the section and is worthless in a specific way.
 
 ## The three that actually change behaviour
 

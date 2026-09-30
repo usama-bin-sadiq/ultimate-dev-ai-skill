@@ -150,6 +150,38 @@ Workflow selection has no separate row here, deliberately: one ladder — the
 capability resolution order — answers it, and splitting it would produce two
 questions with one answer. `references/decision-fabric.md` records the mapping.
 
+### Which of the twenty have a command behind them
+
+Most of these were prose for the kernel's whole life, which meant the answer to
+"did we cross this boundary properly" was re-derived from a transcript each time.
+A subset now has a command that exits non-zero when the boundary is crossed
+badly, and the honest count of how much of this table is mechanical rather than
+advisory is:
+
+| Boundary | Command |
+|---|---|
+| 1 Task understanding | `init --objective`, `require` |
+| 2 Coordination mode | `set-mode --why`, and `check` refuses a mode with no reason |
+| 4 / 5 Context retrieval and depth | `context --enables --scope`, `context --gap` |
+| 6 / 7 Capability selection and acquisition | `dispatch --state unreachable --tried` |
+| 13 Specialist delegation | `dispatch --brief`, `dispatch --result` |
+| 16 Verification depth | `reflect` (fifteen), `audit` (§47's five sections) |
+| 17 Retry | `recover --class --result`, `blocked --routes` |
+| 18 Replanning | the process log's `replan` kind, under the ordering rule |
+| 19 Escalation | `handoff`, and `check`'s mode-changed-three-times rule |
+
+The rows with no command are not oversights. Boundary 3 (decomposition) is a
+judgement about whether breaking the work up is worth it, and a command for it
+would be a command that measures cost, which nothing here can do. Boundary 15
+(research depth) is the same shape. Boundary 20 (learning promotion) is gated,
+but by a lifecycle in `skills/skill-creator/` rather than by the run state,
+because promotion outlasts the run that proposed it.
+
+`python3 tools/check-spec.py` is the machine that holds the whole table to this
+account, one row per spec section, and it exits non-zero on any section that is
+neither gated nor a *decided* piece of prose with a stated reason. That is the
+honest measure of this architecture's coverage, and it is deliberately not 100%.
+
 ## Which boundaries each rung must cross
 
 Mandatory means cross it and write the record. Optional means the boundary is
@@ -210,3 +242,34 @@ The loop ends in one of four ways, and the kernel must be able to say which:
 
 Silently stopping at a resource boundary is the failure this list prevents: a
 truncated run that reads like a finished run is worse than a declared block.
+
+`finish` records which of the four the run is entitled to, and `audit` reads the
+delivery against it. They are complements: `finish` stops the *state* from
+recording an ending it has not earned, `audit` reads the thing the user actually
+receives, and a run that skips the first and does the second still gets caught —
+the delivery is the thing that matters. Three of the four carry a field
+(`partial` needs `--remaining`, `blocked` needs a `blocked` record with its
+routes, `failed` needs `--attempted`), because the two middle statuses are
+opposite claims — attempted and lost, versus prevented — and conflating them is
+how "it did not work" gets reported as "it could not be done".
+
+## The host as a second term
+
+The rung answers how hard the decision is. It does not answer how much procedure
+this model can turn into substance, and that is the distinction between thorough
+and merely long. A second ladder — the host tier, `small` / `mid` / `frontier` —
+caps the procedure ceiling at R2 / R3 / R4 respectively, and crossing it needs a
+stated reason in whichever direction.
+
+Asymmetric on purpose. Crossing *up* needs `--exceeds-ceiling "<why>"`; crossing
+*down* on a frontier host needs `set-rung --why`, because under-investment is
+the failure that arrives silently — capability and budget sense are barely
+correlated, so the model best placed to do the deep work is the one least able
+to notice it is avoiding it.
+
+What does not scale is the hard rules. They are correctness, not sophistication,
+and a small host gets all of them in the same words with nothing to trigger. What
+scales is ceremony, and above all the number of work units: fewer and larger is
+the whole difference between a small host doing two things properly and one
+doing eight things shallowly. `references/model-adaptation.md` has the per-tier
+table and the evidence.

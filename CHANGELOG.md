@@ -1,5 +1,59 @@
 # Changelog
 
+## [4.0.37] — 2026-09-30
+
+Thirty-one sections of the specification that were prose and are now commands.
+The conformance table went from 24 gated rows to 55, and the six that stayed
+prose are a decided kind with a stated reason each — `check-spec.py` now exits
+non-zero on a row that is neither.
+
+- feat: `context --enables --scope`, and `context --gap` for a known absence
+- feat: `recover --class` over the nine failure classes, with `--result` required
+- feat: `dispatch --brief` over §11's seven fields, and `--result-status`/`--result`
+- feat: `blocked --routes`, a closed vocabulary of fifteen, so the walk is a record
+- feat: `reflect` records §45's fifteen questions and refuses fifteen answers with
+  no criticism in them
+- feat: `audit` reads §47's five delivery sections, with `--trivially` exempting a
+  short answer
+- feat: §30's routes, §28's classes, §18's field coverage, and §25's log ordering
+  are all closed vocabularies a command can check
+- feat: the over-delegation and no-synthesis gates — two specialists observed with
+  no comparison is concatenation, and dispatch-observed while every unit is
+  `inline` is isolation paid for and work done here anyway
+- feat: `execute-inline`, because a run that did the job itself had no honest way
+  to record that, and a log with a hole where the execution happened is the exact
+  failure the log exists to catch
+- fix: `rung_code` read a local above its own assignment
+- fix: an empty process log accepted any stage
+- fix: §18 gated on truthiness rather than presence, so the first correct run failed
+- fix: two of §45's questions agree for eighteen characters, and one answer
+  silently answered the wrong question
+- fix: a declared-and-unread constant that could never fire
+- fix: the dead-constant lint could not fail, because it only scanned above `__main__`
+- fix: the fifteen-route list existed in two files and `SKILL.md` pointed at a third
+  that did not have it; a test now holds the prose to the constant
+- fix: `check-spec.py` let a `GATE` row be downgraded to `PROSE` silently, so the
+  "55 gated" headline was computed from the rows it measures and could be lowered
+  without failing; `PROSE_SECTIONS` holds a row's kind to a constant, and both
+  directions fail
+- fix: the dead-constant lint covered only the file its defect was found in, so a
+  new constant in `check-spec.py` went uncovered
+- fix: that lint's failure message bound characters instead of the list, because a
+  dict comprehension iterated a list; found by reading a failing test's output
+  rather than by accepting that it failed
+- fix: `reflect`'s criticism floor accepted fifteen bare "no"s — fifteen verdicts
+  and not one finding — while refusing a real answer opening "No, and here is the
+  fault". A finding is a negation *or* a concession, and at least eight words have
+  to follow the marker. An older test asserted the bare-"no" behaviour, so the bug
+  had a test protecting it
+
+## [4.0.36] — 2026-09-30
+
+- feat: the process log, numbered and gated against the state it claims to describe
+- feat: the completion gate, so `completed` cannot be recorded before it is earned
+- feat: the host as a second term in the effort gate, and a ceiling on procedure that
+  never touches the standard of proof
+
 ## [4.0.35] — 2026-09-30
 
 - feat: the two worked exemplars SKILL.md tells you to read before writing

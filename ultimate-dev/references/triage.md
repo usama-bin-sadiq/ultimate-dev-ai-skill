@@ -99,7 +99,7 @@ answers are probably wrong.
 **R4** — "Rotate the production signing key." Irreversible, security-relevant,
 externally visible, and a mistake is not recoverable by re-running.
 
-## Rung is not scale
+## Rung is not scale, and neither is host
 
 Two independent ladders. Rung is about **how hard this decision is**; scale is
 about **how much work there is**. A thousand-file mechanical refactor is L4 and
@@ -108,6 +108,14 @@ L1 and is R4.
 
 Conflating them produces the two characteristic errors: massive ceremony on a
 routine bulk edit, and inadequate care on a small dangerous change.
+
+The host tier is a third term and it is not a third difficulty. It answers a
+different question: how much procedure this model can turn into substance. That
+is what separates thorough from merely long, and it is why two hosts running the
+same R3 correctly produce different amounts of work rather than different
+amounts of documentation. The tier caps procedure and never caps the standard of
+proof — a small host gets every hard rule in the same words, with nothing to
+trigger. `references/model-adaptation.md`.
 
 ## Escalation
 
@@ -140,6 +148,11 @@ over-verify; on a weaker one, the same instructions under-verify. When the
 underlying model changes, re-calibrate. An R3 tuned for last year's model is
 wasted effort on this year's, and the symptom is a kernel that has become slow
 without becoming more correct.
+
+`model-adaptation.md` is where re-calibration became something a run can
+execute: the host tier, the procedure ceiling, and the two gates that make an
+early stop a recorded choice rather than an invisible one. Record the tier at
+`init --host` and it becomes a term in this gate rather than a note in it.
 
 **Over-verification is a failure mode.** A kernel that verifies everything is a
 kernel that has stopped triaging. If a check would only re-observe something a tool

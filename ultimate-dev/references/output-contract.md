@@ -148,6 +148,53 @@ The point of scaling is not brevity for its own sake — it is that a reader's
 attention is finite, and a 400-word report on a one-line fix is unread, therefore
 useless.
 
+## The four endings, and the record that has to match
+
+The status is not a tone choice. It is a claim about the world, and it is the one
+the reader will act on, so the state records it before the delivery is written
+and `audit` reads the delivery against it.
+
+| Status | Means | Carries |
+|---|---|---|
+| `completed` | Criteria met, verification passed, nothing outstanding | — (and it is refused unless all four of §35's conditions hold) |
+| `partial` | Some work genuinely happened, required work remains | what remains, what recovery was tried, the next executable action |
+| `blocked` | A dependency prevents further execution | what is blocked, why, what was attempted, the routes tried, what would unblock it |
+| `failed` | Execution was attempted and did not succeed | what was attempted, what recovery was tried, the next action |
+
+`failed` and `blocked` are opposite claims and are kept apart. `failed` means the
+work was tried and lost; `blocked` means a dependency prevented it. Conflating
+them is how "it did not work" gets reported as "it could not be done", and each
+carries a different next move.
+
+`partial` is only for work that genuinely happened. A run that never started
+anything is `failed`, and a run that started and got there is `completed` —
+`partial` is for the middle, which is the only place a reader who was not
+watching needs detail.
+
+Before delivery, record the process, then the ending, then read the result back:
+
+```sh
+python3 tools/run-state.py reflect --list          # §45's fifteen, all or none
+python3 tools/run-state.py finish --status <one of four> [--remaining "..."]
+python3 tools/run-state.py audit [--trivially]     # reads what the user receives
+```
+
+They are complements rather than duplicates, and a run that skips the first and
+does the second still gets caught — the delivery is the thing that matters.
+
+`audit` reads five sections: **Process**, **Result**, **Verification**,
+**State**, **Remaining**. §47 asks for the headings and nothing checked their
+presence, so a delivery could be fluent, correct, and missing half of what the
+reader needs to judge it. `--trivially` is the exemption: a one-line answer is
+not asked to carry five headings, and the same rung argument that removes a
+field below R2 removes these. What `audit` refuses is a delivery that opens on a
+named terminal justification ("this is as far as I can take it"), one that pairs
+a non-action with a block conclusion, and one missing a section.
+
+`reflect` runs before all three. It is the only one that is about the run rather
+than the result, and it is the one most often skipped, because the result is in
+hand and the deadline is now.
+
 ## Anti-patterns in delivery
 
 - **Hedging everything.** Uniform low confidence trains a reader to ignore the

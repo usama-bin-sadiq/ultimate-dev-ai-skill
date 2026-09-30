@@ -90,9 +90,56 @@ independently verifiable, and a precondition is what makes it so: it is the cond
 resuming agent re-checks before repeating the work, and an expected result is the
 observable condition that tells it the step is finished.
 
+At R2 and above, `--capability` and `--verify` are required too, and those are the two
+that get skipped — everybody writes the other three. A unit worked on with no named
+capability cannot say whether that capability was reachable, and an `--expect` with no
+`--verify` is a prediction rather than a check. §26 gives a work unit five fields; these
+are the two whose absence is invisible, which is why nothing complained until the tool
+asked. R0 and R1 are exempt for the same reason the step gate is: at those rungs a unit
+is a sentence, and five fields of a sentence is the ceremony the kernel criticises.
+
 `check` refuses an R2-or-higher run with no steps at all, and refuses two steps open at
 once. R0 and R1 are exempt: the kernel calls recording at those rungs ceremony, and a
 gate that fires there is the thing it criticises.
+
+### The process log is the one structure that can contradict the state
+
+Everything else in this file is a record, and a record cannot assert — which is why the
+rung, the mode, the evidence pointers, the dispatch chain and the criteria are all
+enforceable. The process log is prose, so it can say something the ledger contradicts,
+and a run can satisfy every gate above and still write `P07 — DELEGATE` for a delegation
+that never happened.
+
+```sh
+python3 tools/run-state.py log --kind <stage> --what "<what happened>" [--under P03]
+python3 tools/run-state.py log --list
+```
+
+`log` is the gate for that. Entries are numbered `P01`, `P02`, …, never reset — including
+across a recovery, because a number that restarts at 1 after a failure produces a log that
+cannot be read to find out what had already been tried, which is the only reason to
+number it at all. Substeps hang off a parent as `P03.1` and the top-level count is
+unaffected, so a log reads `P01 … P03.1, P04` rather than fragmenting.
+
+The vocabulary is closed, and each kind that claims something *about the work* is checked
+against the work: `--kind delegate` is refused unless the dispatch ledger has a capability
+at `invoked` or beyond, and `--kind verify` is refused unless a capability reached
+`verified` or an acceptance criterion is met. `--kind complete` is refused until `finish`
+has recorded a status. A run that did its work inline is not penalised — it uses the
+kinds that claim nothing about the ledger, which is the honest description of what
+happened. The third check is ordering: a stage is refused unless the log has already
+been where that stage comes from, so `verify` needs an `observe` and `observe` needs an
+`execute`. That is what stops a log from being written forwards at the end. The full
+predecessor table is in `references/execution-system.md`.
+
+`execute-inline` exists because of a gap this found on real work. A run that did the
+job itself has no honest way to record that, since `execute` claims a dispatch is
+running and the dispatch ledger correctly says nothing was dispatched. The alternative
+was to write nothing, and a log with a hole where the execution happened is the exact
+failure the log exists to catch.
+
+`check` re-reads the same three things, because a state file can also be hand-edited and
+because a criterion can be reopened by a later `require` after the run claimed completion.
 
 ### Acceptance criteria: what must be true when the run ends
 
@@ -137,6 +184,40 @@ answered fails the same gate, because a decline does not satisfy a criterion and
 produces no deliverable. Both directions are gated; neither is a stylistic
 preference.
 
+### The terminal status: which of the two conditions of §55 holds
+
+A run ends one of two ways and the record has to say which, because the delivery is
+written by the same judgement that wrote the state and they will agree by default.
+
+```sh
+python3 tools/run-state.py finish --status completed|partial|blocked|failed \
+        [--remaining "<what is outstanding>"] [--attempted "<what was tried>"] \
+        [--recovery "<what recovery was tried>"] [--next-action "<what next>"] \
+        [--replace --why "<what changed the recorded ending>"]
+```
+
+`completed` is the only status that asserts the objective was met, so it is the only one
+gated on §35's four conditions, and all four are reported separately because each fails on
+its own: every work unit closed, at least one acceptance criterion and all of them met,
+the verification behind them passed, and no capability in flight. Each has a distinct
+failure and a distinct repair, so collapsing them into one message would hide which one
+you are looking at.
+
+The other three each carry the field the spec gives them, and the asymmetry is the point.
+`partial` needs `--remaining`, because a partial report with no remainder is a complete
+one with a caveat; it also needs work to have actually happened, so a run that never
+opened a step cannot claim it. `blocked` needs a `blocked` record whose routes were
+walked. `failed` needs `--attempted`, because `failed` and `blocked` are opposite claims
+— attempted and lost, versus prevented — and a run that conflates them has not decided
+which one occurred.
+
+A second ending is refused unless `--replace --why` records what changed. Retracting a
+verdict is a decision, and the whole point of recording one is that changing it is visible.
+
+`audit` is the complement. Every gate on this page reads the state; `audit` reads the
+delivery, because a run can satisfy all of them and still hand the user a report
+describing work it did not do.
+
 ### The dispatch contract: a capability that was chosen and not run
 
 The kernel has an over-delegation guard — “delegation is a cost, not a default” —
@@ -151,66 +232,149 @@ a precise account of the work reads exactly like the work.
 ```sh
 python3 tools/run-state.py dispatch --for "<capability, as the host names it>" \
                                     --state selected|invoked|running|observed|verified
+python3 tools/run-state.py dispatch --for "<capability>" --state invoked \
+                                    --brief "<objective, input, constraints, expected \
+                                             output, success criteria, verification, \
+                                             available context>"
+python3 tools/run-state.py dispatch --for "<capability>" --state observed \
+                                    --result-status completed|partial|failed \
+                                    --result "<what came back>"
 python3 tools/run-state.py dispatch --for "<capability>" --state unreachable \
                                     --tried "<a route looked for>"
 python3 tools/run-state.py dispatch --for "<capability>" --state skipped \
                                     --why "<the reason>"
 ```
 
-Four rules, all structural:
+Six rules, all structural:
 
 1. **`selected`, `invoked` and `running` are not terminal.** `check` refuses an
    R2-or-higher report while any capability sits in one. A capability chosen and
    never observed is a delegation described rather than performed.
-2. **`unreachable` needs `--tried`, non-empty.** `NOT_INVOKED` and `UNREACHABLE`
+2. **`invoked` needs a brief naming all seven of §11's fields.** A delegate given
+   three of them returns a guess about the other four, and the guess is
+   indistinguishable from an answer in the final report. The fields are a closed
+   list rather than prose precisely so that "I described the objective" cannot
+   stand in for naming it.
+3. **`observed` needs `--result-status` and `--result`.** A capability that
+   returned with nothing attached is indistinguishable from one never invoked,
+   and `completed` is a claim about the *capability*, not about the run — a
+   specialist that says "Done" has returned, which is the thing being recorded.
+4. **`unreachable` needs `--tried`, non-empty.** `NOT_INVOKED` and `UNREACHABLE`
    are different states: one is an action not taken, the other is a capability
    proved absent. Only the second is a finding about the host, and the first is
    what a run writes when it stops looking.
-3. **`skipped` needs `--why`.** A deliberate pass-over is a decision with a
+5. **`skipped` needs `--why`.** A deliberate pass-over is a decision with a
    recorded reason. An unnamed one is indistinguishable from having forgotten the
    capability existed.
-4. **The chain does not run backwards.** A state that un-observes itself is a
+6. **The chain does not run backwards.** A state that un-observes itself is a
    rewrite of history, which is worse than the omission it papers over.
 
 `verified` additionally needs `--evidence OBS-n`, because a capability reported as
 checked with nothing recording what was checked is an assertion wearing the word for
 a finding.
 
+Two counts are compared rather than asserted, because §40 is about synthesis and
+synthesis is the one thing two specialists' outputs cannot be assumed to have done
+between them. `check` refuses a run that observed two or more capabilities and
+recorded no comparison, and it refuses a run that dispatched-and-observed while
+every work unit named `inline` — §38's over-delegation in its narrow, checkable
+form: isolation was paid for and the work happened here anyway.
+
 ### One gate before you stop, and the routes it walks
 
-If the objective is not met, this is the question — and it has a list, walked in
-order, taking the first `yes`. It is the Step 8 recovery table read as a checklist
-rather than a taxonomy, because the taxonomy is what a run does *after* deciding to
-stop:
+If the objective is not met, walk the fifteen routes in
+`references/completion-law.md` in order and take the first `yes`, then name the
+one you took:
 
-1. another reachable capability → record it with `dispatch`, and invoke it
-2. context that was never loaded → `context --load`
-3. an agent that failed → re-choose the mode, or a different capability
-4. a tool that failed → fix the cause; retries are bounded, blind retry is not
-5. verification that failed → fix the *work*; the criterion stays open
-6. the strategy was wrong → back to JEv and re-decide
-7. the objective is decomposable → more steps, smaller units
-8. delegable → `set-mode --mode delegate`
-9. spans several sources → `set-mode --mode route`
-10. runnable inline in the context already in hand
-11. needs one owner across stages → `set-mode --mode handoff`
-12. a different order of the same units
-13. any other viable path
+```sh
+python3 tools/run-state.py blocked --what "<the blocked part>" --reason "<why>" \
+  --tried "<what you actually looked for>" --routes <one of fifteen>
+```
 
-A block is what is left *after* that list, never the first thing noticed. Two of the
-thirteen are machine-checkable and `check` decides them alone: route 1 is the
-dispatch gate above, and route 5 is the acceptance gate. The other eleven are
-judgements, and a rule that stopped a run on the model’s reading of its own list
-would be the self-judgement failure above wearing a different hat — so they are
-written down and reviewed by whoever reads the run.
+A block is what is left *after* that list, never the first thing noticed, and
+`--routes` is what makes the walk a record rather than a claim. `--routes` is the
+checkable half and `--tried` is the evidence; they fail in opposite directions,
+because a block with a route and no detail asserts a category without showing any
+work, and a block with detail and no route asserts that nothing systematic was
+tried — the claim that most needs support and is least often given it.
 
-### Context is recorded as loads *and* deliberate drops
+The list is not restated here. Two copies of a fifteen-item list is one more
+thing to keep in sync, and `tools/test-run-state.py` already holds
+`completion-law.md` to the `ROUTES` constant, so the two cannot drift silently —
+which is the whole reason the list is written down at all.
+
+### Recovery names the failure, because "it failed" is not a class
+
+`recover` records the failure reason, the recovery action, the previous and new
+mode, the previous and new capability, and the result — and §28's nine classes are
+a closed vocabulary rather than free text:
+
+```sh
+python3 tools/run-state.py recover --class <one of nine> --action "<what was done>" \
+  --result "<what it produced>" [--from-mode M --to-mode M]
+```
+
+The classes are `capability`, `context`, `tool`, `input`, `execution`,
+`verification`, `coordination`, `dependency`, `resource`. `--result` is required
+rather than optional because a recovery with no recorded outcome has not been
+evaluated, and a re-plan against an unevaluated recovery is a blind retry with a
+longer log in front of it. Each recovery is numbered and none is ever reset, so a
+run that failed four times says so rather than recording one recovery four times.
+
+### Self-evaluation is recorded, not remembered
+
+`references/self-evaluation.md` has §45's fifteen questions in prose, and
+`reflect` is the same fifteen in state:
+
+```sh
+python3 tools/run-state.py reflect --list
+python3 tools/run-state.py reflect --answer "<question>=<answer>" --answer ...
+```
+
+All fifteen or none. A question may be abbreviated to any prefix that is unique
+among the fifteen, and a prefix that matches two is refused by name rather than
+guessed at — two questions agreeing for eighteen characters is exactly how one
+answer silently answers the wrong question.
+
+`reflect` also has a floor on content. An answer counts when a reader who
+disagrees could show it wrong, and the check refuses fifteen answers that name
+no fault. Two conditions, and each exists because its absence broke the check in
+one direction or the other: a finding opens on a negation *or* on a concession
+(`but`, `however`, `although`, `except`, `under-delegated`), and in both cases at
+least eight words have to follow the marker. The eight-word floor is what stops
+fifteen bare "no"s — fifteen verdicts and not one finding — and the concession
+list is what stops the check refusing "Yes, but the count of the gated rows was
+self-reported", which is the shape an honest review actually takes. `--why` skips
+the floor, for the run that looked and found nothing and would rather say so than
+manufacture a fault. `references/self-evaluation.md` has the reasoning.
+
+### Context is recorded as loads, drops, and acknowledged gaps
 
 `context --ref <r> [--level C0..C6]` records what entered the context;
-`context --ref <r> --drop --why <w>` records what was deliberately left out. Both halves
-are required, and they fail in opposite directions — a record of loads alone is a
-shopping list that never says what was omitted, so the next agent cannot tell an
-intentional omission from an oversight. `check` refuses a drop with no reason.
+`context --ref <r> --drop --why <w>` records what was deliberately left out. Both
+halves are required, and they fail in opposite directions — a record of loads
+alone is a shopping list that never says what was omitted, so the next agent
+cannot tell an intentional omission from an oversight. `check` refuses a drop with
+no reason.
+
+A load also names what it enables and its minimum scope, and a gap is a load that
+turned out not to be answerable:
+
+```sh
+python3 tools/run-state.py context --ref "references/foo.md" --level C3 \
+  --why "<why>" --enables "<the action this enables>" --scope "<minimum scope>"
+python3 tools/run-state.py context --gap "<what is missing>"   # refuses check at R2+
+python3 tools/run-state.py context --closed "<gap>" --how "<what resolved it>"
+```
+
+§15 names four things about a context request and two were being recorded, so
+`--enables` and `--scope` are asked for at R2+: a request with no named action it
+enables is an open-ended read, and one with no scope has not said what it will not
+read. `--gap` is the other direction — a run that knows it is missing something
+and has stopped is the failure §16 is about, so an open gap refuses `check` at
+R2+ and only `context --closed` clears it. Gaps are how a run reports
+incompleteness without claiming a blocker, and the distinction matters: a blocker
+says the work cannot proceed, a gap says it has not yet.
 
 `run-state.py check` is the gate, and it is deliberately strict about the ways this
 file becomes a decoration:
@@ -227,8 +391,18 @@ file becomes a decoration:
 | at most one step is open | "What is the agent doing" with two answers gets answered from the transcript, which is what this file replaces |
 | every step has a precondition and an expected result | A work unit without those is not independently verifiable, so it can only be re-run blind |
 | a context drop has a reason | The next agent cannot otherwise tell an intentional omission from an oversight |
+| a context load names `--enables` and `--scope` | A request with no named action it enables is an open-ended read; one with no scope has not said what it will not read |
+| no open context gap at R2+ | A run that knows it is missing something and has stopped is the failure §16 is about |
+| a recovery names its class and its result | "It failed" is not a class, and a recovery with no outcome has not been evaluated |
+| a block names a walked route | A block asserted without a route claims nothing systematic was tried |
+| an invoked capability has a brief | §11's seven fields; a delegate given three of them returns a guess |
+| an observed capability has a result | A capability that returned with nothing attached is indistinguishable from one never invoked |
+| dispatch and observation counts agree | Two capabilities observed and none compared is concatenation, not synthesis |
+| dispatched-and-observed while every unit is `inline` | Paid for isolation and did the work here anyway (§38) |
+| an open `execute` entry is not claimed complete | The ledger must be reconciled against the plan |
 | no deliverable sits inside `.memory/` | A file filed in gitignored memory is invisible to whoever asked for it and lost when the directory is cleared |
 | a requested deliverable location has something in it | The user named a path; nothing was written there |
+| every §18 field is mapped or enumerated | Coverage is reported as a ratio, and only mapped-and-missing fields fail — a gate on a field the run never claimed to track would be enforcing something the spec did not ask for |
 
 ## The fields that earn their keep
 
