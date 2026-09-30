@@ -5,6 +5,60 @@ takes produces an observation. Two rules dominate: do the deterministic thing
 deterministically, and never report a tool result you did not observe. Both
 exist because their violations are invisible downstream.
 
+## The process log
+
+Every meaningful operation gets a process number, and the log records what
+actually happened. Numbering is `P01`, `P02`, … with `P03.1`, `P03.2` for
+substeps, and **it is never reset** — including during recovery, because a number
+that restarts at 1 after a failure is a log that cannot be read to find out what
+had already been tried.
+
+```text
+P01 — RECEIVE      User objective received.
+P02 — UNDERSTAND   Objective and success criteria identified.
+P03 — TRIAGE       Complexity and dependencies assessed.
+P04 — DECIDE       Required capability identified.
+P05 — REACHABILITY Required specialist confirmed reachable.
+P06 — CONTEXT      Loaded only the capability instructions in hand.
+P07 — DELEGATE     Specialist invoked.
+P08 — EXECUTE      Specialist performed the requested operation.
+P09 — OBSERVE      Result received.
+P10 — VERIFY       Result checked against the success criteria.
+P11 — RECOVERY     Additional action required.
+P12 — REPLAN       Alternative execution selected.
+P13 — EXECUTE      Alternative action completed.
+P14 — VERIFY       Result verified.
+P15 — SYNTHESIZE   Final result assembled.
+P16 — DELIVER      Task completed.
+```
+
+**The log describes operational events, not private reasoning.** It records what
+was invoked, what returned, what failed, and what changed — not the deliberation
+that chose between them. A log of reasoning is a liability: it is unverifiable
+from outside and invites reconstructing it rather than recording it.
+
+### The log must be truthful, and must agree with the state
+
+Never log `P07 — INVOKED` if invocation did not happen. Never log `P10 —
+VERIFIED` if verification did not happen. Never log `P16 — COMPLETE` if work
+remains. The process log and the run state must agree; where they disagree, at
+least one of them is a claim rather than a record, and the delivery is reporting
+from the wrong one.
+
+This is the same rule the dispatch chain enforces mechanically — a capability at
+`selected` is not `observed` — applied to the narrative form. A run can satisfy
+every state gate and still write a log that claims work it did not do, because
+the log is prose and the gates are not. `run-state.py audit` catches the terminal
+version of that in the delivery; the check here is the local habit that prevents
+it.
+
+State is updated as each of these events happens, not reconstructed at the end:
+capability discovery · capability selection · context acquisition · agent
+invocation · agent completion · execution · tool use · error · verification ·
+retry · replan · mode change · handoff · recovery · completion. A state
+reconstructed from memory at the end is a summary of what the run wished it had
+done.
+
 ## Before each unit
 
 Confirm the unit's **precondition still holds**. Preconditions are the first

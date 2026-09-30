@@ -8,6 +8,76 @@ distrust.
 Every field below is required at R2 and above, and proportionally lighter below —
 but `outcome` and the statement of limitations are never omitted.
 
+## Four statuses, four templates
+
+The fields above are the shape of a delivery. The status is a claim about the run,
+and it has exactly four values. Which one you may use is a rule, not a preference.
+
+| Status | Only when | Never |
+|---|---|---|
+| `COMPLETED` | every required unit is done and every criterion is satisfied | because the deliverable exists |
+| `PARTIAL` | useful execution genuinely occurred **and** required work remains | because execution became inconvenient |
+| `BLOCKED` | a required dependency prevents further execution, after the routes are walked | because a capability was not found |
+| `FAILED` | execution was attempted and did not succeed, after reasonable recovery | as a synonym for blocked |
+
+`FAILED` means *tried and unsuccessful*. `BLOCKED` means *a required dependency
+stops further execution*. A run that tried three approaches and exhausted them
+failed; a run that cannot proceed because a dependency is absent is blocked; and
+conflating them hides which of the two happened.
+
+```text
+Status: COMPLETED
+
+Process:   P01 … P16
+Result:    what was produced, and where it is
+Verification: what was checked, and the evidence for each
+State:     completed
+Remaining: None
+```
+
+```text
+Status: PARTIAL
+
+Completed:  what genuinely got done
+Remaining:  what did not, specifically
+Recovery attempted: what was tried, and what it showed
+Next executable action: the first route that is still open
+```
+
+Then keep executing whenever one is open. A `PARTIAL` delivery is a progress
+report, not a conclusion.
+
+```text
+Status: BLOCKED
+
+Blocked:    the specific part that cannot proceed
+Why:        the dependency that is absent
+Attempted:  what was tried
+Alternative paths attempted: which of the routes were walked
+Missing dependency: the named resource
+What would unblock it: the condition, not the wish
+```
+
+A blocker must be evidence-based. "What would unblock it" is the field that
+separates a finding from a surrender, and it is the one most often left empty.
+
+```text
+Status: FAILED
+
+Attempted:  what was tried
+Recovery:   the routes walked, and their outcomes
+Why it failed: the failure that survived recovery
+What remains: the state the work is in
+```
+
+## And the one that does not belong here
+
+A delivery whose first line is one of the intermediate states — *I identified the
+skill*, *I need more context*, *the first attempt failed* — is not any of the
+four. It is a run that stopped, described as a result. `run-state.py audit`
+refuses it, and the fix is to record which of the two conditions of the hard
+rules actually holds, not to reword. `completion-law.md`.
+
 ## The fields
 
 In this order. The ordering is the argument: what happened, why believe it, what

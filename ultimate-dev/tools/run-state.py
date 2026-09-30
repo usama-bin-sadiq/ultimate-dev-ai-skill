@@ -52,6 +52,7 @@ import argparse
 import datetime as _dt
 import json
 import os
+import pathlib
 import re
 import shutil
 import sys
@@ -73,6 +74,71 @@ SCHEMA_VERSION = 3
 # section. The chain matters in one direction: a capability that was chosen and
 # never observed is a delegation described rather than performed, which is the
 # under-doing failure wearing a different hat.
+# --- §1/§2/§32/§55: the phrasings a run may not end on ---
+#
+# The specification names them, which makes them a list rather than a sentiment,
+# and a list can be checked. Two classes, because they fail differently:
+#
+#   A. A non-action paired with a block conclusion -- "I did not use the skill,
+#      therefore blocked". This is a false conclusion about the world, not a
+#      phrasing choice, and it is always a defect.
+#   B. A named terminal justification -- "the first attempt failed". Legitimate
+#      inside a recovery narrative, illegitimate as a stopping point, so it is
+#      only a defect when it is what the delivery leads with.
+#
+# The second class is the hard one, because the same words serve both purposes.
+# A check that failed on the vocabulary would be satisfied by rewording, and
+# rewording is not the property under test. So class B is checked against the
+# shape of a terminal claim -- a justification standing where a result should be,
+# with nothing after it -- and the remedy it prints is to record which of the two
+# conditions of section 55 holds, not to choose different adjectives.
+BLOCK_CONCLUSIONS = (
+    (re.compile(r"\b(?:did\s+not|didn't|have\s+not|haven't|never)\s+"
+                r"(?:use|used|invoke|invoked|call|called|touch|touched|run|ran|"
+                r"execute|executed|load|loaded|deploy|deploy)\b"
+                r"[^.?!\n]{0,120}?\b(?:therefore|so|thus|hence)?\s*"
+                r"\b(?:blocked|unavailable|therefore blocked|so blocked)\b", re.I),
+     "a capability not used, concluded blocked or unavailable -- the capability "
+     "was not looked for, which is not a finding about the host"),
+    (re.compile(r"\b(?:need|needs|needed|require|requires|required)\s+(?:more\s+)?"
+                r"(?:additional\s+|further\s+)?"
+                r"(?:context|information|info|details?)\b"
+                r"[^.?!\n]{0,60}?\b(?:therefore|so|thus)?\s*"
+                r"\b(?:blocked|stopping|stopped|cannot continue)\b", re.I),
+     "missing context concluded to be a stop -- context that can be acquired is "
+     "route 2 of the gate before you stop, not a terminal state"),
+    (re.compile(r"\b(?:the\s+)?task\s+(?:is|was)\s+complex\b"
+                r"[^.?!\n]{0,40}?\b(?:therefore|so|thus)?\s*"
+                r"\b(?:blocked|stopping|stopped|not\s+(?:attempted|proceed))\b", re.I),
+     "complexity concluded to be a stop -- complexity is a rung, and a rung is "
+     "revised by evidence rather than obeyed"),
+    (re.compile(r"\b(?:first|initial|original)\s+"
+                r"(?:approach|method|attempt|try|strategy)\s+failed\b"
+                r"[^.?!\n]{0,60}?\b(?:therefore|so|thus)?\s*"
+                r"\b(?:blocked|stopping|stopped|giving up)\b", re.I),
+     "a failed first approach concluded to be a stop -- section 29: approach "
+     "failure is not task impossibility"),
+    (re.compile(r"\b(?:i\s+)?(?:only\s+)?(?:planned|identified|found|discovered)\b"
+                r"[^.?!\n]{0,60}?\b(?:therefore|so|thus)?\s*\bblocked\b", re.I),
+     "planning or discovery concluded to be a block -- candidate_found is never "
+     "task_completed, and it is not blocked either"),
+)
+
+# A terminal claim: the sentence opens the delivery, or is the whole of it. A
+# justification buried mid-report is a recovery narrative and is left alone.
+TERMINAL_CLAIMS = (
+    re.compile(r"^\W{0,3}i\s+(?:did\s+not|didn't|only\s+(?:planned|identified|"
+               r"found|reviewed|analysed|analyzed))\b", re.I),
+    re.compile(r"^\W{0,3}i\s+(?:wasn't|was\s+not)\s+sure\b", re.I),
+    re.compile(r"^\W{0,3}(?:i\s+)?need\s+(?:more\s+)?(?:context|information)\b", re.I),
+    re.compile(r"^\W{0,3}the\s+(?:task\s+was|skill\s+is|agent\s+is)\s+complex\b", re.I),
+    re.compile(r"^\W{0,3}(?:the\s+)?(?:first|initial)\s+(?:attempt|approach|try)"
+               r"\s+failed\b", re.I),
+    re.compile(r"^\W{0,3}i\s+(?:found|identified)\s+the\s+"
+               r"(?:skill|agent|specialist|capability)\b", re.I),
+    re.compile(r"^\W{0,3}i\s+(?:didn't|did\s+not)\s+invoke\b", re.I),
+)
+
 DISPATCH_ORDER = ("selected", "invoked", "running", "observed", "verified")
 # `unreachable` and `skipped` are terminal verdicts, not stages of the chain --
 # a capability the host does not expose, or one deliberately passed over.
@@ -727,6 +793,67 @@ def cmd_blocked(args) -> int:
     return 0
 
 
+def cmd_audit(args) -> int:
+    """Check a delivery for the phrasings a run is not allowed to end on.
+
+    This is the one gate that reads the thing the user actually receives, rather
+    than the state that produced it. Every other gate in this file is satisfied
+    by writing something into the state file; a run can satisfy all of them and
+    still deliver a report that describes work it did not do, because the
+    description and the state are written by the same judgement and share its
+    blind spot. The text is the only place the failure is visible to the person
+    the work was for.
+
+    The specification supplies the list -- section 2 names seven terminations,
+    section 55 names nine, section 32 names five non-actions that cannot become a
+    block -- and a list can be checked, which is the whole reason this exists
+    rather than another paragraph in SKILL.md saying the same thing.
+    """
+    if args.path == "-":
+        text = sys.stdin.read()
+        origin = "(stdin)"
+    else:
+        try:
+            text = pathlib.Path(args.path).read_text(encoding="utf-8")
+        except OSError as e:
+            print(f"audit: cannot read {args.path}: {e}", file=sys.stderr)
+            return 2
+        origin = args.path
+
+    lines = [ln for ln in text.splitlines() if ln.strip()]
+    problems: list[str] = []
+
+    # Class A -- a false conclusion about the world.
+    for rx, why in BLOCK_CONCLUSIONS:
+        for m in rx.finditer(text):
+            line = text.count("\n", 0, m.start()) + 1
+            snippet = " ".join(m.group(0).split())[:96]
+            problems.append(
+                f"line {line}: {snippet!r} -- {why}")
+
+    # Class B -- a terminal justification. Only where a result should be.
+    for idx, ln in enumerate(lines[:3]):
+        for rx in TERMINAL_CLAIMS:
+            if rx.search(ln):
+                problems.append(
+                    f"line {idx + 1}: the delivery opens with {ln.strip()[:72]!r}, "
+                    f"which is an intermediate state. Either the objective is met "
+                    f"and `satisfy` says so with evidence, or the routes are walked "
+                    f"and `blocked --tried` records them. Rewording is not the "
+                    f"fix; the two conditions of section 55 are.")
+                break
+
+    for pr in problems:
+        print(f"  problem: {pr}")
+    if problems:
+        print(f"\n  {len(problems)} problem(s) in {origin}. A precise account of "
+              f"the work you did not do is the failure this is here to catch.")
+        return 1
+    print(f"  delivery is clean: no terminal justification and no invented block "
+          f"in {origin}")
+    return 0
+
+
 def cmd_dispatch(args) -> int:
     """Record where a chosen capability actually got to.
 
@@ -1292,6 +1419,11 @@ def main() -> int:
                    help="a route looked for; repeatable, required at `unreachable`")
     s.add_argument("--why", default="", help="the reason; required at `skipped`")
     s.set_defaults(fn=cmd_dispatch)
+
+    s = sub.add_parser("audit", help="check a delivery for terminal justifications",
+                       parents=[common])
+    s.add_argument("path", help="the delivery file, or - for stdin")
+    s.set_defaults(fn=cmd_audit)
 
     s = sub.add_parser("list", help="list runs in the state directory", parents=[common])
     s.set_defaults(fn=cmd_list)

@@ -235,6 +235,23 @@ run_step "changelog-generator self-test" python3 tools/test-changelog-generator.
 run_step "routing-assertion self-test" python3 tools/test-routing-assertions.py
 run_step "marker-drift self-test"      python3 tools/test-marker-drift.py
 run_step "run-state self-test"          python3 tools/test-run-state.py
+# The kernel is measured against a 56-section specification. Probes that
+# all pass prove nothing unless a probe can fail, so this runs its own
+# negative test first: it deletes a file it depends on and requires the
+# checker to go red, then restores it.
+run_step "spec conformance (negative + real)" bash -c '
+  set -e
+  BAK="$(mktemp)"
+  cp references/completion-law.md "$BAK"
+  mv references/completion-law.md "$BAK.hidden"
+  if python3 tools/check-spec.py >/dev/null 2>&1; then
+    cp "$BAK.hidden" references/completion-law.md; rm -f "$BAK.hidden" "$BAK"
+    echo "  the conformance checker passed with a required file removed -- it cannot fail"; exit 1
+  fi
+  cp "$BAK.hidden" references/completion-law.md
+  rm -f "$BAK.hidden" "$BAK"
+  python3 tools/check-spec.py
+'
 run_step "mode-cost self-test"          python3 tools/test-mode-cost.py
 run_step "provider-neutrality self-test"   python3 tools/test-provider-neutral.py
 run_step "oracle-coverage self-test"      python3 tools/test-oracle-coverage.py
