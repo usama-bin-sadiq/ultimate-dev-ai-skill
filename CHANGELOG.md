@@ -1,5 +1,9 @@
 # Changelog
 
+## [4.0.36] — 2026-09-30
+
+- fix: a plan that had stopped being live still said three finished things were not
+
 ## [4.0.35] — 2026-09-30
 
 - feat: the two worked exemplars SKILL.md tells you to read before writing
