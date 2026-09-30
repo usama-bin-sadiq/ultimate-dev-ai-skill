@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.35] — 2026-09-30
+
+- feat: the two worked exemplars SKILL.md tells you to read before writing
+- fix: a write in one clause cleared every reference on the line, and a missing file went unreported
+- feat: a step log that answers "what is this doing", and a hard line between memory and deliverables
+- fix: the check that policed "0 executed" could never have been contradicted
+
 ## [4.0.34] — 2026-09-29
 
 - chore: stop tracking a generated run-state file that .gitignore already excludes
