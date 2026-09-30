@@ -1651,6 +1651,47 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
                     f"{len(built)} of {len(entries)} cases have generated fixtures, "
                     f"{len(exempt)} exempt by recorded reason")
 
+                # The query-naming check above only fires when the case text
+                # happens to spell out a filename. A case can declare
+                # `fixture_required: yes` and describe its whole workspace in
+                # prose -- an ACTIVE skill in the kernel's trusted surface that
+                # instructs the agent to skip verification -- without ever
+                # naming a file. Those cases were invisible: the count in the
+                # note said 27 of 128, nothing failed, and the honest number
+                # was that a large share of the suite could not be run at all.
+                #
+                # A case that declares it needs a fixture and has neither a
+                # builder nor a recorded exemption cannot be scored for the
+                # behaviour it was written to measure. That is not a warning
+                # about a future gap; it is a present fact about the corpus, and
+                # it is the fact that decides what every run result means. So it
+                # is an error, and it stays one until one of three exits is
+                # taken: build the fixture, exempt it with a reason beside it,
+                # or correct the flag if the case is genuinely prompt-only.
+                required = {
+                    e["id"] for e in entries
+                    if str(e.get("fixture_required", "")).lower() == "yes"
+                }
+                unbuildable = sorted(required - built - set(exempt))
+                if unbuildable:
+                    by_family: dict[str, list[str]] = {}
+                    for cid in unbuildable:
+                        by_family.setdefault(cid.split("-")[0], []).append(cid)
+                    shape = ", ".join(
+                        f"{fam} {len(ids)}"
+                        for fam, ids in sorted(by_family.items())
+                    )
+                    errors.append(
+                        f"{evals_json}: {len(unbuildable)} of {len(required)} cases "
+                        f"declare fixture_required=yes and have neither a builder in "
+                        f"build-fixtures.py nor a recorded reason in EXEMPT "
+                        f"({shape}). They cannot be run, so any result that "
+                        f"excludes them is a statement about the remainder. Build "
+                        f"them, exempt each with a reason beside its fixture, or "
+                        f"set the flag to no if the case is genuinely prompt-only. "
+                        f"First: {unbuildable[:6]}"
+                    )
+
     # No second implementation of the placeholder rule.
     #
     # This check used to live in validate.yml as a shell step that grepped
@@ -2036,6 +2077,41 @@ def validate_repository(repo_root: Path) -> dict[str, Any]:
             "every executed-case count in the documentation is 0, which is what "
             "the runs on disk support"
         )
+
+
+    # The kernel's two failure biases must both be present: it must refuse to
+    # overstate a result, AND it must refuse to hand back a report about the work
+    # in place of the work. The first is heavily guarded and the second had none,
+    # which is how a run could end as a precise account of what it had not done
+    # and have that read as diligence.
+    #
+    # This is a presence check, deliberately. A check that greps the kernel for
+    # specific phrases is defeated the first time the phrasing is improved, and
+    # then it is a false guarantee -- the same defect class this repository keeps
+    # auditing. What must not silently disappear is the *capability* of the text
+    # to force a run to keep going: a rung that requires absence to be proved, and
+    # a rule naming the routes to take before absence is believed.
+    retry_policy = SKILL_ROOT / "references" / "retry-policy.md"
+    if retry_policy.is_file():
+        rp = retry_policy.read_text(encoding="utf-8", errors="replace").lower()
+        has_r6 = "prove absence" in rp or "prove-absence" in rp
+        has_rule = "did not find" in rp or "hypothesis, not a fact" in rp
+        if not has_r6:
+            errors.append(
+                f"{retry_policy.name}: no rung requires a claimed-absent capability to be "
+                f"proved before escalation. R6/R7 must split 'prove absence' from "
+                f"'escalate', or one failed lookup is read as an environmental fact."
+            )
+        if not has_rule:
+            errors.append(
+                f"{retry_policy.name}: no rule requires searching the catalogue, changing "
+                f"mode, and re-resolving the unit before a capability is called "
+                f"unobtainable."
+            )
+        if has_r6 and has_rule:
+            notes.append(
+                "the kernel forces exhausting routes before a capability is called absent"
+            )
 
     return {"ok": not errors, "errors": errors, "warnings": warnings, "notes": notes}
 

@@ -50,6 +50,10 @@ These hold at every rung, and no later step may relax them:
   `agents/_shared/documentation-first.md`
 - Do only what was asked. No scope creep, no adjacent cleanup.
   `agents/_shared/task-adherence.md`
+- **Finish before you report.** A capability you did not find is a hypothesis, not
+  a fact, and a limitation is a fallback rather than a result. `retry-policy.md`
+- **The run state gates the exit.** `check` refuses a terminal report while an
+  acceptance criterion is unmet. `state-system.md`
 
 ## The loop
 
@@ -90,7 +94,8 @@ helping.
 3. **Consequence** — what does a wrong answer cost, and who absorbs it?
 4. **Reversibility** — can this be undone cheaply?
 
-Map the answers onto the ladder and stop at the lowest rung that is adequate:
+Map the answers onto the ladder and stop at the lowest rung **adequate for finishing
+the task** — not the lowest that makes the task look handled:
 
 | Rung | Use when | Kernel behaviour |
 |---|---|---|
@@ -135,8 +140,12 @@ and nothing notices, because the directory is ignored. Deciding where output goe
 once, at the start, is what stops it being re-guessed at the end, by an agent that
 has run long and has the least context left.
 
+**And what must be true when it is done** — one `require` per outcome, before
+the work: a step says what you are doing, a criterion says what ends the run, and
+`check` refuses the report at R2 and above without one. `references/state-system.md`
+
 **Then say what you are doing, in the file, not only in prose.** Each work unit
-gets a step, opened as you start it:
+gets a step as you start it:
 
 ```sh
 python3 tools/run-state.py step --doing "<this unit>" \
@@ -144,21 +153,12 @@ python3 tools/run-state.py step --doing "<this unit>" \
   --expect "<the observable condition that means it is finished>"
 ```
 
-Opening a step supersedes the previous one, so exactly one is current. `show`
-prints it first:
-
-```sh
-python3 tools/run-state.py show
-```
-
-At R2 and above, `check` refuses a run with no steps, and refuses two open at
-once — a question with two answers gets answered from the transcript, which is
-what this file exists to replace. R0 and R1 are exempt: recording at those rungs
-is the ceremony the kernel criticises.
-
-This is what makes the choice reviewable, and the evaluation harness reads the
-state file to score whether the rung chosen was the rung warranted. Why this is
-not ceremony at R0 is in `references/state-system.md`.
+Opening a step supersedes the previous, so exactly one is current; `show` prints
+it first. At R2 and above, `check` refuses a run with no steps, and refuses two
+open at once — a question with two answers gets answered from the transcript,
+which is what this file exists to replace. R0 and R1 are exempt: recording at
+those rungs is the ceremony the kernel criticises, and why that is the right
+boundary rather than an oversight is in `references/state-system.md`.
 
 **Escalate** when reality is harder than expected — an assumption fails, a step
 reveals an unknown dependency, evidence contradicts the plan. **De-escalate**
@@ -488,7 +488,7 @@ appearance of effort.
 | Coordination failure | Re-choose the mode; a mode error is not a capability error. |
 | Resource failure | Cut scope, lower effort, or report the block. |
 | Verification failure | A real failure of the work, not of the check. |
-| Unsupported objective | Say so plainly, with what is missing. Stop. |
+| Unsupported objective | Look for another route first, per `retry-policy.md`. Only then say so plainly, with what is missing. Stop. |
 
 A self-repair loop has a shape: `agents/_shared/iterative-improvement-loop.md`
 triages findings, researches, plans, implements, re-verifies, and stops when
@@ -524,6 +524,9 @@ Deliver in the output contract (`references/output-contract.md`, with the shape 
 limitations, confidence, and verification status. State what you could not
 establish. A limitation stated plainly is worth more than a confident answer that
 hides one, because it tells the reader where not to trust you.
+
+But it is a fallback, not an output: the run state will not let the report
+through until it is a true statement about a finished effort. `state-system.md`
 
 ## Step 10 — learning (gated, never automatic)
 

@@ -94,6 +94,49 @@ observable condition that tells it the step is finished.
 once. R0 and R1 are exempt: the kernel calls recording at those rungs ceremony, and a
 gate that fires there is the thing it criticises.
 
+### Acceptance criteria: what must be true when the run ends
+
+A step says what the agent is *doing*. A criterion says what must be *true* when it
+is finished, and only the second one tells you when to stop. The two are not
+interchangeable and a run needs both: “add retry logic” is a step, “the retry header
+is three attempts and the error is logged once” is a criterion.
+
+```sh
+python3 tools/run-state.py require  --what "<what must be true>"
+python3 tools/run-state.py satisfy  --what "<verbatim>" --evidence OBS-n
+python3 tools/run-state.py blocked  --what "<the blocked part>" --reason "<why>" \
+                                --tried "<a route walked>" [--next-action "<what next>"]
+```
+
+`check` refuses an R2-or-higher run that ends with any criterion `open`, and refuses
+an R2-or-higher run that has steps but no criteria at all — work with no stopping
+condition stops when the work *looks* finished, which is the failure where a precise
+account of the unfinished work is delivered in place of the work.
+
+This is the one gate that answers *whether the objective was met*, and it is
+deliberately mechanical rather than a matter of judgement. Prose does not work here:
+an explicit “do not give up” line in a system prompt does not change paired success,
+and a model asked whether its own run is complete scores it complete regardless of
+what happened (AUROC ≤ 0.65 across five judge models) because it anchors on
+confident closing language. So the question is not put to the model; it is answered
+by a script over state the model wrote earlier.
+
+`satisfy` requires `--evidence` to resolve to a recorded observation, exactly as
+decision evidence does. A criterion met by restating the criterion is not met.
+
+`blocked` is the exit, and it is the expensive one. `--tried` is mandatory and must
+be non-empty, because a capability you did not find is a hypothesis rather than a
+fact, and the declaration has to name the routes walked before it can stand. The
+same block cannot be declared twice for the same reason unless `--next-action`
+records what will be executed — the analogue of a harness-level self-reference
+guard, so a run that has already written “this is blocked” cannot end on the
+same words. The bound is structural, which is what keeps it from being a plea.
+
+The mirror failure is not fixed by this. A run that blocks when it could have
+answered fails the same gate, because a decline does not satisfy a criterion and
+produces no deliverable. Both directions are gated; neither is a stylistic
+preference.
+
 ### Context is recorded as loads *and* deliberate drops
 
 `context --ref <r> [--level C0..C6]` records what entered the context;

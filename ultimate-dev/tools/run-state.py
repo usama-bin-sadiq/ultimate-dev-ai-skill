@@ -558,6 +558,146 @@ def cmd_deliver(args) -> int:
     return 0
 
 
+def cmd_require(args) -> int:
+    """Register an acceptance criterion the run must satisfy before it ends.
+
+    The step log records what the agent is *doing*. This records what must be
+    *true* when it is finished, and it persists, so the list survives the context
+    that wrote it.
+
+    The distinction is the whole point. "Add retry logic" is a step; "the retry
+    header is 3 attempts and the error is logged once" is a criterion, and only
+    the second tells you when to stop. A run keeps steps and never writes
+    criteria is a run that stops when the work *looks* finished -- which is the
+    failure mode where a precise account of the unfinished work gets delivered in
+    place of the work.
+    """
+    state = load(args)
+    items = state.setdefault("criteria", [])
+    what = (args.what or "").strip()
+    if not what:
+        print("require: --what is the criterion, stated so it can be observed",
+              file=sys.stderr)
+        return 2
+    if any(i.get("what") == what for i in items if isinstance(i, dict)):
+        print(f"require: already recorded: {what}", file=sys.stderr)
+        return 2
+    items.append({
+        "n": len(items) + 1,
+        "what": what,
+        "status": "open",
+        "evidence": None,
+        "met_at": None,
+    })
+    save(args, state)
+    print(f"  criterion {len(items)} open: {what}")
+    return 0
+
+
+def cmd_satisfy(args) -> int:
+    """Mark a criterion met, with the observation that proves it.
+
+    Evidence is mandatory and must resolve to a recorded observation, exactly as
+    decision evidence does. A criterion satisfied by a restatement of the
+    criterion is not satisfied; that is the whole content of "report honestly".
+    """
+    state = load(args)
+    items = state.get("criteria") or []
+    what = (args.what or "").strip()
+    match = [i for i in items if isinstance(i, dict) and i.get("what") == what]
+    if not match:
+        print(f"satisfy: no criterion {what!r}. Record it with `require` first.",
+              file=sys.stderr)
+        return 2
+    item = match[0]
+    raw = (args.evidence or "").strip()
+    obs_ids = {o.get("id") for o in state.get("observations", [])}
+    if not raw:
+        print("satisfy: --evidence is required; write OBS-n, or `none`", file=sys.stderr)
+        return 2
+    if raw.lower() != "none" and raw.upper() not in obs_ids:
+        print(f"satisfy: evidence {raw!r} does not resolve to a recorded "
+              f"observation", file=sys.stderr)
+        return 2
+    item["status"] = "met"
+    item["evidence"] = raw
+    item["met_at"] = now()
+    save(args, state)
+    print(f"  criterion {item['n']} met: {what}  [{raw}]")
+    return 0
+
+
+def cmd_blocked(args) -> int:
+    """Declare part of the objective blocked, and pay for the declaration.
+
+    Two rules, both structural, because the failure this exists to prevent is an
+    agent quietly substituting a description of the work for the work:
+
+    1. The routes must be named. `--tried` takes what was actually attempted; an
+       empty list is refused, so "I could not find a way" cannot be written
+       without a way having been looked for.
+    2. The same reason cannot be blocked twice. A second `blocked` for an
+       identical reason is refused unless a *different* next action is recorded,
+       which turns the self-reference guard into a requirement for progress
+       rather than an exhortation not to give up.
+
+    Rule 2 is the analogue of the harness-level `stop_hook_active` guard: a run
+    that has already written "this is blocked" cannot end on the same words, so
+    the second attempt has to carry something new.
+    """
+    state = load(args)
+    blocks = state.setdefault("blocks", [])
+    what = (args.what or "").strip()
+    reason = (args.reason or "").strip()
+    if not what or not reason:
+        print("blocked: --what and --reason are both required", file=sys.stderr)
+        return 2
+    tried = [t.strip() for t in (args.tried or []) if t and t.strip()]
+    if not tried:
+        print("blocked: --tried is required, and must be non-empty. A capability "
+              "you did not find is a hypothesis; list the routes walked before "
+              "calling it absent. See references/retry-policy.md.", file=sys.stderr)
+        return 2
+    for t in tried:
+        if t.lower() == reason.lower():
+            print("blocked: a route listed in --tried is the same as --reason. "
+                  "The reason you are blocked on cannot also be a route you tried.",
+                  file=sys.stderr)
+            return 2
+
+    prior = [b for b in blocks
+             if isinstance(b, dict) and (b.get("what") or "").strip() == what]
+    if prior:
+        last = prior[-1]
+        if (last.get("reason") or "").strip().lower() == reason.lower():
+            if not (args.next_action or "").strip():
+                print(f"blocked: {what!r} is already blocked for this exact reason. "
+                      f"A second declaration of the same block is refused: either "
+                      f"execute --next-action and report what happened, or record a "
+                      f"different --reason. Declaring the same block twice is how a "
+                      f"run reports a limit instead of reaching it.", file=sys.stderr)
+                return 2
+            last["next_action"] = args.next_action.strip()
+            last["continued_at"] = now()
+            save(args, state)
+            print(f"  block on {what!r} continued; next action recorded: "
+                  f"{last['next_action']}")
+            return 0
+
+    blocks.append({
+        "n": len(blocks) + 1,
+        "what": what,
+        "reason": reason,
+        "tried": tried,
+        "next_action": (args.next_action or "").strip() or None,
+        "declared_at": now(),
+    })
+    save(args, state)
+    print(f"  block {len(blocks)} recorded on {what!r}; "
+          f"{len(tried)} route(s) tried")
+    return 0
+
+
 def cmd_check(args) -> int:
     state = load(args)
     problems: list[str] = []
@@ -754,6 +894,55 @@ def cmd_check(args) -> int:
             f"deliverable was recorded there. Either write it and `deliver "
             f"--path ...`, or record why it was not produced.")
 
+    # --- the acceptance gate ---
+    #
+    # The checks above police the *shape* of a run: was the mode justified, is the
+    # rung revisable, is a step open. None of them can tell whether the objective
+    # was met, because nothing recorded what "met" means. This does.
+    #
+    # It is a mechanism, not a reminder, because the research on this exact
+    # failure is unusually clear that prose does not work: an explicit "do not give
+    # up" line in a system prompt does not change paired success, and a model asked
+    # to judge its own completeness anchors on confident closing language and scores
+    # a trajectory "completed" regardless of what happened (AUROC <= 0.65 across
+    # five judge models, five prompt conditions). So the question cannot be put to
+    # the model, and it cannot be left to judgement -- it has to be answered by a
+    # deterministic check over state the model wrote earlier.
+    #
+    # R2 and above only. At R0 and R1 the run is short enough to hold the objective
+    # in mind, and a rule that stops a false report would be charged as ceremony,
+    # which is what the ladder exists to prevent.
+    criteria = state.get("criteria") or []
+    if rung_code in {"R2", "R3", "R4"}:
+        if not criteria:
+            problems.append(
+                f"rung {rung_code} records no acceptance criteria. `require` states "
+                f"what must be true when the run ends; steps without criteria are "
+                f"work with no stopping condition, so they stop when the work looks "
+                f"finished."
+            )
+        else:
+            for c in criteria:
+                if isinstance(c, dict) and c.get("status") != "met":
+                    problems.append(
+                        f"criterion {c.get('n')} is {c.get('status')!r}: "
+                        f"{c.get('what')!r}. A terminal report while a criterion is "
+                        f"open is a report about the work rather than the work. "
+                        f"Satisfy it with `satisfy --evidence OBS-n`, or record a "
+                        f"block with `blocked --tried`."
+                    )
+
+    # A continued block with no next action is a dead end by construction: it
+    # declares the end of a route and leaves nothing to execute. Step 8's call to
+    # escalate to the user is right once, and a loop if it becomes the answer.
+    for b in state.get("blocks") or []:
+        if (isinstance(b, dict) and b.get("continued_at")
+                and not (b.get("next_action") or "").strip()):
+            problems.append(
+                f"block {b.get('n')} on {b.get('what')!r} was continued but records "
+                f"no next action"
+            )
+
     for p in problems:
         print(f"  problem: {p}")
     if problems:
@@ -914,6 +1103,28 @@ def main() -> int:
     s = sub.add_parser("check", help="exit non-zero if the state is incoherent",
                        parents=[common])
     s.set_defaults(fn=cmd_check)
+
+    s = sub.add_parser("require", help="state an acceptance criterion for this run",
+                       parents=[common])
+    s.add_argument("--what", required=True, help="what must be true when it ends")
+    s.set_defaults(fn=cmd_require)
+
+    s = sub.add_parser("satisfy", help="mark a criterion met, with its evidence",
+                       parents=[common])
+    s.add_argument("--what", required=True, help="the criterion, verbatim")
+    s.add_argument("--evidence", required=True,
+                   help="OBS-n that proves it, or `none`")
+    s.set_defaults(fn=cmd_satisfy)
+
+    s = sub.add_parser("blocked", help="declare part of the objective blocked",
+                       parents=[common])
+    s.add_argument("--what", required=True, help="the part that is blocked")
+    s.add_argument("--reason", required=True, help="why, in one line")
+    s.add_argument("--tried", action="append", default=[],
+                   help="a route already walked; repeatable, and required")
+    s.add_argument("--next-action", default="",
+                   help="what will be executed next; required to continue a block")
+    s.set_defaults(fn=cmd_blocked)
 
     s = sub.add_parser("list", help="list runs in the state directory", parents=[common])
     s.set_defaults(fn=cmd_list)

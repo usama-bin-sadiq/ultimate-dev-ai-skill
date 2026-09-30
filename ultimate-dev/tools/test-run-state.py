@@ -279,6 +279,12 @@ d, sp = write_state({
     "decisions": [{"question": "q", "selected": "s", "rejected": "r",
                    "recovery": "v", "evidence": ["OBS-1"]}],
     "observations": [{"id": "OBS-1", "text": "t"}],
+    # R2 and above need an acceptance criterion, and this fixture is a well-formed
+    # R2 state, so it carries a met one. It did not when S13 was written, because
+    # the gate did not exist; a fixture that predates a rule is updated, not the
+    # rule relaxed.
+    "criteria": [{"n": 1, "what": "the state is coherent", "status": "met",
+                  "evidence": "OBS-1", "met_at": "2026-01-01T00:00:00Z"}],
 })
 code, out = cli("--state-dir", d, "check")
 check("S13 a well-formed state passes", code == 0, f"exit {code}: {out[:200]}")
@@ -412,6 +418,131 @@ check("S23 the default state directory is .memory",
       'DEFAULT_DIR = ".memory"' in _src, "DEFAULT_DIR is not .memory")
 check("S23 and the legacy directory is still recognised for migration",
       'LEGACY_DIR = ".ultimate-dev"' in _src, "LEGACY_DIR missing")
+
+# ---- S24: the acceptance gate, and the cost of declaring a block ----------
+#
+# S24 exists because of a measured failure, not a hypothetical one. One run
+# concluded three separate work items by writing a precise account of why it had
+# not done them -- "blocked on credits", "0 of 286 have an eval", "needs an
+# owner decision" -- and each read as diligence.
+#
+# Prose rules against that do not work, which is why these cases exist: an
+# explicit "do not give up" instruction in a system prompt does not change paired
+# success, and a model asked to judge its own completeness anchors on confident
+# closing language and scores a trajectory "completed" regardless of what
+# actually happened (AUROC <= 0.65 across five judge models). The correction
+# therefore has to be mechanical, and these cases pin the mechanics.
+
+_s24 = pathlib.Path(tempfile.mkdtemp())
+
+
+def s24(*argv: str) -> tuple[int, str]:
+    """cli() against one persistent dir, so a run spans several calls."""
+    import io
+    old_argv, old_err, old_out = sys.argv, sys.stderr, sys.stdout
+    buf = io.StringIO()
+    sys.argv = ["run-state.py", "--state-dir", str(_s24)] + list(argv)
+    sys.stderr = sys.stdout = buf
+    try:
+        try:
+            code = rs.main()
+        except SystemExit as e:
+            code = int(e.code or 0)
+    finally:
+        sys.argv, sys.stderr, sys.stdout = old_argv, old_err, old_out
+    return code, buf.getvalue()
+
+
+s24("init", "--rung", "R2", "--objective", "gate test")
+s24("set-mode", "--mode", "inline", "--why", "one tool", "--until", "done")
+s24("step", "--doing", "work", "--precondition", "p", "--expect", "e")
+s24("record", "--observation", "ran the gate")
+s24("record", "--observation", "searched the catalogue")
+
+code, out = s24("check")
+check("S24 a terminal report is refused while no criterion exists", code != 0,
+      f"exit {code}")
+check("S24 and the refusal names the missing criteria",
+      "no acceptance criteria" in out, out[:140])
+
+s24("require", "--what", "the gate exits 0 only when met")
+code, out = s24("check")
+check("S24 an OPEN criterion still refuses the report", code != 0, f"exit {code}")
+check("S24 and it names the criterion", "criterion 1 is 'open'" in out, out[:140])
+
+code, out = s24("satisfy", "--what", "the gate exits 0 only when met",
+                "--evidence", "OBS-99")
+check("S24 evidence that does not resolve is refused", code != 0, f"exit {code}")
+
+code, out = s24("satisfy", "--what", "the gate exits 0 only when met",
+                "--evidence", "it works now")
+check("S24 prose evidence is refused", code != 0, f"exit {code}")
+
+code, out = s24("satisfy", "--what", "the gate exits 0 only when met",
+                "--evidence", "OBS-1")
+check("S24 a resolving pointer satisfies the criterion", code == 0,
+      f"exit {code}: {out[:120]}")
+code, out = s24("check")
+check("S24 and the gate then stops complaining about it",
+      "criterion 1 is" not in out, out[:140])
+
+# The block rules -- the exact failure being corrected.
+code, out = s24("blocked", "--what", "E4", "--reason", "no runtime")
+check("S24 a block with no --tried is refused", code != 0, f"exit {code}")
+check("S24 and the refusal says an absent capability is a hypothesis",
+      "hypothesis" in out, out[:140])
+
+code, out = s24("blocked", "--what", "E4", "--reason", "purchased runtime absent",
+                "--tried", "checked the catalogue for a local runner")
+check("S24 a block that names the routes walked is accepted", code == 0,
+      f"exit {code}: {out[:120]}")
+
+code, out = s24("blocked", "--what", "E4", "--reason", "purchased runtime absent",
+                "--tried", "another route")
+check("S24 the SAME block cannot be declared twice for the same reason", code != 0,
+      f"exit {code}")
+check("S24 and the refusal demands a different reason or a next action",
+      "--next-action" in out, out[:160])
+
+code, out = s24("blocked", "--what", "E4", "--reason", "purchased runtime absent",
+                "--tried", "third route",
+                "--next-action", "run it via a local subagent instead")
+check("S24 the same block continues when a next action is recorded", code == 0,
+      f"exit {code}: {out[:120]}")
+
+code, out = s24("blocked", "--what", "E5", "--reason", "same as the route",
+                "--tried", "same as the route")
+check("S24 a reason that is also listed as a tried route is refused", code != 0,
+      f"exit {code}")
+
+# R0/R1 are exempt: the rule must not charge ceremony at the low rungs.
+_s24b = pathlib.Path(tempfile.mkdtemp())
+
+
+def s24b(*argv: str) -> tuple[int, str]:
+    import io
+    old_argv, old_err, old_out = sys.argv, sys.stderr, sys.stdout
+    buf = io.StringIO()
+    sys.argv = ["run-state.py", "--state-dir", str(_s24b)] + list(argv)
+    sys.stderr = sys.stdout = buf
+    try:
+        try:
+            code = rs.main()
+        except SystemExit as e:
+            code = int(e.code or 0)
+    finally:
+        sys.argv, sys.stderr, sys.stdout = old_argv, old_err, old_out
+    return code, buf.getvalue()
+
+
+s24b("init", "--rung", "R1", "--objective", "short run")
+s24b("set-mode", "--mode", "inline", "--why", "one command", "--until", "done")
+code, out = s24b("check")
+check("S24 R1 is exempt from the acceptance gate",
+      "no acceptance criteria" not in out, out[:140])
+
+shutil.rmtree(_s24, ignore_errors=True)
+shutil.rmtree(_s24b, ignore_errors=True)
 
 if FAILURES:
     print(f"\nFAIL  {len(FAILURES)} case(s) failed: {', '.join(FAILURES)}")

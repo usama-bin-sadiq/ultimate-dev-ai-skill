@@ -34,10 +34,71 @@ wrong: re-classify before you spend attempt three.
 | R3 | Change method | The approach is sound, the mechanism is not | A different mechanism fails the same way |
 | R4 | Change strategy | The approach itself is wrong | No new strategy can be justified at JEv |
 | R5 | Change rung | Reality is harder or easier than triage said | The rung ceiling is reached |
-| R6 | Escalate | Only the user can supply what is missing | Terminal |
+| R6 | Prove absence | You believe only the user can supply what is missing | Absence is **proved**, not assumed — see below |
+| R7 | Escalate | The routes below were tried and did not produce it | Terminal |
 
 Each rung needs a decision record. Descending this ladder without recording what
 changed is how a run reaches R5 having burned four attempts and learned nothing.
+
+## A capability you did not find is a hypothesis, not a fact
+
+The single most common way a run ends early is a sentence like *"this tool is
+unavailable, so I have left that part untouched"* — and the sentence is almost
+never true, because **not having looked for a route is not the same as there
+being none.** Treating absence as an environmental fact is what turns a task into
+a report about a task.
+
+So an absent capability is a claim, and a claim has to be earned before it can end
+the work. Before R6 (prove absence) or R7 (escalate) is reached, do all of this:
+
+1. **Search, do not assume.** The catalogue is large and the tools are not named
+   the way you would guess. Search it (`tools/index-tree.py --search <term>`),
+   check what the host actually exposes, and look for the *capability* rather than
+   the tool you had in mind. A different tool with the same effect is a route.
+2. **Change the level.** If one route is refused, a different mode usually is not:
+   inline vs delegate, a specialist vs the general procedure, a script vs a
+   manual sequence, a narrower scope done for real vs a broad scope declared.
+3. **Re-resolve the unit.** Go back through capability resolution (do it → use an
+   existing one → compose → acquire → create) for *this unit*, not for the plan
+   you started with. The plan was written before you knew this part was hard.
+4. **Do the part that is possible, for real.** A partially-completed unit that
+   genuinely changed something on disk or in the output is worth more than a
+   complete report that nothing was attempted.
+
+Only when every one of those has genuinely been tried is absence a finding. "I
+did not find it" becomes "it is not there" here, and never before.
+
+**And the mirror error, which the rule above does not fix.** Benchmarks built to
+measure premature give-up report that the models most likely to give up are also
+the ones that *over*-block: one evaluation found a model unsafe on due diligence
+while still declining to answer 21% of the questions it was safe to answer. So
+"never give up" is not the correction either — it trades a false-completion rate
+for a refusal rate, and both are ways of not doing the work.
+
+Both errors have one cure, and it is the same test: **was the boundary carried, or
+was it abandoned?** A task where the agent used what it had, did the achievable
+part for real, and reported the remainder factually is right in both directions.
+It fails neither test — which is why `deliver --path` and `satisfy --evidence`
+exist. They require the artifact to exist and the evidence to resolve, so neither a
+fabricated success nor a comfortable refusal satisfies the state. An over-blocker
+cannot pass the gate by declining, any more than an under-claimer passes it by
+explaining.
+
+**The asymmetry, stated so it is not traded away.** This rule makes *early* giving
+up expensive, and deliberately does not make *claiming success* cheap. Persisting
+is not the same as finishing: a run that exhausts every route and then reports a
+genuine block has succeeded at the task of finding out what is true, even though
+it did not deliver the feature. Both halves are required —
+
+- never stop at the first obstacle (**this section**), and
+- never claim a result you did not observe (`anti-hallucination.md`,
+  `execution-system.md`).
+
+A run that does the first and skips the second is worse than either failure alone,
+because it converts a block into a fabrication. The order matters: **exhaust the
+routes, then report honestly what is left.** The failure this prevents is not
+giving up — it is the comfortable substitution of *writing about* the task for
+doing it, wearing the costume of rigour.
 
 ## Which failures are retryable
 
@@ -45,7 +106,7 @@ changed is how a run reaches R5 having burned four attempts and learned nothing.
 |---|---|---|
 | Transient | Timeout, rate limit, lock contention, temporary unavailability, reclaimable space | Yes, with backoff |
 | Deterministic | Syntax error, missing dependency, bad argument, absent file, type mismatch, failed assertion, unmet criterion | No — fix the cause first |
-| Environmental | Permission denied, offline, wrong host, quota exhausted | No — change the environment or escalate |
+| Environmental | Permission denied, offline, wrong host, quota exhausted | No — change the environment, find another route, or escalate. A *missing tool* is not environmental: it is R6 |
 | Wrong-reason failure | The action was never going to work, because of missing context, wrong capability, or a bad assumption | No — this is not an execution failure |
 
 Only the transient class is retryable. Everything else is recovered through

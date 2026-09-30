@@ -20,7 +20,7 @@ cause is missing context or wrong capability, and both are recoverable.
 | Execution failure | Fix the identified cause, then retry within the bound. | Bound reached → change rung or escalate |
 | Resource failure | Reduce scope, lower effort, or report the block. | No slack left → report the block |
 | Verification failure | Treat as a real failure of the work, not of the check. | Same criterion fails twice → re-decide |
-| Unsupported objective | Say so plainly, with what is missing. Stop. | Terminal; do not hunt for a workaround |
+| Unsupported objective | Say so plainly, with what is missing. Stop — **but only after the routes in `retry-policy.md` §"A capability you did not find" are exhausted.** "Unsupported" is a conclusion reached by looking, not the first thing you notice. | Terminal; do not hunt for a workaround |
 | Coordination failure | Re-choose the mode; a mode error is not a capability error. | Two mode changes → re-triage |
 
 Recovery may change `coordination`, and the change is recorded like any other
@@ -71,7 +71,14 @@ because it failed converts a detected defect into a shipped one.
 
 Recovery is bounded. Take it to `escalation.md` when the classification is
 unsupported objective, when the rung has nowhere lower to go, or when the cause is
-known, fixed, and still failing. Retry arithmetic is in `retry-policy.md`; the state
+known, fixed, and still failing.
+
+A bound on recovery is a bound on *repetition*, not on *routes*. Running out of retries
+on one approach means change the approach, not that the work is finished: the ladder
+in `retry-policy.md` has six rungs below escalation, and a run that climbed none of
+them has not tried to recover, it has retried. The block you report must name the
+routes already taken, because "this was blocked" and "I stopped looking" are
+indistinguishable to a reader and only one of them is true. Retry arithmetic is in `retry-policy.md`; the state
 that must survive a stop is in `state-system.md`; verification verdicts are in
 `verification-system.md`.
 

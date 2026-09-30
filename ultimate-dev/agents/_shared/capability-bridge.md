@@ -49,8 +49,26 @@ Resolution statuses:
 - `native` — requested capability exists and was used.
 - `fallback` — native capability is absent; equivalent serial execution was used.
 - `partial` — agent ran but one or more optional tools were unavailable.
-- `unavailable` — required capability is absent and no safe equivalent exists.
+- `unavailable` — required capability is absent **and was looked for**: the host's
+  capability map was inspected, a semantic equivalent was sought (a different tool
+  with the same effect, a different execution mode, a narrower scope done for
+  real), and the reason it substitutes nothing is written down.
 - `skipped` — routing determined the agent was irrelevant.
+
+`unavailable` is the one status a run reaches most easily and least defensibly,
+because "I could not do that" and "I did not find a way to do that" produce the
+same sentence and only one of them is a fact about the host. The map above is
+built by *inspecting the host*, so an entry is an observation; a capability the
+agent never went looking for is not an entry, it is an assumption. When the
+capability is one the host actually lacks, say which mechanism reported it.
+
+The failure this prevents is a run that opens with an accurate-sounding
+capability map containing several `unavailable` rows it never tested, routes
+around its own skills, and delivers a smaller result than the host was fully
+able to produce. That is a self-inflicted limit, and it is worse than a real one
+because it is invisible from the transcript: the report is accurate about a
+capability set the run quietly shrank before using it. See
+`references/retry-policy.md` for the routes to walk first.
 
 ## 4. Subagent execution
 
