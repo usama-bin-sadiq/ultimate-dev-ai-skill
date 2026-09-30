@@ -541,8 +541,139 @@ code, out = s24b("check")
 check("S24 R1 is exempt from the acceptance gate",
       "no acceptance criteria" not in out, out[:140])
 
-shutil.rmtree(_s24, ignore_errors=True)
-shutil.rmtree(_s24b, ignore_errors=True)
+# --- S25: the capability dispatch gate, the mirror of the over-delegation rule --
+#
+# Each rule gets a case that proves it fires, and one case that proves the gate
+# is not simply always-on. A check that reports nothing is indistinguishable from
+# a check that works.
+
+_s25 = pathlib.Path(tempfile.mkdtemp())
+
+
+def s25(*argv: str) -> tuple[int, str]:
+    import io
+    old_argv, old_err, old_out = sys.argv, sys.stderr, sys.stdout
+    buf = io.StringIO()
+    sys.argv = ["run-state.py", "--state-dir", str(_s25)] + list(argv)
+    sys.stderr = sys.stdout = buf
+    try:
+        try:
+            code = rs.main()
+        except SystemExit as e:
+            code = int(e.code or 0)
+    finally:
+        sys.argv, sys.stderr, sys.stdout = old_argv, old_err, old_out
+    return code, buf.getvalue()
+
+
+# A well-formed R2 run, so the dispatch rules are the only thing under test.
+s25("init", "--rung", "R2", "--objective", "use a specialist",
+     "--escalate-on", "the capability turns out to be wrong",
+     "--de-escalate-on", "one invocation is enough")
+s25("set-mode", "--mode", "delegate", "--why", "the catalogue has one",
+     "--until", "it returns something usable")
+s25("record", "--observation", "looked the capability up in the catalogue")
+s25("step", "--doing", "invoke it", "--precondition", "it exists",
+     "--expect", "an observation back")
+s25("require", "--what", "the specialist's output is observed")
+s25("satisfy", "--what", "the specialist's output is observed",
+     "--evidence", "OBS-1")
+
+code, out = s25("dispatch", "--for", "stock-analysis", "--state", "selected")
+check("S25 a capability can be recorded as selected", code == 0,
+      f"exit {code}: {out[:120]}")
+code, out = s25("check")
+check("S25 and a capability left at `selected` refuses the report", code != 0,
+      f"exit {code}")
+check("S25 and the refusal says it was described, not performed",
+      "described rather than performed" in out, out[:160])
+check("S25 and the refusal names the capability", "stock-analysis" in out,
+      out[:160])
+
+code, out = s25("dispatch", "--for", "stock-analysis", "--state", "invoked")
+check("S25 the chain advances to invoked", code == 0, f"exit {code}: {out[:120]}")
+code, out = s25("check")
+check("S25 `invoked` is still not terminal", code != 0, f"exit {code}")
+
+code, out = s25("dispatch", "--for", "stock-analysis", "--state", "observed")
+check("S25 the chain reaches observed", code == 0, f"exit {code}: {out[:120]}")
+code, out = s25("check")
+check("S25 and once observed the gate stops complaining about it",
+      "stock-analysis" not in out, out[:160])
+check("S25 -- so a well-formed run still passes", code == 0,
+      f"exit {code}: {out[:160]}")
+
+code, out = s25("dispatch", "--for", "stock-analysis", "--state", "selected")
+check("S25 the chain refuses to run backwards", code != 0, f"exit {code}")
+check("S25 and says so as a rewrite of history",
+      "cannot go back" in out, out[:160])
+
+# NOT_INVOKED is not UNREACHABLE: the second needs proof the first does not.
+code, out = s25("dispatch", "--for", "some-skill", "--state", "unreachable")
+check("S25 `unreachable` with no route tried is refused", code != 0, f"exit {code}")
+check("S25 and the refusal names the under-claiming failure",
+      "under-claiming" in out, out[:160])
+code, out = s25("dispatch", "--for", "some-skill", "--state", "unreachable",
+                "--tried", "searched the catalogue by name, then by keyword")
+check("S25 `unreachable` with a route tried is accepted", code == 0,
+      f"exit {code}: {out[:120]}")
+
+code, out = s25("dispatch", "--for", "another-skill", "--state", "skipped")
+check("S25 `skipped` with no reason is refused", code != 0, f"exit {code}")
+code, out = s25("dispatch", "--for", "another-skill", "--state", "skipped",
+                "--why", "the task needs no specialisation")
+check("S25 `skipped` with a reason is accepted", code == 0,
+      f"exit {code}: {out[:120]}")
+
+code, out = s25("dispatch", "--for", "third-skill", "--state", "verified")
+check("S25 `verified` with no evidence is refused", code != 0, f"exit {code}")
+
+code, out = s25("check")
+check("S25 the three terminal verdicts all pass the gate", code == 0,
+      f"exit {code}: {out[:160]}")
+
+# The gate must be a check, not a decorator: hand-edited state, which the write
+# path cannot defend against, still has to fail.
+_hand = state_of(str(_s25 / "run-state.json"))
+_hand["dispatch"].append({"n": 9, "for": "hand-edited", "state": "unreachable",
+                          "tried": [], "history": []})
+(_s25 / "run-state.json").write_text(json.dumps(_hand), encoding="utf-8")
+code, out = s25("check")
+check("S25 a hand-edited unreachable with no routes is still refused", code != 0,
+      f"exit {code}")
+check("S25 and it names the distinction",
+      "not-invoked and unreachable" in out, out[:200])
+
+# R1 is exempt, as everything else in the gate is: the ladder exists so short
+# runs are not charged for ceremony.
+_s25b = pathlib.Path(tempfile.mkdtemp())
+
+
+def s25b(*argv: str) -> tuple[int, str]:
+    import io
+    old_argv, old_err, old_out = sys.argv, sys.stderr, sys.stdout
+    buf = io.StringIO()
+    sys.argv = ["run-state.py", "--state-dir", str(_s25b)] + list(argv)
+    sys.stderr = sys.stdout = buf
+    try:
+        try:
+            code = rs.main()
+        except SystemExit as e:
+            code = int(e.code or 0)
+    finally:
+        sys.argv, sys.stderr, sys.stdout = old_argv, old_err, old_out
+    return code, buf.getvalue()
+
+
+s25b("init", "--rung", "R1", "--objective", "one command")
+s25b("set-mode", "--mode", "inline", "--why", "one command", "--until", "done")
+s25b("dispatch", "--for", "a-skill", "--state", "selected")
+code, out = s25b("check")
+check("S25 R1 is exempt from the dispatch gate", "described rather than performed"
+      not in out, out[:160])
+
+shutil.rmtree(_s25, ignore_errors=True)
+shutil.rmtree(_s25b, ignore_errors=True)
 
 if FAILURES:
     print(f"\nFAIL  {len(FAILURES)} case(s) failed: {', '.join(FAILURES)}")

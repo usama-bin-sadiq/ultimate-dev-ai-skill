@@ -1,5 +1,14 @@
 # Anti-patterns
 
+## Why this is a list and not a copy in `SKILL.md`
+
+It was duplicated here once, and the copies drifted: the kernel's own
+`Unreviewed coordination` entry existed only in the `SKILL.md` copy, so it had no
+regression case and nothing detected it missing. The evidence a rule needs to be
+worth enforcing is the failing case, and a rule kept in two places gets updated in
+one. A negative constraint restated five times is not a rule, it is a theme; a
+positive rule restated in two files is a rule with two chances to become wrong.
+
 Each of these is a real failure mode of this architecture, not a style
 preference. Know the corrective before you need it — several of them feel like
 diligence while they are destroying the work.

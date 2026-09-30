@@ -137,6 +137,73 @@ answered fails the same gate, because a decline does not satisfy a criterion and
 produces no deliverable. Both directions are gated; neither is a stylistic
 preference.
 
+### The dispatch contract: a capability that was chosen and not run
+
+The kernel has an over-delegation guard — “delegation is a cost, not a default” —
+and until this was added, no rule at all pushing the other way. That asymmetry is
+not neutral. With a cost stated and no benefit stated, a run quietly stops loading
+the capability it was built around and does the work with whatever is already in
+context; and because doing the work inline *always* feels compliant, no rule about
+dispatch quality catches it. The mirror is the under-delegation failure, and it is
+invisible from the transcript for the same reason every other one of these gates is:
+a precise account of the work reads exactly like the work.
+
+```sh
+python3 tools/run-state.py dispatch --for "<capability, as the host names it>" \
+                                    --state selected|invoked|running|observed|verified
+python3 tools/run-state.py dispatch --for "<capability>" --state unreachable \
+                                    --tried "<a route looked for>"
+python3 tools/run-state.py dispatch --for "<capability>" --state skipped \
+                                    --why "<the reason>"
+```
+
+Four rules, all structural:
+
+1. **`selected`, `invoked` and `running` are not terminal.** `check` refuses an
+   R2-or-higher report while any capability sits in one. A capability chosen and
+   never observed is a delegation described rather than performed.
+2. **`unreachable` needs `--tried`, non-empty.** `NOT_INVOKED` and `UNREACHABLE`
+   are different states: one is an action not taken, the other is a capability
+   proved absent. Only the second is a finding about the host, and the first is
+   what a run writes when it stops looking.
+3. **`skipped` needs `--why`.** A deliberate pass-over is a decision with a
+   recorded reason. An unnamed one is indistinguishable from having forgotten the
+   capability existed.
+4. **The chain does not run backwards.** A state that un-observes itself is a
+   rewrite of history, which is worse than the omission it papers over.
+
+`verified` additionally needs `--evidence OBS-n`, because a capability reported as
+checked with nothing recording what was checked is an assertion wearing the word for
+a finding.
+
+### One gate before you stop, and the routes it walks
+
+If the objective is not met, this is the question — and it has a list, walked in
+order, taking the first `yes`. It is the Step 8 recovery table read as a checklist
+rather than a taxonomy, because the taxonomy is what a run does *after* deciding to
+stop:
+
+1. another reachable capability → record it with `dispatch`, and invoke it
+2. context that was never loaded → `context --load`
+3. an agent that failed → re-choose the mode, or a different capability
+4. a tool that failed → fix the cause; retries are bounded, blind retry is not
+5. verification that failed → fix the *work*; the criterion stays open
+6. the strategy was wrong → back to JEv and re-decide
+7. the objective is decomposable → more steps, smaller units
+8. delegable → `set-mode --mode delegate`
+9. spans several sources → `set-mode --mode route`
+10. runnable inline in the context already in hand
+11. needs one owner across stages → `set-mode --mode handoff`
+12. a different order of the same units
+13. any other viable path
+
+A block is what is left *after* that list, never the first thing noticed. Two of the
+thirteen are machine-checkable and `check` decides them alone: route 1 is the
+dispatch gate above, and route 5 is the acceptance gate. The other eleven are
+judgements, and a rule that stopped a run on the model’s reading of its own list
+would be the self-judgement failure above wearing a different hat — so they are
+written down and reviewed by whoever reads the run.
+
 ### Context is recorded as loads *and* deliberate drops
 
 `context --ref <r> [--level C0..C6]` records what entered the context;

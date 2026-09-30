@@ -69,6 +69,17 @@ LEGACY_DIR = ".ultimate-dev"
 STATE_FILE = "run-state.json"
 SCHEMA_VERSION = 3
 
+# The capability dispatch contract, from the kernel's "no silent degradation"
+# section. The chain matters in one direction: a capability that was chosen and
+# never observed is a delegation described rather than performed, which is the
+# under-doing failure wearing a different hat.
+DISPATCH_ORDER = ("selected", "invoked", "running", "observed", "verified")
+# `unreachable` and `skipped` are terminal verdicts, not stages of the chain --
+# a capability the host does not expose, or one deliberately passed over.
+DISPATCH_TERMINAL = ("unreachable", "skipped")
+DISPATCH_STATES = DISPATCH_ORDER + DISPATCH_TERMINAL
+
+
 MODES = ("inline", "delegate", "route", "handoff")
 
 # The rung and scale vocabularies, as constrained values rather than free text.
@@ -234,6 +245,24 @@ def cmd_show(args) -> int:
     print(f"  until     {mode.get('until')}")
     print(f"  active    {state.get('active_agent') or '(none)'}  "
           f"authority={state.get('authority')}")
+
+    disp = state.get("dispatch") or []
+    inflight = [d for d in disp if isinstance(d, dict)
+                and (d.get("state") or "") in ("selected", "invoked", "running")]
+    if disp:
+        head = (f"  dispatch  {len(disp)} recorded, {len(inflight)} in flight"
+                + ("  <- check will refuse" if inflight else ""))
+        print(head)
+        for d in disp:
+            if not isinstance(d, dict):
+                continue
+            mark = "▶" if d in inflight else " "
+            extra = ""
+            if (d.get("state") or "") == "unreachable" and d.get("tried"):
+                extra = f"  tried: {len(d['tried'])}"
+            print(f"    {mark} {d.get('for')}  →  {d.get('state')}{extra}")
+    else:
+        print("  dispatch  none recorded; a chosen capability is invisible to `check`")
 
     ctx = state.get("context") or {}
     loaded = ctx.get("loaded") or []
@@ -698,6 +727,92 @@ def cmd_blocked(args) -> int:
     return 0
 
 
+def cmd_dispatch(args) -> int:
+    """Record where a chosen capability actually got to.
+
+    The kernel already forbids *over*-delegating ("delegation is a cost, not a
+    default") and had no rule at all pushing the other way, so a run could stop
+    loading the capability it was built around and do the work with whatever was
+    already in context -- and doing it inline always felt compliant. This is the
+    mirror, and it is a record rather than a reminder for the reason the criterion
+    gate is a record: a model asked whether it delegated well answers from the
+    shape of its own prose, which is exactly what is in question.
+
+    Three rules, all structural:
+
+    1. `selected`, `invoked` and `running` are not terminal. `check` refuses a
+       terminal report while any capability sits in one, so "I chose the specialist
+       and then did it myself" cannot be reported as a finished run.
+    2. `unreachable` needs `--tried`, and `skipped` needs `--why`. NOT_INVOKED and
+       UNREACHABLE are different states: one is an action not taken, the other is
+       a capability proved absent, and only the second is a finding.
+    3. The chain does not run backwards. A state that un-observes itself is a
+       rewrite of history, which is worse than the omission it papers over.
+    """
+    state = load(args)
+    for_what = (args.what or "").strip()
+    st = (args.state or "").strip().lower()
+    if not for_what:
+        print("dispatch: --for is required (it names the capability)", file=sys.stderr)
+        return 2
+    if st not in DISPATCH_STATES:
+        print(f"dispatch: --state {st!r} is not one of "
+              f"{', '.join(DISPATCH_STATES)}", file=sys.stderr)
+        return 2
+
+    tried = [t.strip() for t in (args.tried or []) if t and t.strip()]
+    why = (args.why or "").strip()
+    ev = (args.evidence or "").strip()
+
+    if st == "unreachable" and not tried:
+        print("dispatch: `unreachable` needs --tried, and it must be non-empty. "
+              "A capability you did not look for is not a capability the host "
+              "lacks; that is the under-claiming failure this state is supposed to "
+              "make visible, not hide.", file=sys.stderr)
+        return 2
+    if st == "skipped" and not why:
+        print("dispatch: `skipped` needs --why. A deliberate pass-over is a "
+              "decision with a recorded reason; an unnamed one is indistinguishable "
+              "from having forgotten the capability existed.", file=sys.stderr)
+        return 2
+    if st == "verified" and not ev:
+        print("dispatch: `verified` needs --evidence OBS-n. A capability reported as "
+              "checked, with nothing recording what was checked, is an assertion "
+              "wearing the word for a finding.", file=sys.stderr)
+        return 2
+
+    records = state.setdefault("dispatch", [])
+    prior = [d for d in records
+             if isinstance(d, dict) and (d.get("for") or "") == for_what]
+    last = prior[-1] if prior else None
+    if last is not None and (last.get("state") or "") in DISPATCH_ORDER \
+            and st in DISPATCH_ORDER \
+            and DISPATCH_ORDER.index(st) < DISPATCH_ORDER.index(last.get("state")):
+        print(f"dispatch: {for_what!r} is {last.get('state')!r} and cannot go back to "
+              f"{st!r}. If it turned out not to have run, that is a new finding and "
+              f"it is recorded here rather than by quietly resetting the chain.",
+              file=sys.stderr)
+        return 2
+
+    entry = last if last is not None else {
+        "n": len(records) + 1, "for": for_what, "history": []}
+    if last is None:
+        records.append(entry)
+    entry.setdefault("history", []).append(
+        {"state": last.get("state") if last else None, "at": now()})
+    entry["state"] = st
+    entry["tried"] = tried or entry.get("tried") or []
+    entry["why"] = why or entry.get("why") or ""
+    entry["evidence"] = ev or entry.get("evidence") or ""
+    entry["at"] = now()
+    if st in DISPATCH_TERMINAL:
+        entry["terminal_reason"] = st
+    save(args, state)
+    print(f"  capability {for_what!r}: {st}"
+          + (f" ({len(tried)} route(s) tried)" if st == "unreachable" else ""))
+    return 0
+
+
 def cmd_check(args) -> int:
     state = load(args)
     problems: list[str] = []
@@ -943,6 +1058,46 @@ def cmd_check(args) -> int:
                 f"no next action"
             )
 
+    # --- the capability dispatch gate ---
+    #
+    # The mirror of the over-delegation rule that already existed. A run that
+    # selected a specialist and then did the work inline passes every other check
+    # here: its steps are closed, its criteria are met, its blocks are justified.
+    # Nothing could see the missing dispatch, because nothing recorded one. This
+    # records it, and refuses the report while a chosen capability is still in
+    # flight.
+    for d in state.get("dispatch") or []:
+        if not isinstance(d, dict):
+            continue
+        name = d.get("for") or d.get("capability") or "?"
+        st = (d.get("state") or "").strip().lower()
+        if not st:
+            problems.append(f"capability {name!r} is recorded with no state")
+        elif st not in DISPATCH_STATES:
+            problems.append(
+                f"capability {name!r} is {st!r}, which is not a dispatch state "
+                f"({', '.join(DISPATCH_STATES)})")
+        if rung_code in {"R2", "R3", "R4"} and st in DISPATCH_ORDER \
+                and st not in ("observed", "verified"):
+            problems.append(
+                f"capability {name!r} is {st!r} and never reached observed. A "
+                f"capability that was chosen and not observed is a delegation "
+                f"described rather than performed. Invoke it and record the "
+                f"outcome, or record `unreachable --tried` / `skipped --why` "
+                f"for a deliberate verdict.")
+        if st == "unreachable" and not (d.get("tried") or []):
+            problems.append(
+                f"capability {name!r} is recorded unreachable with no route tried; "
+                f"not-invoked and unreachable are different states, and only the "
+                f"second is a finding about the host")
+        if st == "skipped" and not (d.get("why") or "").strip():
+            problems.append(
+                f"capability {name!r} is skipped with no recorded reason")
+        if st == "verified" and not (d.get("evidence") or "").strip():
+            problems.append(
+                f"capability {name!r} is verified with no evidence; nothing records "
+                f"what was checked")
+
     for p in problems:
         print(f"  problem: {p}")
     if problems:
@@ -1125,6 +1280,18 @@ def main() -> int:
     s.add_argument("--next-action", default="",
                    help="what will be executed next; required to continue a block")
     s.set_defaults(fn=cmd_blocked)
+
+    s = sub.add_parser("dispatch", help="record how far a chosen capability got",
+                       parents=[common])
+    s.add_argument("--for", dest="what", required=True,
+                   help="the capability, named as the host exposes it")
+    s.add_argument("--state", required=True,
+                   help="|".join(DISPATCH_STATES))
+    s.add_argument("--evidence", default="", help="OBS-n; required at `verified`")
+    s.add_argument("--tried", action="append", default=[],
+                   help="a route looked for; repeatable, required at `unreachable`")
+    s.add_argument("--why", default="", help="the reason; required at `skipped`")
+    s.set_defaults(fn=cmd_dispatch)
 
     s = sub.add_parser("list", help="list runs in the state directory", parents=[common])
     s.set_defaults(fn=cmd_list)

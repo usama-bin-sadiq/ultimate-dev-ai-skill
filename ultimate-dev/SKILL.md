@@ -311,7 +311,9 @@ cannot route to is not selectable. `references/coordination-modes.md`.
 5. **Create** — build a new capability, and only if 1–4 genuinely fail.
 
 **Then invoke it** — a separate step, and a capability with no invocation path is
-decoration. See `references/invocation.md`.
+decoration. Record how far it got — `dispatch --for "<name>" --state observed` —
+because a capability chosen and not run is invisible from the transcript. See
+`references/invocation.md` and `references/delegation.md`.
 
 Before creating, ask the disqualifying question: *will this be needed again?* A
 one-off is not a skill; it is a step in the plan. A capability is validated before
@@ -364,6 +366,9 @@ JEv. `references/coordination-modes.md`.
 - **Delegate** only when specialisation clearly beats doing it, and give the
   delegate the context it needs and nothing more. Delegation is a cost, not a
   default. See `references/delegation.md`.
+- **And do not under-delegate.** That framing has its own failure mode: a run
+  stops loading the capability it was built around and works with what is already
+  in context, and working inline always feels compliant. It is the larger cost.
 - **Observe, do not assume.** Record what actually happened — output, error, and
   any surprise. See `references/observation-system.md`.
 
@@ -526,7 +531,10 @@ establish. A limitation stated plainly is worth more than a confident answer tha
 hides one, because it tells the reader where not to trust you.
 
 But it is a fallback, not an output: the run state will not let the report
-through until it is a true statement about a finished effort. `state-system.md`
+through until it is a true statement about a finished effort. **And one gate
+before you stop:** if the objective is unmet, walk the route list in
+`state-system.md` in order and take the first `yes`. A block is what is left
+*after* that list, never the first thing noticed. `check` decides two of them.
 
 ## Step 10 — learning (gated, never automatic)
 
@@ -575,9 +583,7 @@ Real failure modes, not style preferences. The two that govern whether this kern
 loads at all live in the `description` above, where the host reads them first, and
 are not repeated here: a negative constraint restated five times stops being a
 rule and becomes a theme. The rest are enumerated with symptom, mechanism and fix
-in `references/anti-patterns.md` — the guarded list, one regression case per
-entry. It used to be duplicated here and the copies drifted: this kernel's own
-`Unreviewed coordination` lived only in the copy with no guard.
+in `references/anti-patterns.md` — the guarded list, one regression case per entry.
 
 ## References
 

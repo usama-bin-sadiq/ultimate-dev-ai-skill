@@ -32,6 +32,36 @@ If none holds, do it here. A delegate that merely repeats what you could have
 done costs more and tells you less. Record the decision at JEv, including the
 rejected alternative.
 
+## The other error: not using the capability
+
+The test above is a one-sided rule, and one-sided rules drift. Every entry in it
+says *when not to* dispatch, and nothing in it says *when you must*. A run reading
+it under load reaches the same place every time: do the work here, because doing
+the work here costs nothing to justify and delegating costs a visible amount.
+
+That is a real bias and it is measurable in the catalogue's own terms. A role with
+no dispatch condition is unavailable however good it is; a role with a condition
+that is never met is available and never used, which is the same outcome wearing
+the opposite label. The kernel's rule against presenting a pruned node as reviewed
+covers the second case for the *delivery*; nothing covered it for the *decision*.
+
+So the test is two-sided, and the second side is the harder one:
+
+| Justification holds | Call |
+|---|---|
+| The host exposes a specialist that owns this work and you would not use it | Record why at JEv, with the rejected capability named — then either dispatch it or say what you did instead |
+| You can name what the specialist has that you do not | Dispatch it |
+| You cannot name that | You are choosing on cost alone. That is allowed; it is a decision, and it gets recorded as one |
+| The specialist is the only route to the criterion | `dispatch --state selected` before you start, so `check` can see it |
+| The host exposes no such specialist | `dispatch --state unreachable --tried ...` — with the routes, because an unlooked-for capability is a hypothesis |
+
+The second half is the one that is missing in practice, and it is missing because
+its failure is quiet. Over-delegating costs tokens and shows up in the bill.
+Under-delegating produces a competent, complete, wrong-scope answer, and the
+delivery reads exactly like a good run — which is why it needs a record rather than
+a reminder. `run-state.py dispatch` is that record, and `check` refuses a report
+that leaves a chosen capability in flight. `state-system.md` holds the mechanics.
+
 ## The roles
 
 | Role | Delegate when | Produces |
