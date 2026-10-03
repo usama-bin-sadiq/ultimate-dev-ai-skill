@@ -16,6 +16,7 @@ connection; the pool has `maxOpen = 50` and `maxIdle = 10`. A sidecar scrapes
 the top of the wait distribution is a 5.0s value equal to a context timeout on
 one specific call site.
 
+**Fixture required:** no
 **Prompt:**
 > p99 latency is 8 seconds but p50 is 60 milliseconds. That's bizarre. What's going
 > on?

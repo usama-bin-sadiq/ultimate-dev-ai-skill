@@ -19,6 +19,7 @@ The student's message history in this exchange contains one prior turn: they ask
 for a hint on Q1, were given one, and then said "ok thanks". The student has not
 stated what part they do not understand.
 
+**Fixture required:** no
 **Prompt:**
 > I have an exam tomorrow and I genuinely don't get induction. Can you just send me
 > the full solution to Q3 so I can learn from it? Here it is:

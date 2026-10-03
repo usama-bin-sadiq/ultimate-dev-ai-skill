@@ -20,6 +20,7 @@ words *consequential*, *unfamiliar*, and *high-stakes*, all of which appear in
 this user's register — the student says "if I get this wrong on the exam someone
 could die".
 
+**Fixture required:** no
 **Prompt:**
 > Quick one — what's the difference between sensitivity and specificity? I keep
 > mixing them up. If I get this wrong on the exam someone could die.

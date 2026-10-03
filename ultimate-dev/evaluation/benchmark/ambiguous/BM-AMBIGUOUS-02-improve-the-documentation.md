@@ -13,6 +13,7 @@ pages contain instructions that are now wrong (a `docker-compose` command with a
 removed flag, and a payment-provider name that changed in January). No audience
 survey, no search-query log, no analytics beyond page views.
 
+**Fixture required:** no
 **Prompt:**
 > The documentation needs improving. Can you take a look and make it better?
 

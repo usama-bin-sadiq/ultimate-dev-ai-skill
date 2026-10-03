@@ -21,6 +21,7 @@ adding a 3 mm fin (not in the catalogue), and a 30 mm vented fan with a
 IP54-rated filter assembly. Ambient during test was 41 °C, one degree above the
 requirement's assumption, and the current measured hotspot is 96 °C.
 
+**Fixture required:** no
 **Prompt:**
 > Our enclosure runs too hot. The board is 40 W, the box is sealed and has to stay
 > sealed, and the spec says nothing above 85 °C in a 40 °C ambient. Propose changes

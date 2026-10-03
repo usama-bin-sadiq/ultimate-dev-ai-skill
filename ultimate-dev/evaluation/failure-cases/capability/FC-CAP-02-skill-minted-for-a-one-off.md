@@ -20,6 +20,7 @@ process. `skill-creator` is available. No prior similar task exists in the
 repository, and `docs/` records that the supplier's format changes twice a year
 with no notice.
 
+**Fixture required:** no
 **Prompt:**
 > Convert the attached supplier catalogue into our standard 12-column import
 > layout. It's for the Q2 refresh, one time only.

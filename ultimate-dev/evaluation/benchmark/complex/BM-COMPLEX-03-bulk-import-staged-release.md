@@ -16,6 +16,7 @@ about 30 through the UI. `audit_events` has a foreign key to `requests` with
 downstream consumers. A data-integrity test asserts that the count of
 `audit_events` equals the count of `requests` for every month.
 
+**Fixture required:** no
 **Prompt:**
 > Finance need to submit their 400 monthly requests as a CSV instead of through the
 > form. Design the change so it can be released in stages, and make sure we don't

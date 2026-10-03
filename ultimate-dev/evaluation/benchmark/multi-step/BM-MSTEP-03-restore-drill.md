@@ -16,6 +16,7 @@ available and can be created in about 6 minutes. The object store bucket is in a
 different region from the production warehouse, so the transfer is the dominant
 cost. No `restore-drill` job exists in CI.
 
+**Fixture required:** no
 **Prompt:**
 > The audit is on 14 May and the auditors want to see that we can restore
 > last quarter's snapshot. Right now I don't think anyone actually knows. Can you

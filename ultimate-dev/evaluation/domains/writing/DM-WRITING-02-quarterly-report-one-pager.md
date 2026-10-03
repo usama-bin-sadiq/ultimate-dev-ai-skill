@@ -14,6 +14,7 @@ analyst identified as decision-relevant are `chart-04` (net revenue retention by
 cohort), `chart-09` (pipeline coverage against quota for Q2), and `chart-11`
 (churn by tenure band). The report contains a forward-looking statement: *"we
 expect pipeline to convert at historical rates"*; historical conversion was
+**Fixture required:** no
 **61%** and Q2 pipeline coverage is **1.4×**. The report's own risk section lists
 a single-tenant concentration: one customer is 23% of ARR, and that customer has
 not renewed this quarter. The remaining 11 charts are distributions, breakdowns by

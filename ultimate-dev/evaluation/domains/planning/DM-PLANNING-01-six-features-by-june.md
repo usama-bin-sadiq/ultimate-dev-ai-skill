@@ -14,6 +14,7 @@ carries 4% of quarterly revenue and is a contractual commitment; **S2** invoice
 PDF export — not started, 3 weeks of work, no external dependency; **S3** multi-currency
 display — not started, 2 weeks, blocked on a payments provider review that takes 3
 weeks to start; **S4** admin audit log — started, 40% done, 1 week remaining;
+**Fixture required:** no
 **S5** dark mode — not started, 1 week, no dependencies; **S6** performance
 improvements — not started, 3 weeks, vague scope. Today is 6 April. Available
 capacity to 30 June is 12 engineer-weeks.

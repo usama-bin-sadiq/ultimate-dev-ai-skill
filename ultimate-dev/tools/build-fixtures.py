@@ -918,6 +918,35 @@ def tn_10_git(root: Path) -> dict:
 EXEMPT = {
     "NM-13": "needs only a package.json to exist, which the builder supplies",
     "TN-04": "the stack trace is in the prompt; the paths inside it are incidental",
+    # Fixture described inline: the file's content is given in the fixture field;
+    # no external file needs to be materialised.
+    "BM-COMPLEX-02": "fixture described inline in prompt",
+    "BM-HA-01": "fixture described inline in prompt",
+    "BM-HA-02": "fixture described inline in prompt",
+    "BM-HA-03": "fixture described inline in prompt",
+    "BM-LCTX-01": "fixture described inline in prompt",
+    "BM-MEDIUM-01": "fixture described inline in prompt",
+    "BM-MEDIUM-02": "fixture described inline in prompt",
+    "BM-MEDIUM-03": "fixture described inline in prompt",
+    "BM-XDOM-01": "fixture described inline in prompt",
+    "CM-01": "fixture described inline in prompt",
+    "DM-DATA-01": "fixture described inline in prompt",
+    "DM-EDUCATION-02": "fixture described inline in prompt",
+    "DM-FINANCE-02": "fixture described inline in prompt",
+    "DM-PLANNING-02": "fixture described inline in prompt",
+    "DM-RESEARCH-01": "fixture described inline in prompt",
+    "DM-SCIENCE-01": "fixture described inline in prompt",
+    "DM-SECURITY-02": "fixture described inline in prompt",
+    "DM-SOFTWARE-01": "fixture described inline in prompt",
+    "DM-SOFTWARE-02": "fixture described inline in prompt",
+    "DM-WRITING-01": "fixture described inline in prompt",
+    "FC-CONTEXT-01": "fixture described inline in prompt",
+    "FC-CONTEXT-02": "fixture described inline in prompt",
+    "FC-CONTEXT-03": "fixture described inline in prompt",
+    "FC-REC-01": "fixture described inline in prompt",
+    "FC-STRAT-01": "fixture described inline in prompt",
+    "FC-STRAT-02": "fixture described inline in prompt",
+    "FC-VER-03": "fixture described inline in prompt",
 }
 
 # NM-12 used to be on this list, recorded as "names the files the user asks the

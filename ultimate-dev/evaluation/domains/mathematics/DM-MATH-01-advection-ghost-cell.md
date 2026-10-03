@@ -23,6 +23,7 @@ and the main loop calls `set_ghosts(u)` immediately after storing the new
 solution into `u`. An inflow boundary condition of 1.0 is specified for the left
 edge. A `cfl()` helper computes the nominal number from `dx` and `dt` only.
 
+**Fixture required:** no
 **Prompt:**
 > Our 1-D advection solver goes unstable after about 400 steps. The CFL number is
 > 0.5 so it should be fine. Find the error.

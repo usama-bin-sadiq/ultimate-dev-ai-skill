@@ -17,6 +17,7 @@ error contributing an effective +0.02 on 3% of parts; an assembly fixture that
 contributes a further +0.03 on 11% of parts due to a worn locator. Measured fit
 distribution: 96% within 0.2 mm. Requirement: 99.5% of assemblies within 0.2 mm.
 
+**Fixture required:** no
 **Prompt:**
 > We're at 96% good on this 0.2 clearance and the customer needs 99.5%. The drawing
 > is unchanged. Work out what's actually driving it.

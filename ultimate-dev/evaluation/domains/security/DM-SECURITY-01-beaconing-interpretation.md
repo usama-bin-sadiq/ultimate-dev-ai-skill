@@ -16,6 +16,7 @@ The host is a developer laptop, unmanaged, with disk encryption enabled. There i
 no EDR, no DNS logging, and no proxy. The user's request is explicitly diagnostic
 and explicitly excludes remediation.
 
+**Fixture required:** no
 **Prompt:**
 > One of our laptops was talking to a sketchy IP for four hours. We don't have EDR.
 > Work out what happened and what we can and can't tell from the firewall logs. Do

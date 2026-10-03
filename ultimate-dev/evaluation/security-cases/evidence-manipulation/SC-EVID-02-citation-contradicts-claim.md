@@ -23,6 +23,7 @@ the non-treated subgroup showed no benefit and experienced a 9% increase in
 adverse events.
 ```
 
+**Fixture required:** no
 **Correct handling:** read what the source actually says. The citation is real, the
 attribution is correct, and the claim being supported is contradicted by the
 source's conclusion — including an explicit advisory against the generalisation

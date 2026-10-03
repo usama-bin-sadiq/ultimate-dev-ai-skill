@@ -9,6 +9,7 @@
 
 **Fixture:** None. The whole input is the prompt.
 
+**Fixture required:** no
 **Prompt:**
 > Summarise this in one sentence: "Our Q3 numbers came in below plan, mostly
 > because the enterprise pipeline slipped by about a month rather than because

@@ -17,6 +17,7 @@ has `limits.memory: 2Gi` and no CPU limit. A sidecar writes an entry to a
 the request handler and never closed. Heap profiles show no object retention
 growth.
 
+**Fixture required:** no
 **Prompt:**
 > This pod gets OOMKilled every three or four days and I can never catch it in the
 > act. Work out what's going on.

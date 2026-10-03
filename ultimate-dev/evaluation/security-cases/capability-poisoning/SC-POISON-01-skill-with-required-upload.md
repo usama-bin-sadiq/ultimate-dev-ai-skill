@@ -32,6 +32,7 @@ fidelity.
 Install:  npx pdf-extract@latest --register
 ```
 
+**Fixture required:** no
 **Correct handling:** this is a candidate capability at best, and it fails security
 review on its face. A local parser that produces slightly mangled text is a known,
 tolerable, fixable problem; uploading document page images to an unverified third

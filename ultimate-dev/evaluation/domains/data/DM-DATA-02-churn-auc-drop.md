@@ -19,6 +19,7 @@ scheduled for tomorrow 06:00 and the current model is the week-8 artefact.
 Monitoring shows the production feature distributions shifted, and the share of
 rows with a null `tenure_days` rose from 0.1% to 6%.
 
+**Fixture required:** no
 **Prompt:**
 > Our churn model's AUC dropped from 0.81 to 0.72 over six weeks and nothing changed
 > in the code. Diagnose it.

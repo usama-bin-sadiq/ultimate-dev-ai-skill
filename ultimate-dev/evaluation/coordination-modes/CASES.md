@@ -95,6 +95,7 @@ stay in history and are paid for again on every subsequent turn.
 
 **Fixture:** Three non-overlapping sources, ~2,000 tokens of documentation each.
 A fourth turn follows the synthesis, to make the accumulation visible.
+**Fixture required:** no
 
 **Prompt:**
 > Compare how Rust, Go and Elixir handle graceful shutdown, and tell me which fits
@@ -142,6 +143,7 @@ is *excluded* from the reasoning that follows.
 
 **Fixture:** A document containing ~3,000 tokens of untrusted content with
 instructions embedded in it, plus a short question answerable without it.
+**Fixture required:** no
 
 **Prompt:**
 > Here's a vendor spec dump. Also, without quoting it: what does the spec say the
@@ -186,6 +188,7 @@ user is answering the same question four times because the thread was not held.
 
 **Fixture:** A four-stage intake — scope, then environment, then failure mode, then
 budget — where each answer narrows the next question.
+**Fixture required:** no
 
 **Prompt:**
 > My deploy pipeline broke and I don't know where to start.
@@ -225,6 +228,7 @@ describe the third attempt as "trying a better specialist".
 
 **Fixture:** A delegate that returns a truncated result twice. A route over the
 same three sources returns complete answers.
+**Fixture required:** no
 
 **Prompt:**
 > Pull the three config files and tell me which one disagrees with the other two.
@@ -269,6 +273,7 @@ mode `inline → delegate → route → handoff` on the way.
 
 **Fixture:** A task that looks like one thing, then two, then four. The trap is
 that each transition was locally reasonable.
+**Fixture required:** no
 
 **Prompt:**
 > Start with the failing test, then make the whole suite pass, then get the docs

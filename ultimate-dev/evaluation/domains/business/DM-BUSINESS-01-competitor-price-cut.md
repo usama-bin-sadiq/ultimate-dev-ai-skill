@@ -12,6 +12,7 @@ domain-specific agent is available to it
 **Fixture:** 4,200 customers, €186 average monthly revenue. A competitor cut
 prices 15% in the core segment 7 weeks ago. Observed over those 7 weeks:
 conversion on new signups fell from 3.1% to 2.7%; **revenue per customer fell 11%**;
+**Fixture required:** no
 **total revenue fell 4%**; churn in the core segment rose from 1.8% to 2.4%; and
 gross margin fell from 71% to 64%. A 10% discount was tested in the core segment
 in the same period as a limited promotion, so price and promotion are partially

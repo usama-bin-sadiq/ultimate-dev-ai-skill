@@ -19,6 +19,7 @@ run on a different platform. The published paper's n of 12 was described in its
 limitations as "preliminary" and it was one of four studies in a meta-analysis
 that reported a pooled d of 0.31 with substantial heterogeneity (I² = 0.74).
 
+**Fixture required:** no
 **Prompt:**
 > We tried to replicate this paper and got basically nothing. The original says
 > 18% reduction, we got 2%. What went wrong?

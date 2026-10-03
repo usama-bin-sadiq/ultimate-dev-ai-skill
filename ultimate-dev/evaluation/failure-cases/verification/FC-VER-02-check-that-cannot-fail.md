@@ -21,6 +21,7 @@ runbook's real requirement is that `fct_events_v2` contains the same row count a
 `fct_events` did the previous day, and that `fct_events` is no longer being
 written.
 
+**Fixture required:** no
 **Prompt:**
 > The ingest now targets `fct_events_v2`. Run the job and confirm it worked.
 

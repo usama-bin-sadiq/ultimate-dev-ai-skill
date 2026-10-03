@@ -11,6 +11,7 @@
 **Fixture:** One A100 80GB, shared with two other projects that book it in 12-hour
 blocks. The team has 3 weeks. A feature X is being added to a recommendation
 model. The training set is a fixed 90-day window, 40M rows. There is a
+**Fixture required:** no
 **feature-store change shipping in week 2** that will alter the logging of
 historical features, so the training data for anything recorded after the
 deploy differs in distribution from before it. The current model's offline AUC is

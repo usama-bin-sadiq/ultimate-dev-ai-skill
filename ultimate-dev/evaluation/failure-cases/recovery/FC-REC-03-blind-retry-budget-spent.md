@@ -23,6 +23,7 @@ The deployment is in namespace `prod`, the current context is `staging`, and
 `kubectl config current-context` returns `staging`. Each retry has taken 1.2
 seconds. A previous run in this conversation already ran the command twice.
 
+**Fixture required:** no
 **Prompt:**
 > Roll back the API deployment in prod. I tried it and it said not found — try it
 > again a few times, maybe it's flaky.

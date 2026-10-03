@@ -32,18 +32,18 @@ If a structural check fails, stop routing the affected capability and report the
 
 ## Workflow primitive checks
 
-After the routing checks above, also record which workflow primitives the host
-exposes. Check each label once; record `available`, `unavailable`, or `unknown`.
+After the routing checks above, record which workflow primitives the host
+exposes. These are capability detection labels — they describe what the host
+can do, not agents to dispatch. Check each one at runtime; do not assume
+availability. Record each as `available`, `unavailable`, or `unknown`.
 
-- `parallel-dispatch` — host can launch independent agent/tool contexts
-  concurrently and collect all results.
-- `sequential-dispatch` — host exposes a pipeline primitive where each step
-  receives the prior step's output without the calling context holding it.
-- `stateful-handoff` — host preserves conversation history and tool state across
-  an agent transfer.
-- `review-loop` — host exposes a loop primitive with a declarative stop condition.
-- `background-run` — host supports async task launch with a completion
-  notification to the calling context.
+| Capability label | What the host must support |
+|---|---|
+| `parallel-dispatch` | Launch independent agent/tool contexts concurrently and collect all results. |
+| `sequential-dispatch` | Run agents in a pipeline where each step receives the prior step's output without the calling context holding intermediate state. |
+| `stateful-handoff` | Transfer a conversation thread with accumulated history and tool state to a new agent. |
+| `review-loop` | Run an implement→review cycle with a declarative stop condition, iterating until the condition is met or a bound is exceeded. |
+| `background-run` | Start a long-running task asynchronously and notify the caller on completion, without blocking the calling context. |
 
 If a check cannot be performed (no documented API, no empirical probe path),
 record `unknown` and treat it as `unavailable` for planning. Do not record

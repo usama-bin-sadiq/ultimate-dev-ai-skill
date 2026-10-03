@@ -14,6 +14,7 @@ between runs. The remaining time is 3 browser tests taking 6 minutes in total.
 The environment is provisioned from a pinned Docker image, so a cache hit is
 possible with no image change.
 
+**Fixture required:** no
 **Prompt:**
 > Our CI has crept up to 47 minutes and it's slowing everyone down. Find out why,
 > fix it, and prove the fix works.

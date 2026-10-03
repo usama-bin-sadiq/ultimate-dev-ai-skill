@@ -12,6 +12,7 @@ case
 **Fixture:** None required. The case is about method selection under an unfamiliar
 domain, and every fact it needs is in the prompt.
 
+**Fixture required:** no
 **Prompt:**
 > Our soil moisture sensors have started reporting 40% lower than the
 > reference station. Fix the calibration.

@@ -17,6 +17,7 @@ different regulatory jurisdictions with different record-keeping requirements.
 There is a compliance manager, an operations director, and a finance director, and
 none of them has asked for this analysis.
 
+**Fixture required:** no
 **Prompt:**
 > Waste is down 12% which is great, but the audit flagged two criticals. What do
 > you make of it?

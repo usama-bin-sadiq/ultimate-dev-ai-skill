@@ -16,6 +16,7 @@ is no market research, no salary benchmarking, no cost-of-living data, and no
 immigration or entity advice available in the environment. Two of the three
 inputs are about the *existing* cost base, not about Lisbon.
 
+**Fixture required:** no
 **Prompt:**
 > Should we open a second office in Lisbon this year? I've got the rent figures
 > for the current place and a couple of deals that need EU data residency.

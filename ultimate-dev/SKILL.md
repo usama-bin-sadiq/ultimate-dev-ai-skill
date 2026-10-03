@@ -297,6 +297,7 @@ per-complexity dispatch counts, `agents/_shared/agent-compatibility.md` to adapt
 when the host is smaller than the plan assumed. Two rules survive every host: never
 read a whole role file unless you are dispatching it, and never pay for a
 delegation that returns nothing this context could not have produced.
+The catalog holds 286 role files; load a role only when you are about to dispatch it.
 `references/context-system.md`.
 
 ## Step 4 — coordination mode, then capability

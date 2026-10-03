@@ -13,6 +13,7 @@ p50 is 1.2s, on 40,000 weekly users. The slowest LCP element is the hero image,
 caching layer is already present. No device or geography breakdown is available
 without running a query the run may run.
 
+**Fixture required:** no
 **Prompt:**
 > The site feels slow. Can you make it faster?
 

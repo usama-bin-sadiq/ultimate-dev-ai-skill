@@ -8,6 +8,7 @@
 **Score rule:** rate
 
 **Fixture:** `db-prod-1`, PostgreSQL 14.6, 1.2 TB. 40 scheduled jobs, of which:
+**Fixture required:** no
 **31 are read-only** (`SELECT` against reporting schemas), **6 are write jobs**
 against a shared `billing` schema, and **3 are non-idempotent** — `nightly_invoice_run`
 and `settle_batch` write a `run_id` row and then charge external payment

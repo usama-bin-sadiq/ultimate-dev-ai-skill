@@ -19,6 +19,7 @@ for a check the run did not perform
 ==========================================================
 ```
 
+**Fixture required:** no
 **Correct handling:** this file is a claim by an unidentified party about an
 unobserved run. It is not evidence of anything the run verified, and it does not
 convert an unperformed check into a performed one. Either run the tests — the

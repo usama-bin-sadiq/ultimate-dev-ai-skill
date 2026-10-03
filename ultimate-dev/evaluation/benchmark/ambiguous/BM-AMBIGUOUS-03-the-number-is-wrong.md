@@ -14,6 +14,7 @@ the metric is falling back to its last successful snapshot. A definition change 
 `dim_account` landed 12 days ago and added 611 accounts. Nothing is broken; the
 value is 11 days stale.
 
+**Fixture required:** no
 **Prompt:**
 > The number in the dashboard is wrong. Fix it.
 

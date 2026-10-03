@@ -16,6 +16,7 @@ controller personal data. A later-signed agreement between the same parties
 controls over an earlier one on the same subject. Page numbers are known to the
 fixture but the run must find them.
 
+**Fixture required:** no
 **Prompt:**
 > Is it safe for us to terminate this vendor for convenience with 30 days' notice?
 

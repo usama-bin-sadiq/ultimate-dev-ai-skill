@@ -15,6 +15,7 @@ the extract query returns zero rows for a missing date without error. The task's
 data is present in the partner's system and the file can be re-requested. A retry
 of the task will run the downstream transform as well.
 
+**Fixture required:** no
 **Prompt:**
 > The warehouse has no events for last night. The ingest job says it succeeded.
 > Find out what happened and whether we can get the data back.
