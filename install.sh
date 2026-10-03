@@ -529,6 +529,13 @@ if [ -e "$DEST" ]; then
   # most wants to see the plan before deciding.
   if [ "$DRY_RUN" -eq 1 ]; then
     log "dry run:     ${DEST} exists and differs; a real run would ask before replacing it"
+    if [ "$WRITE_HINTS" -eq 1 ]; then
+      _dry_parent="$(dirname -- "$DEST")"
+      log "dry run:     would write discovery hint to ${_dry_parent}/AGENTS.md (if absent)"
+      if [ "$_dry_parent" = "${HOME}/.claude" ]; then
+        log "dry run:     would write discovery hint to ${HOME}/.claude/CLAUDE.md (if absent)"
+      fi
+    fi
     exit 0
   fi
   if [ "$YES" -eq 1 ]; then
