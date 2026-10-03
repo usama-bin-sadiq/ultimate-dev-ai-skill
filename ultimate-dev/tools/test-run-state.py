@@ -80,6 +80,21 @@ already named the gap and answered it with "re-calibrate", which is not executab
   S35 the same drop on a small host is free, because it usually is right
   S35 an out-of-vocabulary host in the state file is refused
   S36 no constant in run-state.py is declared and read by nothing
+
+Revision 6 adds process log enforcement and verification-kind tracking.
+`verification_kind` is the sixth field of a work unit at R2+, recording which
+of the three check kinds was used. `finish --status completed` is refused at R2+
+when any closed unit lacks it. `check` at R2+ with closed steps and no log
+entries emits a problem (R3/R4: error wording). `log --summary` prints a compact
+numbered log for delivery inclusion.
+
+  S38 step --verification-kind is accepted and stored
+  S39 at R2, finish --status completed is refused when a closed step lacks
+      verification_kind
+  S40 at R2 with closed steps and empty log, check emits a problem
+  S41 at R3 with closed steps and empty log, check emits a problem with
+      "error" wording
+  S42 log --summary prints compact P01 — ... format
 """
 
 from __future__ import annotations
@@ -211,7 +226,7 @@ BASE = {
                "expect": "it is done", "outcome": "done",
                "capability": "inline", "verify": "read it back",
                "at": "now", "closed_at": "now"}],
-    "log": [],
+    "log": [{"n": "P01", "kind": "execute-inline", "what": "did the work", "at": "now"}],
     "completion": None,
     "host": "mid", "exceeds_ceiling": None, "host_history": [],
     "criteria": [], "dispatch": [], "recoveries": [], "blocks": [],
@@ -936,7 +951,8 @@ check("S32 and it says why: a run with no criterion stops when the work looks do
       "acceptance criterion" in out, out[:300])
 
 s32("step", "--doing", "edit", "--precondition", "p", "--expect", "e",
-     "--capability", "inline", "--verify", "read it back")
+     "--capability", "inline", "--verify", "read it back",
+     "--verification-kind", "evidence-check")
 code, out = s32("finish", "--status", "completed")
 check("S32 and refused while the work unit is still open", code != 0, f"exit {code}")
 check("S32 naming the open unit", "still open" in out, out[:300])
@@ -947,6 +963,7 @@ s32("record", "--observation", "read the file back, 42 lines")
 code, out = s32("finish", "--status", "completed")
 check("S32 and refused while the criterion is open", code != 0, f"exit {code}")
 
+s32("log", "--kind", "execute-inline", "--what", "wrote the file and read it back")
 s32("satisfy", "--what", "the file has the new line", "--evidence", "OBS-1")
 code, out = s32("finish", "--status", "completed")
 check("S32 and accepted once every condition holds", code == 0,
@@ -1117,6 +1134,7 @@ def _wellformed(dir_: pathlib.Path, *extra: str) -> None:
     s34("step", "--doing", "d", "--precondition", "p", "--expect", "e",
          "--capability", "c", "--verify", "v")
     s34("step", "--close", "--outcome", "o")
+    s34("log", "--kind", "execute-inline", "--what", "did the work")
     s34("require", "--what", "c1")
     s34("record", "--observation", "o")
     s34("satisfy", "--what", "c1", "--evidence", "OBS-1")
@@ -1199,6 +1217,7 @@ s35("init", "--rung", "R3", "--host", "small", "--objective", "o",
 s35("step", "--doing", "d", "--precondition", "p", "--expect", "e",
      "--capability", "c", "--verify", "v")
 s35("step", "--close", "--outcome", "o")
+s35("log", "--kind", "execute-inline", "--what", "did the work")
 s35("require", "--what", "c1")
 s35("record", "--observation", "o")
 s35("satisfy", "--what", "c1", "--evidence", "OBS-1")
@@ -1323,6 +1342,7 @@ def _fresh(tag: str, rung: str = "R2", host: str = "mid", with_step: bool | None
         run("step", "--doing", "d", "--precondition", "p", "--expect", "e",
             "--capability", "inline", "--verify", "v")
         run("step", "--close", "--outcome", "o")
+        run("log", "--kind", "execute-inline", "--what", "did the work")
         run("require", "--what", "c1")
         run("record", "--observation", "o")
         run("satisfy", "--what", "c1", "--evidence", "OBS-1")
@@ -1597,6 +1617,172 @@ check("S37 §45 and a finding behind 'yes, but' is accepted too",
 
 for _d in _DIRS:
     shutil.rmtree(_d, ignore_errors=True)
+
+# --- S38-S42: process log enforcement and verification-kind tracking ----------
+#
+# S38  step --verification-kind is accepted and stored
+# S39  at R2, finish --status completed is refused when a closed step lacks
+#      verification_kind
+# S40  at R2 with closed steps and empty log, check emits a problem
+# S41  at R3 with closed steps and empty log, check emits a problem with
+#      "error" wording
+# S42  log --summary prints compact P01 — ... format
+
+# S38
+_s38 = pathlib.Path(tempfile.mkdtemp())
+
+
+def s38(*argv: str) -> tuple[int, str]:
+    import io
+    old_argv, old_err, old_out = sys.argv, sys.stderr, sys.stdout
+    buf = io.StringIO()
+    sys.argv = ["run-state.py", "--state-dir", str(_s38)] + list(argv)
+    sys.stderr = sys.stdout = buf
+    try:
+        try:
+            code = rs.main()
+        except SystemExit as e:
+            code = int(e.code or 0)
+    finally:
+        sys.argv, sys.stderr, sys.stdout = old_argv, old_err, old_out
+    return code, buf.getvalue()
+
+
+s38("init", "--rung", "R2", "--objective", "vk test",
+     "--escalate-on", "a", "--de-escalate-on", "b", "--why", "w", "--until", "u")
+code, out = s38("step", "--doing", "edit the file", "--precondition", "file exists",
+                "--expect", "file is updated", "--capability", "inline",
+                "--verify", "read it back", "--verification-kind", "evidence-check")
+check("S38 step --verification-kind is accepted", code == 0, f"exit {code}: {out[:160]}")
+_st38 = json.loads((pathlib.Path(_s38) / "run-state.json").read_text(encoding="utf-8"))
+check("S38 and verification_kind is stored in the step dict",
+      _st38["steps"][-1].get("verification_kind") == "evidence-check",
+      json.dumps(_st38["steps"][-1]))
+
+shutil.rmtree(_s38, ignore_errors=True)
+
+# S39
+_s39, s39 = _fresh("S39", rung="R2")
+# The step opened by _fresh has no --verification-kind. finish --status completed
+# should refuse because the closed unit lacks it.
+code, out = s39("finish", "--status", "completed")
+check("S39 finish --status completed is refused when a closed step lacks verification_kind",
+      code != 0, f"exit {code}: {out[:200]}")
+check("S39 and the message names the missing verification_kind",
+      "verification_kind" in out, out[:300])
+
+shutil.rmtree(_s39, ignore_errors=True)
+
+# S40
+_s40 = pathlib.Path(tempfile.mkdtemp())
+
+
+def s40(*argv: str) -> tuple[int, str]:
+    import io
+    old_argv, old_err, old_out = sys.argv, sys.stderr, sys.stdout
+    buf = io.StringIO()
+    sys.argv = ["run-state.py", "--state-dir", str(_s40)] + list(argv)
+    sys.stderr = sys.stdout = buf
+    try:
+        try:
+            code = rs.main()
+        except SystemExit as e:
+            code = int(e.code or 0)
+    finally:
+        sys.argv, sys.stderr, sys.stdout = old_argv, old_err, old_out
+    return code, buf.getvalue()
+
+
+s40("init", "--rung", "R2", "--objective", "log enforcement R2",
+     "--escalate-on", "a", "--de-escalate-on", "b", "--why", "w", "--until", "u")
+s40("step", "--doing", "d", "--precondition", "p", "--expect", "e",
+     "--capability", "inline", "--verify", "v")
+s40("step", "--close", "--outcome", "o")
+# No log entries — check must complain
+code, out = s40("check")
+check("S40 at R2 with closed steps and empty log, check emits a problem",
+      code != 0, f"exit {code}: {out[:200]}")
+check("S40 and the problem mentions the process log",
+      "process log" in out or "log at least" in out.lower(), out[:300])
+
+shutil.rmtree(_s40, ignore_errors=True)
+
+# S41
+_s41 = pathlib.Path(tempfile.mkdtemp())
+
+
+def s41(*argv: str) -> tuple[int, str]:
+    import io
+    old_argv, old_err, old_out = sys.argv, sys.stderr, sys.stdout
+    buf = io.StringIO()
+    sys.argv = ["run-state.py", "--state-dir", str(_s41)] + list(argv)
+    sys.stderr = sys.stdout = buf
+    try:
+        try:
+            code = rs.main()
+        except SystemExit as e:
+            code = int(e.code or 0)
+    finally:
+        sys.argv, sys.stderr, sys.stdout = old_argv, old_err, old_out
+    return code, buf.getvalue()
+
+
+s41("init", "--rung", "R3", "--objective", "log enforcement R3",
+     "--escalate-on", "a", "--de-escalate-on", "b", "--why", "w", "--until", "u")
+s41("step", "--doing", "d", "--precondition", "p", "--expect", "e",
+     "--capability", "inline", "--verify", "v")
+s41("step", "--close", "--outcome", "o")
+# No log entries — check must complain with "error" wording
+code, out = s41("check")
+check("S41 at R3 with closed steps and empty log, check emits a problem",
+      code != 0, f"exit {code}: {out[:200]}")
+check("S41 and the problem uses 'error' wording for R3",
+      "error" in out.lower(), out[:300])
+
+shutil.rmtree(_s41, ignore_errors=True)
+
+# S42
+_s42 = pathlib.Path(tempfile.mkdtemp())
+
+
+def s42(*argv: str) -> tuple[int, str]:
+    import io
+    old_argv, old_err, old_out = sys.argv, sys.stderr, sys.stdout
+    buf = io.StringIO()
+    sys.argv = ["run-state.py", "--state-dir", str(_s42)] + list(argv)
+    sys.stderr = sys.stdout = buf
+    try:
+        try:
+            code = rs.main()
+        except SystemExit as e:
+            code = int(e.code or 0)
+    finally:
+        sys.argv, sys.stderr, sys.stdout = old_argv, old_err, old_out
+    return code, buf.getvalue()
+
+
+s42("init", "--rung", "R1", "--objective", "summary test")
+s42("log", "--kind", "receive", "--what", "the objective arrived")
+s42("log", "--kind", "execute-inline", "--what", "ran the migration")
+s42("log", "--kind", "deliver", "--what", "filed the report")
+code, out = s42("log", "--summary")
+check("S42 log --summary exits 0", code == 0, f"exit {code}: {out[:160]}")
+check("S42 and prints compact P01 — ... format",
+      "P01" in out and " — " in out, out[:300])
+check("S42 and includes the what text without the kind column",
+      "ran the migration" in out, out[:300])
+# Verify the format is exactly 'P01 — what' (no kind column like --list)
+check("S42 and does not include the kind column (RECEIVE, etc.)",
+      "RECEIVE" not in out and "EXECUTE-INLINE" not in out, out[:300])
+
+# --summary on an empty log
+s42("init", "--rung", "R1", "--objective", "empty", "--force")
+code, out = s42("log", "--summary")
+check("S42 --summary on an empty log prints the empty message",
+      code == 0 and "empty" in out, f"exit {code}: {out[:160]}")
+
+shutil.rmtree(_s42, ignore_errors=True)
+
 
 if FAILURES:
     print(f"\nFAIL  {len(FAILURES)} case(s) failed: {', '.join(FAILURES)}")

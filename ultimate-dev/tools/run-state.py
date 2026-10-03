@@ -1052,6 +1052,7 @@ def cmd_step(args) -> int:
         "expect": args.expect,
         "capability": (getattr(args, "capability", "") or "").strip() or None,
         "verify": (getattr(args, "verify", "") or "").strip() or None,
+        "verification_kind": (getattr(args, "verification_kind", "") or "").strip() or None,
         "at": now(),
         "closed_at": None,
         "outcome": None,
@@ -1218,6 +1219,16 @@ def cmd_log(args) -> int:
         for e in entries:
             print(f"  {e.get('n'):>6}  {str(e.get('kind')).upper():<12}  "
                   f"{e.get('what')}")
+        return 0
+
+    if getattr(args, "summary", False):
+        if not entries:
+            print("  process log is empty")
+            return 0
+        for e in entries:
+            n = str(e.get("n") or "").strip()
+            what = str(e.get("what") or "").strip()
+            print(f"  {n} — {what}")
         return 0
 
     kind = (args.kind or "").strip().lower()
@@ -1648,6 +1659,7 @@ def cmd_finish(args) -> int:
     which happened.
     """
     state = load(args)
+    rung_code = str(state.get("rung") or "").split(" ", 1)[0].upper()
 
     status = (args.status or "").strip().lower()
     if status not in COMPLETION_STATUSES:
@@ -1695,6 +1707,27 @@ def cmd_finish(args) -> int:
                 f"capability/capabilities still in flight: {', '.join(in_flight)}. "
                 f"A capability chosen and never observed is a delegation "
                 f"described rather than performed.")
+        if rung_code in {"R2", "R3", "R4"}:
+            missing_vk = [s for s in state.get("steps", [])
+                          if isinstance(s, dict)
+                          and s.get("outcome") not in (None, "superseded")
+                          and not (s.get("verification_kind") or "").strip()]
+            if missing_vk:
+                blockers.append(
+                    f"{len(missing_vk)} closed work unit(s) have no verification_kind recorded: "
+                    + ", ".join(
+                        f"step {s.get('n')} ({s.get('doing')!r})"
+                        for s in missing_vk[:3]
+                    )
+                    + ". At R2+, each closed unit needs a named check kind "
+                      "(evidence-check | validation-check | independent-check). "
+                      "Set it with `step --doing ... --verification-kind evidence-check`.")
+        if rung_code in {"R2", "R3", "R4"}:
+            log_entries = state.get("log") or []
+            if not log_entries:
+                blockers.append(
+                    "No process log entries recorded. At R2+, log at least one "
+                    "entry per work unit with `log --kind execute-inline --what ...`.")
         if blockers:
             print("finish: refusing `completed`.", file=sys.stderr)
             for b in blockers:
@@ -2701,6 +2734,28 @@ def cmd_check(args) -> int:
             f"deliverable was recorded there. Either write it and `deliver "
             f"--path ...`, or record why it was not produced.")
 
+    # --- process log enforcement at R2+ ---
+    #
+    # A run that has closed work units and recorded nothing in the process log has
+    # described its work without logging it. At R2 this is a finding; at R3/R4
+    # it is an error because the log is the record a reader cannot reconstruct.
+    if rung_code in {"R2", "R3", "R4"}:
+        closed_steps = [s for s in (state.get("steps") or [])
+                        if isinstance(s, dict) and s.get("outcome") not in (None,)]
+        log_entries = state.get("log") or []
+        if closed_steps and not log_entries:
+            if rung_code in {"R3", "R4"}:
+                problems.append(
+                    f"error: rung {rung_code} has {len(closed_steps)} closed work "
+                    f"unit(s) and no process log entries. At R3/R4 the process log "
+                    f"is required: log at least one entry per work unit with "
+                    f"`log --kind execute-inline --what ...`.")
+            else:
+                problems.append(
+                    f"rung {rung_code} has {len(closed_steps)} closed work unit(s) "
+                    f"and no process log entries. Log at least one entry per work "
+                    f"unit with `log --kind execute-inline --what ...`.")
+
     # --- the acceptance gate ---
     #
     # The checks above police the *shape* of a run: was the mode justified, is the
@@ -2934,6 +2989,8 @@ def main() -> int:
                    help="what does the work (skill, tool, subagent, or 'inline')")
     s.add_argument("--verify", default="",
                    help="how you will know the expectation held (required at R2+)")
+    s.add_argument("--verification-kind", default="",
+                   help="which of the three check kinds was used: evidence-check | validation-check | independent-check")
     s.add_argument("--close", action="store_true",
                    help="close the open step instead of opening a new one")
     s.add_argument("--outcome", default="",
@@ -2949,6 +3006,8 @@ def main() -> int:
     s.add_argument("--under", default="",
                    help="hang this off a logged step as a substep, e.g. P03")
     s.add_argument("--list", action="store_true", help="print the whole log")
+    s.add_argument("--summary", action="store_true",
+                   help="print compact numbered process log for inclusion in a delivery")
     s.set_defaults(fn=cmd_log)
 
     s = sub.add_parser("context", help="record context loaded or deliberately dropped",
