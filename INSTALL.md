@@ -89,8 +89,20 @@ Copy the directory to wherever your runtime looks for skills:
 
 | Scope | Common locations |
 |---|---|
-| User | `~/.agents/skills/`, `~/.claude/skills/`, `~/.config/opencode/skills/` |
-| Project | `./.agents/skills/`, `./.claude/skills/` |
+| User (Kiro / Agents) | `~/.agents/skills/` |
+| User (Claude Code) | `~/.claude/skills/` |
+| User (OpenCode) | `~/.config/opencode/skills/`, `~/.local/share/opencode/skills/` |
+| User (Gemini CLI) | `~/.config/gemini/skills/`, `~/.gemini/skills/` |
+| User (Cursor) | `~/.cursor/skills/`, `~/.cursor/extensions/skills/` |
+| User (Windsurf / Codeium) | `~/.codeium/skills/`, `~/.windsurf/skills/` |
+| User (Amazon Q) | `~/.aws/amazonq/skills/`, `~/.q/skills/` |
+| User (Continue.dev) | `~/.continue/skills/` |
+| User (GitHub Copilot) | `~/.github-copilot/skills/` |
+| User (Aider) | `~/.aider/skills/` |
+| User (Goose) | `~/.config/goose/skills/` |
+| User (Amp) | `~/.config/amp/skills/` |
+| User (Zed) | `~/.config/zed/skills/` |
+| Project | `./.agents/skills/`, `./.claude/skills/`, `./.cursor/skills/`, `./.windsurf/skills/`, `./.continue/skills/`, `./.amazonq/skills/` |
 
 ```bash
 mkdir -p ~/.agents/skills
@@ -98,6 +110,27 @@ cp -R ultimate-dev ~/.agents/skills/ultimate-dev
 ```
 
 Then restart the runtime so it rediscovers skills.
+
+### Discovery hints
+
+The installer can write minimal hint files (`AGENTS.md`, `CLAUDE.md`) next to the
+installed skill directory so that runtimes that probe for those files discover the
+skill automatically:
+
+```bash
+./install.sh --write-discovery-hints
+```
+
+This only writes a file when none exists — it never overwrites content you have
+already placed there. The files contain a single heading and one line pointing to
+the `skills/` directory.
+
+Pass `--dry-run` together with `--write-discovery-hints` to see what would be
+written without changing anything:
+
+```bash
+./install.sh --dry-run --global --write-discovery-hints
+```
 
 ## Verify
 

@@ -30,10 +30,28 @@ GLOBAL_CANDIDATES=(
   "${HOME}/.claude/skills"
   "${HOME}/.config/opencode/skills"
   "${XDG_DATA_HOME:-$HOME/.local/share}/opencode/skills"
+  "${HOME}/.config/gemini/skills"
+  "${HOME}/.gemini/skills"
+  "${HOME}/.cursor/skills"
+  "${HOME}/.cursor/extensions/skills"
+  "${HOME}/.codeium/skills"
+  "${HOME}/.windsurf/skills"
+  "${HOME}/.aws/amazonq/skills"
+  "${HOME}/.q/skills"
+  "${HOME}/.continue/skills"
+  "${HOME}/.github-copilot/skills"
+  "${HOME}/.aider/skills"
+  "${HOME}/.config/goose/skills"
+  "${HOME}/.config/amp/skills"
+  "${HOME}/.config/zed/skills"
 )
 PROJECT_CANDIDATES=(
   ".agents/skills"
   ".claude/skills"
+  ".cursor/skills"
+  ".windsurf/skills"
+  ".continue/skills"
+  ".amazonq/skills"
 )
 
 MODE=""
@@ -41,6 +59,7 @@ TARGET=""
 YES=0
 PRUNE=1
 DRY_RUN=0
+WRITE_HINTS=0
 BUNDLE_OUT="dist"
 BUNDLE_ZIP=0
 FORCE_INTERACTIVE=0
@@ -65,6 +84,8 @@ usage: install.sh [options]
   --check-bundle        verify the bundle would be sound, write nothing
   --yes                 do not prompt
   --dry-run             print what would happen, change nothing
+  --write-discovery-hints  write minimal discovery hint files (AGENTS.md,
+                        CLAUDE.md) to the parent of each install target
   -i, --interactive     ask where to install and what to include, even on a tty
   -h, --help            this message
 
@@ -174,6 +195,49 @@ copy_tree() {
   fi
 }
 
+# Write minimal discovery hint files so runtimes that probe for AGENTS.md or
+# CLAUDE.md can find the skill without manual configuration. Only writes when
+# the file is absent -- never overwrites existing content, because the user may
+# have placed their own content there.
+write_discovery_hints() {
+  local target="$1"
+  local parent; parent="$(dirname -- "$target")"
+
+  _maybe_write() {
+    local file="$1" content="$2"
+    if [ ! -f "$file" ]; then
+      printf '%s\n' "$content" > "$file"
+      log "hint:        wrote ${file}"
+    fi
+  }
+
+  local agents_dir="${HOME}/.agents"
+  if [ "$parent" = "$agents_dir" ]; then
+    local agents_md="${agents_dir}/AGENTS.md"
+    if [ ! -f "$agents_md" ]; then
+      _maybe_write "$agents_md" "# Agent Skills
+The ultimate-dev skill is installed in skills/"
+    fi
+  fi
+
+  local claude_dir="${HOME}/.claude"
+  if [ "$parent" = "$claude_dir" ]; then
+    local claude_md="${claude_dir}/CLAUDE.md"
+    if [ ! -f "$claude_md" ]; then
+      _maybe_write "$claude_md" "# Agent Skills
+The ultimate-dev skill is installed in skills/"
+    fi
+  fi
+
+  if [ "$parent" != "$agents_dir" ] && [ "$parent" != "$claude_dir" ]; then
+    local hint_file="${parent}/AGENTS.md"
+    if [ ! -f "$hint_file" ]; then
+      _maybe_write "$hint_file" "# Agent Skills
+The ultimate-dev skill is installed in skills/"
+    fi
+  fi
+}
+
 # Platform detection. The script is POSIX bash and that is a real constraint on
 # Windows: it runs under WSL, Git Bash, or MSYS, and nowhere else. Saying which,
 # and saying what to do when it is not one of those, is better than failing later
@@ -228,6 +292,7 @@ while [ $# -gt 0 ]; do
     --check-bundle) MODE="bundle-check"; EXPLICIT=1; shift ;;
     --yes|-y)   YES=1; shift ;;
     --dry-run)  DRY_RUN=1; shift ;;
+    --write-discovery-hints) WRITE_HINTS=1; shift ;;
     -i|--interactive) FORCE_INTERACTIVE=1; shift ;;
     -h|--help)  usage; exit 0 ;;
     *)          die "unknown option: $1 (try --help)" ;;
@@ -486,6 +551,13 @@ if [ "$DRY_RUN" -eq 1 ]; then
   else
     log "dry run:     keeping documentation; ${ALWAYS_PRUNE[*]} still excluded"
   fi
+  if [ "$WRITE_HINTS" -eq 1 ]; then
+    _dry_parent="$(dirname -- "$DEST")"
+    log "dry run:     would write discovery hint to ${_dry_parent}/AGENTS.md (if absent)"
+    if [ "$_dry_parent" = "${HOME}/.claude" ]; then
+      log "dry run:     would write discovery hint to ${HOME}/.claude/CLAUDE.md (if absent)"
+    fi
+  fi
   exit 0
 fi
 
@@ -520,6 +592,11 @@ fi
 log ""
 log "installed to ${DEST}"
 log ""
+
+if [ "$WRITE_HINTS" -eq 1 ] && [ "$DRY_RUN" -eq 0 ]; then
+  write_discovery_hints "$DEST"
+fi
+
 log "Next:"
 log "  1. Restart the agent runtime so it rediscovers skills."
 log "  2. Confirm discovery, then try a request that needs the kernel —"
