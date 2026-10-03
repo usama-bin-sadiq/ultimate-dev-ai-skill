@@ -153,7 +153,17 @@ The ledger is for orchestration and final reporting; do not dump raw child trans
 - Skill load failure → continue with the closest applicable agent workflow and report the missing skill.
 - Tool failure → preserve the real error and continue only where dependencies allow.
 
-## 10. What "use all" means
+## 10. Bridge failure protocol
+
+When a capability is reported absent or a dispatch fails, apply these steps in order before recording a result:
+
+1. Record the gap in the capability map — name the missing capability class and the mechanism that reported it absent.
+2. Attempt inline execution as a fallback — if the capability class has an inline-executable equivalent (e.g. a tool call, a direct file read, a web fetch), try it before marking anything unavailable.
+3. Only report `unavailable` after inline was also tried, or after stating explicitly why inline is provably impossible for this capability class.
+
+A capability reported unavailable without steps 1–3 is a hypothesis, not a finding.
+
+## 11. What "use all" means
 
 "Use all subskills/subagents/tools" must never mean indiscriminately running everything.
 

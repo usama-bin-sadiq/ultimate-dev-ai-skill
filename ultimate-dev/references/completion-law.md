@@ -4,6 +4,23 @@ The rule this kernel exists to enforce. It is here as a reference rather than in
 `SKILL.md` because the *shape* of it is short and the *evidence* for it is long,
 and the evidence is what stops it being read as encouragement.
 
+## Terminal state checklist
+
+Before treating a run as finished — in either direction — answer each question YES or NO.
+
+1. Is there a reachable capability I have not yet tried? If YES, attempt it before stopping.
+2. Can I acquire the missing context by any available means? If YES, acquiring it is the next action.
+3. Have I actually invoked the specialist (not just identified it)? If NO, invocation is the next action.
+4. Have I verified the result (not just received it)? If NO, verification is the next action.
+5. After the first failure, have I tried at least one alternative approach? If NO, an alternative exists and must be attempted.
+6. Can I execute this inline in the current context? If YES, inline execution is the next action.
+7. Have I walked all applicable recovery routes before declaring a blocker? If NO, the route list is not exhausted.
+8. Can I reduce the scope and complete a meaningful partial result? If YES, partial completion is better than stopping.
+
+If YES to any of these, the run must continue.
+
+Only when every answer is NO may the kernel consider a terminal state.
+
 ## The law
 
 > Complete the user's actual task whenever completion is technically possible

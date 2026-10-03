@@ -453,6 +453,9 @@ task is complex; a plan needs to change. **None of these end the task.** Change
 the plan, find another capability, acquire the context, invoke the specialist,
 recover through JEv, decompose, replan. `references/recovery-system.md`.
 
+
+> **Quick-check before blocking:** Can I retry with the identified failure cause? · Can I use a different capability or route? · Can I acquire missing context by any available means? A YES to any of these means this is not a blocker yet.
+
 ### Exhaust alternatives before blocking
 
 Before declaring a blocker, walk the fifteen routes in `references/completion-law.md`
