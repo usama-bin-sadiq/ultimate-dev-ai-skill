@@ -104,7 +104,7 @@ RUNTIME_FILES = ("SKILL.md", "TREE.json")
 EXCLUDED_DIRS = ("knowledge", "evaluation", "examples", "docs", "research",
                  "evals", "catalog")
 EXCLUDED_FILES = ("new-arch.md", "new-arch-updated.md", "prd.md",
-                   "ARCHITECTURE.md")
+                   "ARCHITECTURE.md", "manifest.json")
 
 # tools/ is a runtime directory because the kernel tells the agent to run
 # tools/validate-skills.py when it needs a structural check. The rest of that

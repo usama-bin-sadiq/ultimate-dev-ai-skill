@@ -600,6 +600,72 @@ log ""
 log "installed to ${DEST}"
 log ""
 
+# Write a machine-readable manifest alongside the install so any runtime or
+# tool-chain that probes for it can discover the skill without parsing Markdown.
+# Also write a one-line pointer at the parent so an indexer can enumerate skills
+# without walking every candidate directory.
+#
+# No jq, no Python — pure bash printf. The manifest is not a repo artefact:
+# it is generated at install time and must not be committed.
+write_manifest() {
+  local version description install_path installed_at
+
+  # Read version; fall back to 1.0.0 when the file is absent.
+  version="$(cat "${SOURCE_DIR}/VERSION" 2>/dev/null || printf '1.0.0')"
+
+  # Extract description from SKILL.md frontmatter.
+  # The frontmatter block starts at line 1 with '---' and ends at the next '---'.
+  # The description field may span several lines; continuation lines are indented
+  # with exactly two spaces.
+  description="$(
+    awk '
+      /^---$/ && NR==1 { in_front=1; next }
+      in_front && /^---$/ { exit }
+      in_front && /^description:/ {
+        # Print everything after "description: "
+        sub(/^description:[[:space:]]*/, "")
+        printf "%s", $0
+        capturing=1
+        next
+      }
+      in_front && capturing && /^  / {
+        # Continuation line: strip two-space indent, append with a space
+        sub(/^  /, "")
+        printf " %s", $0
+        next
+      }
+      in_front && capturing { exit }
+    ' "${SOURCE_DIR}/SKILL.md" | cut -c1-120
+  )"
+
+  install_path="$(cd "$DEST" && pwd)"
+  installed_at="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+
+  if [ "$DRY_RUN" -eq 1 ]; then
+    log "dry run:     would write ${DEST}/manifest.json"
+    log "dry run:     would write ${DEST_ROOT}/ultimate-dev.json"
+    return 0
+  fi
+
+  printf '{\n' > "${DEST}/manifest.json"
+  printf '  "name": "%s",\n' "$SKILL_NAME" >> "${DEST}/manifest.json"
+  printf '  "version": "%s",\n' "$version" >> "${DEST}/manifest.json"
+  printf '  "type": "skill",\n' >> "${DEST}/manifest.json"
+  printf '  "entry": "SKILL.md",\n' >> "${DEST}/manifest.json"
+  printf '  "description": "%s",\n' "$(printf '%s' "$description" | sed 's/"/\\"/g')" >> "${DEST}/manifest.json"
+  printf '  "install_path": "%s",\n' "$install_path" >> "${DEST}/manifest.json"
+  printf '  "installed_at": "%s",\n' "$installed_at" >> "${DEST}/manifest.json"
+  printf '  "capabilities": ["inline", "delegate", "route", "handoff"]\n' >> "${DEST}/manifest.json"
+  printf '}\n' >> "${DEST}/manifest.json"
+  log "manifest:    wrote ${DEST}/manifest.json"
+
+  printf '{\n  "skill": "%s",\n  "path": "%s"\n}\n' \
+    "$SKILL_NAME" "$install_path" > "${DEST_ROOT}/ultimate-dev.json"
+  log "pointer:     wrote ${DEST_ROOT}/ultimate-dev.json"
+}
+
+write_manifest
+
 if [ "$WRITE_HINTS" -eq 1 ] && [ "$DRY_RUN" -eq 0 ]; then
   write_discovery_hints "$DEST"
 fi

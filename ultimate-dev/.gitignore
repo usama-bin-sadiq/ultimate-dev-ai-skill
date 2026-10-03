@@ -3,3 +3,6 @@
 # be committed.
 .memory/
 .ultimate-dev/
+
+# Written at install time by install.sh — not a repo artifact
+manifest.json
