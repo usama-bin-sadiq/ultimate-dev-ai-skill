@@ -453,7 +453,6 @@ task is complex; a plan needs to change. **None of these end the task.** Change
 the plan, find another capability, acquire the context, invoke the specialist,
 recover through JEv, decompose, replan. `references/recovery-system.md`.
 
-
 > **Quick-check before blocking:** Can I retry with the identified failure cause? · Can I use a different capability or route? · Can I acquire missing context by any available means? A YES to any of these means this is not a blocker yet.
 
 ### Exhaust alternatives before blocking
@@ -583,19 +582,15 @@ choosing the method, not waiving the user's authority over consequences.
 
 ## Anti-patterns
 
-Real failure modes, not style preferences. Enumerated with symptom, mechanism and
-fix in `references/anti-patterns.md` — the guarded list, one regression case per
-entry, and the reason it is a list rather than a duplicate is recorded there. The
-failure this kernel exists to correct is enumerated in
-`references/completion-law.md`.
+Real failure modes, not style preferences. Detail in `references/anti-patterns.md`.
+The failure this kernel exists to correct: `references/completion-law.md`.
 
 ## References
 
 Load on demand. `references/README.md` is the annotated map — what each file
 governs and which situation loads it. Three sit outside the groups:
-`references/coordination-modes.md`, `references/invocation.md`, and
-`references/completion-law.md`.
-`references/workflow-bridge.md` maps coordination modes to host-native workflow primitives and defines the degradation contract.
+`references/coordination-modes.md`, `references/invocation.md`,
+`references/completion-law.md`, and `references/workflow-bridge.md`.
 
 **Elsewhere** — `skills/skill-creator/SKILL.md` owns capability creation and
 promotion. `references/maturity.md` records the claimed level. `tools/` holds the
