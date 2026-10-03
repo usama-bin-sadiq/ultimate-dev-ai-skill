@@ -5,6 +5,26 @@ nothing else. Verification answers a question; it is not a ritual, and the depth
 it takes is set by risk, consequence, uncertainty, novelty and evidence quality —
 never by the size of the deliverable.
 
+## Verification protocol
+
+Three named check kinds:
+
+| Kind | Definition |
+|---|---|
+| **evidence-check** | Does the evidence actually support the claim, or does it merely exist? |
+| **validation-check** | Does the result meet the stated success criteria? |
+| **independent-check** | Would this survive being derived a different way? |
+
+**Sufficiency rules by rung:**
+
+- **R0–R1:** evidence-check is sufficient.
+- **R2:** at least one named check per work unit is required.
+- **R3–R4:** evidence-check plus validation-check are required; independent-check is required on any load-bearing result.
+
+**Self-check labelling:** a result verified only by reading your own output must be labelled `VERIFIED (self-check only)`, with a note on what an independent check would have covered.
+
+**Too-much-verification rule:** if a check would only re-observe something a tool already returned, the rung is too high. Verification cost is paid in the user's attention; the effort gate exists to protect it.
+
 ## Proportionality
 
 A low-stakes, well-understood, tool-confirmed result does not need a review

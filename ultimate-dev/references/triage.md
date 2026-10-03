@@ -75,6 +75,14 @@ request sounded simple — the sounding is the least reliable input available.
 Stop at the **lowest** rung that is adequate. Not the lowest that feels
 comfortable, and not the highest the problem appears to deserve.
 
+## Example tasks by rung
+
+- **R0** — rename a variable · fix a typo · reformat JSON · answer a factual question
+- **R1** — add a field to a struct with tests · refactor one function · translate a config
+- **R2** — add a new API endpoint with auth and tests · migrate a DB schema · debug a multi-step failure
+- **R3** — design and implement a new service · audit a codebase for security · port a project to a new framework
+- **R4** — production DB migration · security credential rotation · irreversible infrastructure change
+
 ## Calibration
 
 The failure is almost always escalation. Concrete anchors:

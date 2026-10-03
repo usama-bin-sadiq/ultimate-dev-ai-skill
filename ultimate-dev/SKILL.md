@@ -103,13 +103,15 @@ justify elaborate work, or notice when elaborate work stopped helping.
 
 Map the answers onto the ladder and stop at the lowest rung that is adequate:
 
-| Rung | Use when | Kernel behaviour |
-|---|---|---|
-| **R0 Immediate** | Next action determined, failure cheap | Act. Verify the output. No plan, no ledger. |
-| **R1 Structured** | A few dependent steps, or one assumption that could be wrong | Short plan. Verify each step. |
-| **R2 Analytical** | Parts interact, or the approach must be chosen | Task model. Real plan. Verify per unit. |
-| **R3 Deep** | Unfamiliar domain, long horizon, costly failure | Full kernel. Parallel where independent. Independent verification. |
-| **R4 Assurance** | Irreversible, high-consequence, safety- or security-relevant | R3 plus a named human checkpoint before acting. |
+| Rung | Use when | Kernel behaviour | Example tasks |
+|---|---|---|---|
+| **R0 Immediate** | Next action determined, failure cheap | Act. Verify the output. No plan, no ledger. | Rename a variable · fix a typo · reformat JSON · answer a factual question |
+| **R1 Structured** | A few dependent steps, or one assumption that could be wrong | Short plan. Verify each step. | Add a field to a struct with tests · refactor one function · translate a config |
+| **R2 Analytical** | Parts interact, or the approach must be chosen | Task model. Real plan. Verify per unit. | Add a new API endpoint with auth and tests · migrate a DB schema · debug a multi-step failure |
+| **R3 Deep** | Unfamiliar domain, long horizon, costly failure | Full kernel. Parallel where independent. Independent verification. | Design and implement a new service · audit a codebase for security · port a project to a new framework |
+| **R4 Assurance** | Irreversible, high-consequence, safety- or security-relevant | R3 plus a named human checkpoint before acting. | Production DB migration · security credential rotation · irreversible infrastructure change |
+
+**Over-orchestration warning:** if the task has a determined next action and failure is cheap, applying R2+ is a defect — it adds ceremony without adding correctness. The effort gate protects the user's attention; escalating to feel thorough wastes it.
 
 Then apply the scale ladder: L1 one task · L2 multi-step · L3 professional ·
 L4 multi-domain project · L5 large programme · L6–L7 extreme, unfamiliar,
@@ -133,11 +135,10 @@ number of work units**: fewer and larger is the whole difference between a small
 host doing two things properly and one doing eight things shallowly.
 
 Crossing *downward* on a frontier host also needs a reason. That is the
-under-investment failure, and it arrives silently — capability and budget sense
-are barely correlated, so the model best placed to do the deep work is the one
-least able to notice it is avoiding it. The gate does not tell a frontier host to
-apply *more* procedure; that is over-prescription wearing a friendly hat. It makes
-an early stop recorded rather than invisible. `references/model-adaptation.md`.
+under-investment failure — capability and budget sense are barely correlated, so
+the model best placed to do the deep work is the one least able to notice it is
+avoiding it. It makes an early stop recorded rather than invisible.
+`references/model-adaptation.md`.
 
 **Record the rung before working, not afterwards** — at every rung, including R0,
 and immediately after the ladder rather than at a later step. The path is
@@ -169,9 +170,7 @@ python3 tools/run-state.py step --doing "<this unit>" \
 python3 tools/run-state.py require --what "<what must be true when it ends>"
 ```
 
-`--capability` and `--verify` are required at R2 and above, refused below it. Both
-are a wish rather than a unit: a unit with no named capability cannot say whether
-it was reachable, and an expectation with no verification method is a prediction.
+`--capability` and `--verify` are required at R2 and above, refused below it.
 At R2+, `check` refuses a run with no criteria, any criterion open, two steps
 open at once, or a chosen capability still in flight.
 
@@ -189,8 +188,9 @@ stage is refused if the log has not been where that stage comes from. Use
 `--kind execute-inline` for work this kernel did itself; `execute` claims a
 dispatch is running. `references/execution-system.md`.
 
-**Escalate** when reality is harder than expected; **de-escalate** when easier —
-the direction most often missing elsewhere.
+At R2 and above, `check` warns if no entries exist; at R3 and above it is a hard error.
+
+**Escalate** when reality is harder than expected; **de-escalate** when easier.
 
 ## Step 1 — the task model
 
@@ -404,10 +404,9 @@ exceed the work. The rung is recorded at every rung, R0 included.
 
 Ask: *what must be true for this result to be trusted?* Then check that, and
 nothing else. Verification is proportional to risk, consequence, uncertainty,
-novelty, and evidence quality. Three kinds, in increasing strength: **evidence
-check** (does the evidence support the claim, not merely exist), **validation
-check** (does it meet the stated success criteria), **independent check** (would
-this survive being derived a different way).
+novelty, and evidence quality.
+
+Three check kinds, in increasing strength: **evidence-check** (does the evidence support the claim?); **validation-check** (does it meet the stated success criteria?); **independent-check** (would it survive being derived a different way?). A result verified by self-check only is labelled `VERIFIED (self-check only)`.
 
 Decide one of three ways, and say which: **VERIFIED** — the criteria hold and the
 evidence supports them. **PARTIAL** — some hold; state precisely which, and what
@@ -422,11 +421,10 @@ refuses a run that observed two capabilities and recorded no comparison.
 
 **Self-critique is not verification.** Re-reading your own output and agreeing
 with it shares every blind spot with the thing being checked. If the only check
-available is your own reading, write `VERIFIED (self-check only)` and name what
+available is your own reading, label it `VERIFIED (self-check only)` and name what
 an independent check would have covered.
 
-**Verification can also be too much.** The fix is not to verify less in general —
-it is to verify what is load-bearing and stop. A verification section that lists
+**Verification can also be too much.** Verify what is load-bearing and stop. A verification section that lists
 only what passed is not a verification section; a check that was not run is
 reported `skipped` or `unavailable`, never as passed.
 `references/verification-system.md`.
@@ -590,7 +588,8 @@ The failure this kernel exists to correct: `references/completion-law.md`.
 Load on demand. `references/README.md` is the annotated map — what each file
 governs and which situation loads it. Three sit outside the groups:
 `references/coordination-modes.md`, `references/invocation.md`,
-`references/completion-law.md`, and `references/workflow-bridge.md`.
+`references/completion-law.md`, `references/workflow-bridge.md`, and
+`references/routing-table.md` (reachable-agent table and task-type mapping).
 
 **Elsewhere** — `skills/skill-creator/SKILL.md` owns capability creation and
 promotion. `references/maturity.md` records the claimed level. `tools/` holds the

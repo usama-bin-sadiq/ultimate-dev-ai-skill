@@ -25,7 +25,7 @@ so read the directory rather than a count stated here.
 
 **Control and safety** — `policy-constraints.md` · `security-and-trust.md` · `human-control.md` · `deterministic-vs-agentic.md` · `delegation.md` · `parallelism.md` · `runtime-portability.md`
 
-**Coordination** — `coordination-modes.md` — how results come back together, and what each of the four modes costs
+**Coordination** — `coordination-modes.md` — how results come back together, and what each of the four modes costs · `routing-table.md` — task-type to reachable-agent mapping table; the reachability test; which agents have files and are invocable
 
 **Breadth** — `multi-domain.md` · `unknown-domain.md` · `insufficient-capability.md` · `insufficient-evidence.md` · `anti-patterns.md`
 

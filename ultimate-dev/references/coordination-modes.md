@@ -211,6 +211,8 @@ cost; this is where it is paid.
 Unreachable specialists are not spare capacity. They are descriptions competing for the
 same attention as the ones that work.
 
+See `references/routing-table.md` for the current reachable-agent table and the task-type→agent mapping.
+
 ## Host-native workflow primitives
 
 When the host exposes a native parallel-dispatch or pipeline primitive that maps
