@@ -210,3 +210,17 @@ cost; this is where it is paid.
 
 Unreachable specialists are not spare capacity. They are descriptions competing for the
 same attention as the ones that work.
+
+## Host-native workflow primitives
+
+When the host exposes a native parallel-dispatch or pipeline primitive that maps
+cleanly to the selected coordination mode, prefer it over serial inline execution.
+Context isolation and parallelism are real gains — not cosmetic ones — because
+they reduce context accumulation and wall-clock time for independent work.
+
+The mode decision comes first. The primitive is the implementation vehicle, not
+the driver. A host without any workflow primitives runs the same four modes by
+the serial inline fallback path, with identical logical outcomes.
+
+How each mode maps to a host primitive, what to fall back to, and how to detect
+whether a primitive is available: `references/workflow-bridge.md`.

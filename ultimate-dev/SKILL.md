@@ -90,6 +90,7 @@ It is host-derived, never a hardcoded list of names. State the execution mode
 once: `native-subagent`, `serial-fallback`, or `hybrid`. Read
 `agents/_shared/stack-detection.md` before inferring a language, framework, or
 test command, and `agents/_shared/task-classifier.md` before routing a unit.
+At bootstrap the agent also checks for workflow and subagent primitives — parallel dispatch, sequential pipeline, review loop, and async background runs — and records what the host can do in the capability registry. See `references/workflow-bridge.md` for the five capability labels, the detection method, and the degradation contract.
 
 **Now the effort gate.** Before any stage beyond `UNDERSTAND`, answer four
 questions and record the answers. This is the triage output; without it you cannot
@@ -591,6 +592,7 @@ Load on demand. `references/README.md` is the annotated map — what each file
 governs and which situation loads it. Three sit outside the groups:
 `references/coordination-modes.md`, `references/invocation.md`, and
 `references/completion-law.md`.
+`references/workflow-bridge.md` maps coordination modes to host-native workflow primitives and defines the degradation contract.
 
 **Elsewhere** — `skills/skill-creator/SKILL.md` owns capability creation and
 promotion. `references/maturity.md` records the claimed level. `tools/` holds the
