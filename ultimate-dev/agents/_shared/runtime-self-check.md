@@ -34,19 +34,23 @@ If a structural check fails, stop routing the affected capability and report the
 
 After the routing checks above, record which workflow primitives the host
 exposes. These are capability detection labels — they describe what the host
-can do, not agents to dispatch. Check each one at runtime; do not assume
+can do, not roles to invoke. Check each one at runtime; do not assume
 availability. Record each as `available`, `unavailable`, or `unknown`.
 
-| Capability label | What the host must support |
-|---|---|
-| `parallel-dispatch` | Launch independent agent/tool contexts concurrently and collect all results. |
-| `sequential-dispatch` | Run agents in a pipeline where each step receives the prior step's output without the calling context holding intermediate state. |
-| `stateful-handoff` | Transfer a conversation thread with accumulated history and tool state to a new agent. |
-| `review-loop` | Run an implement→review cycle with a declarative stop condition, iterating until the condition is met or a bound is exceeded. |
-| `background-run` | Start a long-running task asynchronously and notify the caller on completion, without blocking the calling context. |
+Five labels to probe (see `references/workflow-bridge.md` for detection guidance
+and the mode mapping):
+
+- **parallel-dispatch** — host can run independent contexts concurrently and
+  collect all results before continuing.
+- **sequential-dispatch** — host exposes a pipeline where each step receives the
+  prior step's output without the calling context holding intermediate state.
+- **stateful-handoff** — host preserves conversation history and tool state when
+  transferring a thread to a new context.
+- **review-loop** — host exposes an iterative loop with a declarative stop
+  condition (implement → review → repeat until approved or budget exhausted).
+- **background-run** — host supports async task launch with a completion
+  notification, without blocking the caller.
 
 If a check cannot be performed (no documented API, no empirical probe path),
 record `unknown` and treat it as `unavailable` for planning. Do not record
 `available` by assumption.
-
-See `references/workflow-bridge.md` for detection guidance and the mode mapping.
