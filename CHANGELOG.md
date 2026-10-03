@@ -1,5 +1,25 @@
 # Changelog
 
+## [4.0.38] — 2026-10-03
+
+- fix: remove backtick slugs from runtime-self-check workflow primitives section so validator does not misread capability labels as agent dispatch names
+- fix: resolve CI failures — dispatch name, fixture_required coverage, anchor drift
+- fix: integration issues (convergence iteration 1)
+- feat: process log enforcement and verification-kind tracking (FEAT-003)
+- feat: routing table, effort examples, verification protocol (FEAT-002)
+- feat: skill auto-registration manifest (FEAT-001)
+- fix: print WRITE_HINTS dry-run log when DEST exists and differs
+- fix: trim SKILL.md to 600 lines so --strict validation passes
+- feat: execution quality — terminal state checklist, bridge failure protocol, quick-check callout
+- feat: expand tool discoverability and add --write-discovery-hints flag
+- chore: fix .gitignore — cover runtime artefacts and add nested skill .gitignore
+- feat: add tool-neutral workflow primitive bridge and detection
+- fix: anchor temp-file paths to skill root and align SKILL.md with kernel-fix.md
+- feat: thirty-one sections of the spec that were prose, now commands
+- feat: rebuild the kernel spine from the 56-section spec, and check it every time
+- feat: the kernel had a rule against over-delegating and none against under-delegating
+- feat: an acceptance gate, because a run ended three times by describing the work it had not done
+
 ## [4.0.37] — 2026-09-30
 
 Thirty-one sections of the specification that were prose and are now commands.
