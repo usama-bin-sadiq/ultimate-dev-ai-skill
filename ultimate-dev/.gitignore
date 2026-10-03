@@ -1,0 +1,5 @@
+# Agent run-state directories — written at runtime by run-state.py and
+# workflow engines. These are per-invocation scratch dirs and must never
+# be committed.
+.memory/
+.ultimate-dev/

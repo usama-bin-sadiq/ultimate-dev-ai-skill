@@ -41,6 +41,16 @@ results/
 .DS_Store
 Thumbs.db
 
+# Workflow runtime outputs and task artefacts
+.agents/
+.agents/tasks/
+**/.memory/
+**/.ultimate-dev/
+*.run-state.json
+/review.json
+/plan.md
+/review.md
+
 # Fixture debris. build-fixtures.py stages into the repository because the
 # runtime ignores the per-invocation working directory, so these appear at the
 # root during a pilot run and must never be committed.
