@@ -65,3 +65,4 @@ Thumbs.db
 # as untracked noise in git status.
 __pycache__/
 *.py[cod]
+.agents
