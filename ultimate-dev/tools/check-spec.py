@@ -46,7 +46,7 @@ ROOT = os.path.dirname(HERE)
 # The hash of kernel-fix.md this table was written against. The spec lives outside
 # the skill (it is not part of an install), so this is a staleness tripwire, not a
 # dependency: if the spec changes, the table is re-examined rather than trusted.
-SPEC_SHA256 = "37f38585"
+SPEC_SHA256 = "6673cc9b"
 SPEC_PATH = os.path.join(os.path.dirname(ROOT), "kernel-fix.md")
 
 # kind: file  -- the file must exist

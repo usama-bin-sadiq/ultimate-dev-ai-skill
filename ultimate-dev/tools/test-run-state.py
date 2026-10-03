@@ -468,7 +468,9 @@ check("S22 a drop with no reason is refused at write time too", code != 0,
 _src = (pathlib.Path(__file__).resolve().parent / "run-state.py").read_text(
     encoding="utf-8")
 check("S23 the default state directory is .memory",
-      'DEFAULT_DIR = ".memory"' in _src, "DEFAULT_DIR is not .memory")
+      ('DEFAULT_DIR = ".memory"' in _src or
+       ('_SKILL_ROOT' in _src and '".memory"' in _src)),
+      "DEFAULT_DIR does not resolve to .memory")
 check("S23 and the legacy directory is still recognised for migration",
       'LEGACY_DIR = ".ultimate-dev"' in _src, "LEGACY_DIR missing")
 

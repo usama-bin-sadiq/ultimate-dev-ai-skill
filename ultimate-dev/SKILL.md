@@ -70,7 +70,7 @@ RECEIVE → UNDERSTAND → TRIAGE → DECIDE → ACQUIRE → PLAN → EXECUTE
    │                                                     OBSERVE
    └──── LEARN ← SELF-EVALUATE ← SYNTHESIZE ← VERIFY ←─────┘
                           ▲              │
-                          └──── RECOVER ┘
+                          └──── RECOVER → JEv RE-DECISION
 ```
 
 Every arrow can return to `DECIDE`. There is no path through this loop that
@@ -210,38 +210,39 @@ Write this down only to the depth the rung justifies. `references/task-model.md`
 ## Step 2 — JEv, the decision fabric
 
 JEv is not a stage. It is the decision taken at every boundary, and its output is
-a **decision record**. Anything that changes the shape of the work gets one.
+a **decision record**. Anything that changes the shape of the work gets one. Before
+recording, determine: `OBJECTIVE` · `STATE` · `EVIDENCE` (OBS-n) · `CANDIDATES` ·
+`CONSTRAINTS` · `RISK` · `UNCERTAINTY` · `COST`.
 
 ```text
 DECISION
-  question      the boundary being crossed
-  selected      what to do
-  rejected      what not to do, and why            <- the most useful field
-  rationale     the reasoning, in one line
-  confidence    high | medium | low — in WHAT, named below, never bare
-  cost          expected effort, and what it buys
-  evidence      POINTERS to observations (OBS-n), not prose. "none" is valid.
-  recovery      the condition that would reverse this
-  coordination  inline | delegate | route | handoff  <- only at a mode boundary
+  question              the boundary being crossed
+  selected              what to do
+  rejected              what not to do, and why            <- the most useful field
+  rationale             the reasoning, in one line
+  confidence            high | medium | low — in WHAT, named below, never bare
+  cost                  expected effort, and what it buys
+  evidence              POINTERS to observations (OBS-n), not prose. "none" is valid.
+  context_required      minimum context needed to execute the selected action
+  capability_required   the skill, tool, or mode needed
+  coordination          inline | delegate | route | handoff  <- only at a mode boundary
+  verification_method / escalation_condition / recovery_condition
 ```
 
 **JEv must produce an executable next action.** A decision record that produces
 only an explanation is not a decision, it is a paragraph.
-
 **`evidence` must point, not narrate.** Write `OBS-013`, not "the logs showed
 retries". A prose evidence field cannot be checked for existence, so a fabricated
 citation is indistinguishable from a real one — the perfect place to hide the
 system's worst failure. If nothing was observed, write `none`; that is a
 legitimate answer and a checkable one.
-
 **`confidence` must name its object.** A bare `high` is read as a property of the
 conclusion rather than of the evidence. Write `high in the retry header`, not
 `high`.
-
 **The count of records is rung-dependent; the fields are not.** What is
 non-negotiable is the *shape*: whenever you record a decision, `rejected` and
-`recovery` are filled. If you cannot name what you chose *against*, you probably
-did not choose.
+`recovery_condition` are filled. If you cannot name what you chose against, you
+probably did not choose.
 
 **Record the mode when it changes, and the rung when it changes:**
 
@@ -522,6 +523,7 @@ separately, because each fails on its own. The other three carry the field the
 specification gives them: `partial` needs `--remaining`, `blocked` needs a
 `blocked` record whose routes were walked, and `failed` needs `--attempted`,
 because the two mean opposite things — attempted and lost, versus prevented.
+`failed` means execution was attempted and the task could not be completed despite recovery. `blocked` means a required dependency prevents any further execution — use it only after all fifteen recovery routes have been walked. The two are not interchangeable: a run that stops without attempting is `failed`, not `blocked`.
 A second ending is refused unless `--replace --why` says what changed, and
 `partial` additionally needs work to have actually happened: no work unit ever
 opened is `failed`, not `partial`.

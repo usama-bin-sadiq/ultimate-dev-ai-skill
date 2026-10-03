@@ -6,7 +6,7 @@ repository and nothing has ever read or written it. Every claim the architecture
 about resumption, about work outliving a context window, and about the L4+ rows of the
 scale ladder depends on a file existing -- and none did. That is the gap this closes.
 
-State is a single JSON file, one per run, under `--state-dir` (default `.memory/`).
+State is a single JSON file, one per run, under `--state-dir` (default <skill_root>/.memory/ or ~/.ultimate-dev/.memory/).
 That directory is the agent's private, disposable, gitignored working memory and
 is never where a deliverable goes; `deliver` refuses a path inside it.
 It is small on purpose: `state-system.md` asks for size discipline, and a state file that
@@ -120,7 +120,26 @@ import sys
 # "Local agent state" while the tool wrote to `.ultimate-dev/`, so the
 # convention was declared and the implementation ignored it -- and two names for
 # one thing meant a run started by one version could not be read by the other.
-DEFAULT_DIR = ".memory"
+
+
+def _find_skill_root(start: str) -> "str | None":
+    """Walk up from start looking for the directory that contains SKILL.md."""
+    current = os.path.abspath(start)
+    while True:
+        if os.path.isfile(os.path.join(current, "SKILL.md")):
+            return current
+        parent = os.path.dirname(current)
+        if parent == current:  # reached filesystem root
+            return None
+        current = parent
+
+
+_SKILL_ROOT = _find_skill_root(os.path.dirname(os.path.abspath(__file__)))
+DEFAULT_DIR = (
+    os.path.join(_SKILL_ROOT, ".memory")
+    if _SKILL_ROOT
+    else os.path.expanduser("~/.ultimate-dev/.memory")
+)
 # Where earlier versions wrote. Read once, on load, and migrated rather than
 # silently ignored: a state file the tool cannot find is indistinguishable from
 # a run that never recorded anything, and the second is a finding about the
@@ -1419,7 +1438,8 @@ def cmd_deliver(args) -> int:
     out = (args.path or "").strip()
     if not out:
         die("--path is required: the file this run produced.")
-    if _is_inside(out, DEFAULT_DIR) or _is_inside(out, LEGACY_DIR):
+    if (_is_inside(out, DEFAULT_DIR) or _is_inside(out, LEGACY_DIR)
+            or _is_inside(out, ".memory") or _is_inside(out, ".ultimate-dev")):
         die(
             f"refusing to record {out}: it is inside the agent's working memory, "
             f"not a deliverable. That directory is gitignored and disposable, so a "
@@ -2667,7 +2687,8 @@ def cmd_check(args) -> int:
         if not isinstance(entry, dict):
             continue
         p = str(entry.get("path") or "")
-        if p and (_is_inside(p, DEFAULT_DIR) or _is_inside(p, LEGACY_DIR)):
+        if p and (_is_inside(p, DEFAULT_DIR) or _is_inside(p, LEGACY_DIR)
+                  or _is_inside(p, ".memory") or _is_inside(p, ".ultimate-dev")):
             problems.append(
                 f"deliverable {p!r} is inside the agent's working memory. It is "
                 f"gitignored and disposable, so the person who asked for it cannot "
@@ -2821,7 +2842,7 @@ def main() -> int:
     # actually given, so the top-level value survives and the fallback below
     # fires only when neither position supplied one.
     common.add_argument("--state-dir", default=argparse.SUPPRESS,
-                        help=f"where run state lives (default {DEFAULT_DIR}/)")
+                        help="where run state lives (default: <skill_root>/.memory/, or ~/.ultimate-dev/.memory/ if no skill root is found)")
 
     p = argparse.ArgumentParser(description=__doc__, parents=[common],
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
