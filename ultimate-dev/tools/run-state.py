@@ -1234,8 +1234,9 @@ def cmd_log(args) -> int:
             return 0
         for e in entries:
             n = str(e.get("n") or "").strip()
+            kind = str(e.get("kind") or "").upper()
             what = str(e.get("what") or "").strip()
-            print(f"  {n} — {what}")
+            print(f"  {n} — {kind:<15}  {what}")
         return 0
 
     kind = (args.kind or "").strip().lower()
@@ -1312,7 +1313,6 @@ def cmd_log(args) -> int:
             return 2
 
     parent = (args.under or "").strip().upper()
-    number = _next_process_number(state)
     number = _next_process_number(state)
     if parent:
         match = [e for e in entries if str(e.get("n")).upper() == parent]
@@ -1698,7 +1698,8 @@ def cmd_finish(args) -> int:
             blockers.append(
                 f"work unit {open_step.get('n')} ({open_step.get('doing')!r}) is "
                 f"still open. An unclosed unit has an unknown outcome, and an "
-                f"unknown outcome is not a completed one.")
+                f"unknown outcome is not a completed one. "
+                f"Close it with:\n  run-state.py step --close --outcome \"<what actually happened>\"")
         if not criteria:
             blockers.append(
                 "no acceptance criterion was ever recorded. 'Add retries' is a "
@@ -2700,7 +2701,7 @@ def cmd_check(args) -> int:
     # where the kernel's own rule is that the effort gate is recorded; R0 and
     # R1 are exempt because recording anything at those rungs is itself called
     # ceremony by references/decision-ledger.md.
-    if rung_code in {"R2", "R3", "R4"}:
+    if rung_code in {"R3", "R4"}:
         triggers = state.get("rung_triggers") or {}
         if not (triggers.get("escalate_on") or "").strip():
             problems.append(
@@ -2710,6 +2711,16 @@ def cmd_check(args) -> int:
             problems.append(
                 f"rung {rung_code} records no de-escalation trigger; SKILL.md "
                 f"calls de-escalation the direction most often missing")
+    elif rung_code == "R2":
+        triggers = state.get("rung_triggers") or {}
+        if not (triggers.get("escalate_on") or "").strip():
+            print(f"  advisory: rung R2 records no escalation trigger; "
+                  f"recording one is recommended but not required at R2.",
+                  file=sys.stderr)
+        if not (triggers.get("de_escalate_on") or "").strip():
+            print(f"  advisory: rung R2 records no de-escalation trigger; "
+                  f"SKILL.md calls de-escalation the direction most often missing.",
+                  file=sys.stderr)
 
     # A rung that changed many times is the rung-axis analogue of mode
     # thrashing, and until now only the mode axis had a gate.

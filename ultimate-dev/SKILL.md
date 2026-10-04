@@ -156,10 +156,7 @@ once it exists: `run-state.py deliver --path docs/audit.md --what "the audit"`.
 to whoever asked for it, uncommittable, and lost when the directory is cleared —
 and nothing notices, because the directory is ignored.
 
-**Then say what you are doing, in the file, not only in prose.** Each work unit
-gets a step with a declared precondition, an expected result, the capability that
-will do the work, how you will know the expectation held, and an acceptance
-criterion that says when the run ends:
+**Then say what you are doing, in the file, not only in prose.** Each unit gets a step with a precondition, expected result, capability, and verification method:
 
 ```sh
 python3 tools/run-state.py step --doing "<this unit>" \
@@ -168,8 +165,11 @@ python3 tools/run-state.py step --doing "<this unit>" \
   --capability "<the skill, tool, or 'inline'>" \
   --verify "<how you will check the expectation>"
 python3 tools/run-state.py require --what "<what must be true when it ends>"
+python3 tools/run-state.py step --close \
+  --outcome "<what actually happened>"
 ```
 
+Close each step when it ends — `finish` refuses `completed` while any step is open.
 `--capability` and `--verify` are required at R2 and above, refused below it.
 At R2+, `check` refuses a run with no criteria, any criterion open, two steps
 open at once, or a chosen capability still in flight.

@@ -6,6 +6,11 @@ it, it can receive the context, and it can return a result. A file that exists
 but fails any of these conditions is an unreachable description, not a dispatch
 target.
 
+> **Note:** This table covers a starter set of commonly used agents. The full
+> catalog has 287 agents in `agents/` — scan that directory or
+> `references/capability-catalogue.md` to discover all reachable agents for a
+> domain.
+
 ## Agent clusters
 
 | Cluster | Agents (file-backed, confirmed) |
@@ -14,6 +19,9 @@ target.
 | **Analysis** | `ai-generated-code-auditor` · `ai-data-remediation-engineer` · `analyst` |
 | **AI / ML** | `ai-engineer` |
 | **Testing** | `api-tester` |
+| **Writing / Content** | `author` · `content-strategist` |
+| **Data / Analysis** | `analyst` · `data-engineer` |
+| **Security** | `appsec-engineer` · `cloud-security-architect` |
 
 ## Task-type to agent mapping
 
@@ -26,6 +34,9 @@ target.
 | API testing | `api-tester` | `appsec-engineer` | inline |
 | Code audit | `ai-generated-code-auditor` | `appsec-engineer` | inline |
 | Data remediation | `ai-data-remediation-engineer` | `analyst` | inline |
+| Writing / content | `author` | `content-strategist` | inline |
+| Data engineering | `data-engineer` | `analyst` | inline |
+| Security architecture | `appsec-engineer` | `cloud-security-architect` | inline |
 
 ## Reachability test
 

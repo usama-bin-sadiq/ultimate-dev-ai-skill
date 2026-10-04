@@ -95,6 +95,8 @@ afford because it has no attention to spare:
 | Context ladder | jump to C2/C3; do not walk C0→C6 | as needed | as needed |
 | Delegation | one specialist, not a fleet | parallel where independent | parallel where independent |
 
+On a `small` host, load `SKILL-compact.md` rather than the full `SKILL.md` — it covers the non-negotiable rules and effort gate in 67 lines without paying for ceremony the host cannot sustain.
+
 Read the `small` row as an instruction rather than a permission. **Fewer, larger
 units is the whole difference between an executor that does two things properly
 and one that does eight things shallowly.**

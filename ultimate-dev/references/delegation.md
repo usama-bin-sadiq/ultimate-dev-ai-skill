@@ -5,6 +5,8 @@ transfer, the review, and the risk of holding a result whose production you did
 not watch. Buy it only when specialisation clearly beats doing it here.
 Spawning specialists to do what one context does better is a named anti-pattern.
 
+See `references/coordination-modes.md` for the full four-mode vocabulary; this file covers the `delegate` mode in depth.
+
 **If this runtime has no dispatch mechanism, there is nothing to justify and
 nothing to dispatch.** Do the work in this context, narrow the role to what one
 context can hold, and state in the delivery that the independent check did not

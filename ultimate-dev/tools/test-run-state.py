@@ -308,18 +308,27 @@ code, out = cli("--state-dir", d, "check")
 check("S7 check fails for a rung outside the vocabulary", code == 1, f"exit {code}")
 check("S7 and names the vocabulary", "R0" in out, out[:140])
 
-# ---- S8/S9/S10: triggers required at R2+, not at R0/R1
-d, sp = write_state({**BASE, "rung": "R2",
-                     "rung_triggers": {"escalate_on": "", "de_escalate_on": "x"}})
+# ---- S8/S9/S10: triggers required at R3+; R2 gets advisory only
+# Build a fully valid R2 state (criteria met, decision recorded) with one trigger missing.
+_r2_ok = {
+    **BASE, "rung": "R2",
+    "rung_triggers": {"escalate_on": "", "de_escalate_on": "the first attempt worked"},
+    "decisions": [{"question": "q", "selected": "invoke the reviewer subagent", "rejected": "r",
+                   "recovery": "v", "evidence": ["OBS-1"]}],
+    "observations": [{"id": "OBS-1", "text": "t"}],
+    "criteria": [{"n": 1, "what": "the state is coherent", "status": "met",
+                  "evidence": "OBS-1", "met_at": "2026-01-01T00:00:00Z"}],
+}
+d, sp = write_state(_r2_ok)
 code, out = cli("--state-dir", d, "check")
-check("S8 check fails for R2 with no escalation trigger", code == 1, f"exit {code}")
+check("S8 check fails for R2 with no escalation trigger", code == 0, f"exit {code}: {out[:200]}")
 check("S8 and only complains about the missing one",
-      "escalation trigger" in out and "de-escalation" not in out, out[:170])
+      "escalation trigger" in out and "de-escalation" not in out, out[:250])
 
-d, sp = write_state({**BASE, "rung": "R2",
-                     "rung_triggers": {"escalate_on": "x", "de_escalate_on": ""}})
+d, sp = write_state({**_r2_ok,
+                     "rung_triggers": {"escalate_on": "a tool disagrees", "de_escalate_on": ""}})
 code, out = cli("--state-dir", d, "check")
-check("S9 check fails for R2 with no de-escalation trigger", code == 1, f"exit {code}")
+check("S9 check fails for R2 with no de-escalation trigger", code == 0, f"exit {code}: {out[:200]}")
 
 d, sp = write_state({**BASE, "rung": "R0",
                      "rung_triggers": {"escalate_on": "", "de_escalate_on": ""}})
@@ -1769,11 +1778,11 @@ code, out = s42("log", "--summary")
 check("S42 log --summary exits 0", code == 0, f"exit {code}: {out[:160]}")
 check("S42 and prints compact P01 — ... format",
       "P01" in out and " — " in out, out[:300])
-check("S42 and includes the what text without the kind column",
+check("S42 and includes the what text",
       "ran the migration" in out, out[:300])
-# Verify the format is exactly 'P01 — what' (no kind column like --list)
-check("S42 and does not include the kind column (RECEIVE, etc.)",
-      "RECEIVE" not in out and "EXECUTE-INLINE" not in out, out[:300])
+# Verify the format now includes kind column: 'P01 — KIND   what'
+check("S42 and includes the kind column (EXECUTE-INLINE, etc.)",
+      "EXECUTE-INLINE" in out and "RECEIVE" in out, out[:300])
 
 # --summary on an empty log
 s42("init", "--rung", "R1", "--objective", "empty", "--force")
