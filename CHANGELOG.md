@@ -1,5 +1,9 @@
 # Changelog
 
+## [4.0.40] — 2026-10-04
+
+- fix: address review findings in model-tier adaptation (P1/P3/P7)
+
 ## [4.0.39] — 2026-10-04
 
 - feat: model-tier adaptation fixes P1-P3 P5-P7
