@@ -529,7 +529,8 @@ def cmd_init(args) -> int:
         # rung answers how hard the task is; this answers how much procedure the
         # model can turn into substance, which is a different question and the
         # one that decides whether a run is thorough or merely long.
-        "host": args.host,
+        "host": getattr(args, "host", None),
+        "host_tier_assumed": not bool(getattr(args, "host", None)),
         "exceeds_ceiling": (args.exceeds_ceiling or "").strip() or None,
         # A rung without the events that would move it cannot be revised by
         # evidence, so the triggers are stored beside it rather than left to
@@ -2605,6 +2606,20 @@ def cmd_check(args) -> int:
         problems.append(
             f"host {host!r} is not one of {', '.join(HOSTS)}; the host is a term in "
             f"the effort gate, so an unrecognised one means the gate was skipped")
+    # P1: host tier not set — default to "mid" for ceiling purposes and warn.
+    # A run that never set --host silently bypassed the ceiling gate; this
+    # makes the bypass visible. Warning only, not a hard error: the model may
+    # have inferred the tier correctly; we just cannot tell.
+    _host_assumed = False
+    if host is None or str(host) not in HOSTS:
+        _host_assumed = True
+        host = "mid"
+        print(
+            "  warning: host tier not set; defaulting to 'mid' for ceiling "
+            "check. Set with:\n"
+            "    run-state.py set-host --host small|mid|frontier --why '...'",
+            file=sys.stderr,
+        )
     ceiling = HOST_CEILING.get(str(host or ""))
     if ceiling and rung_code in RUNGS and rung_code > ceiling:
         # Deliberately exceeding the ceiling is legitimate -- one focused hard
@@ -2637,6 +2652,38 @@ def cmd_check(args) -> int:
                     f"recorded. The risk here is under-investment, and a capable "
                     f"model is the one least able to notice it: capability and "
                     f"budget sense are barely correlated. `set-rung --why`.")
+        # P7: frontier host at R3/R4 with no triage answers recorded.
+        # The over-orchestration path is symmetric to the ceiling gate but runs in
+        # the other direction: a frontier host claiming a high rung without having
+        # performed triage may be inflating the ceremony. Advisory only.
+        if rung_code in {"R3", "R4"}:
+            has_reflect = bool((state.get("self_evaluation") or {}).get("at"))
+            has_triggers = bool(
+                (state.get("rung_triggers") or {}).get("escalate_on", "").strip()
+                or (state.get("rung_triggers") or {}).get("de_escalate_on", "").strip()
+            )
+            if not has_reflect and not has_triggers:
+                print(
+                    f"  warning: frontier host at {rung_code} but no triage answers "
+                    f"recorded. Run 'reflect' to confirm the rung is justified "
+                    f"(references/triage.md)",
+                    file=sys.stderr,
+                )
+
+    # P3: step-count advisory for small hosts.
+    # The model-adaptation.md per-tier table says a small host should use
+    # "fewer and larger — never more" work units. 5 is the advisory threshold;
+    # exceeding it produces 5+ shallow results on a small model, which reads
+    # thorough and is not. Warning only, not a hard error.
+    _steps_for_count = state.get("steps") or []
+    _effective_host = host if not _host_assumed else "mid"
+    if _effective_host == "small" and len(_steps_for_count) > 5:
+        print(
+            f"  warning: small host has {len(_steps_for_count)} steps defined; "
+            f"consider consolidating into \u22645 larger units "
+            f"(references/model-adaptation.md)",
+            file=sys.stderr,
+        )
 
     # A rung with no trigger cannot be revised by evidence, which is the
     # difference between a decision and a label. Reported for R2 and above,
@@ -2929,7 +2976,7 @@ def main() -> int:
     s.add_argument("--de-escalate-on", default="",
                    help="the observation that would let the rung drop")
     s.add_argument("--mode", default="inline", choices=list(MODES))
-    s.add_argument("--host", default="mid", choices=list(HOSTS),
+    s.add_argument("--host", default=None, choices=list(HOSTS),
                    help="what this host can carry, as a term in the effort gate. "
                         "A term, never a model name: the tier is read from what the "
                         "host exposes, and a ladder that named models would be stale "

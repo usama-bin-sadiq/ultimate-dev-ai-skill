@@ -73,6 +73,10 @@ A host may expose tools with different names. Resolve them semantically at runti
 
 ## Key Adaptation Rules
 
+The formal tier vocabulary (small, mid, frontier) and their procedure ceilings
+are defined in `references/model-adaptation.md`; record the tier at run init
+with `python3 tools/run-state.py init --host <tier>`.
+
 1. **The loop is universal.** Step 0 through Step 10 work the same regardless of
    tool. What changes across hosts is how much can run in parallel and how deep a
    verification is affordable — not which steps exist.

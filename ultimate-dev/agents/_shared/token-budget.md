@@ -16,9 +16,12 @@ Goal: accomplish the task with the fewest tokens while maintaining quality.
 
 Model tiers are NOT hardcoded. Each agent declares a suggested tier in frontmatter, but the orchestrator adapts:
 
-1. **If running a small model** — Use all agents at their default tier. Small models benefit from focused, single-purpose prompts.
-2. **If running a mid-tier model** — Can combine thin agents (merge accessibility-auditor+i18n-engineer into frontend-developer).
-3. **If running a large model** — Can run more agents in parallel, use deeper analysis passes.
+1. **If running a small-tier host** (`small` in `references/model-adaptation.md`) — Use all agents at their default tier. Small hosts benefit from focused, single-purpose prompts with ≤5 work units.
+2. **If running a mid-tier host** (`mid` in `references/model-adaptation.md`) — Can combine thin agents (merge accessibility-auditor+i18n-engineer into frontend-developer).
+3. **If running a frontier-tier host** (`frontier` in `references/model-adaptation.md`) — Can run more agents in parallel, use deeper analysis passes.
+
+Tier definitions and enforcement: `references/model-adaptation.md`. Record
+the tier at run init: `python3 tools/run-state.py init --host <tier>`.
 
 The frontmatter `model:` field is advisory. The orchestrator picks based on available compute, not hardcoded names.
 

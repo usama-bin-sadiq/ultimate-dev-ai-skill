@@ -96,7 +96,7 @@ RUNTIME_DIRS = ("references", "skills", "agents", "tools")
 # TREE.json is the generated capability index. The kernel points a reader at
 # references/capability-catalogue.md and at `tools/index-tree.py --search`; the
 # JSON is the machine-readable form of the same map, so it ships.
-RUNTIME_FILES = ("SKILL.md", "TREE.json")
+RUNTIME_FILES = ("SKILL.md", "SKILL-compact.md", "TREE.json")
 
 # Excluded: everything a reader of the skill never loads. Listed explicitly so
 # a new top-level tree fails the "unclassified" check rather than being silently

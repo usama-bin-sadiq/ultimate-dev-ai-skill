@@ -37,6 +37,7 @@ discover it is missing by finding out.
 | **Image or other modality input** | A non-text input was read | State that the material could not be inspected and that every claim about it is unverified. Never describe an image you could not see. |
 | **Skill discovery** | This skill was selected | Nothing to degrade. If the kernel is running but a sub-skill is not reachable, do its work inline and record that the sub-skill was unavailable. |
 | **Sub-skill loading** | `skills/skill-creator/SKILL.md` was read | Perform the capability-expansion procedure inline from `capability-expansion.md`. Do not skip the gates because the engine was unreachable. |
+| **Narrow context window** | Context fills before the task completes, or `SKILL.md` alone exceeds the available token budget | Use `SKILL-compact.md` instead of `SKILL.md`. Skip Steps 3–10 until context permits. Collapse decision records to outcome-only (evidence: none, omit rejected). Record rung as R1 max. State the limitation in the delivery: `LIMITATION: kernel loaded in compact form; Steps 3–10 deferred.` |
 
 ## The self-check problem
 
@@ -99,3 +100,15 @@ skill would outlive the runtime's limitation.
 See `capability-system.md` for the ladder, `insufficient-capability.md` for a gap
 that cannot be closed, `delegation.md` for what changes without dispatch, and
 `model-adaptation.md` for lowering rigour rather than pretending to hold it.
+
+## Context-budget constraints
+
+Context-window size is a capability the kernel probes like any other, and
+its absence is a limit to state rather than a reason to skip gates silently.
+A host whose context fills before the kernel is fully applied should load
+`SKILL-compact.md` in place of `SKILL.md` and treat that as the correct
+degradation path, not a defect. The compact form preserves the hard rules
+and the effort gate — the parts that change correctness — and defers the
+ceremony that a small context cannot afford. When the compact form is active,
+note it in every delivery with a `LIMITATION` line so downstream consumers
+know which checks were applied.
