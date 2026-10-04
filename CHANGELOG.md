@@ -1,5 +1,9 @@
 # Changelog
 
+## [4.0.39] — 2026-10-04
+
+- feat: model-tier adaptation fixes P1-P3 P5-P7
+
 ## [4.0.38] — 2026-10-03
 
 - fix: remove backtick slugs from runtime-self-check workflow primitives section so validator does not misread capability labels as agent dispatch names
