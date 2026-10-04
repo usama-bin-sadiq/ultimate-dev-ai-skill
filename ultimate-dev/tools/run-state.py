@@ -530,7 +530,11 @@ def cmd_init(args) -> int:
         # model can turn into substance, which is a different question and the
         # one that decides whether a run is thorough or merely long.
         "host": getattr(args, "host", None),
-        "host_tier_assumed": not bool(getattr(args, "host", None)),
+        # Record the assumed tier value ("mid") when --host was not supplied, or
+        # None when the host was explicitly declared. cmd_set_host clears this
+        # field (sets it to None) once the host is updated, so the state file
+        # reliably distinguishes "never set" from "set later".
+        "host_tier_assumed": "mid" if not getattr(args, "host", None) else None,
         "exceeds_ceiling": (args.exceeds_ceiling or "").strip() or None,
         # A rung without the events that would move it cannot be revised by
         # evidence, so the triggers are stored beside it rather than left to
@@ -836,6 +840,8 @@ def cmd_set_host(args) -> int:
         "from": prior, "to": host, "why": args.why.strip(), "at": now(),
     })
     state["host"] = host
+    # Clear the assumed-tier marker: the host is now explicitly set.
+    state["host_tier_assumed"] = None
     save(args, state)
     print(f"  host {prior or '(unset)'} -> {host}  "
           f"(ceiling {HOST_CEILING[host]})  {args.why}")
@@ -2662,7 +2668,7 @@ def cmd_check(args) -> int:
                 (state.get("rung_triggers") or {}).get("escalate_on", "").strip()
                 or (state.get("rung_triggers") or {}).get("de_escalate_on", "").strip()
             )
-            if not has_reflect and not has_triggers:
+            if not has_reflect or not has_triggers:
                 print(
                     f"  warning: frontier host at {rung_code} but no triage answers "
                     f"recorded. Run 'reflect' to confirm the rung is justified "
@@ -2675,6 +2681,10 @@ def cmd_check(args) -> int:
     # "fewer and larger — never more" work units. 5 is the advisory threshold;
     # exceeding it produces 5+ shallow results on a small model, which reads
     # thorough and is not. Warning only, not a hard error.
+    # Deliberate: this gate fires only when --host small is explicitly declared.
+    # An unset host falls back to "mid" (_effective_host = "mid"), not "small",
+    # so runs that never declared a tier are not penalised here. There is no
+    # basis for the step-count advisory without an explicit small-host declaration.
     _steps_for_count = state.get("steps") or []
     _effective_host = host if not _host_assumed else "mid"
     if _effective_host == "small" and len(_steps_for_count) > 5:
