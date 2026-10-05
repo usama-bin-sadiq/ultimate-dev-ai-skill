@@ -28,3 +28,9 @@ resources/    operational data — the vocabularies and profiles those records n
    capability itself.
 3. Examples are marked as examples. Anything an environment must supply for
    itself says so at the top of the file.
+
+## What is not here
+
+`knowledge/schemas/provider.md` and the rest of the contracts layer live in
+the full repository, not in a bundle. The vocabulary and profiles in this
+tree are what a run reads; the schemas are what audits it.

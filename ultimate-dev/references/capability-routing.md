@@ -121,3 +121,12 @@ The user receives one coherent result. The routing lives in the decision
 record — `capability_required`, `context_required`, `coordination`, `rejected`
 — not in the narration. A delivery that reads as a tour of the capabilities
 considered has confused the log with the answer. `output-contract.md`.
+
+## What is not here
+
+The record shapes the card and the packet point at —
+`../knowledge/schemas/capability.md`, `../knowledge/schemas/agent.md`, and
+`../knowledge/schemas/artifact.md` — live in the full repository, not in a
+pruned install or a bundle. They are the audit trail behind the fields, read
+when a record is being built or audited, which is rare by design; the routing
+discipline itself runs without them.
