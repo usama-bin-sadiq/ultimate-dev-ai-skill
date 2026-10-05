@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.0.42] — 2026-10-05
+
+- fix: classify resources/ and manifest.yaml for the bundler
+- ci: uninstall round-trip assertions in the installer gate
+- feat: capability routing discipline, package composition contracts (PRD phase 1), and --uninstall flag
+
 ## [4.0.41] — 2026-10-04
 
 - fix: accuracy and efficiency improvements — finish UX, R2 trigger gate, log summary, routing table caveat
