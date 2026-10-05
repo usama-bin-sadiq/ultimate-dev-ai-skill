@@ -424,7 +424,21 @@ jobs:
           # --all keeps the documentation the default prunes.
           ./install.sh --all --target "$sandbox/full" --yes
           test -d "$sandbox/full/ultimate-dev/docs"
-          echo 'installer round-trip, idempotence, clobber guard, and --all pass'
+          # Uninstall removes the install and its pointer file, and a second
+          # run is a safe no-op.
+          ./install.sh --uninstall --target "$sandbox/install" --yes
+          test ! -e "$sandbox/install/ultimate-dev"
+          test ! -e "$sandbox/install/ultimate-dev.json"
+          ./install.sh --uninstall --target "$sandbox/install" --yes
+          # Uninstall refuses a directory that is not this skill.
+          mkdir -p "$sandbox/foreign/ultimate-dev"
+          printf 'not ours\n' > "$sandbox/foreign/ultimate-dev/SKILL.md"
+          if ./install.sh --uninstall --target "$sandbox/foreign" --yes; then
+            echo 'uninstaller deleted a directory that was not the skill' >&2
+            exit 1
+          fi
+          test -d "$sandbox/foreign/ultimate-dev"
+          echo 'installer round-trip, idempotence, clobber guard, --all, and uninstall pass'
 
       - name: Installer refuses to guess without a terminal
         run: |
