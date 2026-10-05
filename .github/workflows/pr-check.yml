@@ -66,3 +66,28 @@ jobs:
             has_release_label=false
           fi
           printf 'has_release_label=%s\n' "$has_release_label" >> "$GITHUB_OUTPUT"
+
+  cancel-siblings:
+    name: Cancel sibling workflows on failure
+    runs-on: ubuntu-latest
+    # Same fail-fast contract as validate.yml, scoped by head_sha.
+    if: failure()
+    needs: [pr-template-check]
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Cancel every other run of this commit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          for status in queued in_progress; do
+            gh api "repos/${{ github.repository }}/actions/runs?head_sha=${{ github.sha }}&status=${status}" \
+              --jq '.workflow_runs[].id' | while read -r id; do
+                [ -z "$id" ] && continue
+                [ "$id" = "${{ github.run_id }}" ] && continue
+                echo "cancelling run ${id}"
+                gh api -X POST "repos/${{ github.repository }}/actions/runs/${id}/cancel"
+              done
+          done

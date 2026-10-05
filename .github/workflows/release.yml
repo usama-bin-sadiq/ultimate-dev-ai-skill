@@ -467,3 +467,31 @@ jobs:
             --title "v$NEW_VERSION" \
             --notes "$notes" \
             --verify-tag
+
+  cancel-siblings:
+    name: Cancel sibling workflows on failure
+    runs-on: ubuntu-latest
+    # Same fail-fast contract as validate.yml: if the release verification
+    # fails, the remaining workflows of this commit are cancelled rather than
+    # left running against a known-red commit. Scoped by head_sha, so runs of
+    # other commits and other branches are never touched.
+    if: failure()
+    needs: [should-release, release-gate, create-release]
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Cancel every other run of this commit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          for status in queued in_progress; do
+            gh api "repos/${{ github.repository }}/actions/runs?head_sha=${{ github.sha }}&status=${status}" \
+              --jq '.workflow_runs[].id' | while read -r id; do
+                [ -z "$id" ] && continue
+                [ "$id" = "${{ github.run_id }}" ] && continue
+                echo "cancelling run ${id}"
+                gh api -X POST "repos/${{ github.repository }}/actions/runs/${id}/cancel"
+              done
+          done

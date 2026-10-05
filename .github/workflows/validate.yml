@@ -1280,3 +1280,31 @@ jobs:
               && echo 'Release label found' \
               || echo 'No release label; a merged PR will not auto-release'
           fi
+
+  cancel-siblings:
+    name: Cancel sibling workflows on failure
+    runs-on: ubuntu-latest
+    # Fires only when one of this workflow's jobs failed, then cancels the
+    # other workflow runs of the SAME commit -- a red gate stops the bill for
+    # the 45-minute suite and the release check, instead of letting them run
+    # to completion against a verdict that is already known.
+    if: failure()
+    needs: [structure, gate, integrity, self-test, release-consistency, docs, pr-quality]
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Cancel every other run of this commit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          for status in queued in_progress; do
+            gh api "repos/${{ github.repository }}/actions/runs?head_sha=${{ github.sha }}&status=${status}" \
+              --jq '.workflow_runs[].id' | while read -r id; do
+                [ -z "$id" ] && continue
+                [ "$id" = "${{ github.run_id }}" ] && continue
+                echo "cancelling run ${id}"
+                gh api -X POST "repos/${{ github.repository }}/actions/runs/${id}/cancel"
+              done
+          done
