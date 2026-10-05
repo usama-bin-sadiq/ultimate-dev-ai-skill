@@ -157,15 +157,31 @@ None. Python 3 is needed only for the validator, and the validator is optional.
 
 ## Uninstall
 
-Delete the installed directory:
+```bash
+./install.sh --uninstall                  # from the user-global location
+./install.sh --uninstall --project        # from ./.agents/skills (or ./.claude/skills)
+./install.sh --uninstall --target DIR     # from an exact directory
+./install.sh --uninstall --dry-run        # print what would be removed, change nothing
+```
+
+This removes the installed directory and the install's pointer file
+(`ultimate-dev.json` next to it). A discovery hint file is removed only when
+its whole content is exactly what the installer wrote — your own `AGENTS.md`
+or `CLAUDE.md` is never touched. The uninstaller verifies the directory is
+this skill before deleting anything, and asks first unless `--yes` is given.
+
+On Windows the same works with `.\install.ps1 -Uninstall [-Target DIR]`.
+
+Manually: delete the installed directory and the pointer file:
 
 ```bash
 rm -rf ~/.agents/skills/ultimate-dev
+rm -f  ~/.agents/skills/ultimate-dev.json
 ```
 
-The installer keeps no state, writes no registry, and creates no symlinks, so
-removal is complete when the directory is gone. If you installed with
-`--project`, also check your `.gitignore` for an entry a previous install added.
+The installer keeps no other state and creates no symlinks, so removal is
+complete when those are gone. If you installed with `--project`, also check
+your `.gitignore` for an entry a previous install added.
 
 ## Troubleshooting
 

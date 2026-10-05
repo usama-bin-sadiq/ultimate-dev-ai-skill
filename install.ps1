@@ -52,6 +52,10 @@
 .PARAMETER Interactive
     Ask where to install and what to include, even on a terminal.
 
+.PARAMETER Uninstall
+    Remove an install: the skill directory and its pointer file. Combine with
+    -Global (default), -Project, or -Target to choose where from.
+
 .EXAMPLE
     .\install.ps1
     Installs for the current user, pruning everything the runtime does not load.
@@ -81,6 +85,7 @@ param(
     [switch]$Yes,
     [switch]$DryRun,
     [switch]$Interactive,
+    [switch]$Uninstall,
     [string]$BundleOut = 'dist'
 )
 
@@ -236,6 +241,66 @@ function Resolve-Target {
     # No known directory exists. Use the first rather than inventing a path, so
     # the result is somewhere a runtime actually looks.
     return $GlobalCandidates[0]
+}
+
+# ---------------------------------------------------------------------------
+# Uninstall
+#
+# Short-circuits before the source preflight: removal needs a destination,
+# not a source tree. Mirrors install.sh --uninstall, including the refusals.
+# ---------------------------------------------------------------------------
+
+if ($Uninstall) {
+    $destRoot = Resolve-Target
+    $dest = Join-Path $destRoot $SkillName
+    $pointer = Join-Path $destRoot 'ultimate-dev.json'
+
+    Write-Log "target:       $dest"
+
+    # The one place this operation can lose data, so it verifies before it asks.
+    # manifest.json is written by current installs; the SKILL.md frontmatter
+    # name covers installs made before the manifest existed.
+    if (Test-Path -LiteralPath $dest) {
+        $ours = $false
+        $manifestPath = Join-Path $dest 'manifest.json'
+        $skillPath = Join-Path $dest 'SKILL.md'
+        if ((Test-Path -LiteralPath $manifestPath) -and
+            (Select-String -LiteralPath $manifestPath -Pattern ([regex]::Escape("`"name`": `"$SkillName`"")) -Quiet)) {
+            $ours = $true
+        }
+        if ((-not $ours) -and (Test-Path -LiteralPath $skillPath) -and
+            (Select-String -LiteralPath $skillPath -Pattern "^name:\s*$([regex]::Escape($SkillName))\s*$" -Quiet)) {
+            $ours = $true
+        }
+        if (-not $ours) {
+            Stop-WithError "$dest does not look like the $SkillName skill (no matching manifest.json or SKILL.md name); refusing to delete it"
+        }
+    }
+
+    if ($DryRun) {
+        if (Test-Path -LiteralPath $dest) { Write-Log "dry run:      would remove $dest" } else { Write-Log "dry run:      $dest does not exist" }
+        if (Test-Path -LiteralPath $pointer) { Write-Log "dry run:      would remove $pointer" }
+        exit 0
+    }
+
+    if ((-not (Test-Path -LiteralPath $dest)) -and (-not (Test-Path -LiteralPath $pointer))) {
+        Write-Log "nothing to uninstall from $destRoot"
+        exit 0
+    }
+
+    if (-not $Yes) {
+        $reply = Read-Host "This deletes $dest. Proceed? [y/N]"
+        if ($reply -notmatch '^(y|yes)$') {
+            Stop-WithError 'aborted; nothing was changed'
+        }
+    }
+
+    if (Test-Path -LiteralPath $dest) { Remove-Item -LiteralPath $dest -Recurse -Force; Write-Log "removed:      $dest" }
+    if (Test-Path -LiteralPath $pointer) { Remove-Item -LiteralPath $pointer -Force; Write-Log "removed:      $pointer" }
+
+    Write-Log ""
+    Write-Log "uninstalled $SkillName from $destRoot"
+    exit 0
 }
 
 # ---------------------------------------------------------------------------

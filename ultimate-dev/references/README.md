@@ -11,7 +11,7 @@ so read the directory rather than a count stated here.
 
 **Context** — `context-system.md` · `context-compiler.md` · `context-provenance.md`
 
-**Capability and skills** — `capability-system.md` · `capability-discovery.md` · `capability-acquisition.md` · `capability-validation.md` · `capability-composition.md` · `capability-expansion.md` · `skill-system.md` · `skill-discovery.md` · `skill-selection.md` · `skill-composition.md` · `invocation.md`
+**Capability and skills** — `capability-routing.md` · `capability-system.md` · `capability-discovery.md` · `capability-acquisition.md` · `capability-validation.md` · `capability-composition.md` · `capability-expansion.md` · `skill-system.md` · `skill-discovery.md` · `skill-selection.md` · `skill-composition.md` · `invocation.md`
 
 **Strategy and reasoning** — `strategy-system.md` · `reasoning-system.md` · `model-adaptation.md`
 
@@ -38,6 +38,7 @@ so read the directory rather than a count stated here.
 | A `run-state.py` command refused something and the message is not enough | `state-system.md` — every gate here, and why each exists |
 | Recording a decision, or unsure what a field means | `decision-fabric.md` |
 | Deciding what context to hold | `context-system.md`, then `context-compiler.md` |
+| Choosing what capability a task needs, or wiring several into a chain | `capability-routing.md` |
 | Resolving a missing capability | `capability-system.md`, then `../skills/skill-creator/SKILL.md` |
 | Writing or defending a plan | `planning-system.md` |
 | Something went wrong | `recovery-system.md`, then `retry-policy.md` |

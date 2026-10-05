@@ -29,6 +29,10 @@ prose about either.
 | `schemas/observation.md` | what actually happened, verbatim, including what did not | EXECUTE |
 | `schemas/experience.md` | one completed run, assembled and auditable | LEARN |
 | `schemas/learning.md` | a candidate change to behaviour, gated and scoped | LEARN |
+| `schemas/agent.md` | a specialized reasoning role: input/output contract, capabilities, dispatch condition | DELEGATE |
+| `schemas/provider.md` | one implementation of a capability: entrypoint, selection criteria, fallback order | ACQUIRE |
+| `schemas/artifact.md` | a typed, persistent, validated stage output | EXECUTE → SYNTHESIZE |
+| `schemas/workflow.md` | stages, dependencies, parallelism, gates, recovery, completion | PLAN |
 
 `experience` is the spine. Every other record carries a reference back to a run
 or a task, and the experience record is where they are assembled. The nine map
@@ -37,6 +41,11 @@ onto the RunState model in `prd.md` §17 without renaming its fields: `task`,
 `evidence`, `context`, `capabilities`, `skills`, `decisions`, `strategy`,
 `reasoning`, `plan`, `actions`, `observations`, `failures`, `verification`,
 `learning_candidates`, `budget`, `provenance`, `result`.
+
+The last four are **composition records**: they describe the package, not a
+run, and they map onto the entity model in `new-implementation.md` §7 (agent,
+provider, artifact, workflow). The adoption decision and what it defers is
+`../docs/decisions/0014-package-composition-contracts.md`.
 
 ## Policies
 
@@ -47,6 +56,7 @@ onto the RunState model in `prd.md` §17 without renaming its fields: `task`,
 | `policies/validation.md` | when a result may be trusted, and which verdict may be reported |
 | `policies/promotion.md` | when learning and capabilities may change behaviour |
 | `policies/retention.md` | what is kept, for how long, and what is deleted |
+| `policies/mcp-failures.md` | how MCP provider failures are normalized, and what each disposes |
 
 Policies override convenience everywhere. A policy conflict is resolved in
 favour of the more restrictive rule, and the conflict is recorded as a

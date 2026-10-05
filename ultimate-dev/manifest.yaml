@@ -1,0 +1,54 @@
+# Declarative composition layer for ultimate-dev.
+#
+# Intentionally boring and predictable: what the package is, where its parts
+# live, and which file orchestrates. It describes the package as it exists;
+# the target layout in new-implementation.md §9 is a Phase-5 migration goal,
+# recorded in docs/decisions/0014.
+name: ultimate-dev
+version: 4.0.40
+type: skill
+
+description: >
+  General-purpose development kernel — decision fabric, capability routing,
+  coordination, execution, verification, and recovery. Model-agnostic,
+  tool-neutral, runtime-driven.
+
+orchestrator:
+  path: SKILL.md
+  compact: SKILL-compact.md
+  routing_contract: references/capability-routing.md
+
+skills:
+  # Owned sub-skills. The 2,086 discovered sub-skills in the catalogue are
+  # indexed by tools/index-tree.py, not listed here.
+  - id: skill-creator
+    path: skills/skill-creator
+
+agents:
+  # 286 role files; each its own procedure and output contract.
+  # The reachable set is references/routing-table.md; dispatch conditions are
+  # references/delegation.md; the contract schema is knowledge/schemas/agent.md.
+  path: agents/
+  shared: agents/_shared/
+
+references:
+  path: references/
+  index: references/README.md
+
+knowledge:
+  schemas: knowledge/schemas/
+  policies: knowledge/policies/
+  index: knowledge/README.md
+
+resources:
+  path: resources/
+  capability_vocabulary: resources/capability-vocabulary.yaml
+  model_profiles: resources/model-profiles.yaml
+  mcp_registry_example: resources/mcp-registry.example.yaml
+
+tools:
+  path: tools/
+  note: validators and maintenance machinery; not part of an install
+
+evaluation:
+  assertions: evaluation/assertions.json

@@ -284,7 +284,8 @@ SOURCE_SPECS = {"new-arch.md", "new-arch-updated.md", "prd.md",
                  "ARCHITECTURE.md"}
 
 INDEXED_TREES = ("skills", "agents", "knowledge", "evaluation",
-                 "examples", "docs", "research", "evals", "references")
+                 "examples", "docs", "research", "evals", "references",
+                 "resources")
 
 # Top-level directories that are deliberately not content trees, so the rule
 # below stays honest. tools/ holds this validator; it is not a tree a reader

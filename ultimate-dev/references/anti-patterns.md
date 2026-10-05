@@ -27,6 +27,7 @@ diligence while they are destroying the work.
 | Silent overreach | Name the authorisation, or ask for it |
 | Difficulty worship | Stop at the lowest rung that is adequate |
 | Unreviewed coordination | Record the mode and its reason |
+| Keyword routing | State the need as a verb from the objective, then match |
 
 ## Orchestrating a trivial task
 
@@ -107,6 +108,17 @@ diligence while they are destroying the work.
 - **Symptom:** effort, ceremony, and reasoning depth scaled to how hard the problem sounds rather than to what triage found.
 - **Mechanism:** the ladder is treated as a quota instead of a floor. Carrying R3 reasoning on an R0 task is pure waste, and it is the most common failure of this kernel.
 - **Fix:** stop at the lowest rung that is adequate, and de-escalate the moment reality turns out easier. See `triage.md`.
+
+## Keyword routing
+
+- **Symptom:** a capability chosen because the request contained its name or
+  vocabulary; the same need phrased differently gets a different capability.
+- **Mechanism:** the description listing is matched as text instead of as a
+  contract, so word overlap stands in for an objective match and the choice
+  inherits the user's vocabulary rather than the work's shape.
+- **Fix:** state the required capability as a verb from the task model, then
+  match; rephrase the request without the keyword and check the choice
+  survives. See `skill-selection.md` and `capability-routing.md`.
 
 ## The unifying failure
 

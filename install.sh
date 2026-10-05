@@ -59,6 +59,7 @@ TARGET=""
 YES=0
 PRUNE=1
 DRY_RUN=0
+UNINSTALL=0
 WRITE_HINTS=0
 BUNDLE_OUT="dist"
 BUNDLE_ZIP=0
@@ -86,6 +87,9 @@ usage: install.sh [options]
   --dry-run             print what would happen, change nothing
   --write-discovery-hints  write minimal discovery hint files (AGENTS.md,
                         CLAUDE.md) to the parent of each install target
+  --uninstall           remove an install: the skill directory, its pointer
+                        file, and any hint file the installer wrote. Combine
+                        with --global (default), --project DIR, or --target DIR
   -i, --interactive     ask where to install and what to include, even on a tty
   -h, --help            this message
 
@@ -238,6 +242,131 @@ The ultimate-dev skill is installed in skills/"
   fi
 }
 
+# Resolve the destination. Shared by install and uninstall, so both compute
+# the same directory from the same flags.
+detect_target() {
+  case "$MODE" in
+    target) printf '%s' "$TARGET" ;;
+    project) printf '%s' "$TARGET" ;;
+    global)
+      for candidate in "${GLOBAL_CANDIDATES[@]}"; do
+        if [ -d "$candidate" ]; then printf '%s' "$candidate"; return 0; fi
+      done
+      # No known directory exists. Create the first one rather than inventing a
+      # path, so the result is somewhere a runtime actually looks.
+      printf '%s' "${GLOBAL_CANDIDATES[0]}"
+      ;;
+    *) return 1 ;;
+  esac
+}
+
+# The safety gate for deletion: the directory must provably be this skill.
+# manifest.json is written by current installs; the SKILL.md frontmatter name
+# covers installs made before the manifest existed.
+target_is_ours() {
+  local dest="$1"
+  if [ -f "${dest}/manifest.json" ] \
+    && grep -q "\"name\": \"${SKILL_NAME}\"" "${dest}/manifest.json" 2>/dev/null; then
+    return 0
+  fi
+  if [ -f "${dest}/SKILL.md" ] \
+    && grep -qE "^name:[[:space:]]*${SKILL_NAME}[[:space:]]*$" "${dest}/SKILL.md" 2>/dev/null; then
+    return 0
+  fi
+  return 1
+}
+
+# A hint file is removed only when its whole content is exactly what the
+# installer writes -- the installer never overwrites, so anything else is the
+# user's own file and removing it would be the loss the gate exists to prevent.
+hint_is_ours() {
+  [ -f "$1" ] || return 1
+  printf '%s\n' '# Agent Skills' 'The ultimate-dev skill is installed in skills/' \
+    | cmp -s - "$1"
+}
+
+do_uninstall() {
+  case "$MODE" in
+    bundle|bundle-check) die "--uninstall does not combine with bundle operations" ;;
+  esac
+  if [ -z "$MODE" ]; then
+    MODE="global"
+    warn "no destination given; defaulting to --global"
+  fi
+
+  local dest_root dest pointer hint_file removing=""
+  dest_root="$(detect_target)" || die "cannot resolve the install location"
+  dest="${dest_root%/}/${SKILL_NAME}"
+  pointer="${dest_root%/}/ultimate-dev.json"
+
+  log "target:      ${dest}"
+
+  # The one place this operation can lose data, so it verifies before it asks.
+  if [ -e "$dest" ] && ! target_is_ours "$dest"; then
+    die "${dest} does not look like the ${SKILL_NAME} skill (no matching manifest.json or SKILL.md name); refusing to delete it"
+  fi
+
+  # Which hint file the installer may have written depends on the destination's
+  # parent, exactly as in write_discovery_hints.
+  case "$dest_root" in
+    "${HOME}/.agents") hint_file="${HOME}/.agents/AGENTS.md" ;;
+    "${HOME}/.claude") hint_file="${HOME}/.claude/CLAUDE.md" ;;
+    *)                 hint_file="${dest_root%/}/AGENTS.md" ;;
+  esac
+
+  if [ "$DRY_RUN" -eq 1 ]; then
+    if [ -e "$dest" ]; then
+      log "dry run:     would remove ${dest}"
+    else
+      log "dry run:     ${dest} does not exist"
+    fi
+    [ -f "$pointer" ] && log "dry run:     would remove ${pointer}"
+    if [ -f "$hint_file" ]; then
+      if hint_is_ours "$hint_file"; then
+        log "dry run:     would remove ${hint_file} (installer-written hint)"
+      else
+        log "dry run:     would keep ${hint_file}; its content is not the installer's hint"
+      fi
+    fi
+    exit 0
+  fi
+
+  if [ ! -e "$dest" ] && [ ! -f "$pointer" ]; then
+    log "nothing to uninstall from ${dest_root}"
+    exit 0
+  fi
+
+  [ -e "$dest" ] && removing="$dest"
+  if [ -f "$pointer" ]; then
+    [ -n "$removing" ] && removing="${removing} and "
+    removing="${removing}${pointer}"
+  fi
+
+  if [ "$YES" -ne 1 ]; then
+    printf '%s\n' "This deletes ${removing}." >&2
+    printf 'Proceed? [y/N] ' >&2
+    read -r reply </dev/tty || reply=""
+    case "$reply" in
+      y|Y|yes|YES) ;;
+      *) die "aborted; nothing was changed" ;;
+    esac
+  fi
+
+  if [ -e "$dest" ]; then rm -rf "$dest"; log "removed:     ${dest}"; fi
+  if [ -f "$pointer" ]; then rm -f "$pointer"; log "removed:     ${pointer}"; fi
+  if [ -f "$hint_file" ]; then
+    if hint_is_ours "$hint_file"; then
+      rm -f "$hint_file"
+      log "removed:     ${hint_file}"
+    else
+      log "kept:        ${hint_file} (content differs from the installer's hint)"
+    fi
+  fi
+
+  log ""
+  log "uninstalled ${SKILL_NAME} from ${dest_root}"
+}
+
 # Platform detection. The script is POSIX bash and that is a real constraint on
 # Windows: it runs under WSL, Git Bash, or MSYS, and nowhere else. Saying which,
 # and saying what to do when it is not one of those, is better than failing later
@@ -290,6 +419,7 @@ while [ $# -gt 0 ]; do
     --bundle-zip) MODE="bundle"; BUNDLE_ZIP=1; EXPLICIT=1
                 BUNDLE_OUT="${BUNDLE_OUT:-dist}"; shift ;;
     --check-bundle) MODE="bundle-check"; EXPLICIT=1; shift ;;
+    --uninstall) UNINSTALL=1; EXPLICIT=1; shift ;;
     --yes|-y)   YES=1; shift ;;
     --dry-run)  DRY_RUN=1; shift ;;
     --write-discovery-hints) WRITE_HINTS=1; shift ;;
@@ -298,6 +428,12 @@ while [ $# -gt 0 ]; do
     *)          die "unknown option: $1 (try --help)" ;;
   esac
 done
+
+# Uninstall short-circuits: it needs a destination, not a source tree.
+if [ "$UNINSTALL" -eq 1 ]; then
+  do_uninstall
+  exit 0
+fi
 
 [ -d "$SOURCE_DIR" ] || die "cannot find the skill at ${SOURCE_DIR}; run install.sh from the repository root, or pass --source DIR"
 [ -f "${SOURCE_DIR}/SKILL.md" ] || die "${SOURCE_DIR} has no SKILL.md, so it is not a skill"
@@ -485,22 +621,6 @@ fi
 # Resolve the destination. An existing skill directory is never silently
 # replaced: the user is told, and asked, because a skill directory can hold
 # promoted local skills that a blind overwrite would destroy.
-detect_target() {
-  case "$MODE" in
-    target) printf '%s' "$TARGET" ;;
-    project) printf '%s' "$TARGET" ;;
-    global)
-      for candidate in "${GLOBAL_CANDIDATES[@]}"; do
-        if [ -d "$candidate" ]; then printf '%s' "$candidate"; return 0; fi
-      done
-      # No known directory exists. Create the first one rather than inventing a
-      # path, so the result is somewhere a runtime actually looks.
-      printf '%s' "${GLOBAL_CANDIDATES[0]}"
-      ;;
-    *) return 1 ;;
-  esac
-}
-
 DEST_ROOT="$(detect_target)"
 DEST="${DEST_ROOT%/}/${SKILL_NAME}"
 

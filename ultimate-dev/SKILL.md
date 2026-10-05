@@ -297,17 +297,16 @@ per-complexity dispatch counts, `agents/_shared/agent-compatibility.md` to adapt
 when the host is smaller than the plan assumed. Two rules survive every host: never
 read a whole role file unless you are dispatching it, and never pay for a
 delegation that returns nothing this context could not have produced.
-The catalog holds 286 role files; load a role only when you are about to dispatch it.
 `references/context-system.md`.
 
 ## Step 4 — coordination mode, then capability
 
-**How** capabilities are assembled is decided first. Read in order, stop at the
-first that fits:
+**First, route the objective — never the request.** State the capabilities the
+*outcome* requires, as verbs; the same need, phrased without its keyword, must
+produce the same choice. Chains are declared at intake: `references/capability-routing.md`.
 
-Read "cheapest adequate" as cheapest per **call**, which is not cheapest per unit
-of work: inline is free per call and can cost most overall, because loaded skills
-stay in context.
+**How** capabilities are assembled is decided first. Read cheapest adequate
+first, and stop at the first that fits:
 
 1. **inline** — one capability, already in context. No extra call. The default.
 2. **delegate** — a specialist whose context must not pollute this one, answering
@@ -595,6 +594,7 @@ governs and which situation loads it. Three sit outside the groups:
 **Elsewhere** — `skills/skill-creator/SKILL.md` owns capability creation and
 promotion. `references/maturity.md` records the claimed level. `tools/` holds the
 validators and the maintenance machinery, which is not part of an install.
+The manifest is `manifest.yaml`; runtime data lives in `resources/`.
 
 Base directory for this skill: the directory holding `SKILL.md`, which is also the
 root of an install. Relative paths resolve from there.
