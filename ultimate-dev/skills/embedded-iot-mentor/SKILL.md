@@ -137,5 +137,5 @@ Request: "I want to know when my greenhouse gets too cold at night, on my phone.
 
 ## Cross-References
 
-- `engineering-team/skills/tech-stack-evaluator` — for software-stack TCO/migration analysis once the project has firmware and needs a backend or cloud comparison.
-- `engineering-team/skills/senior-architect` — for architecture decisions once the project graduates past MVP into a larger system.
+- `skills/tech-stack-evaluator` — for software-stack TCO/migration analysis once the project has firmware and needs a backend or cloud comparison.
+- `skills/senior-architect` — for architecture decisions once the project graduates past MVP into a larger system.

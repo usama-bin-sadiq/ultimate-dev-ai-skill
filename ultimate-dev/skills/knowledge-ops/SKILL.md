@@ -56,7 +56,7 @@ Four-step deterministic flow (matches the ops org's actual workflow, not an abst
 
 ```bash
 # Builds a synthetic 8-page vault and emits a KB health report (orphans, stale pages, glossary drift, top-20 cleanup list)
-cd business-operations/skills/knowledge-ops && python3 scripts/kb_ingester.py --sample
+cd skills/knowledge-ops && python3 scripts/kb_ingester.py --sample
 ```
 
 ## References

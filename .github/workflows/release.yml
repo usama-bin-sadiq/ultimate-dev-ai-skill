@@ -360,29 +360,14 @@ jobs:
           PY
 
       # A release must not be able to ship a skill that does not validate, a
-      # bundle that does not install, or a changelog that disagrees with VERSION.
+      # structure that does not validate, or a changelog that disagrees with VERSION.
       - name: Verify the release is releasable
         run: |
           set -euo pipefail
           python ultimate-dev/tools/validate-skills.py --strict
-          python ultimate-dev/tools/build-evals.py --check
-          python ultimate-dev/tools/bundle-skill.py --out dist
           version=$(tr -d '[:space:]' < VERSION)
           if ! grep -qF "## [$version]" CHANGELOG.md; then
             echo "CHANGELOG.md has no entry for $version" >&2
-            exit 1
-          fi
-
-      - name: Commit release artefacts
-        run: |
-          set -euo pipefail
-          # dist/ is gitignored; assert rather than assume, so a change to
-          # .gitignore that starts tracking bundles fails here instead of
-          # silently shipping a 400 KB artefact into the tag.
-          if git check-ignore -q dist/ultimate-dev/SKILL.md; then
-            echo 'dist/ is correctly ignored'
-          else
-            echo 'dist/ is not ignored; refusing to commit a generated bundle' >&2
             exit 1
           fi
 

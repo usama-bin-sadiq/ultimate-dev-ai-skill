@@ -127,7 +127,7 @@ Assume the plan will fail. Find the three most likely failure modes. For each, i
 
 ## Communication
 
-All output passes the Internal Quality Loop before reaching the founder (see `c-level-advisor/skills/agent-protocol/SKILL.md`).
+All output passes the Internal Quality Loop before reaching the founder (see `skills/agent-protocol/SKILL.md`).
 - Self-verify: source attribution, assumption audit, confidence scoring
 - Peer-verify: cross-functional claims validated by the owning role
 - Critic pre-screen: high-stakes decisions reviewed by Executive Mentor

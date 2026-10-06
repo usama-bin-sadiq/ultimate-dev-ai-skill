@@ -7,8 +7,8 @@ the agent skills and the MCP server.
 
 Check if the skills are already installed before proceeding:
 
-1.  **Check Local skills**: Run `ls -d .agent/skills/firebase-basics` or `ls -d
-    .agents/skills/firebase-basics`. If the directory exists, the skills are
+1.  **Check Local skills**: Run `ls -d .skills/firebase-basics` or `ls -d
+    .skills/firebase-basics`. If the directory exists, the skills are
     already installed locally.
 1.  **Check Global skills**: If not found locally, check the global installation
     by running:

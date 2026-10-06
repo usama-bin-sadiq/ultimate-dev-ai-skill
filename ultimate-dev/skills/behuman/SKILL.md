@@ -177,8 +177,8 @@ Quiet mode is cheaper because Mirror reflection can be shorter when not displaye
 | Skill | Relationship |
 |-------|-------------|
 | `engineering-team/senior-prompt-engineer` | Prompt writing quality — complementary, not overlapping |
-| `marketing-skill/content-humanizer` | Detects AI patterns in written text — behuman changes how AI responds in real-time |
-| `marketing-skill/copywriting` | Writing craft — behuman can layer on top for more authentic copy |
+| `skills/content-humanizer` | Detects AI patterns in written text — behuman changes how AI responds in real-time |
+| `skills/copywriting` | Writing craft — behuman can layer on top for more authentic copy |
 
 ## Philosophy
 

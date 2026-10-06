@@ -162,7 +162,7 @@ Work in tiers and look the current numbers up at request time:
 | Large | Multi-step reasoning, code generation, long context | ~50-100x small |
 
 Read the live rate from your provider's pricing page and pass it in, the way
-`engineering-team/skills/senior-prompt-engineer/scripts/prompt_optimizer.py`
+`skills/senior-prompt-engineer/scripts/prompt_optimizer.py`
 takes `--price-per-mtok`.
 The ratios between tiers are far more stable than the absolute prices, so
 build the model-routing decision on the ratio.

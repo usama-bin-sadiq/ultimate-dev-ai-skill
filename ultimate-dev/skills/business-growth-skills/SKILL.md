@@ -35,8 +35,8 @@ Match the request, then load `business-growth/skills/<skill>/SKILL.md`. If multi
 
 ```bash
 # Example: route an account-health request
-cat business-growth/skills/customer-success-manager/SKILL.md
-python3 business-growth/skills/customer-success-manager/scripts/health_score_calculator.py --help
+cat skills/customer-success-manager/SKILL.md
+python3 skills/customer-success-manager/scripts/health_score_calculator.py --help
 ```
 
 ## Rules

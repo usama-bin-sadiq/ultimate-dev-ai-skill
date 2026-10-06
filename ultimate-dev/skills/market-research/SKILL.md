@@ -31,7 +31,7 @@ Invoke this skill when:
 - You have a list of candidate segments and need to know which are real markets vs demographic slices.
 - You are synthesizing competitive intelligence and need a methodological backbone.
 
-**Do NOT use this skill to**: measure a live campaign (attribution, ROAS, CPA → `marketing-skill/campaign-analytics`), build demand-gen / paid-media plans (`marketing-skill/marketing-demand-acquisition`), set positioning / GTM strategy (`marketing-skill/marketing-strategy-pmm`), or set pricing (`commercial/pricing-strategist`).
+**Do NOT use this skill to**: measure a live campaign (attribution, ROAS, CPA → `skills/campaign-analytics`), build demand-gen / paid-media plans (`skills/marketing-demand-acquisition`), set positioning / GTM strategy (`skills/marketing-strategy-pmm`), or set pricing (`commercial/pricing-strategist`).
 
 ## Workflow
 
@@ -103,9 +103,9 @@ Isolated: no hard dependency — autoresearch runs only on demand, and the loop 
 
 | Neighbor | Scope | Difference |
 |---|---|---|
-| `marketing-skill/campaign-analytics` | Attribution, ROAS, CPA, funnel of a live campaign | That **measures spend deployed**; this is **upstream methodology** |
-| `marketing-skill/marketing-demand-acquisition` | Demand-gen, paid media, channel mix | That **runs acquisition**; this **builds the evidence** |
-| `marketing-skill/marketing-strategy-pmm` | Positioning, GTM, category | That **sets strategy**; this **sizes and segments the market** |
+| `skills/campaign-analytics` | Attribution, ROAS, CPA, funnel of a live campaign | That **measures spend deployed**; this is **upstream methodology** |
+| `skills/marketing-demand-acquisition` | Demand-gen, paid media, channel mix | That **runs acquisition**; this **builds the evidence** |
+| `skills/marketing-strategy-pmm` | Positioning, GTM, category | That **sets strategy**; this **sizes and segments the market** |
 | `commercial/pricing-strategist` | Pricing model + WTP + packaging | That **sets price**; this **sizes the market** |
 | `product-research` (sibling) | User/product discovery methods | That studies **users**; this studies **the market** |
 

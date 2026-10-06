@@ -103,7 +103,7 @@ All four tools live in `scripts/` and run on the standard library alone.
 ## Run it
 
 ```bash
-SKILL_ROOT=engineering/book-to-skill/skills/book-to-skill
+SKILL_ROOT=skills/book-to-skill
 SKILLS_HOME=~/.claude/skills        # Step 5 picks this; see the workflow reference
 WORKDIR=$(mktemp -d)                # or omit --workdir and capture the path it prints
 SLUG=<author-lastname>-<concept>

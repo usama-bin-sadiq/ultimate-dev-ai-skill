@@ -50,7 +50,7 @@ The 3 tools below catch each of these.
 ## Quick start
 
 ```bash
-SKILL=engineering/slo-architect/skills/slo-architect
+SKILL=skills/slo-architect
 
 # 1. Design an SLO
 python "$SKILL/scripts/slo_designer.py" \
@@ -155,7 +155,7 @@ This skill explicitly composes with three others:
 | `chaos-engineering` | Blast-radius calculator already takes monthly error budget as input — define it here |
 | `kubernetes-operator` | Operator capability L4 (Deep Insights) requires SLOs + Prometheus rules |
 
-The `error_budget_calculator.py` output is in the same shape `engineering/skills/chaos-engineering/scripts/blast_radius_calculator.py` expects on stdin.
+The `error_budget_calculator.py` output is in the same shape `skills/chaos-engineering/scripts/blast_radius_calculator.py` expects on stdin.
 
 ## Workflows
 

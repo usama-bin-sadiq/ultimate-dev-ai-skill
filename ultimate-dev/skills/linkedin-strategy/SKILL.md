@@ -91,7 +91,7 @@ pillars, and a stop rule written before issue one.
 - **`linkedin-content`** — drafts and lints individual posts. This decides what they are about
   and how many there are. Posts without pillars are noise; offer this first, never chain silently.
 - **`linkedin-analytics`** — tells you what happened. This decides what to do next.
-- **`marketing-skill/content-strategy`** — company-level content marketing. This is one
+- **`skills/content-strategy`** — company-level content marketing. This is one
   person's own presence.
 
 ---

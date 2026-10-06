@@ -74,10 +74,10 @@ loop-library contract (Observe → Choose → Act → Verify → Record → Repe
 5. **Record / Repeat-or-stop** — for multi-task goals, run the state through the repo-wide
    harness (it enforces attempt caps, iteration budgets, and evidence logging):
    ```bash
-   python3 engineering/agent-harness/skills/agent-harness/scripts/goal_compiler.py \
-     --goal "<goal>" --manifest engineering/agent-harness/skills/agent-harness/assets/harnesses/project-management.json \
+   python3 skills/agent-harness/scripts/goal_compiler.py \
+     --goal "<goal>" --manifest skills/agent-harness/assets/harnesses/project-management.json \
      --out .agent-harness/plan.json
-   python3 engineering/agent-harness/skills/agent-harness/scripts/loop_controller.py init|next|record|verify|close ...
+   python3 skills/agent-harness/scripts/loop_controller.py init|next|record|verify|close ...
    ```
    Terminal states: success, clean no-op, blocked, approval-required, exhausted,
    stagnated. An exhausted budget is an escalation — never a success report.

@@ -24,7 +24,7 @@ All three are stdlib-only and contain no LLM calls (deterministic per Path-B dis
 
 | Symptom | Action |
 |---|---|
-| User says "convert this markdown to HTML" for the first time in this workspace | Run `python3 markdown-html/skills/design-system/scripts/onboard.py` |
+| User says "convert this markdown to HTML" for the first time in this workspace | Run `python3 skills/design-system/scripts/onboard.py` |
 | `~/.config/markdown-html/design-system.json` doesn't exist OR `setup_completed_at` is null | Refuse conversion, surface onboarding |
 | User wants per-repo brand override | `python3 .../onboard.py --scope project` |
 | User wants to change a single field non-interactively | `python3 .../onboard.py --set brand.primary=#FF6B35` |
@@ -88,7 +88,7 @@ One question per turn, recommended answer, canon citation.
 
 ```bash
 # First-run onboarding (interactive, walks all 10 questions)
-python3 markdown-html/skills/design-system/scripts/onboard.py
+python3 skills/design-system/scripts/onboard.py
 
 # Zero-touch defaults for CI / first-test
 python3 .../onboard.py --defaults
@@ -131,8 +131,8 @@ python3 .../brand_palette_validator.py --primary "#FF6B35" --accent "#00D4AA"
 
 ## Distinct from
 
-- **`marketing/landing/skills/landing/scripts/brand_palette_validator.py`** — that script's `derive_palette()` produces 8 tokens shaped for hero-page rendering (`--navy`, `--teal`, `--card-bg`, `--card-border`). This script produces 12 tokens shaped for document rendering (sticky surface, hairline border, code bg, link, link-hover, success, warn). Same WCAG + HSL math, different token taxonomy.
-- **`research-ops/skills/clinical-research/scripts/onboard.py`** — same pattern (interactive + `--defaults`/`--set`/`--show`/`--reset`/`--scope`), different question set (clinical alpha/power/dropout vs. brand palette/typography/layout).
+- **`skills/landing/scripts/brand_palette_validator.py`** — that script's `derive_palette()` produces 8 tokens shaped for hero-page rendering (`--navy`, `--teal`, `--card-bg`, `--card-border`). This script produces 12 tokens shaped for document rendering (sticky surface, hairline border, code bg, link, link-hover, success, warn). Same WCAG + HSL math, different token taxonomy.
+- **`skills/clinical-research/scripts/onboard.py`** — same pattern (interactive + `--defaults`/`--set`/`--show`/`--reset`/`--scope`), different question set (clinical alpha/power/dropout vs. brand palette/typography/layout).
 
 ## Output artifact
 
@@ -153,7 +153,7 @@ python3 .../brand_palette_validator.py --primary "#FF6B35" --accent "#00D4AA"
 - Adobe Spectrum — *Color Foundations*
 - Nielsen-Norman — *Table of Contents Best Practices* (2023)
 - research-ops onboarding pattern: `research-ops/CLAUDE.md` §8
-- Brand palette math source: `marketing/landing/skills/landing/scripts/brand_palette_validator.py`
+- Brand palette math source: `skills/landing/scripts/brand_palette_validator.py`
 
 ## Reference files
 

@@ -28,7 +28,7 @@
 
 3. **Run RICE Prioritization** - Execute analysis with team capacity
    ```bash
-   python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py features.csv --capacity 20
+   python skills/product-manager-toolkit/scripts/rice_prioritizer.py features.csv --capacity 20
    ```
 
 4. **Analyze Portfolio** - Review output for:
@@ -54,7 +54,7 @@
 **Example:**
 ```bash
 # Complete prioritization workflow
-python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py q4-features.csv --capacity 20 > roadmap.txt
+python skills/product-manager-toolkit/scripts/rice_prioritizer.py q4-features.csv --capacity 20 > roadmap.txt
 cat roadmap.txt
 # Review quick wins, big bets, and generate quarterly plan
 ```
@@ -80,7 +80,7 @@ cat roadmap.txt
 
 3. **Run Interview Analyzer** - Extract structured insights
    ```bash
-   python ../../product-team/skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interview-001.txt
+   python skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interview-001.txt
    ```
 
 4. **Review Analysis Output** - Study extracted insights:
@@ -94,9 +94,9 @@ cat roadmap.txt
 5. **Synthesize Across Interviews** - Aggregate insights:
    ```bash
    # Analyze multiple interviews
-   python ../../product-team/skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interview-001.txt json > insights-001.json
-   python ../../product-team/skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interview-002.txt json > insights-002.json
-   python ../../product-team/skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interview-003.txt json > insights-003.json
+   python skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interview-001.txt json > insights-001.json
+   python skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interview-002.txt json > insights-002.json
+   python skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interview-003.txt json > insights-003.json
    # Aggregate JSON files to find patterns
    ```
 
@@ -122,7 +122,7 @@ cat roadmap.txt
 **Steps:**
 1. **Choose PRD Template** - Select based on complexity:
    ```bash
-   cat ../../product-team/skills/product-manager-toolkit/references/prd_templates.md
+   cat skills/product-manager-toolkit/references/prd_templates.md
    ```
    - **Standard PRD**: Complex features (6-8 weeks dev)
    - **One-Page PRD**: Simple features (2-4 weeks)
@@ -181,12 +181,12 @@ cat roadmap.txt
 
 2. **Run Feature Prioritization** - Use RICE for candidate features
    ```bash
-   python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py q4-candidates.csv --capacity 18
+   python skills/product-manager-toolkit/scripts/rice_prioritizer.py q4-candidates.csv --capacity 18
    ```
 
 3. **Generate OKR Cascade** - Use the OKR cascade generator to create aligned objectives
    ```bash
-   python ../../product-team/skills/product-strategist/scripts/okr_cascade_generator.py growth
+   python skills/product-strategist/scripts/okr_cascade_generator.py growth
    ```
 
 4. **Define Product OKRs** - Set ambitious but achievable goals:
@@ -236,22 +236,22 @@ cat roadmap.txt
 
 2. **Review Persona Methodology** - Understand research-backed persona creation
    ```bash
-   cat ../../product-team/skills/ux-researcher-designer/references/persona-methodology.md
+   cat skills/ux-researcher-designer/references/persona-methodology.md
    ```
 
 3. **Generate Personas** - Create structured personas from research inputs
    ```bash
-   python ../../product-team/skills/ux-researcher-designer/scripts/persona_generator.py research-data.json
+   python skills/ux-researcher-designer/scripts/persona_generator.py research-data.json
    ```
 
 4. **Map Customer Journeys** - Reference journey mapping guide for each persona
    ```bash
-   cat ../../product-team/skills/ux-researcher-designer/references/journey-mapping-guide.md
+   cat skills/ux-researcher-designer/references/journey-mapping-guide.md
    ```
 
 5. **Review Example Personas** - Compare output against proven persona formats
    ```bash
-   cat ../../product-team/skills/ux-researcher-designer/references/example-personas.md
+   cat skills/ux-researcher-designer/references/example-personas.md
    ```
 
 6. **Validate and Iterate** - Share personas with stakeholders:
@@ -266,13 +266,13 @@ cat roadmap.txt
 **Example:**
 ```bash
 # Complete persona generation workflow
-python ../../product-team/skills/ux-researcher-designer/scripts/persona_generator.py user-research-q4.json > personas.md
+python skills/ux-researcher-designer/scripts/persona_generator.py user-research-q4.json > personas.md
 
 # Cross-reference with interview analysis
-python ../../product-team/skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interviews-batch.txt > insights.txt
+python skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interviews-batch.txt > insights.txt
 
 # Review journey mapping methodology
-cat ../../product-team/skills/ux-researcher-designer/references/journey-mapping-guide.md
+cat skills/ux-researcher-designer/references/journey-mapping-guide.md
 ```
 
 ### Workflow 6: Sprint Story Generation
@@ -288,17 +288,17 @@ cat ../../product-team/skills/ux-researcher-designer/references/journey-mapping-
 
 2. **Review Story Templates** - Load INVEST-compliant story patterns
    ```bash
-   cat ../../product-team/agile-product-owner/skills/agile-product-owner/references/user-story-templates.md
+   cat skills/agile-product-owner/references/user-story-templates.md
    ```
 
 3. **Generate User Stories** - Break the epic into sprint-sized stories
    ```bash
-   python ../../product-team/agile-product-owner/skills/agile-product-owner/scripts/user_story_generator.py epic.yaml
+   python skills/agile-product-owner/scripts/user_story_generator.py epic.yaml
    ```
 
 4. **Review Sprint Planning Guide** - Ensure stories fit sprint capacity
    ```bash
-   cat ../../product-team/agile-product-owner/skills/agile-product-owner/references/sprint-planning-guide.md
+   cat skills/agile-product-owner/references/sprint-planning-guide.md
    ```
 
 5. **Refine and Estimate** - Groom generated stories:
@@ -309,7 +309,7 @@ cat ../../product-team/skills/ux-researcher-designer/references/journey-mapping-
 
 6. **Prioritize for Sprint** - Use RICE scores to sequence stories
    ```bash
-   python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py sprint-stories.csv --capacity 8
+   python skills/product-manager-toolkit/scripts/rice_prioritizer.py sprint-stories.csv --capacity 8
    ```
 
 **Expected Output:** Sprint-ready backlog of INVEST-compliant user stories with acceptance criteria, story points, and priority order
@@ -319,13 +319,13 @@ cat ../../product-team/skills/ux-researcher-designer/references/journey-mapping-
 **Example:**
 ```bash
 # End-to-end story generation workflow
-python ../../product-team/agile-product-owner/skills/agile-product-owner/scripts/user_story_generator.py onboarding-epic.yaml > stories.md
+python skills/agile-product-owner/scripts/user_story_generator.py onboarding-epic.yaml > stories.md
 
 # Prioritize stories for sprint
-python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py stories.csv --capacity 8 > sprint-plan.txt
+python skills/product-manager-toolkit/scripts/rice_prioritizer.py stories.csv --capacity 8 > sprint-plan.txt
 
 # Review sprint planning best practices
-cat ../../product-team/agile-product-owner/skills/agile-product-owner/references/sprint-planning-guide.md
+cat skills/agile-product-owner/references/sprint-planning-guide.md
 ```
 
 ### Workflow 7: Competitive Intelligence
@@ -348,7 +348,7 @@ cat ../../product-team/agile-product-owner/skills/agile-product-owner/references
 
 3. **Build Competitive Matrix** - Generate visual comparison
    ```bash
-   python ../../product-team/skills/competitive-teardown/scripts/competitive_matrix_builder.py competitors.csv
+   python skills/competitive-teardown/scripts/competitive_matrix_builder.py competitors.csv
    ```
 
 4. **Analyze Gaps** - Identify strategic opportunities:
@@ -360,7 +360,7 @@ cat ../../product-team/agile-product-owner/skills/agile-product-owner/references
 5. **Feed Into Prioritization** - Use gaps to inform roadmap
    ```bash
    # Add competitive gap features to RICE analysis
-   python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py competitive-features.csv --capacity 20
+   python skills/product-manager-toolkit/scripts/rice_prioritizer.py competitive-features.csv --capacity 20
    ```
 
 6. **Track Over Time** - Update competitive matrix quarterly:
@@ -375,8 +375,8 @@ cat ../../product-team/agile-product-owner/skills/agile-product-owner/references
 **Example:**
 ```bash
 # Full competitive intelligence workflow
-python ../../product-team/skills/competitive-teardown/scripts/competitive_matrix_builder.py q4-competitors.csv > competitive-matrix.md
+python skills/competitive-teardown/scripts/competitive_matrix_builder.py q4-competitors.csv > competitive-matrix.md
 
 # Prioritize competitive gap features
-python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py gap-features.csv --capacity 12 > competitive-roadmap.txt
+python skills/product-manager-toolkit/scripts/rice_prioritizer.py gap-features.csv --capacity 12 > competitive-roadmap.txt
 ```

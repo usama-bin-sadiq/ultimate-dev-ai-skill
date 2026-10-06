@@ -95,23 +95,23 @@ Most invocations exit intake after Q2.
 
 ```bash
 # Phase 1: Audit
-python3 marketing-skill/skills/aeo/scripts/aeo_audit.py --input <file> --industry <industry>
+python3 skills/aeo/scripts/aeo_audit.py --input <file> --industry <industry>
 # → composite score 0-100 + top fixes
 
 # Phase 2: Optimize (if audit < industry threshold)
-python3 marketing-skill/skills/aeo/scripts/aeo_optimizer.py \
+python3 skills/aeo/scripts/aeo_optimizer.py \
   --input <file> --mode <mode> --industry <industry> --output <file>-aeo.md
 # → optimized variant + changelog
 
 # Phase 3: Publish (manual step — review the optimized variant, then deploy)
 
 # Phase 4: Track (over 4-12 weeks)
-python3 marketing-skill/skills/aeo/scripts/citation_tracker.py \
+python3 skills/aeo/scripts/citation_tracker.py \
   --action add --url <url> --llm <llm> --query <query> --date <YYYY-MM-DD>
 # → ledger updated
 
 # Phase 5: Report (monthly)
-python3 marketing-skill/skills/aeo/scripts/citation_tracker.py \
+python3 skills/aeo/scripts/citation_tracker.py \
   --action report --url <url>
 # → per-URL citation report
 ```

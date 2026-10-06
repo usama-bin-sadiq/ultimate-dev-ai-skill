@@ -35,15 +35,15 @@ Output is one `.html` file with sticky TOC, search filter, scrollspy, code-copy 
 
 ```bash
 # 1. Parse markdown → JSON AST
-python3 markdown-html/skills/md-document/scripts/markdown_parser.py \
+python3 skills/md-document/scripts/markdown_parser.py \
     --input <path>.md --output sections.json
 
 # 2. Render AST + design-system config → single-file HTML
-python3 markdown-html/skills/md-document/scripts/html_renderer.py \
+python3 skills/md-document/scripts/html_renderer.py \
     --sections sections.json --output document.html
 
 # 3. Inject lightweight JS (search, copycode, smoothscroll, scrollspy)
-python3 markdown-html/skills/md-document/scripts/interactivity_injector.py \
+python3 skills/md-document/scripts/interactivity_injector.py \
     --file document.html \
     --features search,copycode,smoothscroll,scrollspy
 ```
@@ -51,8 +51,8 @@ python3 markdown-html/skills/md-document/scripts/interactivity_injector.py \
 Or all-in-one (sample render):
 
 ```bash
-python3 markdown-html/skills/md-document/scripts/html_renderer.py --sample \
-  | python3 markdown-html/skills/md-document/scripts/interactivity_injector.py \
+python3 skills/md-document/scripts/html_renderer.py --sample \
+  | python3 skills/md-document/scripts/interactivity_injector.py \
       --file /dev/stdin --output document.html
 ```
 

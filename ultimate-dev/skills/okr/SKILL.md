@@ -31,7 +31,7 @@ Pass a strategy keyword directly. The generator produces company, department, an
 ```
 
 ## Scripts
-- `product-team/skills/product-strategist/scripts/okr_cascade_generator.py` — OKR cascade generator (`<strategy> [--teams "A,B,C"] [--contribution 0.3] [--json]`)
+- `skills/product-strategist/scripts/okr_cascade_generator.py` — OKR cascade generator (`<strategy> [--teams "A,B,C"] [--contribution 0.3] [--json]`)
 
 ## Skill Reference
-> `product-team/skills/product-strategist/SKILL.md`
+> `skills/product-strategist/SKILL.md`

@@ -32,7 +32,7 @@ The first question kills more bad architecture than any other. Without QPS + rat
 1. **Backend Decision Engine**
    - **Purpose:** Deterministic pattern + language + DB picker from the 7 forcing-question answers
    - **Path:** `../senior-backend/scripts/backend_decision_engine.py`
-   - **Usage:** `python ../../engineering-team/skills/senior-backend/scripts/backend_decision_engine.py --team-size 8 --qps-p99 50 --read-write-ratio 20 --tenancy shared-multi-tenant --data-sensitivity pii --pattern modular-monolith --language-preference typescript`
+   - **Usage:** `python skills/senior-backend/scripts/backend_decision_engine.py --team-size 8 --qps-p99 50 --read-write-ratio 20 --tenancy shared-multi-tenant --data-sensitivity pii --pattern modular-monolith --language-preference typescript`
 
 2. **API Scaffolder** (existing)
    - **Path:** `../senior-backend/scripts/api_scaffolder.py`
@@ -49,11 +49,11 @@ The first question kills more bad architecture than any other. Without QPS + rat
 
 1. **Forcing-Question Library** — `../senior-backend/references/forcing_questions.md`
 2. **Composition Map** — `../senior-backend/references/composition_map.md`
-3. **API Design Patterns / Backend Security / Database Optimization** (existing) — `../../engineering-team/skills/senior-backend/references/{api_design_patterns,backend_security_practices,database_optimization_guide}.md`
+3. **API Design Patterns / Backend Security / Database Optimization** (existing) — `skills/senior-backend/references/{api_design_patterns,backend_security_practices,database_optimization_guide}.md`
 
 ### Templates / Profiles
 
-1. **Profile JSONs:** `../../engineering-team/skills/senior-backend/profiles/{node-express,fastapi-python,django-monolith,go-or-rust-microservice}.json`
+1. **Profile JSONs:** `skills/senior-backend/profiles/{node-express,fastapi-python,django-monolith,go-or-rust-microservice}.json`
 
 ## Workflows
 
@@ -104,8 +104,8 @@ If the parent's prompt names answers explicitly (e.g., "team of 6, daily cadence
 Before any commit:
 
 ```bash
-python ../../engineering/karpathy-coder/skills/karpathy-coder/scripts/complexity_checker.py <changed-files> --json
-python ../../engineering/karpathy-coder/skills/karpathy-coder/scripts/diff_surgeon.py --json
+python skills/karpathy-coder/scripts/complexity_checker.py <changed-files> --json
+python skills/karpathy-coder/scripts/diff_surgeon.py --json
 ```
 
 ## Anti-patterns
@@ -119,9 +119,9 @@ python ../../engineering/karpathy-coder/skills/karpathy-coder/scripts/diff_surge
 
 ## Related Agents
 
-- [cs-fullstack-engineer](cs-fullstack-engineer.md) — parent orchestrator
-- [cs-frontend-engineer](cs-frontend-engineer.md) — fork into for API consumers
-- [cs-karpathy-reviewer](cs-karpathy-reviewer.md) — invoke before every commit
+- [cs-fullstack-engineer](../cs-fullstack-engineer/SKILL.md) — parent orchestrator
+- [cs-frontend-engineer](../cs-frontend-engineer/SKILL.md) — fork into for API consumers
+- [cs-karpathy-reviewer](../cs-karpathy-reviewer/SKILL.md) — invoke before every commit
 
 ## Invocation Contract
 

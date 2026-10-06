@@ -91,7 +91,7 @@ The `docx` library is a JavaScript library (npm package). Could the skill use a 
 ## File Structure
 
 ```
-research/syllabus/skills/syllabus/scripts/
+skills/syllabus/scripts/
 ├── citation_tracker.py            ← stdlib Python (orchestration helper)
 ├── topic_grouper.py               ← stdlib Python (orchestration helper)
 ├── discussion_question_validator.py ← stdlib Python (orchestration helper)

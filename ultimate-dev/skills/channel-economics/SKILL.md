@@ -83,7 +83,7 @@ All scripts: stdlib only. `--help`, `--sample`, `--input`, `--output` work on al
 
 ```bash
 # Emits fully-loaded cost-to-serve per channel (direct vs partner-led) for the built-in sample channel data
-cd commercial/skills/channel-economics && python3 scripts/cost_to_serve_calculator.py --sample
+cd skills/channel-economics && python3 scripts/cost_to_serve_calculator.py --sample
 ```
 
 ## References

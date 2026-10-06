@@ -166,6 +166,6 @@ If the user cannot or will not use TranscriptAPI:
 
 ## Cross-References
 
-- `marketing-skill/skills/video-content-strategist` — for video strategy, scripting, and content planning
-- `marketing-skill/skills/social-media-manager` — for publishing and scheduling derived from transcripts
-- `marketing-skill/skills/content-production` — for turning transcripts into blog posts, summaries, or articles
+- `skills/video-content-strategist` — for video strategy, scripting, and content planning
+- `skills/social-media-manager` — for publishing and scheduling derived from transcripts
+- `skills/content-production` — for turning transcripts into blog posts, summaries, or articles

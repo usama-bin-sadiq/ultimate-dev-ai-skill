@@ -43,7 +43,7 @@ reads: which skills gave them the most grief, ranked, with bars. Do NOT open wit
 signature counts.
 
 ```bash
-python3 ~/.config/skillshare/skills/skill-hardener/scripts/report.py --days 30
+python3 ~/.skills/skill-hardener/scripts/report.py --days 30
 ```
 
 `report.py` ranks skills by real-trouble signals only (pushed back / stopped it mid-run /
@@ -56,7 +56,7 @@ skills sink to the bottom marked done and the next-worst rises.
 Then, under the hood, get the raw events for the diagnosis phases:
 
 ```bash
-python3 ~/.config/skillshare/skills/skill-hardener/scripts/mine_friction.py \
+python3 ~/.skills/skill-hardener/scripts/mine_friction.py \
   --days 30 --json /tmp/friction.json
 ```
 
@@ -113,7 +113,7 @@ do not skip it). Append one line per fixed skill to `hardening-log.jsonl`:
 
 ```bash
 echo '{"date":"YYYY-MM-DD","skill":"<name>","summary":"<what changed, plainly>","files":["<edited file>"],"based_on_sessions":["<id>","<id>"]}' \
-  >> ~/.config/skillshare/skills/skill-hardener/hardening-log.jsonl
+  >> ~/.skills/skill-hardener/hardening-log.jsonl
 ```
 
 If you edited a skill that lives in Skillshare, remember to `skillshare sync` so the fix

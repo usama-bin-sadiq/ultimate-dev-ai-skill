@@ -51,7 +51,7 @@ The 3 tools below catch each of these.
 ## Quick start
 
 ```bash
-SKILL=engineering/kubernetes-operator/skills/kubernetes-operator
+SKILL=skills/kubernetes-operator
 
 # Validate a CRD design
 python "$SKILL/scripts/crd_validator.py" --crd config/crd/myapp.yaml

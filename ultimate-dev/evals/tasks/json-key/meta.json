@@ -1,0 +1,8 @@
+{
+  "category": "data-extraction",
+  "difficulty": "easy",
+  "skill": "strict-api",
+  "artifacts": [
+    "out/email.txt"
+  ]
+}

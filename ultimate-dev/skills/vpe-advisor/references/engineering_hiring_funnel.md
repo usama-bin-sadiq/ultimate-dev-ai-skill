@@ -159,8 +159,8 @@ Includes recruiter time, hiring manager time, agency fees, signing bonuses, and 
 
 ## When This Reference Doesn't Help
 
-- **Comp benchmarking specifics.** See `c-level-advisor/skills/chro-advisor/scripts/comp_benchmarker.py`.
-- **Leveling ladders.** See `c-level-advisor/skills/chro-advisor/references/leveling_ladders.md`.
+- **Comp benchmarking specifics.** See `skills/chro-advisor/scripts/comp_benchmarker.py`.
+- **Leveling ladders.** See `skills/chro-advisor/references/leveling_ladders.md`.
 - **ATS tooling selection (Greenhouse / Lever / Ashby / etc.).** Tactical.
 - **Diversity + inclusion in hiring.** Important; not covered here; standard HR best practice.
 - **Visa / immigration logistics.** Specialist legal territory.

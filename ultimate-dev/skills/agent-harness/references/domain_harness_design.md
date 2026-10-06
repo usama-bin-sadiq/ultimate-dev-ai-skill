@@ -62,14 +62,14 @@ repo's `derive_counters.py --check` discipline.
 
 | Need | Reuse from this repo | The harness adds |
 |---|---|---|
-| Task/state persistence + handoff schema | `engineering/skills/tc-tracker` (atomic writes, append-only history, session handoff block) | A goal-scoped, domain-agnostic state file (`.agent-harness/`), not per-code-change records |
+| Task/state persistence + handoff schema | `skills/tc-tracker` (atomic writes, append-only history, session handoff block) | A goal-scoped, domain-agnostic state file (`.agent-harness/`), not per-code-change records |
 | Anti-overfit locked evaluator | `engineering/autoresearch-agent` (never modify `evaluate.py`; KEEP/DISCARD/CRASH) | The same invariant generalized: `verify` re-runs gates itself |
 | N-agent tournament on one task | `engineering/agenthub` (worktrees, DAG, result ranker) | Nothing — route there when the task wants competing attempts |
 | Deterministic fan-out/pipeline topologies | `engineering/workflow-builder` (Workflow-tool .js + validator) | Nothing — route there when orchestrating Claude Code's Workflow tool |
 | Loop design/audit vocabulary | `loop-library/` (six-step cycle, stop-state taxonomy) | An executable enforcement of that vocabulary |
-| Severity-gated ship decision | `engineering/skills/ship-gate` (CRITICAL/HIGH/ADVISORY verdict) | Use as a close-time check inside a task's `verification[]` |
-| Honest self-scoring | `engineering/skills/self-eval` (matrix-locked composite) | Optional close-out step before the handoff |
-| Bounded-autonomy STOP triggers | `engineering/skills/spec-driven-workflow` + `focused-fix` 3-strike rule | `escalate_on` defaults in every manifest |
+| Severity-gated ship decision | `skills/ship-gate` (CRITICAL/HIGH/ADVISORY verdict) | Use as a close-time check inside a task's `verification[]` |
+| Honest self-scoring | `skills/self-eval` (matrix-locked composite) | Optional close-out step before the handoff |
+| Bounded-autonomy STOP triggers | `skills/spec-driven-workflow` + `focused-fix` 3-strike rule | `escalate_on` defaults in every manifest |
 
 ## Namespacing (collisions this skill deliberately avoids)
 

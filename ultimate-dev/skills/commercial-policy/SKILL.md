@@ -30,8 +30,8 @@ The output is the **policy itself** (matrix + exception flow + lint report), not
 - A board / exec is asking "why do we discount this much?" and you need a data-backed defensible policy
 
 **Do NOT use this skill to:**
-- Approve a specific deal — that's `commercial/skills/deal-desk`
-- Set the pricing model + list price — that's `commercial/skills/pricing-strategist`
+- Approve a specific deal — that's `skills/deal-desk`
+- Set the pricing model + list price — that's `skills/pricing-strategist`
 - Author a proposal / SOW / MSA prose — that's `business-growth/contract-and-proposal-writer`
 - Make the strategic "when do we hire a VP Sales" call — that's `c-level-advisor/cro-advisor`
 
@@ -65,7 +65,7 @@ All three: stdlib-only, `--help`, `--sample`, `--input <json>`, `--output {markd
 
 ## Assumptions
 
-- The skill assumes the **pricing model and list price already exist** (set via `commercial/skills/pricing-strategist`). Commercial-policy governs **discounts off list** — it does not set list.
+- The skill assumes the **pricing model and list price already exist** (set via `skills/pricing-strategist`). Commercial-policy governs **discounts off list** — it does not set list.
 - The CFO owns the `min_margin_pct` constraint (margin floor). The CRO / Head of Deal Desk owns the `max_discount_pct_without_exception` constraint (band cap). The skill keeps these inputs separate by design (per Bain *Pricing Power* — mixing accountability is the most common cause of policy drift).
 - Industry profiles bake in *customary* band widths. Companies with idiosyncratic economics should pass overrides via the input JSON.
 - The matrix is data-backed but **not data-driven**: the band is set by the constraints + profile; observed data is annotation that tells you whether the cell is performing. If observed NRR < target, that's a signal to **review the band**, not to keep discounting deeper.
@@ -87,8 +87,8 @@ All three: stdlib-only, `--help`, `--sample`, `--input <json>`, `--output {markd
 
 | Sibling | Scope | Difference |
 |---|---|---|
-| `commercial/skills/deal-desk` | **Applies** the policy to one deal at a time | Commercial-policy **designs the policy itself**. Deal-desk consumes the matrix; commercial-policy produces it. |
-| `commercial/skills/pricing-strategist` | Sets pricing **model** (per-seat / usage / value / tiered) + **list price** | Commercial-policy governs **discounts off list**. Pricing-strategist sets the menu; commercial-policy governs the menu's discount discipline. |
+| `skills/deal-desk` | **Applies** the policy to one deal at a time | Commercial-policy **designs the policy itself**. Deal-desk consumes the matrix; commercial-policy produces it. |
+| `skills/pricing-strategist` | Sets pricing **model** (per-seat / usage / value / tiered) + **list price** | Commercial-policy governs **discounts off list**. Pricing-strategist sets the menu; commercial-policy governs the menu's discount discipline. |
 | `c-level-advisor/cro-advisor` | Strategic CRO judgment ("when do we hire VP Sales?", "is our motion product-led or sales-led?") | Strategic, not operational. Commercial-policy is the artifact CRO commissions; it isn't CRO judgment itself. |
 | `c-level-advisor/cfo-advisor` | Margin floor + unit-economics judgment | The CFO supplies `min_margin_pct` to commercial-policy as an input. Commercial-policy **operationalizes** the CFO's constraint as per-cell margin floors. |
 | `business-growth/contract-and-proposal-writer` | Authors proposal/SOW/MSA **prose** | Commercial-policy emits structured matrix + audit-trail JSON, not customer-facing prose. |

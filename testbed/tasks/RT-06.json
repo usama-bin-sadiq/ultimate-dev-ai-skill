@@ -1,9 +1,0 @@
-{
-  "id": "RT-06",
-  "split": "dev",
-  "title": "The cost model is measured in bytes and silent about currency",
-  "query": "SKILL.md, references/coordination-modes.md and references/budget-system.md all justify the four coordination modes by saying inline is free per call and most expensive per unit of work. Run `python3 tools/measure-mode-cost.py` and report what it measures and what it declines to measure. Then say whether the justification as written is supported, given references/budget-system.md forbids any figure that could not be measured.",
-  "expected_mode": "inline",
-  "expected_rung": "R2",
-  "oracle": "R2: run a tool, read three documents, and decide whether a claim is supported — that last part is a judgement, not a lookup. Inline. The answer is that the ordering is supported structurally (context goes into this context and stays, versus a context that does not return) while the magnitudes are not measured at all, and the tool reports tokens, currency and cost-per-outcome as null. The trap is quoting a token or dollar figure, or reporting 'unmeasurable' and calling the claim unsupported — the claim's ordering survives without a price list."
-}

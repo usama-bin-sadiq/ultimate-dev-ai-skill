@@ -33,11 +33,11 @@ If both match (e.g., "value my SaaS company"), ask whether the user wants statem
 
 ```bash
 # Example: route a statement-analysis request
-cat finance/skills/financial-analyst/SKILL.md
-python3 finance/skills/financial-analyst/scripts/ratio_calculator.py --help
+cat skills/financial-analyst/SKILL.md
+python3 skills/financial-analyst/scripts/ratio_calculator.py --help
 
 # Or a SaaS metrics request
-python3 finance/skills/saas-metrics-coach/scripts/metrics_calculator.py --help
+python3 skills/saas-metrics-coach/scripts/metrics_calculator.py --help
 ```
 
 ## Related (packaged separately, not in this bundle)

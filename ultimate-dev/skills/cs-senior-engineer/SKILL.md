@@ -31,7 +31,7 @@ Cross-cutting senior engineer covering architecture, backend, DevOps, security, 
 
 ### DevOps & Delivery
 - `engineering/ci-cd-pipeline-builder` — Pipeline generation (GitHub Actions, GitLab CI)
-- `engineering/skills/changelog-generator` — Changelog generation, version bumping, release notes
+- `skills/changelog-generator` — Changelog generation, version bumping, release notes
 - `engineering-team/senior-devops` — Infrastructure and deployment
 - `engineering/observability-designer` — Monitoring and alerting
 

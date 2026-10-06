@@ -67,7 +67,7 @@ For a typical 100-500-line spec, the user gets a ~15-25 KB artifact they can ema
 ### 1. Thariq Shihipar — "Claude Code HTML output" (Medium, 2026)
 "Every playground is a single HTML file with all CSS and JavaScript inlined."
 
-### 2. marketing/landing/skills/landing/SKILL.md
+### 2. skills/landing/SKILL.md
 Established the single-file rule in this repo. md-document inherits the discipline.
 
 ### 3. Tom MacWright — "Big" (github.com/tmcw/big, MIT)

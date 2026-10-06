@@ -1,0 +1,9 @@
+{
+  "category": "version-control",
+  "difficulty": "medium",
+  "skill": "git-workflow-and-versioning",
+  "artifacts": [
+    "out/git.txt"
+  ],
+  "setup": "git"
+}

@@ -181,8 +181,8 @@ The decision is not "centralize or embed" — it's "when do you transition from 
 
 ## When This Reference Doesn't Help
 
-- **Comp benchmarking.** See `c-level-advisor/skills/chro-advisor/scripts/comp_benchmarker.py`.
-- **Leveling ladders.** See `c-level-advisor/skills/chro-advisor/references/leveling_ladders.md`.
+- **Comp benchmarking.** See `skills/chro-advisor/scripts/comp_benchmarker.py`.
+- **Leveling ladders.** See `skills/chro-advisor/references/leveling_ladders.md`.
 - **Specific JD templates.** Not covered here; many open-source examples exist.
 - **Performance management.** Standard people management; not data-specific.
 

@@ -1,0 +1,8 @@
+{
+  "category": "filesystem",
+  "difficulty": "easy",
+  "skill": null,
+  "artifacts": [
+    "out/count.txt"
+  ]
+}

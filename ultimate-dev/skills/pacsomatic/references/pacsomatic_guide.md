@@ -28,7 +28,7 @@ Important notes from docs:
 
 This skill can be reused by other agents in the same workspace.
 
-- Keep the whole folder `.github/skills/pacsomatic` intact when reusing.
+- Keep the whole folder `.skills/pacsomatic` intact when reusing.
 - Other agents can either:
   - call `scripts/run_pacsomatic.py` to generate a backend-aware launch script, or
   - emit a direct platform-native script and return the matching launcher command.
@@ -63,7 +63,7 @@ It produces:
 ## Example: generate script only
 
 ```bash
-python .github/skills/pacsomatic/scripts/run_pacsomatic.py \
+python .skills/pacsomatic/scripts/run_pacsomatic.py \
   --tumor-bam /data/P1_tumor.bam \
   --normal-bam /data/P1_normal.bam \
   --patient-id P1 \
@@ -82,7 +82,7 @@ python .github/skills/pacsomatic/scripts/run_pacsomatic.py \
 ## Example: dry-run validation
 
 ```bash
-python .github/skills/pacsomatic/scripts/run_pacsomatic.py \
+python .skills/pacsomatic/scripts/run_pacsomatic.py \
   --tumor-bam /data/P1_tumor.bam \
   --normal-bam /data/P1_normal.bam \
   --patient-id P1 \
@@ -98,7 +98,7 @@ python .github/skills/pacsomatic/scripts/run_pacsomatic.py \
 ## Example: generate and submit immediately
 
 ```bash
-python .github/skills/pacsomatic/scripts/run_pacsomatic.py \
+python .skills/pacsomatic/scripts/run_pacsomatic.py \
   --tumor-bam /data/P1_tumor.bam \
   --normal-bam /data/P1_normal.bam \
   --patient-id P1 \
@@ -114,7 +114,7 @@ python .github/skills/pacsomatic/scripts/run_pacsomatic.py \
 ## Example: submit on Slurm
 
 ```bash
-python .github/skills/pacsomatic/scripts/run_pacsomatic.py \
+python .skills/pacsomatic/scripts/run_pacsomatic.py \
   --tumor-bam /data/P1_tumor.bam \
   --normal-bam /data/P1_normal.bam \
   --patient-id P1 \
@@ -218,7 +218,7 @@ You can override with `--stdout-file` and `--stderr-file`, and optionally set
 `--logdir` to place them under a specific directory.
 
 ```bash
-python .github/skills/pacsomatic/scripts/run_pacsomatic.py \
+python .skills/pacsomatic/scripts/run_pacsomatic.py \
   --tumor-bam /data/P1_tumor.bam \
   --normal-bam /data/P1_normal.bam \
   --patient-id P1 \

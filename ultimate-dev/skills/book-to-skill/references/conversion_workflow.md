@@ -5,7 +5,7 @@ commands; this file carries the detail: what to ask at each step, the exact temp
 per-chapter budget matrix, and the update/fold-in procedure.
 
 Read it when running a conversion. `$SKILL_ROOT` below is this skill's folder
-(`engineering/book-to-skill/skills/book-to-skill`); `$SKILLS_HOME` is the destination
+(`skills/book-to-skill`); `$SKILLS_HOME` is the destination
 skill root chosen in Step 5. File templates also ship under `assets/`:
 `chapter_template.md`, `master_skill_template.md`, `cheatsheet_template.md`. Modes 2 (analyze only) and 3 (generate from prior
 analysis) skip steps as noted in `SKILL.md`.

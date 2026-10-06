@@ -62,16 +62,16 @@ The multi-framework compliance officer pressure-tests any compliance program. Si
 
 ```bash
 # 1. Framework selection
-python ../../skills/compliance-os/scripts/framework_selector.py profile.json
+python skills/compliance-os/scripts/framework_selector.py profile.json
 
 # 2. Cross-framework overlap
-python ../../skills/compliance-os/scripts/cross_framework_mapper.py program.json
+python skills/compliance-os/scripts/cross_framework_mapper.py program.json
 
 # 3. Evidence pool consolidation
-python ../../skills/compliance-os/scripts/evidence_pool_generator.py program.json
+python skills/compliance-os/scripts/evidence_pool_generator.py program.json
 
 # 4. Mock audit (per framework)
-python ../../skills/compliance-os/scripts/audit_simulator.py scope.json
+python skills/compliance-os/scripts/audit_simulator.py scope.json
 ```
 
 ## Output Format
@@ -128,7 +128,7 @@ python ../../skills/compliance-os/scripts/audit_simulator.py scope.json
 ## Related
 
 - Skill: [`compliance-os`](../compliance-os/SKILL.md)
-- Adjacent: `ra-qm-team/skills/iso42001-specialist/`, `ra-qm-team/skills/eu-ai-act-specialist/`, `ra-qm-team/skills/information-security-manager-iso27001/`, `ra-qm-team/skills/soc2-compliance/`, `ra-qm-team/skills/gdpr-dsgvo-expert/`
+- Adjacent: `skills/iso42001-specialist/`, `skills/eu-ai-act-specialist/`, `skills/information-security-manager-iso27001/`, `skills/soc2-compliance/`, `skills/gdpr-dsgvo-expert/`
 
 ---
 

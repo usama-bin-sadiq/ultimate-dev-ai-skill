@@ -26,7 +26,7 @@ Run the full feature-flag cleanup workflow:
 This command dispatches to the `feature-flags-architect` skill:
 
 ```bash
-SKILL=engineering/feature-flags-architect/skills/feature-flags-architect
+SKILL=skills/feature-flags-architect
 
 # Step 1: scan for debt
 python "$SKILL/scripts/flag_debt_scanner.py" --repo . --max-age-days "${MAX_AGE_DAYS:-90}" --format json > .flag-debt.json

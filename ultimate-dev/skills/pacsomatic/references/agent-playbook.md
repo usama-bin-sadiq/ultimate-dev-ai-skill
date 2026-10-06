@@ -43,7 +43,7 @@ Use this sequence when helping a user run nf-core/pacsomatic:
 Recommended helper command:
 
 ```bash
-python .github/skills/pacsomatic/scripts/run_pacsomatic.py \
+python .skills/pacsomatic/scripts/run_pacsomatic.py \
   --tumor-bam /path/to/tumor.bam \
   --normal-bam /path/to/normal.bam \
   --patient-id P001 \
@@ -59,7 +59,7 @@ python .github/skills/pacsomatic/scripts/run_pacsomatic.py \
 Launch command variant:
 
 ```bash
-python .github/skills/pacsomatic/scripts/run_pacsomatic.py \
+python .skills/pacsomatic/scripts/run_pacsomatic.py \
   --tumor-bam /path/to/tumor.bam \
   --normal-bam /path/to/normal.bam \
   --patient-id P001 \

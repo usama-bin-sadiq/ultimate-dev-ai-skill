@@ -1,9 +1,0 @@
-{
-  "id": "RT-07",
-  "split": "dev",
-  "title": "A harness decides which runtime to invoke, and has no default",
-  "query": "tools/agent_invocation.py resolves which agent, model, adapter and agent-specific flags a harness will use, and has no default for any of them; an unconfigured invocation refuses rather than guessing. Read it and say why the absence of a default is the correct behaviour for an evaluation harness rather than an inconvenience, and what a results file would have to record for a rate computed from it to be attributable.",
-  "expected_mode": "inline",
-  "expected_rung": "R2",
-  "oracle": "R2: read one file and reason about a design decision, which is analytical rather than a lookup. Inline. The answer is that a silent default measures one vendor and reports the result as a property of the kernel, so refusing is the only option that keeps a number attributable — and that means the results file must carry the resolved agent, model, adapter and flags, because a rate over a mixed pool is a rate over the pool. The trap is calling the missing default a usability gap to be fixed."
-}

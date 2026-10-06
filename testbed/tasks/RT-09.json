@@ -1,9 +1,0 @@
-{
-  "id": "RT-09",
-  "split": "heldout",
-  "title": "A rule lives in two places and one copy is narrower",
-  "query": "SKILL.md carries an anti-patterns section and references/anti-patterns.md carries the full list, and the reference is the one the regression suite guards. Read both and the guard in tools/test-marker-drift.py, then say what a change to the SKILL.md copy would and would not be caught by. Do not change either file.",
-  "expected_mode": "inline",
-  "expected_rung": "R2",
-  "oracle": "R2: two files plus a tool, reconciled into a claim about coverage. Inline. The expected finding is that the guarded copy is the one that matters and edits to the SKILL.md copy are caught only incidentally, if at all — which is the argument for one owner. A run that says 'both are guarded' without reading test-marker-drift.py is guessing."
-}

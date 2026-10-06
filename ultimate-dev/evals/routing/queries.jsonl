@@ -1,0 +1,60 @@
+{"query": "omnisend automation", "expect": ["omnisend-automation"], "not_expect": []}
+{"query": "docs sync", "expect": ["docs-sync"], "not_expect": []}
+{"query": "review", "expect": ["review"], "not_expect": []}
+{"query": "bigquery bigframes", "expect": ["bigquery-bigframes"], "not_expect": []}
+{"query": "capacity planner", "expect": ["capacity-planner"], "not_expect": []}
+{"query": "gaussdb expert", "expect": ["gaussdb-expert"], "not_expect": []}
+{"query": "cmo advisor", "expect": ["cmo-advisor"], "not_expect": []}
+{"query": "prompt governance", "expect": ["prompt-governance"], "not_expect": []}
+{"query": "brandfetch automation", "expect": ["brandfetch-automation"], "not_expect": []}
+{"query": "zoho books automation", "expect": ["zoho-books-automation"], "not_expect": []}
+{"query": "google ads api account diagnostics", "expect": ["google-ads-api-account-diagnostics"], "not_expect": []}
+{"query": "autobound automation", "expect": ["autobound-automation"], "not_expect": []}
+{"query": "clickmeeting automation", "expect": ["clickmeeting-automation"], "not_expect": []}
+{"query": "skill doctor", "expect": ["skill-doctor"], "not_expect": []}
+{"query": "senior backend", "expect": ["senior-backend"], "not_expect": []}
+{"query": "campaign analytics", "expect": ["campaign-analytics"], "not_expect": []}
+{"query": "hivemind", "expect": ["hivemind"], "not_expect": []}
+{"query": "cloud sql basics", "expect": ["cloud-sql-basics"], "not_expect": []}
+{"query": "multi agent systems architect", "expect": ["multi-agent-systems-architect"], "not_expect": []}
+{"query": "setup deploy", "expect": ["setup-deploy"], "not_expect": []}
+{"query": "brex automation", "expect": ["brex-automation"], "not_expect": []}
+{"query": "sprint prioritizer", "expect": ["sprint-prioritizer"], "not_expect": []}
+{"query": "cs workspace admin", "expect": ["cs-workspace-admin"], "not_expect": []}
+{"query": "google cloud waf performance optimization", "expect": ["google-cloud-waf-performance-optimization"], "not_expect": []}
+{"query": "browser tool automation", "expect": ["browser-tool-automation"], "not_expect": []}
+{"query": "whimsy injector", "expect": ["whimsy-injector"], "not_expect": []}
+{"query": "ring central automation", "expect": ["ring-central-automation"], "not_expect": []}
+{"query": "bitquery automation", "expect": ["bitquery-automation"], "not_expect": []}
+{"query": "google cloud solution multi agent security", "expect": ["google-cloud-solution-multi-agent-security"], "not_expect": []}
+{"query": "bidsketch automation", "expect": ["bidsketch-automation"], "not_expect": []}
+{"query": "privacy engineer", "expect": ["privacy-engineer"], "not_expect": []}
+{"query": "deal desk", "expect": ["deal-desk"], "not_expect": []}
+{"query": "mailbluster automation", "expect": ["mailbluster-automation"], "not_expect": []}
+{"query": "senior devops", "expect": ["senior-devops"], "not_expect": []}
+{"query": "developing genkit python", "expect": ["developing-genkit-python"], "not_expect": []}
+{"query": "inclusive visuals specialist", "expect": ["inclusive-visuals-specialist"], "not_expect": []}
+{"query": "cs content creator", "expect": ["cs-content-creator"], "not_expect": []}
+{"query": "tiktok strategist", "expect": ["tiktok-strategist"], "not_expect": []}
+{"query": "modal", "expect": ["modal"], "not_expect": []}
+{"query": "scope decider", "expect": ["scope-decider"], "not_expect": []}
+{"query": "findymail automation", "expect": ["findymail-automation"], "not_expect": []}
+{"query": "competitive teardown", "expect": ["competitive-teardown"], "not_expect": []}
+{"query": "tool evaluator", "expect": ["tool-evaluator"], "not_expect": []}
+{"query": "formcarry automation", "expect": ["formcarry-automation"], "not_expect": []}
+{"query": "qa only", "expect": ["qa-only"], "not_expect": []}
+{"query": "codebase onboarding", "expect": ["codebase-onboarding"], "not_expect": []}
+{"query": "marketing compliance", "expect": ["marketing-compliance"], "not_expect": []}
+{"query": "browserstack", "expect": ["browserstack"], "not_expect": []}
+{"query": "spatial data engineer", "expect": ["spatial-data-engineer"], "not_expect": []}
+{"query": "brief", "expect": ["brief"], "not_expect": []}
+{"query": "gke cluster creation", "expect": ["gke-cluster-creation"], "not_expect": []}
+{"query": "wiki log", "expect": ["wiki-log"], "not_expect": []}
+{"query": "engineer", "expect": ["engineer"], "not_expect": []}
+{"query": "short menu automation", "expect": ["short-menu-automation"], "not_expect": []}
+{"query": "nano nets automation", "expect": ["nano-nets-automation"], "not_expect": []}
+{"query": "the odds api automation", "expect": ["the-odds-api-automation"], "not_expect": []}
+{"query": "survey monkey automation", "expect": ["survey-monkey-automation"], "not_expect": []}
+{"query": "product manager", "expect": ["product-manager"], "not_expect": []}
+{"query": "md slides", "expect": ["md-slides"], "not_expect": []}
+{"query": "hyperise automation", "expect": ["hyperise-automation"], "not_expect": []}

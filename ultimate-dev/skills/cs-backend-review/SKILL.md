@@ -12,7 +12,7 @@ Use the `cs-backend-engineer` agent (uses `context: fork`) to handle this inquir
 
 ## Forcing-question library
 
-Canonical source: `engineering-team/skills/senior-backend/references/forcing_questions.md` (7 questions, one-per-turn, recommendation + canon citation per question).
+Canonical source: `skills/senior-backend/references/forcing_questions.md` (7 questions, one-per-turn, recommendation + canon citation per question).
 
 1. Read/write ratio + one-year p99 QPS
 2. Tenancy model (single / shared / isolated multi-tenant)
@@ -24,11 +24,11 @@ Canonical source: `engineering-team/skills/senior-backend/references/forcing_que
 
 ## Routing protocol
 
-1. **Walk the 7 forcing questions** in `engineering-team/skills/senior-backend/references/forcing_questions.md`. One per turn. Recommend with cited canon. Track in `/tmp/backend-grill-<date>.md`.
+1. **Walk the 7 forcing questions** in `skills/senior-backend/references/forcing_questions.md`. One per turn. Recommend with cited canon. Track in `/tmp/backend-grill-<date>.md`.
 2. **Surface kill criteria** — e.g., "microservices, team size 5" trips (Newman's MonolithFirst). STOP and resolve.
 3. **Run the deterministic profile picker:**
    ```bash
-   python engineering-team/skills/senior-backend/scripts/backend_decision_engine.py \
+   python skills/senior-backend/scripts/backend_decision_engine.py \
      --team-size <N> --qps-p99 <N> --read-write-ratio <ratio> \
      --tenancy <single-tenant|shared-multi-tenant|isolated-multi-tenant> \
      --data-sensitivity <public|pii|phi|pci> \
@@ -66,7 +66,7 @@ Canonical source: `engineering-team/skills/senior-backend/references/forcing_que
 
 ## Customization
 
-Profiles live at `engineering-team/skills/senior-backend/profiles/`. Four built-in: `node-express`, `fastapi-python`, `django-monolith`, `go-or-rust-microservice`. Copy one to `<your-org>.json` and adjust constraints / SLO floor / approver chain.
+Profiles live at `skills/senior-backend/profiles/`. Four built-in: `node-express`, `fastapi-python`, `django-monolith`, `go-or-rust-microservice`. Copy one to `<your-org>.json` and adjust constraints / SLO floor / approver chain.
 
 ## Related commands
 

@@ -26,7 +26,7 @@ agents:
 
 ### Claude Code
 ```
-/read engineering/skills/agent-designer/SKILL.md
+/read skills/agent-designer/SKILL.md
 ```
 
 ### Codex CLI

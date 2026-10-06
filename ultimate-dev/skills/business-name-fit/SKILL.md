@@ -115,6 +115,6 @@ Expand any of these only if asked.
 
 ## Cross-References
 
-- **brand-guidelines** (`marketing-skill/skills/brand-guidelines`) — use after a name is chosen, to build the visual and verbal identity system around it.
-- **copywriting** (`marketing-skill/skills/copywriting`) — use once the name is locked, for tagline and messaging work that needs to match the name's tone.
-- **marketing-context** (`marketing-skill/skills/marketing-context`) — load first if available; ICP and positioning context should inform which candidate names fit best.
+- **brand-guidelines** (`skills/brand-guidelines`) — use after a name is chosen, to build the visual and verbal identity system around it.
+- **copywriting** (`skills/copywriting`) — use once the name is locked, for tagline and messaging work that needs to match the name's tone.
+- **marketing-context** (`skills/marketing-context`) — load first if available; ICP and positioning context should inform which candidate names fit best.

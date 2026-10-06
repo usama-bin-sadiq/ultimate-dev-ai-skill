@@ -138,8 +138,8 @@ A segmentation that has 70% of customers in the "Strategic" tier means the compa
 ## When This Reference Doesn't Help
 
 - **Setting up segmentation in your CRM.** Tactical; use Salesforce / HubSpot / etc. native tier fields.
-- **ICP refinement when product-market fit is unclear.** See `c-level-advisor/skills/cpo-advisor/` for PMF framework first.
-- **Pricing strategy across tiers.** See `c-level-advisor/skills/cmo-advisor/` and consider Patrick Campbell's "Monetizing Innovation".
+- **ICP refinement when product-market fit is unclear.** See `skills/cpo-advisor/` for PMF framework first.
+- **Pricing strategy across tiers.** See `skills/cmo-advisor/` and consider Patrick Campbell's "Monetizing Innovation".
 
 This reference is about the strategic design of differential investment, not the CRM implementation.
 

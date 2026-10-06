@@ -367,11 +367,11 @@ This skill does NOT reimplement scope owned by the POWERFUL-tier specialists. It
 
 | Concern | Fork into |
 |---|---|
-| API contract review | `engineering/skills/api-design-reviewer/` |
-| Database schema design | `engineering/skills/database-designer/` |
+| API contract review | `skills/api-design-reviewer/` |
+| Database schema design | `skills/database-designer/` |
 | Reliability / SLO design | `engineering/slo-architect/` |
-| CI/CD pipeline | `engineering/skills/ci-cd-pipeline-builder/` |
-| Performance profiling | `engineering/skills/performance-profiler/` |
+| CI/CD pipeline | `skills/ci-cd-pipeline-builder/` |
+| Performance profiling | `skills/performance-profiler/` |
 | Pre-commit Karpathy review | `engineering/karpathy-coder/` |
 | Pre-flight architecture grill | `engineering/grill-me/` |
 

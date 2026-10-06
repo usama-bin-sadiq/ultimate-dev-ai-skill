@@ -1,0 +1,9 @@
+{
+  "category": "debugging",
+  "difficulty": "hard",
+  "skill": "systematic-debugging",
+  "artifacts": [
+    "out/cause.md",
+    "out/fixed.py"
+  ]
+}

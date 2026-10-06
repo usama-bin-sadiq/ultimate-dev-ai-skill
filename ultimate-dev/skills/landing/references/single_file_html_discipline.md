@@ -76,7 +76,7 @@ A build pipeline implies:
 
 The user might want this for a long-lived project. They don't want it for a landing page they're shipping today.
 
-If the user explicitly asks for "I want a React component version" → use the sibling skill `product-team/skills/landing-page-generator/` (which outputs Next.js TSX, including the build pipeline).
+If the user explicitly asks for "I want a React component version" → use the sibling skill `skills/landing-page-generator/` (which outputs Next.js TSX, including the build pipeline).
 
 ## When Single-File Breaks Down
 

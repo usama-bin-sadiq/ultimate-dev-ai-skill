@@ -28,19 +28,19 @@ The cs-project-manager agent bridges the gap between project execution and strat
 1. **Project Health Dashboard**
    - **Purpose:** Generate portfolio-level health dashboard with RAG status across all active projects
    - **Path:** `../senior-pm/scripts/project_health_dashboard.py`
-   - **Usage:** `python ../../project-management/skills/senior-pm/scripts/project_health_dashboard.py sample_project_data.json`
+   - **Usage:** `python skills/senior-pm/scripts/project_health_dashboard.py sample_project_data.json`
    - **Features:** Schedule variance, budget tracking, risk exposure, milestone status, RAG indicators
 
 2. **Risk Matrix Analyzer**
    - **Purpose:** Quantitative risk analysis with probability-impact matrices and Expected Monetary Value (EMV)
    - **Path:** `../senior-pm/scripts/risk_matrix_analyzer.py`
-   - **Usage:** `python ../../project-management/skills/senior-pm/scripts/risk_matrix_analyzer.py risks.json`
+   - **Usage:** `python skills/senior-pm/scripts/risk_matrix_analyzer.py risks.json`
    - **Features:** Risk scoring, heat map generation, mitigation tracking, EMV calculation
 
 3. **Resource Capacity Planner**
    - **Purpose:** Team resource allocation and capacity forecasting across sprints and projects
    - **Path:** `../senior-pm/scripts/resource_capacity_planner.py`
-   - **Usage:** `python ../../project-management/skills/senior-pm/scripts/resource_capacity_planner.py team_data.json`
+   - **Usage:** `python skills/senior-pm/scripts/resource_capacity_planner.py team_data.json`
    - **Features:** Utilization analysis, over-allocation detection, capacity forecasting, cross-project balancing
 
 **Knowledge Bases:**
@@ -64,19 +64,19 @@ The cs-project-manager agent bridges the gap between project execution and strat
 1. **Sprint Health Scorer**
    - **Purpose:** Quantitative sprint health assessment across scope, velocity, quality, and team morale
    - **Path:** `../scrum-master/scripts/sprint_health_scorer.py`
-   - **Usage:** `python ../../project-management/skills/scrum-master/scripts/sprint_health_scorer.py sample_sprint_data.json`
+   - **Usage:** `python skills/scrum-master/scripts/sprint_health_scorer.py sample_sprint_data.json`
    - **Features:** Multi-dimensional scoring (0-100), trend analysis, health indicators, actionable recommendations
 
 2. **Velocity Analyzer**
    - **Purpose:** Historical velocity analysis with forecasting and confidence intervals
    - **Path:** `../scrum-master/scripts/velocity_analyzer.py`
-   - **Usage:** `python ../../project-management/skills/scrum-master/scripts/velocity_analyzer.py sprint_history.json`
+   - **Usage:** `python skills/scrum-master/scripts/velocity_analyzer.py sprint_history.json`
    - **Features:** Rolling averages, standard deviation, sprint-over-sprint trends, capacity prediction
 
 3. **Retrospective Analyzer**
    - **Purpose:** Structured retrospective analysis with action item tracking and theme extraction
    - **Path:** `../scrum-master/scripts/retrospective_analyzer.py`
-   - **Usage:** `python ../../project-management/skills/scrum-master/scripts/retrospective_analyzer.py retro_notes.json`
+   - **Usage:** `python skills/scrum-master/scripts/retrospective_analyzer.py retro_notes.json`
    - **Features:** Theme clustering, sentiment analysis, action item extraction, trend tracking across sprints
 
 **Knowledge Bases:**
@@ -131,7 +131,7 @@ Covers blueprint creation, custom page layouts, and reusable Confluence/Jira com
 
 1. **Analyze Velocity History** - Review past sprint performance to set realistic capacity:
    ```bash
-   python ../../project-management/skills/scrum-master/scripts/velocity_analyzer.py sprint_history.json
+   python skills/scrum-master/scripts/velocity_analyzer.py sprint_history.json
    ```
    - Review rolling average velocity and standard deviation
    - Identify trends (accelerating, decelerating, stable)
@@ -144,7 +144,7 @@ Covers blueprint creation, custom page layouts, and reusable Confluence/Jira com
 
 3. **Check Resource Availability** - Verify team capacity for the sprint window:
    ```bash
-   python ../../project-management/skills/senior-pm/scripts/resource_capacity_planner.py team_data.json
+   python skills/senior-pm/scripts/resource_capacity_planner.py team_data.json
    ```
    - Account for PTO, holidays, shared resources
    - Flag over-allocated team members
@@ -172,8 +172,8 @@ Covers blueprint creation, custom page layouts, and reusable Confluence/Jira com
 **Example:**
 ```bash
 # Full sprint planning workflow
-python ../../project-management/skills/scrum-master/scripts/velocity_analyzer.py sprint_history.json > velocity_report.txt
-python ../../project-management/skills/senior-pm/scripts/resource_capacity_planner.py team_data.json > capacity_report.txt
+python skills/scrum-master/scripts/velocity_analyzer.py sprint_history.json > velocity_report.txt
+python skills/senior-pm/scripts/resource_capacity_planner.py team_data.json > capacity_report.txt
 cat velocity_report.txt
 cat capacity_report.txt
 # Use velocity average and capacity data to commit sprint items
@@ -193,7 +193,7 @@ cat capacity_report.txt
 
 2. **Generate Health Dashboard** - Run project health analysis:
    ```bash
-   python ../../project-management/skills/senior-pm/scripts/project_health_dashboard.py portfolio_data.json
+   python skills/senior-pm/scripts/project_health_dashboard.py portfolio_data.json
    ```
    - Review per-project RAG status (Red/Amber/Green)
    - Identify projects requiring intervention
@@ -201,7 +201,7 @@ cat capacity_report.txt
 
 3. **Analyze Risk Exposure** - Quantify portfolio-level risk:
    ```bash
-   python ../../project-management/skills/senior-pm/scripts/risk_matrix_analyzer.py portfolio_risks.json
+   python skills/senior-pm/scripts/risk_matrix_analyzer.py portfolio_risks.json
    ```
    - Calculate EMV for each risk
    - Identify top-10 risks by exposure
@@ -210,7 +210,7 @@ cat capacity_report.txt
 
 4. **Review Resource Utilization** - Check cross-project allocation:
    ```bash
-   python ../../project-management/skills/senior-pm/scripts/resource_capacity_planner.py all_teams.json
+   python skills/senior-pm/scripts/resource_capacity_planner.py all_teams.json
    ```
    - Identify over-allocated individuals (>100% utilization)
    - Find under-utilized capacity for rebalancing
@@ -234,9 +234,9 @@ cat capacity_report.txt
 **Example:**
 ```bash
 # Portfolio health review automation
-python ../../project-management/skills/senior-pm/scripts/project_health_dashboard.py portfolio_data.json > health_dashboard.txt
-python ../../project-management/skills/senior-pm/scripts/risk_matrix_analyzer.py portfolio_risks.json > risk_report.txt
-python ../../project-management/skills/senior-pm/scripts/resource_capacity_planner.py all_teams.json > resource_report.txt
+python skills/senior-pm/scripts/project_health_dashboard.py portfolio_data.json > health_dashboard.txt
+python skills/senior-pm/scripts/risk_matrix_analyzer.py portfolio_risks.json > risk_report.txt
+python skills/senior-pm/scripts/resource_capacity_planner.py all_teams.json > resource_report.txt
 cat health_dashboard.txt
 cat risk_report.txt
 cat resource_report.txt
@@ -250,7 +250,7 @@ cat resource_report.txt
 
 1. **Gather Sprint Metrics** - Collect quantitative data before the retro:
    ```bash
-   python ../../project-management/skills/scrum-master/scripts/sprint_health_scorer.py sprint_data.json
+   python skills/scrum-master/scripts/sprint_health_scorer.py sprint_data.json
    ```
    - Review sprint health score (0-100)
    - Identify scoring dimensions that dropped (scope, velocity, quality, morale)
@@ -272,7 +272,7 @@ cat resource_report.txt
 
 4. **Analyze Retro Output** - Extract structured insights:
    ```bash
-   python ../../project-management/skills/scrum-master/scripts/retrospective_analyzer.py retro_notes.json
+   python skills/scrum-master/scripts/retrospective_analyzer.py retro_notes.json
    ```
    - Identify recurring themes across sprints
    - Cluster related items into improvement areas
@@ -301,11 +301,11 @@ cat resource_report.txt
 **Example:**
 ```bash
 # Pre-retro data collection
-python ../../project-management/skills/scrum-master/scripts/sprint_health_scorer.py sprint_data.json > health_score.txt
-python ../../project-management/skills/scrum-master/scripts/velocity_analyzer.py sprint_history.json > velocity_trend.txt
+python skills/scrum-master/scripts/sprint_health_scorer.py sprint_data.json > health_score.txt
+python skills/scrum-master/scripts/velocity_analyzer.py sprint_history.json > velocity_trend.txt
 cat health_score.txt
 # Use health score insights to guide retro discussion
-python ../../project-management/skills/scrum-master/scripts/retrospective_analyzer.py retro_notes.json > retro_analysis.txt
+python skills/scrum-master/scripts/retrospective_analyzer.py retro_notes.json > retro_analysis.txt
 cat retro_analysis.txt
 ```
 
@@ -383,22 +383,22 @@ echo "============================================"
 # Sprint health assessment
 echo ""
 echo "Sprint Health:"
-python ../../project-management/skills/scrum-master/scripts/sprint_health_scorer.py current_sprint.json
+python skills/scrum-master/scripts/sprint_health_scorer.py current_sprint.json
 
 # Velocity trend
 echo ""
 echo "Velocity Trend:"
-python ../../project-management/skills/scrum-master/scripts/velocity_analyzer.py sprint_history.json
+python skills/scrum-master/scripts/velocity_analyzer.py sprint_history.json
 
 # Risk exposure
 echo ""
 echo "Active Risks:"
-python ../../project-management/skills/senior-pm/scripts/risk_matrix_analyzer.py active_risks.json
+python skills/senior-pm/scripts/risk_matrix_analyzer.py active_risks.json
 
 # Resource utilization
 echo ""
 echo "Team Capacity:"
-python ../../project-management/skills/senior-pm/scripts/resource_capacity_planner.py team_data.json
+python skills/senior-pm/scripts/resource_capacity_planner.py team_data.json
 ```
 
 ### Example 2: Sprint Retrospective Pipeline
@@ -414,19 +414,19 @@ echo "=========================================="
 # Step 1: Score sprint health
 echo ""
 echo "1. Sprint Health Score:"
-python ../../project-management/skills/scrum-master/scripts/sprint_health_scorer.py sprint_${SPRINT_NUM}.json > sprint_health.txt
+python skills/scrum-master/scripts/sprint_health_scorer.py sprint_${SPRINT_NUM}.json > sprint_health.txt
 cat sprint_health.txt
 
 # Step 2: Analyze velocity trend
 echo ""
 echo "2. Velocity Analysis:"
-python ../../project-management/skills/scrum-master/scripts/velocity_analyzer.py velocity_history.json > velocity.txt
+python skills/scrum-master/scripts/velocity_analyzer.py velocity_history.json > velocity.txt
 cat velocity.txt
 
 # Step 3: Process retro notes
 echo ""
 echo "3. Retrospective Themes:"
-python ../../project-management/skills/scrum-master/scripts/retrospective_analyzer.py retro_sprint_${SPRINT_NUM}.json > retro_analysis.txt
+python skills/scrum-master/scripts/retrospective_analyzer.py retro_sprint_${SPRINT_NUM}.json > retro_analysis.txt
 cat retro_analysis.txt
 
 echo ""
@@ -446,24 +446,24 @@ echo "================================"
 # Project health across portfolio
 echo ""
 echo "Project Health (All Active):"
-python ../../project-management/skills/senior-pm/scripts/project_health_dashboard.py portfolio_$MONTH.json > dashboard.txt
+python skills/senior-pm/scripts/project_health_dashboard.py portfolio_$MONTH.json > dashboard.txt
 cat dashboard.txt
 
 # Risk heatmap
 echo ""
 echo "Risk Exposure Summary:"
-python ../../project-management/skills/senior-pm/scripts/risk_matrix_analyzer.py risks_$MONTH.json > risks.txt
+python skills/senior-pm/scripts/risk_matrix_analyzer.py risks_$MONTH.json > risks.txt
 cat risks.txt
 
 # Resource forecast
 echo ""
 echo "Resource Utilization:"
-python ../../project-management/skills/senior-pm/scripts/resource_capacity_planner.py resources_$MONTH.json > capacity.txt
+python skills/senior-pm/scripts/resource_capacity_planner.py resources_$MONTH.json > capacity.txt
 cat capacity.txt
 
 echo ""
 echo "Dashboard generated. Use executive_report_template.md to assemble final report."
-echo "Template: ../../project-management/skills/senior-pm/assets/executive_report_template.md"
+echo "Template: skills/senior-pm/assets/executive_report_template.md"
 ```
 
 ## Success Metrics
@@ -476,11 +476,11 @@ Detail moved to `references/success-metrics.md`.
 
 ## References
 
-- **Senior PM Skill:** [../../project-management/skills/senior-pm/SKILL.md](../senior-pm/SKILL.md)
-- **Scrum Master Skill:** [../../project-management/skills/scrum-master/SKILL.md](../scrum-master/SKILL.md)
-- **Jira Expert Skill:** [../../project-management/skills/jira-expert/SKILL.md](../jira-expert/SKILL.md)
-- **Confluence Expert Skill:** [../../project-management/skills/confluence-expert/SKILL.md](../confluence-expert/SKILL.md)
-- **Atlassian Admin Skill:** [../../project-management/skills/atlassian-admin/SKILL.md](../atlassian-admin/SKILL.md)
+- **Senior PM Skill:** [skills/senior-pm/SKILL.md](../senior-pm/SKILL.md)
+- **Scrum Master Skill:** [skills/scrum-master/SKILL.md](../scrum-master/SKILL.md)
+- **Jira Expert Skill:** [skills/jira-expert/SKILL.md](../jira-expert/SKILL.md)
+- **Confluence Expert Skill:** [skills/confluence-expert/SKILL.md](../confluence-expert/SKILL.md)
+- **Atlassian Admin Skill:** [skills/atlassian-admin/SKILL.md](../atlassian-admin/SKILL.md)
 
 ---
 

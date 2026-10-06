@@ -38,15 +38,15 @@ diff_parser.py  →  annotation_extractor.py  →  review_html_renderer.py
 
 ```bash
 # 1. Parse markdown → diff hunks JSON
-python3 markdown-html/skills/md-review/scripts/diff_parser.py \
+python3 skills/md-review/scripts/diff_parser.py \
     --input <path>.md --output hunks.json
 
 # 2. Extract severity-tagged annotations, attach to nearest preceding hunk
-python3 markdown-html/skills/md-review/scripts/annotation_extractor.py \
+python3 skills/md-review/scripts/annotation_extractor.py \
     --input <path>.md --diff-blocks hunks.json --output annotations.json
 
 # 3. Render 2-col HTML (--reviewer is mandatory — refuses without)
-python3 markdown-html/skills/md-review/scripts/review_html_renderer.py \
+python3 skills/md-review/scripts/review_html_renderer.py \
     --diff-blocks hunks.json --annotations annotations.json \
     --reviewer "Jane Doe" --title "PR #123: Add retry logic" \
     --output review.html

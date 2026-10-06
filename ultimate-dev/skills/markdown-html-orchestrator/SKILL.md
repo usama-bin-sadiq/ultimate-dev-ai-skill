@@ -28,12 +28,12 @@ This orchestrator forks context, classifies the input markdown deterministically
 ## Pre-flight gates (hard refusals)
 
 1. **Below the 100-line threshold.** Markdown wins below 100 lines (Shihipar). The classifier prints `below_min_lines: true` and `route_explainer.py` refuses. Tell the user to keep their input as markdown.
-2. **Design-system not onboarded.** If `~/.config/markdown-html/design-system.json` doesn't exist (or its `setup_completed_at` is null), refuse. Point the user at `python3 markdown-html/skills/design-system/scripts/onboard.py` (or `--defaults` for a zero-touch run).
+2. **Design-system not onboarded.** If `~/.config/markdown-html/design-system.json` doesn't exist (or its `setup_completed_at` is null), refuse. Point the user at `python3 skills/design-system/scripts/onboard.py` (or `--defaults` for a zero-touch run).
 3. **Unwritable save location.** `output_path_resolver.py` refuses if the configured `default_output_dir` (or `--out` override) isn't writable.
 
 ## Routing logic (deterministic)
 
-Two-signal threshold pattern lifted from `research-ops/skills/research-ops-skills/SKILL.md`. Filename hint = 2 points; each content signal = 1 point. Silent-route allowed when winner ≥ 3 AND (runner-up = 0 OR winner ≥ 2× runner-up). Below threshold → one clarifying question with a recommended answer.
+Two-signal threshold pattern lifted from `skills/research-ops-skills/SKILL.md`. Filename hint = 2 points; each content signal = 1 point. Silent-route allowed when winner ≥ 3 AND (runner-up = 0 OR winner ≥ 2× runner-up). Below threshold → one clarifying question with a recommended answer.
 
 ### Signal table
 
@@ -46,9 +46,9 @@ Two-signal threshold pattern lifted from `research-ops/skills/research-ops-skill
 The pipeline:
 
 ```bash
-python3 markdown-html/skills/markdown-html-orchestrator/scripts/doctype_classifier.py \
+python3 skills/markdown-html-orchestrator/scripts/doctype_classifier.py \
     --input <path>.md --output json \
-  | python3 markdown-html/skills/markdown-html-orchestrator/scripts/route_explainer.py
+  | python3 skills/markdown-html-orchestrator/scripts/route_explainer.py
 ```
 
 `route_explainer.py` checks the design-system status, applies the < 100-line refusal, and prints one of: `ROUTE_SILENTLY -> md-<type>`, `ASK_USER one question: ...`, or `REFUSE — fix the issues above`.
@@ -60,7 +60,7 @@ python3 markdown-html/skills/markdown-html-orchestrator/scripts/doctype_classifi
 If the user has never run onboarding, surface the one-time setup:
 
 ```bash
-python3 markdown-html/skills/design-system/scripts/onboard.py
+python3 skills/design-system/scripts/onboard.py
 ```
 
 Ten questions, 1-2 minutes. Captures brand primary + accent + heading/body Google Fonts + design style (editorial/technical/minimal/playful) + default output dir + syntax theme + TOC behavior + optional logo/company. Stored at `~/.config/markdown-html/design-system.json`. Re-runnable with `--scope project` for per-repo overrides.
@@ -76,7 +76,7 @@ Pipe the classification into `route_explainer.py`. If it says `ROUTE_SILENTLY`, 
 ### Step 4 — Resolve the output path
 
 ```bash
-python3 markdown-html/skills/markdown-html-orchestrator/scripts/output_path_resolver.py \
+python3 skills/markdown-html-orchestrator/scripts/output_path_resolver.py \
     --input <path>.md --doctype <document|review|slides>
 ```
 
@@ -99,7 +99,7 @@ Walk these one at a time, with a recommended answer per question, citing the can
 4. **Where does the output save, and will it overwrite anything?**
    Recommended: the configured `default_output_dir` with `--on-collision suffix`. Canon: Matt Pocock `handoff` skill — never silently overwrite a working artifact.
 5. **Document type confidence — silent-route or one question?**
-   Recommended: silent-route only when the classifier's verdict is one of `document/review/slides` AND `silent_route_allowed: true`. Otherwise ask. Canon: research-ops two-signal threshold (`research-ops/skills/research-ops-skills/SKILL.md` §"Routing logic").
+   Recommended: silent-route only when the classifier's verdict is one of `document/review/slides` AND `silent_route_allowed: true`. Otherwise ask. Canon: research-ops two-signal threshold (`skills/research-ops-skills/SKILL.md` §"Routing logic").
 
 Never run a sub-skill before the lane is locked.
 
@@ -144,9 +144,9 @@ Never run a sub-skill before the lane is locked.
 ## References
 
 - Spec: Thariq Shihipar — "Claude Code HTML output" (Medium, 2026)
-- Forking pattern: `research-ops/skills/research-ops-skills/SKILL.md` (`context: fork`, two-signal routing)
-- Customization pattern: `research-ops/skills/clinical-research/scripts/` (`onboard.py`, `config_loader.py`)
-- Brand palette math: `marketing/landing/skills/landing/scripts/brand_palette_validator.py` (WCAG + HSL derive)
+- Forking pattern: `skills/research-ops-skills/SKILL.md` (`context: fork`, two-signal routing)
+- Customization pattern: `skills/clinical-research/scripts/` (`onboard.py`, `config_loader.py`)
+- Brand palette math: `skills/landing/scripts/brand_palette_validator.py` (WCAG + HSL derive)
 - Information-density canon: Tufte; Shihipar's `thariqs.github.io/html-effectiveness/` gallery; Wattenberger interactive essays; Maggie Appleton digital gardens
 
 ## Reference files

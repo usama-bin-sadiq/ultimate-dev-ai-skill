@@ -33,7 +33,7 @@ Mobile app,20000,3,0.5,13
 ```
 
 ## Scripts
-- `product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py` — RICE prioritizer (`<input.csv> [--capacity N] [--output text|json|csv]`)
+- `skills/product-manager-toolkit/scripts/rice_prioritizer.py` — RICE prioritizer (`<input.csv> [--capacity N] [--output text|json|csv]`)
 
 ## Skill Reference
-> `product-team/skills/product-manager-toolkit/SKILL.md`
+> `skills/product-manager-toolkit/SKILL.md`

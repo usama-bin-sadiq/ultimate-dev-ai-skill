@@ -24,8 +24,8 @@ Detect project stack and generate CI/CD pipeline configurations for GitHub Actio
 ```
 
 ## Scripts
-- `engineering/skills/ci-cd-pipeline-builder/scripts/stack_detector.py` — Detect stack and tooling (`--repo <path>`, `--format text|json`)
-- `engineering/skills/ci-cd-pipeline-builder/scripts/pipeline_generator.py` — Generate pipeline YAML (`--platform github|gitlab`, `--repo <path>`, `--input <stack.json>`, `--output <file>`)
+- `skills/ci-cd-pipeline-builder/scripts/stack_detector.py` — Detect stack and tooling (`--repo <path>`, `--format text|json`)
+- `skills/ci-cd-pipeline-builder/scripts/pipeline_generator.py` — Generate pipeline YAML (`--platform github|gitlab`, `--repo <path>`, `--input <stack.json>`, `--output <file>`)
 
 ## Skill Reference
-→ `engineering/skills/ci-cd-pipeline-builder/SKILL.md`
+→ `skills/ci-cd-pipeline-builder/SKILL.md`

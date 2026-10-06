@@ -42,7 +42,7 @@ Identify what the skill contains and classify it.
    - Has `skills/` → has sub-skills (compound skill)
    - Has `.claude-plugin/plugin.json` → is a standalone plugin
    - Has `settings.json` → has command registrations
-4. Detect domain from path: `engineering/`, `product-team/`, `marketing-skill/`, etc.
+4. Detect domain from the owning collection — here every skill lives under `skills/<name>/`; in a multi-plugin repo the top-level directory is the domain.
 5. Check for associated command: search `commands/` for a `.md` file matching the skill name
 
 Display discovery summary before proceeding:
@@ -62,7 +62,7 @@ Auditing: code-to-prd
 Run the skill-tester validator.
 
 ```bash
-python3 engineering/skills/skill-tester/scripts/skill_validator.py {skill_path} --tier {detected_tier} --json
+python3 skills/skill-tester/scripts/skill_validator.py {skill_path} --tier {detected_tier} --json
 ```
 
 Parse the JSON output. Extract:
@@ -85,7 +85,7 @@ Parse the JSON output. Extract:
 Run the quality scorer.
 
 ```bash
-python3 engineering/skills/skill-tester/scripts/quality_scorer.py {skill_path} --detailed --json
+python3 skills/skill-tester/scripts/quality_scorer.py {skill_path} --detailed --json
 ```
 
 Parse the JSON output. Extract:
@@ -102,7 +102,7 @@ Parse the JSON output. Extract:
 If the skill has `scripts/` with `.py` files, run the script tester.
 
 ```bash
-python3 engineering/skills/skill-tester/scripts/script_tester.py {skill_path} --json --verbose
+python3 skills/skill-tester/scripts/script_tester.py {skill_path} --json --verbose
 ```
 
 Parse the JSON output. For each script, extract:
@@ -120,7 +120,7 @@ Parse the JSON output. For each script, extract:
 Run the skill security auditor.
 
 ```bash
-python3 engineering/skills/skill-security-auditor/scripts/skill_security_auditor.py {skill_path} --strict --json
+python3 skills/skill-security-auditor/scripts/skill_security_auditor.py {skill_path} --strict --json
 ```
 
 Parse the JSON output. Extract:
@@ -229,7 +229,7 @@ Based on the skill's domain, invoke the appropriate agent's review perspective:
 |--------|-------|-------------|
 | `engineering/` or `engineering-team/` | cs-senior-engineer | Architecture, code quality, CI/CD integration |
 | `product-team/` | cs-product-manager | PRD quality, user story coverage, RICE alignment |
-| `marketing-skill/` | cs-content-creator | Content quality, SEO optimization, brand voice |
+| `skills/` (marketing) | cs-content-creator | Content quality, SEO optimization, brand voice |
 | `ra-qm-team/` | cs-quality-regulatory | Compliance checklist, audit trail, regulatory alignment |
 | `business-growth/` | cs-growth-strategist | Growth metrics, revenue impact, customer success |
 | `finance/` | cs-financial-analyst | Financial model accuracy, metric definitions |
@@ -305,10 +305,10 @@ Present results as a structured table:
 
 | Tool | Path |
 |------|------|
-| Skill Validator | `engineering/skills/skill-tester/scripts/skill_validator.py` |
-| Quality Scorer | `engineering/skills/skill-tester/scripts/quality_scorer.py` |
-| Script Tester | `engineering/skills/skill-tester/scripts/script_tester.py` |
-| Security Auditor | `engineering/skills/skill-security-auditor/scripts/skill_security_auditor.py` |
+| Skill Validator | `skills/skill-tester/scripts/skill_validator.py` |
+| Quality Scorer | `skills/skill-tester/scripts/quality_scorer.py` |
+| Script Tester | `skills/skill-tester/scripts/script_tester.py` |
+| Security Auditor | `skills/skill-security-auditor/scripts/skill_security_auditor.py` |
 | Quality Standards | `standards/quality/quality-standards.md` |
 | Security Standards | `standards/security/security-standards.md` |
 | Git Standards | `standards/git/git-workflow-standards.md` |

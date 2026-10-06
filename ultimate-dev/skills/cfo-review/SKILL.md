@@ -53,9 +53,9 @@ The numerate skeptic stress-tests anything that touches money. Six questions bef
 
 1. **Run the numbers:**
    ```bash
-   python ../../../c-level-advisor/skills/cfo-advisor/scripts/burn_rate_calculator.py
-   python ../../../c-level-advisor/skills/cfo-advisor/scripts/unit_economics_analyzer.py
-   python ../../../c-level-advisor/skills/cfo-advisor/scripts/fundraising_model.py
+   python skills/cfo-advisor/scripts/burn_rate_calculator.py
+   python skills/cfo-advisor/scripts/unit_economics_analyzer.py
+   python skills/cfo-advisor/scripts/fundraising_model.py
    ```
 2. **Answer all six questions** with numbers, not adjectives.
 3. **Apply the verdict:**

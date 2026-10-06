@@ -34,14 +34,14 @@ The cs-agile-product-owner agent bridges strategic product goals with sprint-lev
 1. **User Story Generator**
    - **Purpose:** Break epics into INVEST-compliant user stories with acceptance criteria in Given/When/Then format
    - **Path:** `../agile-product-owner/scripts/user_story_generator.py`
-   - **Usage:** `python ../../product-team/agile-product-owner/skills/agile-product-owner/scripts/user_story_generator.py epic.yaml`
+   - **Usage:** `python skills/agile-product-owner/scripts/user_story_generator.py epic.yaml`
    - **Features:** Epic decomposition, acceptance criteria generation, story point estimation, dependency mapping
    - **Use Cases:** Sprint planning, backlog refinement, story writing workshops
 
 2. **RICE Prioritizer**
    - **Purpose:** RICE framework for backlog prioritization with portfolio analysis
    - **Path:** `../product-manager-toolkit/scripts/rice_prioritizer.py`
-   - **Usage:** `python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py backlog.csv --capacity 20`
+   - **Usage:** `python skills/product-manager-toolkit/scripts/rice_prioritizer.py backlog.csv --capacity 20`
    - **Features:** Portfolio quadrant analysis, capacity planning, quarterly roadmap generation
    - **Use Cases:** Backlog ordering, sprint scope decisions, stakeholder alignment
 
@@ -103,7 +103,7 @@ The cs-agile-product-owner agent bridges strategic product goals with sprint-lev
 
 3. **Generate Stories** - Run the user story generator:
    ```bash
-   python ../../product-team/agile-product-owner/skills/agile-product-owner/scripts/user_story_generator.py epic.yaml
+   python skills/agile-product-owner/scripts/user_story_generator.py epic.yaml
    ```
 
 4. **Review and Refine** - For each generated story:
@@ -137,10 +137,10 @@ epic:
 EOF
 
 # Generate user stories
-python ../../product-team/agile-product-owner/skills/agile-product-owner/scripts/user_story_generator.py dashboard-epic.yaml
+python skills/agile-product-owner/scripts/user_story_generator.py dashboard-epic.yaml
 
 # Review the sprint planning guide for context
-cat ../../product-team/agile-product-owner/skills/agile-product-owner/references/sprint-planning-guide.md
+cat skills/agile-product-owner/references/sprint-planning-guide.md
 ```
 
 ### Workflow 2: Sprint Planning
@@ -168,12 +168,12 @@ cat ../../product-team/agile-product-owner/skills/agile-product-owner/references
 4. **Select Stories** - Pull from prioritized backlog:
    ```bash
    # Prioritize candidates if not already ordered
-   python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py sprint-candidates.csv --capacity 12
+   python skills/product-manager-toolkit/scripts/rice_prioritizer.py sprint-candidates.csv --capacity 12
    ```
 
 5. **Document the Plan** - Use the sprint planning template:
    ```bash
-   cat ../../product-team/agile-product-owner/skills/agile-product-owner/assets/sprint_planning_template.md
+   cat skills/agile-product-owner/assets/sprint_planning_template.md
    ```
 
 6. **Identify Risks** - Document potential blockers:
@@ -198,10 +198,10 @@ Password Reset Flow Fix,1000,2,1.0,1
 EOF
 
 # Run prioritization
-python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py sprint-candidates.csv --capacity 8
+python skills/product-manager-toolkit/scripts/rice_prioritizer.py sprint-candidates.csv --capacity 8
 
 # Reference sprint planning template
-cat ../../product-team/agile-product-owner/skills/agile-product-owner/assets/sprint_planning_template.md
+cat skills/agile-product-owner/assets/sprint_planning_template.md
 ```
 
 ### Workflow 3: Backlog Refinement
@@ -223,7 +223,7 @@ cat ../../product-team/agile-product-owner/skills/agile-product-owner/assets/spr
 
 3. **Prioritize with RICE** - Score backlog items:
    ```bash
-   python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py backlog.csv
+   python skills/product-manager-toolkit/scripts/rice_prioritizer.py backlog.csv
    ```
 
 4. **Refine Top Items** - Ensure top 2 sprints worth are ready:
@@ -255,10 +255,10 @@ Dark Mode,300,1,0.8,3
 EOF
 
 # Run full prioritization with capacity
-python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py backlog-q2.csv --capacity 15
+python skills/product-manager-toolkit/scripts/rice_prioritizer.py backlog-q2.csv --capacity 15
 
 # Review user story templates for refinement
-cat ../../product-team/agile-product-owner/skills/agile-product-owner/references/user-story-templates.md
+cat skills/agile-product-owner/references/user-story-templates.md
 ```
 
 ### Workflow 4: Story Writing Workshop
@@ -279,7 +279,7 @@ cat ../../product-team/agile-product-owner/skills/agile-product-owner/references
 
 3. **Write Stories Collaboratively** - Use the template:
    ```bash
-   cat ../../product-team/agile-product-owner/skills/agile-product-owner/assets/user_story_template.md
+   cat skills/agile-product-owner/assets/user_story_template.md
    ```
    - "As a [persona], I want [capability], so that [benefit]"
    - Focus on user value, not implementation details
@@ -310,13 +310,13 @@ cat ../../product-team/agile-product-owner/skills/agile-product-owner/references
 **Example:**
 ```bash
 # Generate initial story candidates from epic
-python ../../product-team/agile-product-owner/skills/agile-product-owner/scripts/user_story_generator.py feature-epic.yaml
+python skills/agile-product-owner/scripts/user_story_generator.py feature-epic.yaml
 
 # Reference story templates for format guidance
-cat ../../product-team/agile-product-owner/skills/agile-product-owner/references/user-story-templates.md
+cat skills/agile-product-owner/references/user-story-templates.md
 
 # Reference sprint planning guide for estimation practices
-cat ../../product-team/agile-product-owner/skills/agile-product-owner/references/sprint-planning-guide.md
+cat skills/agile-product-owner/references/sprint-planning-guide.md
 ```
 
 ## Integration Examples
@@ -336,17 +336,17 @@ echo "=========================="
 # Step 1: Prioritize backlog
 echo ""
 echo "1. Backlog Prioritization:"
-python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py backlog.csv --capacity $CAPACITY
+python skills/product-manager-toolkit/scripts/rice_prioritizer.py backlog.csv --capacity $CAPACITY
 
 # Step 2: Generate stories for top epic
 echo ""
 echo "2. Story Generation for Top Epic:"
-python ../../product-team/agile-product-owner/skills/agile-product-owner/scripts/user_story_generator.py top-epic.yaml
+python skills/agile-product-owner/scripts/user_story_generator.py top-epic.yaml
 
 # Step 3: Reference planning template
 echo ""
 echo "3. Sprint Planning Template:"
-echo "See: ../../product-team/agile-product-owner/skills/agile-product-owner/assets/sprint_planning_template.md"
+echo "See: skills/agile-product-owner/assets/sprint_planning_template.md"
 ```
 
 ### Example 2: Backlog Health Check
@@ -367,12 +367,12 @@ echo "items in backlog"
 # Run prioritization
 echo ""
 echo "Current Priorities:"
-python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py backlog.csv --capacity 20
+python skills/product-manager-toolkit/scripts/rice_prioritizer.py backlog.csv --capacity 20
 
 # Check story templates
 echo ""
 echo "Story Template Reference:"
-echo "Location: ../../product-team/agile-product-owner/skills/agile-product-owner/references/user-story-templates.md"
+echo "Location: skills/agile-product-owner/references/user-story-templates.md"
 ```
 
 ## Success Metrics
@@ -397,18 +397,18 @@ echo "Location: ../../product-team/agile-product-owner/skills/agile-product-owne
 
 ## Related Agents
 
-- [cs-product-manager](cs-product-manager.md) - Full product management lifecycle (RICE, interviews, PRDs)
-- [cs-product-strategist](cs-product-strategist.md) - OKR cascade and strategic planning for roadmap alignment
-- [cs-ux-researcher](cs-ux-researcher.md) - User research to inform story requirements and acceptance criteria
+- [cs-product-manager](../cs-product-manager/SKILL.md) - Full product management lifecycle (RICE, interviews, PRDs)
+- [cs-product-strategist](../cs-product-strategist/SKILL.md) - OKR cascade and strategic planning for roadmap alignment
+- [cs-ux-researcher](../cs-ux-researcher/SKILL.md) - User research to inform story requirements and acceptance criteria
 - Scrum Master - Velocity context and sprint execution (see `../scrum-master`)
 
 ## References
 
-- **Primary Skill:** [../../product-team/agile-product-owner/skills/agile-product-owner/SKILL.md](../agile-product-owner/SKILL.md)
-- **RICE Framework:** [../../product-team/skills/product-manager-toolkit/SKILL.md](../product-manager-toolkit/SKILL.md)
+- **Primary Skill:** [skills/agile-product-owner/SKILL.md](../agile-product-owner/SKILL.md)
+- **RICE Framework:** [skills/product-manager-toolkit/SKILL.md](../product-manager-toolkit/SKILL.md)
 - **Product Domain Guide:** [../../product-team/<agent-instructions>](../../product-team/<agent-instructions>)
 - **Agent Development Guide:** [../<agent-instructions>](../<agent-instructions>)
-- **Scrum Master Skill:** [../../project-management/skills/scrum-master/SKILL.md](../scrum-master/SKILL.md)
+- **Scrum Master Skill:** [skills/scrum-master/SKILL.md](../scrum-master/SKILL.md)
 
 ---
 

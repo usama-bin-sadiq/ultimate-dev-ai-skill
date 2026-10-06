@@ -32,7 +32,7 @@ The `cs-webinar` command is the **entry point for webinar workflows**: plan → 
 
 Walks the intake, locks the promise + format, sizes the funnel backward from the business goal,
 builds the promotion runway, and designs show-up + live-to-close + follow-up. Delivers a full plan
-using `marketing-skill/skills/webinar-marketing/templates/webinar-plan-template.md`.
+using `skills/webinar-marketing/templates/webinar-plan-template.md`.
 
 ### `rescue` — Diagnose and fix an underperforming webinar
 
@@ -73,14 +73,14 @@ so you only ask for what's specific to this event.
 
 ```bash
 # Mode: rescue / score — find the broken stage first
-python3 marketing-skill/skills/webinar-marketing/scripts/webinar_funnel_scorer.py funnel.json
+python3 skills/webinar-marketing/scripts/webinar_funnel_scorer.py funnel.json
 # → overall 0-100 score + per-stage rate vs. benchmark + named bottleneck
 
 # Pipe JSON via stdin
-cat funnel.json | python3 marketing-skill/skills/webinar-marketing/scripts/webinar_funnel_scorer.py -
+cat funnel.json | python3 skills/webinar-marketing/scripts/webinar_funnel_scorer.py -
 
 # Demo on embedded sample data (no --help flag — run with no args)
-python3 marketing-skill/skills/webinar-marketing/scripts/webinar_funnel_scorer.py
+python3 skills/webinar-marketing/scripts/webinar_funnel_scorer.py
 ```
 
 Input JSON (`registrations` + `attended_live` required; rest optional):

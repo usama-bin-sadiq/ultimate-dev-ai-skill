@@ -138,9 +138,9 @@ The cache prevents nag-spam but is per-session. Don't rely on "I dismissed this 
 
 ## Related Skills
 
-- `engineering-team/skills/red-team` — adversarial pen-testing
-- `engineering-team/skills/threat-detection` — threat modeling + detection design
-- `engineering-team/skills/ai-security` — AI-specific security (prompt injection, etc.)
+- `skills/red-team` — adversarial pen-testing
+- `skills/threat-detection` — threat modeling + detection design
+- `skills/ai-security` — AI-specific security (prompt injection, etc.)
 - `engineering/ship-gate` — pre-production audit (8-category, ~89 checks)
 - `engineering/skill-security-auditor` — security scan for skill packages
 

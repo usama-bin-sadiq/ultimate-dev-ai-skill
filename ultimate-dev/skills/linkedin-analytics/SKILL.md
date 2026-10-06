@@ -90,7 +90,7 @@ conclusion from retrospective data.
 
 ## Distinct from
 
-- **`marketing-skill/social-media-analyzer`** — cross-platform brand campaign reporting. This
+- **`skills/social-media-analyzer`** — cross-platform brand campaign reporting. This
   is one person's own LinkedIn export, with refusals attached.
 - **`linkedin-strategy`** — decides what to do next. This says what happened.
 - **`product-team/experiment-designer`** — product A/B tests with real traffic; here n is

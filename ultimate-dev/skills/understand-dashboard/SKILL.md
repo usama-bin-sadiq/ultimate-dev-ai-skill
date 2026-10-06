@@ -53,8 +53,8 @@ Start the Understand Anything dashboard to visualize the knowledge graph for the
 3. Find the dashboard code. The dashboard is at `packages/dashboard/` relative to this plugin's root directory. Check these paths in order and use the first that exists:
    - `${CLAUDE_PLUGIN_ROOT}/packages/dashboard/` (Claude Code runtime root, highest priority)
    - `~/.understand-anything-plugin/packages/dashboard/` (universal symlink, all installs)
-   - Two levels up from `~/.agents/skills/understand-dashboard` real path (self-relative fallback)
-   - Two levels up from `~/.copilot/skills/understand-dashboard` real path (Copilot personal skills fallback)
+   - Two levels up from `~/.skills/understand-dashboard` real path (self-relative fallback)
+   - Two levels up from `~/.skills/understand-dashboard` real path (Copilot personal skills fallback)
    - Common clone-based install roots:
      - `~/<agent-config-dir>/understand-anything/understand-anything-plugin/packages/dashboard/`
      - `<agent-config-dir>/understand-anything/understand-anything-plugin/packages/dashboard/`
@@ -63,9 +63,9 @@ Start the Understand Anything dashboard to visualize the knowledge graph for the
 
    Use the Bash tool to resolve:
    ```bash
-   SKILL_REAL=$(realpath ~/.agents/skills/understand-dashboard 2>/dev/null || readlink -f ~/.agents/skills/understand-dashboard 2>/dev/null || echo "")
+   SKILL_REAL=$(realpath ~/.skills/understand-dashboard 2>/dev/null || readlink -f ~/.skills/understand-dashboard 2>/dev/null || echo "")
    SELF_RELATIVE=$([ -n "$SKILL_REAL" ] && cd "$SKILL_REAL/../.." 2>/dev/null && pwd || echo "")
-   COPILOT_SKILL_REAL=$(realpath ~/.copilot/skills/understand-dashboard 2>/dev/null || readlink -f ~/.copilot/skills/understand-dashboard 2>/dev/null || echo "")
+   COPILOT_SKILL_REAL=$(realpath ~/.skills/understand-dashboard 2>/dev/null || readlink -f ~/.skills/understand-dashboard 2>/dev/null || echo "")
    COPILOT_SELF_RELATIVE=$([ -n "$COPILOT_SKILL_REAL" ] && cd "$COPILOT_SKILL_REAL/../.." 2>/dev/null && pwd || echo "")
 
    PLUGIN_ROOT=""
@@ -88,8 +88,8 @@ Start the Understand Anything dashboard to visualize the knowledge graph for the
      echo "Checked:"
      echo "  - ${CLAUDE_PLUGIN_ROOT:-<unset CLAUDE_PLUGIN_ROOT>}"
      echo "  - $HOME/.understand-anything-plugin"
-     echo "  - ${SELF_RELATIVE:-<unresolved path derived from ~/.agents/skills/understand-dashboard>}"
-     echo "  - ${COPILOT_SELF_RELATIVE:-<unresolved path derived from ~/.copilot/skills/understand-dashboard>}"
+     echo "  - ${SELF_RELATIVE:-<unresolved path derived from ~/.skills/understand-dashboard>}"
+     echo "  - ${COPILOT_SELF_RELATIVE:-<unresolved path derived from ~/.skills/understand-dashboard>}"
      echo "  - $HOME/<agent-config-dir>/understand-anything/understand-anything-plugin"
      echo "  - $HOME/.opencode/understand-anything/understand-anything-plugin"
      echo "  - $HOME/.pi/understand-anything/understand-anything-plugin"

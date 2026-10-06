@@ -396,7 +396,7 @@ Provides comprehensive scoring of API design quality.
 ### Pre-commit Hooks
 ```bash
 #!/bin/bash
-python engineering/skills/api-design-reviewer/scripts/api_linter.py api/openapi.json
+python skills/api-design-reviewer/scripts/api_linter.py api/openapi.json
 if [ $? -ne 0 ]; then
   echo "API linting failed. Please fix the issues before committing."
   exit 1

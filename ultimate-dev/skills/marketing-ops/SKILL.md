@@ -105,7 +105,7 @@ User wants to assess their marketing → you run a cross-functional audit touchi
 | "Demand gen," "lead gen program," "MQL/SQL funnel," "CRM campaigns" | **marketing-demand-acquisition** | Not paid-ads (that's one channel) |
 | "Brand guidelines," "brand consistency," "style guide audit" | **brand-guidelines** | Not marketing-context (that's the foundation doc) |
 
-### Cross-Domain (route outside marketing-skill/)
+### Cross-Domain (route outside the marketing skills)
 | Trigger | Route to | Domain |
 |---------|----------|--------|
 | "Revenue operations," "pipeline," "lead scoring" | **revenue-operations** | business-growth/ |

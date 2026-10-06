@@ -93,7 +93,7 @@ All scripts: stdlib only. `--help` and `--sample` work on all three.
 
 ```bash
 # Emits a 5-tier partner classification with deterministic floors per tier for the built-in sample partner
-cd commercial/skills/partnerships-architect && python3 scripts/partner_tier_classifier.py --sample
+cd skills/partnerships-architect && python3 scripts/partner_tier_classifier.py --sample
 ```
 
 ## References

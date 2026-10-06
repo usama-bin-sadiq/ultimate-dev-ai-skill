@@ -1,9 +1,0 @@
-{
-  "id": "RT-12",
-  "split": "heldout",
-  "title": "273 rows made a validator pass by restating a description",
-  "query": "tools/build-dispatch-table.py derives a dispatch condition for any agent role lacking one, and references/delegation.md now carries a row for all 286. Read build-dispatch-table.py's own docstring and a few of the rows it produced, then say what the rows make true and what they leave false, and what it would take to close the gap without a tool being able to do it.",
-  "expected_mode": "inline",
-  "expected_rung": "R3",
-  "oracle": "R3: the question asks for a judgement about what a class of work requires, and the honest answer is that it requires 273 individual content decisions which no tool can make — a tool that generated them again would reproduce the defect. Inline. The trap is proposing a better derivation, since the docstring already concedes the derivation is the problem. A run that says 'generate better conditions programmatically' has not read what it was asked to read."
-}

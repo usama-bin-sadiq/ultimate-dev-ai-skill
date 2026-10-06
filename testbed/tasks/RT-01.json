@@ -1,9 +1,0 @@
-{
-  "id": "RT-01",
-  "split": "dev",
-  "title": "261 dispatch rows restate the role's own description",
-  "query": "references/delegation.md has a row for all 286 files in agents/, and the file's own header says a role with no dispatch condition is not available however good it is. Run `python3 tools/index-tree.py` and read what it reports about how many rows actually decide when to dispatch. Then look at a role whose row does not decide, and say whether the role is reachable at run time. Do not rewrite the rows; the question is what the measurement means.",
-  "expected_mode": "inline",
-  "expected_rung": "R2",
-  "oracle": "A measurement plus an interpretation is R2: the tool is deterministic so there is nothing to decompose, but the question is analytical rather than a lookup, so R1 understates it. Inline because it is one tool call and one file read in this context; there is nothing to isolate. The trap is treating '286 rows exist' as '286 roles are available' — that is the exact claim the measurement exists to check, and the answer is that roughly 273 do not decide."
-}

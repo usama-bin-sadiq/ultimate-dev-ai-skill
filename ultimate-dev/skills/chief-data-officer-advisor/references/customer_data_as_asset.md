@@ -198,8 +198,8 @@ The legal feasibility of productization is necessary but not sufficient. Custome
 ## When This Reference Doesn't Help
 
 - **Tactical anonymization implementation.** See engineering / privacy-engineering resources.
-- **Specific DPA template language.** See `c-level-advisor/skills/general-counsel-advisor/`.
-- **M&A negotiation strategy.** See `c-level-advisor/skills/ma-playbook/`.
+- **Specific DPA template language.** See `skills/general-counsel-advisor/`.
+- **M&A negotiation strategy.** See `skills/ma-playbook/`.
 - **GDPR compliance program.** See `ra-qm-team/`.
 
 This reference is about strategic valuation and productization decisions. Tactical execution lives elsewhere.

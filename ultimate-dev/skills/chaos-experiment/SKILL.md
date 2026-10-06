@@ -17,7 +17,7 @@ Step through the design of a chaos engineering experiment using the `chaos-engin
 ## Implementation
 
 ```bash
-SKILL=engineering/chaos-engineering/skills/chaos-engineering
+SKILL=skills/chaos-engineering
 
 # Step 1: gather inputs interactively (target, hypothesis, attack, magnitude, ...)
 # Step 2: run experiment_designer.py to produce the plan

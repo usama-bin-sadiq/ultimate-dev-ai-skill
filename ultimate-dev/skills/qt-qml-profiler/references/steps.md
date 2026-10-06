@@ -43,7 +43,7 @@ in double quotes in every shell command. This applies to all subsequent
 steps.
 
 Find the parser script bundled with this skill,
-[scripts/parse-qmlprofiler-trace.py](references/scripts/parse-qmlprofiler-trace.py),
+[scripts/parse-qmlprofiler-trace.py](scripts/parse-qmlprofiler-trace.py),
 relative to this SKILL.md file. Resolve `<skill-path>` (used in
 Step 4) to the directory containing this SKILL.md.
 

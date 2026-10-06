@@ -83,8 +83,8 @@ For build-scale goals ("turn this validated spec into a repo and verify it"), co
 through the repo-wide harness instead:
 
 ```bash
-python3 engineering/agent-harness/skills/agent-harness/scripts/goal_compiler.py \
-  --goal "<goal>" --manifest engineering/agent-harness/skills/agent-harness/assets/harnesses/product-team.json \
+python3 skills/agent-harness/scripts/goal_compiler.py \
+  --goal "<goal>" --manifest skills/agent-harness/assets/harnesses/product-team.json \
   --out .agent-harness/plan.json
 ```
 

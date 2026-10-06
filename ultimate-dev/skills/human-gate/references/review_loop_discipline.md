@@ -166,5 +166,5 @@ had to decide whether its own work was good enough — which is the entire point
 6. Yang, P. *human-review* SKILL.md — the blocking-poll contract this design
    deliberately inverts. https://github.com/petergyang/human-review
 7. This repository. `audit/engineering-agentic-2026-07/` — AR5 loop-discipline finding.
-8. This repository. `engineering/agent-harness/skills/agent-harness/scripts/loop_controller.py`
+8. This repository. `skills/agent-harness/scripts/loop_controller.py`
    — machine-verification counterpart to this gate.

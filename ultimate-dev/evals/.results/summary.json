@@ -1,0 +1,17 @@
+[
+  {
+    "agent": "opencode",
+    "task": "rename-files",
+    "condition": "without-skill",
+    "skill": null,
+    "category": "filesystem",
+    "difficulty": "easy",
+    "passed": true,
+    "verdict": "PASS 5 files renamed, count correct",
+    "cli_exited": false,
+    "timed_out": false,
+    "seconds": 96.4,
+    "cli_tail": "        \u2022 New session            \u2022 New session            \u2022 New session            \u2022 New session            \u2022 New session            \u2022 New session            \u2022 New session            \u2022 New session            \u2022 New session            \u2022 New session            \u2022 New session                        \u001b[0 q",
+    "cached": false
+  }
+]

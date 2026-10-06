@@ -75,5 +75,5 @@ is precisely what a reader of a 2016 deep learning book needs most.
 5. 17 U.S.C. §107 — fair use as a four-factor defence, assessed case by case.
 6. *Authors Guild v. Google, Inc.*, 804 F.3d 202 (2d Cir. 2015) — indexing that does not
    substitute for the original held transformative.
-7. This repository: `engineering/book-to-skill/skills/book-to-skill/references/rights_and_provenance.md`
+7. This repository: `skills/book-to-skill/references/rights_and_provenance.md`
    (the rights gate) and its SKILL.md hard rules 1 and 6.

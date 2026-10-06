@@ -200,8 +200,8 @@ Never hire the next CS role until:
 
 ## When This Reference Doesn't Help
 
-- **Comp benchmarking for specific roles.** See `c-level-advisor/skills/chro-advisor/scripts/comp_benchmarker.py`.
-- **Leveling ladders.** See `c-level-advisor/skills/chro-advisor/references/leveling_ladders.md`.
+- **Comp benchmarking for specific roles.** See `skills/chro-advisor/scripts/comp_benchmarker.py`.
+- **Leveling ladders.** See `skills/chro-advisor/references/leveling_ladders.md`.
 - **CS Ops tooling selection (Gainsight, ChurnZero, Vitally, etc.).** Tactical; not strategic.
 - **Performance management.** Standard people management.
 

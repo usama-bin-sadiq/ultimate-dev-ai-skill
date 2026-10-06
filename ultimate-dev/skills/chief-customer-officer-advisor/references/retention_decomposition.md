@@ -125,8 +125,8 @@ NOT useful for:
 
 - **Implementing health scores in your CRM.** Tactical; see business-growth/ skills.
 - **Setting up NPS survey infrastructure.** Use Delighted, Wootric, Pendo, etc.
-- **CS comp design.** See `c-level-advisor/skills/chro-advisor/`.
-- **Pricing strategy.** See `c-level-advisor/skills/cmo-advisor/` and consider Patrick Campbell's "Monetizing Innovation" framework.
+- **CS comp design.** See `skills/chro-advisor/`.
+- **Pricing strategy.** See `skills/cmo-advisor/` and consider Patrick Campbell's "Monetizing Innovation" framework.
 
 This reference is about reading retention data honestly, not about gathering it.
 

@@ -1,0 +1,9 @@
+{
+  "category": "config",
+  "difficulty": "medium",
+  "skill": "principle-boundary-discipline",
+  "artifacts": [
+    "out/config.yaml",
+    "out/count.txt"
+  ]
+}

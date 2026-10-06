@@ -150,10 +150,10 @@ Each file below is loaded on demand, not at triage. 22 file(s):
 - `references/agents-branching.md` — prose
 - `references/agents-custom.md` — Advanced Custom Agents — `defineCustomAgent`. > ai.defineCustomAgent is experimental and comes from
 - `references/agents-deployment.md` — Deploying / Serving Agents over HTTP. > Uses shelfHandler from package:genkitshelf and the agent's companion
-- `references/agents-human-in-the-loop.md` — Agent Human-in-the-Loop / Interrupts. > Read [agents.md](agents.md) first.
+- `references/agents-human-in-the-loop.md` — Agent Human-in-the-Loop / Interrupts. > Read [agents.md](references/agents.md) first.
 - `references/agents-multi-agent.md` — Multi-Agent Orchestration / Sub-Agents. > Sub-agent delegation uses the agents() middleware from
 - `references/agents-sessions.md` — Agent Sessions & Persistence. > Sessions are experimental.
-- `references/agents-state.md` — Working with Agent State. > Read [agents.md](agents.md) first.
+- `references/agents-state.md` — Working with Agent State. > Read [agents.md](references/agents.md) first.
 - `references/agents.md` — > Agents are experimental.
 - `references/dotprompt.md` — Dotprompt (.prompt files) — Genkit Dart. .prompt files combine YAML frontmatter (model, config, schemas, tools,
 - `references/genkit.md` — Genkit Core Framework. Genkit Dart is an AI SDK for Dart that provides a unified interface for text generation, structured output, tool calling, and agentic workflows.

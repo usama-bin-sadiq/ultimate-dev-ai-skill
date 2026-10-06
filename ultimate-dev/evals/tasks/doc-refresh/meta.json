@@ -1,0 +1,8 @@
+{
+  "category": "documentation",
+  "difficulty": "medium",
+  "skill": "docs-writer",
+  "artifacts": [
+    "out/api.md"
+  ]
+}

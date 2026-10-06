@@ -24,7 +24,7 @@ This skill is **NOT chief-ai-officer-advisor**. CAIO decides whether to ship the
 
 This skill is **NOT a legal substitute**. The Act is binding regulation. For novel cases (Is this a GPAI model? Does Article 6(2) carve-out apply? Is fine-tuning a foundation model "substantial modification"?), engage qualified outside counsel. The skill cites Articles + Annexes and uses Commission/EDPB published interpretation but does not provide binding legal opinion.
 
-This skill is **NOT GDPR**. Many AI systems also trigger GDPR (training data, output processing). See `ra-qm-team/skills/gdpr-dsgvo-expert/` for DPIA + lawful basis work. The Acts interact (Recital 10, Article 10 for high-risk training data).
+This skill is **NOT GDPR**. Many AI systems also trigger GDPR (training data, output processing). See `skills/gdpr-dsgvo-expert/` for DPIA + lawful basis work. The Acts interact (Recital 10, Article 10 for high-risk training data).
 
 ## Keywords
 
@@ -183,11 +183,11 @@ python scripts/conformity_assessment_planner.py system.json
 
 ## Adjacent Skills
 
-- `ra-qm-team/skills/gdpr-dsgvo-expert/` — GDPR DPIA + lawful basis (most AI systems also trigger GDPR)
+- `skills/gdpr-dsgvo-expert/` — GDPR DPIA + lawful basis (most AI systems also trigger GDPR)
 - `ra-qm-team/compliance-team-iso42001/` — ISO 42001 AIMS (voluntary management system that satisfies parts of Article 17 QMS for providers)
-- `ra-qm-team/skills/information-security-manager-iso27001/` — ISO 27001 for cybersecurity requirements (Article 15)
-- `ra-qm-team/skills/risk-management-specialist/` — ISO 14971 risk management (referenced for safety-component AI under Article 6(1))
-- `ra-qm-team/skills/mdr-745-specialist/` — MDR 2017/745 (medical-device AI overlap)
+- `skills/information-security-manager-iso27001/` — ISO 27001 for cybersecurity requirements (Article 15)
+- `skills/risk-management-specialist/` — ISO 14971 risk management (referenced for safety-component AI under Article 6(1))
+- `skills/mdr-745-specialist/` — MDR 2017/745 (medical-device AI overlap)
 - `compliance-os/` — Meta-orchestrator for multi-framework programs
 - `c-level-advisor/chief-ai-officer-advisor/` — Executive AI strategy
 

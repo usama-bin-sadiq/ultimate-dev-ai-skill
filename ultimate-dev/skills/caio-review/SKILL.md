@@ -68,13 +68,13 @@ The eval-demanding CAIO pressure-tests any plan that involves AI. Six questions 
 
 ```bash
 # 1. Model selection check
-python ../../../c-level-advisor/skills/chief-ai-officer-advisor/scripts/model_buildvsbuy_calculator.py use_case.json
+python skills/chief-ai-officer-advisor/scripts/model_buildvsbuy_calculator.py use_case.json
 
 # 2. Regulatory classification
-python ../../../c-level-advisor/skills/chief-ai-officer-advisor/scripts/ai_risk_classifier.py use_case.json
+python skills/chief-ai-officer-advisor/scripts/ai_risk_classifier.py use_case.json
 
 # 3. Cost projection
-python ../../../c-level-advisor/skills/chief-ai-officer-advisor/scripts/ai_cost_economics.py workload.json
+python skills/chief-ai-officer-advisor/scripts/ai_cost_economics.py workload.json
 ```
 
 ## Output Format

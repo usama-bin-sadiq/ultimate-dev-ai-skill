@@ -23,7 +23,7 @@ Ask the wiki a question. The librarian reads `index.md` first, picks relevant pa
 1. **Index-first read** — reads `wiki/index.md` to find relevant pages
 2. **Drill-in** — reads 3-10 pages in full (synthesis + concepts + sources + entities)
 3. **Follow links** — opportunistically follows wikilinks between pages
-4. **Fallback search** — if the index isn't enough, runs `engineering/llm-wiki/skills/llm-wiki/scripts/wiki_search.py` (BM25)
+4. **Fallback search** — if the index isn't enough, runs `skills/llm-wiki/scripts/wiki_search.py` (BM25)
 5. **Synthesize** — composes a direct answer + supporting detail + inline `[[sources/<page-slug>]]` citations + "Related pages" section
 6. **Offer to file back** — asks whether to save this as a new wiki page (usually in `comparisons/` or `synthesis/`)
 
@@ -43,8 +43,8 @@ The answer's format follows the question:
 This command dispatches the `wiki-librarian` sub-agent.
 ## Scripts
 
-- `engineering/llm-wiki/skills/llm-wiki/scripts/wiki_search.py` — BM25 fallback search
-- `engineering/llm-wiki/skills/llm-wiki/scripts/append_log.py` — log filed answers
+- `skills/llm-wiki/scripts/wiki_search.py` — BM25 fallback search
+- `skills/llm-wiki/scripts/append_log.py` — log filed answers
 
 ## Rules
 
@@ -54,5 +54,5 @@ This command dispatches the `wiki-librarian` sub-agent.
 
 ## Skill Reference
 
-→ `engineering/llm-wiki/skills/llm-wiki/SKILL.md`
-→ `engineering/llm-wiki/skills/llm-wiki/references/query-workflow.md`
+→ `skills/llm-wiki/SKILL.md`
+→ `skills/llm-wiki/references/query-workflow.md`

@@ -305,9 +305,9 @@ Read these as needed; they are written to be consulted individually rather than 
 
 ## Cross-References
 
-- `finance/skills/financial-analyst` — inside-out corporate FP&A, budgeting, and DCF modelling for a company you operate; this skill is the outside-in public-market view of a listed company.
+- `skills/financial-analyst` — inside-out corporate FP&A, budgeting, and DCF modelling for a company you operate; this skill is the outside-in public-market view of a listed company.
 - `finance/business-investment-advisor` — internal capex and project-ROI decisions; this skill values traded equity, not internal projects.
-- `finance/skills/saas-metrics-coach` — operating SaaS metrics (NRR, CAC, burn) for internal steering, not listed-equity valuation.
+- `skills/saas-metrics-coach` — operating SaaS metrics (NRR, CAC, burn) for internal steering, not listed-equity valuation.
 
 ## A note on judgement
 

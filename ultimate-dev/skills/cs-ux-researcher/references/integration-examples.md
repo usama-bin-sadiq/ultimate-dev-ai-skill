@@ -20,7 +20,7 @@ echo "-------------------------------------"
 for f in discovery-interviews/*.txt; do
   base=$(basename "$f" .txt)
   echo "Analyzing: $base"
-  python ../../product-team/skills/product-manager-toolkit/scripts/customer_interview_analyzer.py "$f" json > "insights/$base.json"
+  python skills/product-manager-toolkit/scripts/customer_interview_analyzer.py "$f" json > "insights/$base.json"
 done
 
 # Week 2: Synthesis
@@ -29,10 +29,10 @@ echo "Week 2: Generate Personas & Journey Map"
 echo "----------------------------------------"
 
 # Generate personas from aggregated data
-python ../../product-team/skills/ux-researcher-designer/scripts/persona_generator.py aggregated-research.json
+python skills/ux-researcher-designer/scripts/persona_generator.py aggregated-research.json
 
 # Reference journey mapping guide
-echo "Journey mapping guide: ../../product-team/skills/ux-researcher-designer/references/journey-mapping-guide.md"
+echo "Journey mapping guide: skills/ux-researcher-designer/references/journey-mapping-guide.md"
 ```
 
 ### Example 2: Research Repository Update
@@ -48,15 +48,15 @@ echo "================================================"
 echo ""
 echo "New Interview Analysis:"
 for f in new-interviews/*.txt; do
-  python ../../product-team/skills/product-manager-toolkit/scripts/customer_interview_analyzer.py "$f"
+  python skills/product-manager-toolkit/scripts/customer_interview_analyzer.py "$f"
   echo "---"
 done
 
 # Review and refresh personas
 echo ""
 echo "Persona Review:"
-echo "Current personas: ../../product-team/skills/ux-researcher-designer/references/example-personas.md"
-echo "Methodology: ../../product-team/skills/ux-researcher-designer/references/persona-methodology.md"
+echo "Current personas: skills/ux-researcher-designer/references/example-personas.md"
+echo "Methodology: skills/ux-researcher-designer/references/persona-methodology.md"
 ```
 
 ### Example 3: Design Handoff with Research Context
@@ -71,20 +71,20 @@ echo "========================"
 # Persona context
 echo ""
 echo "1. Active Personas:"
-cat ../../product-team/skills/ux-researcher-designer/references/example-personas.md | head -30
+cat skills/ux-researcher-designer/references/example-personas.md | head -30
 
 # Journey context
 echo ""
 echo "2. Journey Map Reference:"
-echo "See: ../../product-team/skills/ux-researcher-designer/references/journey-mapping-guide.md"
+echo "See: skills/ux-researcher-designer/references/journey-mapping-guide.md"
 
 # Design system alignment
 echo ""
 echo "3. Component Architecture:"
-echo "See: ../../product-team/skills/ui-design-system/references/component-architecture.md"
+echo "See: skills/ui-design-system/references/component-architecture.md"
 
 # Developer handoff process
 echo ""
 echo "4. Handoff Process:"
-echo "See: ../../product-team/skills/ui-design-system/references/developer-handoff.md"
+echo "See: skills/ui-design-system/references/developer-handoff.md"
 ```

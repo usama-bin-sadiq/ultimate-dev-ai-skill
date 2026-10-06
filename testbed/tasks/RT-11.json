@@ -1,9 +1,0 @@
-{
-  "id": "RT-11",
-  "split": "heldout",
-  "title": "A metric the repository defines cannot currently be computed",
-  "query": "SKILL.md and references/coordination-modes.md claim the kernel selects a coordination mode and a rung according to task complexity, and evaluation/metrics.md defines rung accuracy as the repository's own metric. Read what metrics.md says about which metrics are null by design and why, then say which of those nulls are structural and which are merely unrun, and what the smallest change that would move each from null to a number is.",
-  "expected_mode": "inline",
-  "expected_rung": "R3",
-  "oracle": "R3: distinguishing 'structurally unmeasurable' from 'not yet measured' is the whole difficulty, and getting it wrong means proposing to instrument something that cannot be instrumented — tokens at R0/R1 where the answer is null by design because there is nothing to report. Inline. The expected answer separates the two classes and names a concrete unblocking step for each rather than proposing one measurement that would satisfy both."
-}

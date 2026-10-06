@@ -1,9 +1,0 @@
-{
-  "id": "RT-10",
-  "split": "heldout",
-  "title": "Reconcile a claim that five documents state differently",
-  "query": "References to how many agent roles exist, and how many have a usable dispatch row, appear in SKILL.md, ARCHITECTURE.md, docs/architecture/kernel.md, agents/README.md and references/delegation.md. Run `python3 tools/index-tree.py` for the measured figures, then find every stated figure across those five files and list which ones the measurement supports and which do not match. Do not correct them; report the disagreement.",
-  "expected_mode": "delegate",
-  "expected_rung": "R2",
-  "oracle": "delegate: five files to reconcile plus a tool run is a fan-out — one context per file, merged answer — and the merge is itself the work, so a single context would carry all five for no benefit. R2 because the reconciliation is analytical. The trap is reporting the measured number as the answer; the question asks which stated figures are wrong, and a document can be stale in a way the measurement does not reveal."
-}

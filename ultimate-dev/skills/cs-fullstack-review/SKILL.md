@@ -12,7 +12,7 @@ Use the `cs-fullstack-engineer` agent (which uses `context: fork` to keep the pa
 
 ## Forcing-question library
 
-Canonical source: `engineering-team/skills/senior-fullstack/references/forcing_questions.md` (7 questions, one-per-turn, recommendation + canon citation per question).
+Canonical source: `skills/senior-fullstack/references/forcing_questions.md` (7 questions, one-per-turn, recommendation + canon citation per question).
 
 1. Team size now + 12-month headcount
 2. Deployment cadence (per-PR / daily / weekly / quarterly)
@@ -24,11 +24,11 @@ Canonical source: `engineering-team/skills/senior-fullstack/references/forcing_q
 
 ## Routing protocol
 
-1. **Walk the 7 forcing questions** in `engineering-team/skills/senior-fullstack/references/forcing_questions.md`. One per turn. Recommend the answer with cited canon. Track in `/tmp/fullstack-grill-<date>.md`.
+1. **Walk the 7 forcing questions** in `skills/senior-fullstack/references/forcing_questions.md`. One per turn. Recommend the answer with cited canon. Track in `/tmp/fullstack-grill-<date>.md`.
 2. **Surface kill criteria** — if any question trips one (e.g., "microservices day 1, team size 3"), STOP and resolve before proceeding.
 3. **Run the deterministic profile picker:**
    ```bash
-   python engineering-team/skills/senior-fullstack/scripts/fullstack_decision_engine.py \
+   python skills/senior-fullstack/scripts/fullstack_decision_engine.py \
      --team-size <N> --team-size-12mo <N12> --cadence <c> \
      --user-facing <true|false> --budget <USD/mo> \
      --traffic-p99-rps <N> --data-sensitivity <tier>
@@ -59,7 +59,7 @@ Canonical source: `engineering-team/skills/senior-fullstack/references/forcing_q
 
 ## Customization
 
-Profiles live at `engineering-team/skills/senior-fullstack/profiles/`. To customize for your org:
+Profiles live at `skills/senior-fullstack/profiles/`. To customize for your org:
 
 1. Copy `saas-startup.json` (or whichever best fits) to `<your-org>.json`.
 2. Edit `constraints`, `stack_recommendations`, `success_thresholds`, `named_approver_chain`.

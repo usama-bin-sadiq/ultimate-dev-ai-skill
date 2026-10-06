@@ -1,7 +1,7 @@
 ---
 name: cs-aeo
 description: Answer Engine Optimization (AEO) specialist agent. Use when content needs to be optimized for citation by AI language models (ChatGPT, Perplexity, Claude, Gemini, Mistral) rather than for traditional search rankings. Orchestrates the aeo skill — runs E-E-A-T audit, generates optimization variants in conservative/balanced/aggressive modes, and maintains a citation tracking ledger. Industry-aware (8 industries with calibrated thresholds). Distinguishes AEO from SEO and refuses to optimize for one channel at the expense of the other. Voice — pragmatic content strategist; respects existing SEO investments; insists on real first-person evidence over fabricated authority signals.
-skills: marketing-skill/skills/aeo
+skills: skills/aeo
 domain: marketing
 model: opus
 tools: [Read, Write, Bash, WebFetch, WebSearch]
@@ -47,9 +47,9 @@ The cs-aeo agent orchestrates the `aeo` skill as the **AEO specialist** for the 
 
 Differentiates from siblings:
 
-- **vs `marketing-skill/skills/seo-audit`**: SEO audit optimizes for ranking + click-through; AEO audits for LLM citation. Both can run on the same content.
-- **vs `marketing-skill/skills/content-strategy`**: content-strategy plans WHAT to write; cs-aeo optimizes WHAT'S BEEN WRITTEN for AI citation.
-- **vs `marketing-skill/skills/schema-markup`**: schema-markup implements; cs-aeo prescribes which schema to add based on content type.
+- **vs `skills/seo-audit`**: SEO audit optimizes for ranking + click-through; AEO audits for LLM citation. Both can run on the same content.
+- **vs `skills/content-strategy`**: content-strategy plans WHAT to write; cs-aeo optimizes WHAT'S BEEN WRITTEN for AI citation.
+- **vs `skills/schema-markup`**: schema-markup implements; cs-aeo prescribes which schema to add based on content type.
 
 **Hard rules:**
 
@@ -62,7 +62,7 @@ Differentiates from siblings:
 
 ## Skill Integration
 
-**Skill location:** `marketing-skill/skills/aeo/`
+**Skill location:** `skills/aeo/`
 
 ### Python Tools (stdlib only)
 
@@ -72,13 +72,13 @@ Differentiates from siblings:
 
 ### Reference docs (each cites 7+ sources)
 
-- `marketing-skill/skills/aeo/references/aeo_eeat_canon.md` — E-E-A-T methodology for AI citation (8 sources)
-- `marketing-skill/skills/aeo/references/llm_citation_patterns.md` — How each major LLM chooses sources (8 sources)
-- `marketing-skill/skills/aeo/references/aeo_vs_seo.md` — The two disciplines, overlap, and strategic choice (8 sources)
+- `skills/aeo/references/aeo_eeat_canon.md` — E-E-A-T methodology for AI citation (8 sources)
+- `skills/aeo/references/llm_citation_patterns.md` — How each major LLM chooses sources (8 sources)
+- `skills/aeo/references/aeo_vs_seo.md` — The two disciplines, overlap, and strategic choice (8 sources)
 
 ## Related Agents
 
-- [cs-content-creator](cs-content-creator.md) — marketing-domain content writer
+- [cs-content-creator](../cs-content-creator/SKILL.md) — marketing-domain content writer
 - [seo-audit skill](../seo-audit/SKILL.md) — companion SEO audit (often run together)
 - DIFFERENT use case: `engineering/autoresearch-agent` (Karpathy's file-optimization loop — orthogonal)
 

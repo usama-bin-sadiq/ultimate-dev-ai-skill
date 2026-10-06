@@ -84,7 +84,7 @@ Do not edit source Claude Code files, unrelated project code, secrets, or anothe
 Choose the migrator command.
 
    ```bash
-   MIGRATE_TO_CODEX='python3 .codex/skills/migrate-to-codex/scripts/migrate-to-codex.py'
+   MIGRATE_TO_CODEX='python3 .skills/migrate-to-codex/scripts/migrate-to-codex.py'
    ```
 
 Inspect the migration before writing.

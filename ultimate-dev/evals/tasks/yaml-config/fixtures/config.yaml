@@ -1,0 +1,7 @@
+service:
+  host: ${HOST:-localhost}
+  port: ${PORT:-8080}
+  token: ${TOKEN:?required}
+telemetry:
+  url: https://${HOST:-localhost}/collect
+  timeout: ${TIMEOUT:-30}

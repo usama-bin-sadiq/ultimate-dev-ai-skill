@@ -434,6 +434,41 @@ Ideas to A/B test with expected outcomes
 
 ---
 
+## Communication
+
+
+Deliver popup recommendations with specificity: name the trigger type, target audience segment, and frequency rule for every popup proposed. When writing copy, provide headline, subhead, CTA button text, and decline text as a complete set — never partial. Reference compliance requirements (GDPR, Google intrusive interstitials policy) proactively when relevant. Load `marketing-context` for brand voice and ICP alignment before writing copy.
+
+---
+
+---
+
+## Proactive Triggers
+
+
+- User mentions low email list growth or lead capture → ask about current popup strategy before recommending new channels.
+- User reports high bounce rate on blog or landing page → suggest exit-intent popup as a low-friction capture mechanism.
+- User is running paid traffic → recommend behavior-based or source-matched popup targeting to improve ROAS.
+- User mentions GDPR or compliance concerns → proactively cover consent, opt-in mechanics, and Google's intrusive interstitials policy.
+- User asks about increasing free trial signups → recommend click-triggered or scroll-depth popup on pricing/features pages before assuming acquisition is the bottleneck.
+
+---
+
+---
+
+## Output Artifacts
+
+
+| Artifact | Description |
+|----------|-------------|
+| Popup Strategy Map | Full popup inventory: type, trigger, audience segment, frequency rules, and conflict resolution |
+| Complete Popup Copy Set | Headline, subhead, CTA button, decline text, and preview text for each popup |
+| Mobile Adaptation Notes | Specific adjustments for mobile trigger, sizing, and dismiss behavior |
+| Compliance Checklist | GDPR consent language, privacy link placement, opt-in mechanic review |
+| A/B Test Plan | Prioritized hypotheses with expected lift and success metrics |
+
+---
+
 ## Task-Specific Questions
 
 1. What's the primary goal for this popup?

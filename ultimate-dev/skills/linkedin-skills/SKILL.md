@@ -9,7 +9,7 @@ metadata:
   category: marketing
   updated: 2026-08-25
   build_pattern: "Domain orchestrator — deterministic lane router + policy gate, five managed sub-skills"
-  distinct_from: "marketing-skill/x-twitter-growth (X/Twitter-specific); marketing-skill/social-content (multi-platform calendars); marketing-skill/social-media-analyzer (cross-platform reporting); productivity/andreessen (venture judgement, not audience building)"
+  distinct_from: "skills/x-twitter-growth (X/Twitter-specific); skills/social-content (multi-platform calendars); skills/social-media-analyzer (cross-platform reporting); productivity/andreessen (venture judgement, not audience building)"
 ---
 
 # LinkedIn — Organic Presence Orchestrator
@@ -90,10 +90,10 @@ One at a time, each with a recommended answer. Stop as soon as the lane can run 
 
 ## Distinct from
 
-- **`marketing-skill/x-twitter-growth`** — X/Twitter mechanics. Different platform and rules.
-- **`marketing-skill/social-content` / `social-media-manager`** — multi-platform brand
+- **`skills/x-twitter-growth`** — X/Twitter mechanics. Different platform and rules.
+- **`skills/social-content` / `social-media-manager`** — multi-platform brand
   calendars. This is one person's presence on one platform, in depth.
-- **`marketing-skill/social-media-analyzer`** — cross-platform campaign reporting.
+- **`skills/social-media-analyzer`** — cross-platform campaign reporting.
 
 ---
 

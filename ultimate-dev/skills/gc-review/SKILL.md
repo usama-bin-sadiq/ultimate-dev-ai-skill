@@ -112,10 +112,10 @@ Since v2.5.1, this command is backed by a full skill at `../general-counsel-advi
 
 ```bash
 # Automated contract scan (12 founder-killer patterns)
-python ../../../c-level-advisor/skills/general-counsel-advisor/scripts/contract_risk_scanner.py path/to/contract.txt
+python skills/general-counsel-advisor/scripts/contract_risk_scanner.py path/to/contract.txt
 
 # Term sheet scoring (0-100 founder-friendliness)
-python ../../../c-level-advisor/skills/general-counsel-advisor/scripts/term_sheet_analyzer.py path/to/term_sheet.json
+python skills/general-counsel-advisor/scripts/term_sheet_analyzer.py path/to/term_sheet.json
 ```
 
 The `cs-general-counsel-advisor` agent orchestrates both tools plus 3 references (contracts playbook, IP + regulatory, term sheet decoder).

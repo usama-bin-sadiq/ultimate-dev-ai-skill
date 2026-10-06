@@ -51,8 +51,8 @@ The narrative-first strategist pressure-tests positioning before debating tactic
 
 1. **Run the models:**
    ```bash
-   python ../../../c-level-advisor/skills/cmo-advisor/scripts/marketing_budget_modeler.py
-   python ../../../c-level-advisor/skills/cmo-advisor/scripts/growth_model_simulator.py
+   python skills/cmo-advisor/scripts/marketing_budget_modeler.py
+   python skills/cmo-advisor/scripts/growth_model_simulator.py
    ```
 2. **Answer the six questions** in writing.
 3. **Apply the verdict:**

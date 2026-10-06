@@ -9,7 +9,7 @@
 > Some endpoint AV/EDR products (Bitdefender, Defender, etc.) heuristically
 > flag plain-text documents that contain these strings. If your scanner
 > quarantines this file, allow-list the path
-> `engineering-team/skills/threat-detection/references/hunt-playbooks.md`
+> `skills/threat-detection/references/hunt-playbooks.md`
 > or exclude the `claude-skills` checkout. The strings appear inside markdown
 > code spans / tables; they cannot execute from a `.md` file. Tracking issue:
 > [#533](https://github.com/alirezarezvani/claude-skills/issues/533).

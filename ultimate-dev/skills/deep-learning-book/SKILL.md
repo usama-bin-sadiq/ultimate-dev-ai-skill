@@ -169,7 +169,7 @@ high loss → saturation or dead units. NaN → numerics first. Change one thing
 ## Tools
 
 ```bash
-S=engineering/deep-learning-book/skills/deep-learning-book/scripts
+S=skills/deep-learning-book/scripts
 python3 $S/reading_path_planner.py --goal "train a transformer" --background applied --hours-per-week 5
 python3 $S/training_diagnostics.py --train-loss 0.02 --val-loss 1.9 --grad-norm 0.4 --epochs 30
 python3 $S/capacity_planner.py --params 12000000 --train-examples 50000 --train-error 0.01 --val-error 0.22

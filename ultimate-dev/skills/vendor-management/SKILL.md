@@ -114,7 +114,7 @@ All three accept `--input` (JSON), `--output` (markdown path), `--sample` (run w
 
 ```bash
 # Emits a weighted vendor scorecard (industry-tuned dimensions + per-vendor verdict) for the built-in sample catalog
-cd business-operations/skills/vendor-management && python3 scripts/vendor_scorer.py --sample
+cd skills/vendor-management && python3 scripts/vendor_scorer.py --sample
 ```
 
 ## References

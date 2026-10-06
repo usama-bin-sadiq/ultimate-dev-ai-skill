@@ -32,7 +32,7 @@ Do not skip ahead. Do not bundle. The user may push for "just pick something" �
 1. **Fullstack Decision Engine**
    - **Purpose:** Deterministic profile matching from the seven forcing-question answers
    - **Path:** `../senior-fullstack/scripts/fullstack_decision_engine.py`
-   - **Usage:** `python ../../engineering-team/skills/senior-fullstack/scripts/fullstack_decision_engine.py --team-size 6 --team-size-12mo 12 --cadence daily --user-facing true --budget 5000 --traffic-p99-rps 45 --data-sensitivity pii-only`
+   - **Usage:** `python skills/senior-fullstack/scripts/fullstack_decision_engine.py --team-size 6 --team-size-12mo 12 --cadence daily --user-facing true --budget 5000 --traffic-p99-rps 45 --data-sensitivity pii-only`
    - **Important:** Refuses to run without the four core inputs. Never auto-approves; always names the human approver chain.
 
 2. **Project Scaffolder** (existing)
@@ -53,12 +53,12 @@ Do not skip ahead. Do not bundle. The user may push for "just pick something" �
    - **Content:** routing table — which POWERFUL specialist to fork into for each sub-concern.
 
 3. **Tech Stack Guide / Workflows / Architecture Patterns** (existing)
-   - Paths: `../../engineering-team/skills/senior-fullstack/references/{tech_stack_guide,development_workflows,architecture_patterns}.md`
+   - Paths: `skills/senior-fullstack/references/{tech_stack_guide,development_workflows,architecture_patterns}.md`
 
 ### Templates / Profiles
 
 1. **Profile JSONs (customization surface)**
-   - **Location:** `../../engineering-team/skills/senior-fullstack/profiles/{saas-startup,enterprise-scale,internal-tool,marketing-site}.json`
+   - **Location:** `skills/senior-fullstack/profiles/{saas-startup,enterprise-scale,internal-tool,marketing-site}.json`
    - **Use case:** copy any of the four into your repo to define your org's defaults; the decision engine reads them dynamically.
 
 ## Workflows
@@ -73,7 +73,7 @@ Do not skip ahead. Do not bundle. The user may push for "just pick something" �
 2. **Surface kill criteria** — if any question trips one (e.g., "microservices day 1, team size 3"), STOP. Resolve the gap before continuing.
 3. **Run the decision engine** with the seven answers:
    ```bash
-   python ../../engineering-team/skills/senior-fullstack/scripts/fullstack_decision_engine.py \
+   python skills/senior-fullstack/scripts/fullstack_decision_engine.py \
      --team-size <N> --team-size-12mo <N12> --cadence <daily|per-pr|...> \
      --user-facing <true|false> --budget <USD/mo> \
      --traffic-p99-rps <N> --data-sensitivity <tier>
@@ -93,7 +93,7 @@ Do not skip ahead. Do not bundle. The user may push for "just pick something" �
 **Example:**
 ```bash
 # After walking Q1-Q7 and writing answers to /tmp/fullstack-grill-2026-05-20.md
-python ../../engineering-team/skills/senior-fullstack/scripts/fullstack_decision_engine.py \
+python skills/senior-fullstack/scripts/fullstack_decision_engine.py \
   --team-size 6 --team-size-12mo 12 --cadence daily \
   --user-facing true --budget 5000 --traffic-p99-rps 45 \
   --data-sensitivity pii-only
@@ -139,8 +139,8 @@ python ../../engineering-team/skills/senior-fullstack/scripts/fullstack_decision
 Before ANY commit this agent produces (or recommends), run:
 
 ```bash
-python ../../engineering/karpathy-coder/skills/karpathy-coder/scripts/complexity_checker.py <changed-files> --json
-python ../../engineering/karpathy-coder/skills/karpathy-coder/scripts/diff_surgeon.py --json
+python skills/karpathy-coder/scripts/complexity_checker.py <changed-files> --json
+python skills/karpathy-coder/scripts/diff_surgeon.py --json
 ```
 
 - Complexity score must be < 30 for new code (Karpathy #2).
@@ -158,10 +158,10 @@ python ../../engineering/karpathy-coder/skills/karpathy-coder/scripts/diff_surge
 
 ## Related Agents
 
-- [cs-frontend-engineer](cs-frontend-engineer.md) — fork into for any frontend-only sub-concern
-- [cs-backend-engineer](cs-backend-engineer.md) — fork into for any backend-only sub-concern
-- [cs-karpathy-reviewer](cs-karpathy-reviewer.md) — invoke before every commit
-- [cs-senior-engineer](cs-senior-engineer.md) — cross-cutting engineering lead (use for non-stack questions like CI/CD, security review)
+- [cs-frontend-engineer](../cs-frontend-engineer/SKILL.md) — fork into for any frontend-only sub-concern
+- [cs-backend-engineer](../cs-backend-engineer/SKILL.md) — fork into for any backend-only sub-concern
+- [cs-karpathy-reviewer](../cs-karpathy-reviewer/SKILL.md) — invoke before every commit
+- [cs-senior-engineer](../cs-senior-engineer/SKILL.md) — cross-cutting engineering lead (use for non-stack questions like CI/CD, security review)
 
 ## Invocation Contract
 

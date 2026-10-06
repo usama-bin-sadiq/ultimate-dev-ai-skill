@@ -134,6 +134,6 @@ Without the two price flags, `--estimate-cost` reports token estimates only. The
 
 ## Related Skills
 
-- `engineering-team/skills/senior-ml-engineer` — model deployment and serving (this skill stops at the prompt/eval layer)
+- `skills/senior-ml-engineer` — model deployment and serving (this skill stops at the prompt/eval layer)
 - `engineering/rag-architect` — RAG system architecture (this skill measures RAG quality; that one designs the pipeline)
 - `engineering/agent-designer` — full agent system design (this skill validates configs; that one designs the architecture)

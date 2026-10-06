@@ -40,7 +40,7 @@ The cs-product-manager agent bridges the gap between customer insights and produ
 1. **RICE Prioritizer**
    - **Purpose:** RICE framework implementation for feature prioritization with portfolio analysis and capacity planning
    - **Path:** `../product-manager-toolkit/scripts/rice_prioritizer.py`
-   - **Usage:** `python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py features.csv --capacity 20`
+   - **Usage:** `python skills/product-manager-toolkit/scripts/rice_prioritizer.py features.csv --capacity 20`
    - **Formula:** RICE Score = (Reach × Impact × Confidence) / Effort
    - **Features:** Portfolio analysis (quick wins vs big bets), quarterly roadmap generation, capacity planning, JSON/CSV export
    - **Use Cases:** Feature prioritization, roadmap planning, stakeholder alignment, resource allocation
@@ -48,50 +48,50 @@ The cs-product-manager agent bridges the gap between customer insights and produ
 2. **Customer Interview Analyzer**
    - **Purpose:** NLP-based interview transcript analysis to extract pain points, feature requests, and themes
    - **Path:** `../product-manager-toolkit/scripts/customer_interview_analyzer.py`
-   - **Usage:** `python ../../product-team/skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interview.txt`
+   - **Usage:** `python skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interview.txt`
    - **Features:** Pain point extraction with severity, feature request identification, jobs-to-be-done patterns, sentiment analysis, theme extraction
    - **Use Cases:** User research synthesis, discovery validation, problem prioritization, insight generation
 
 3. **User Story Generator**
    - **Purpose:** Break epics into INVEST-compliant user stories with acceptance criteria
    - **Path:** `../agile-product-owner/scripts/user_story_generator.py`
-   - **Usage:** `python ../../product-team/agile-product-owner/skills/agile-product-owner/scripts/user_story_generator.py epic.yaml`
+   - **Usage:** `python skills/agile-product-owner/scripts/user_story_generator.py epic.yaml`
    - **Use Cases:** Sprint planning, backlog refinement, story decomposition
 
 4. **OKR Cascade Generator**
    - **Purpose:** Generate cascaded OKRs from company objectives to team-level key results
    - **Path:** `../product-strategist/scripts/okr_cascade_generator.py`
-   - **Usage:** `python ../../product-team/skills/product-strategist/scripts/okr_cascade_generator.py growth`
+   - **Usage:** `python skills/product-strategist/scripts/okr_cascade_generator.py growth`
    - **Use Cases:** Quarterly planning, strategic alignment, goal setting
 
 5. **Persona Generator**
    - **Purpose:** Create data-driven user personas from research inputs
    - **Path:** `../ux-researcher-designer/scripts/persona_generator.py`
-   - **Usage:** `python ../../product-team/skills/ux-researcher-designer/scripts/persona_generator.py research-data.json`
+   - **Usage:** `python skills/ux-researcher-designer/scripts/persona_generator.py research-data.json`
    - **Use Cases:** User research synthesis, persona development, journey mapping
 
 6. **Design Token Generator**
    - **Purpose:** Generate design tokens for consistent UI implementation
    - **Path:** `../ui-design-system/scripts/design_token_generator.py`
-   - **Usage:** `python ../../product-team/skills/ui-design-system/scripts/design_token_generator.py theme.json`
+   - **Usage:** `python skills/ui-design-system/scripts/design_token_generator.py theme.json`
    - **Use Cases:** Design system creation, developer handoff, theming
 
 7. **Competitive Matrix Builder**
    - **Purpose:** Build competitive analysis matrices and feature comparison grids
    - **Path:** `../competitive-teardown/scripts/competitive_matrix_builder.py`
-   - **Usage:** `python ../../product-team/skills/competitive-teardown/scripts/competitive_matrix_builder.py competitors.csv`
+   - **Usage:** `python skills/competitive-teardown/scripts/competitive_matrix_builder.py competitors.csv`
    - **Use Cases:** Competitive intelligence, market positioning, feature gap analysis
 
 8. **Landing Page Scaffolder**
    - **Purpose:** Generate conversion-optimized landing page scaffolds
    - **Path:** `../landing-page-generator/scripts/landing_page_scaffolder.py`
-   - **Usage:** `python ../../product-team/skills/landing-page-generator/scripts/landing_page_scaffolder.py config.yaml`
+   - **Usage:** `python skills/landing-page-generator/scripts/landing_page_scaffolder.py config.yaml`
    - **Use Cases:** Product launches, A/B testing, GTM campaigns
 
 9. **Project Bootstrapper**
    - **Purpose:** Scaffold SaaS project structures with boilerplate and configurations
    - **Path:** `../saas-scaffolder/scripts/project_bootstrapper.py`
-   - **Usage:** `python ../../product-team/skills/saas-scaffolder/scripts/project_bootstrapper.py --stack nextjs --name my-saas`
+   - **Usage:** `python skills/saas-scaffolder/scripts/project_bootstrapper.py --stack nextjs --name my-saas`
    - **Use Cases:** MVP scaffolding, project kickoff, SaaS prototype creation
 
 ### Knowledge Bases
@@ -175,13 +175,13 @@ Detail moved to `references/success-metrics.md`.
 
 ## Related Agents
 
-- [cs-agile-product-owner](cs-agile-product-owner.md) - Sprint planning and user story generation
-- [cs-product-strategist](cs-product-strategist.md) - OKR cascade and strategic planning
-- [cs-ux-researcher](cs-ux-researcher.md) - Persona generation and user research
+- [cs-agile-product-owner](../cs-agile-product-owner/SKILL.md) - Sprint planning and user story generation
+- [cs-product-strategist](../cs-product-strategist/SKILL.md) - OKR cascade and strategic planning
+- [cs-ux-researcher](../cs-ux-researcher/SKILL.md) - Persona generation and user research
 
 ## References
 
-- **Skill Documentation:** [../../product-team/skills/product-manager-toolkit/SKILL.md](../product-manager-toolkit/SKILL.md)
+- **Skill Documentation:** [skills/product-manager-toolkit/SKILL.md](../product-manager-toolkit/SKILL.md)
 - **Product Domain Guide:** [../../product-team/<agent-instructions>](../../product-team/<agent-instructions>)
 - **Agent Development Guide:** [../<agent-instructions>](../<agent-instructions>)
 

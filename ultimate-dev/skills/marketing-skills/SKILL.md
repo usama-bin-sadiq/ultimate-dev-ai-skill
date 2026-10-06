@@ -28,7 +28,7 @@ This is the index skill for the marketing plugin. It does one job: route you to 
 
 ## Route Table
 
-All paths are relative to `marketing-skill/`.
+All paths below are relative to the `skills/` directory.
 
 ### Foundation + Ops
 | Task | Skill |

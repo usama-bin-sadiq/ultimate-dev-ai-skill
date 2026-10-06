@@ -1,0 +1,9 @@
+{
+  "category": "multi-step",
+  "difficulty": "hard",
+  "skill": null,
+  "artifacts": [
+    "out/filtered.txt",
+    "out/counts.txt"
+  ]
+}

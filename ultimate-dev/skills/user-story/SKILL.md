@@ -38,7 +38,7 @@ Interactive mode prompts for feature context. For sprint planning, provide capac
 ```
 
 ## Scripts
-- `product-team/agile-product-owner/skills/agile-product-owner/scripts/user_story_generator.py` — User story generator (positional args: `sprint <capacity>`)
+- `skills/agile-product-owner/scripts/user_story_generator.py` — User story generator (positional args: `sprint <capacity>`)
 
 ## Skill Reference
-> `product-team/agile-product-owner/skills/agile-product-owner/SKILL.md`
+> `skills/agile-product-owner/SKILL.md`

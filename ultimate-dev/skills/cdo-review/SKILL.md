@@ -60,13 +60,13 @@ The decision-driven CDO pressure-tests any plan that touches data strategy. Six 
 
 ```bash
 # 1. AI training audit (if any ML / AI use case)
-python ../../../c-level-advisor/skills/chief-data-officer-advisor/scripts/ai_training_data_audit.py sources.json
+python skills/chief-data-officer-advisor/scripts/ai_training_data_audit.py sources.json
 
 # 2. Architecture decision (if changing the stack)
-python ../../../c-level-advisor/skills/chief-data-officer-advisor/scripts/data_product_strategy_picker.py profile.json
+python skills/chief-data-officer-advisor/scripts/data_product_strategy_picker.py profile.json
 
 # 3. Data asset valuation (if productizing or pre-M&A)
-python ../../../c-level-advisor/skills/chief-data-officer-advisor/scripts/data_asset_valuator.py corpus.json
+python skills/chief-data-officer-advisor/scripts/data_asset_valuator.py corpus.json
 ```
 
 ## Output Format

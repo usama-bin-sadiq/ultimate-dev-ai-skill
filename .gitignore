@@ -66,3 +66,9 @@ Thumbs.db
 __pycache__/
 *.py[cod]
 .agents
+# Task-eval scratch: per-run logs, temp workdirs and the resume cache.
+# The summary (summary.md / summary.json) is evidence and stays tracked.
+ultimate-dev/evals/.results/logs/
+ultimate-dev/evals/.results/work/
+ultimate-dev/evals/.results/*.json
+!ultimate-dev/evals/.results/summary.json

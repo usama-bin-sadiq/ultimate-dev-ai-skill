@@ -43,7 +43,7 @@ A story may enter the committed scope only if **all** of these hold — otherwis
 Generate INVEST-checked stories from an epic with:
 
 ```bash
-python3 product-team/agile-product-owner/skills/agile-product-owner/scripts/user_story_generator.py
+python3 skills/agile-product-owner/scripts/user_story_generator.py
 ```
 
 ## Phase 4 — Output Structure
@@ -58,10 +58,10 @@ python3 product-team/agile-product-owner/skills/agile-product-owner/scripts/user
 
 ## Repo Assets (verified paths)
 
-- Skill: `product-team/agile-product-owner/skills/agile-product-owner/SKILL.md`
-- Sprint planning template: `product-team/agile-product-owner/skills/agile-product-owner/assets/sprint_planning_template.md`
-- Sprint planning guide: `product-team/agile-product-owner/skills/agile-product-owner/references/sprint-planning-guide.md`
-- Story generator: `product-team/agile-product-owner/skills/agile-product-owner/scripts/user_story_generator.py`
+- Skill: `skills/agile-product-owner/SKILL.md`
+- Sprint planning template: `skills/agile-product-owner/assets/sprint_planning_template.md`
+- Sprint planning guide: `skills/agile-product-owner/references/sprint-planning-guide.md`
+- Story generator: `skills/agile-product-owner/scripts/user_story_generator.py`
 
 ## Related
 

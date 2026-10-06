@@ -419,13 +419,13 @@ This skill does NOT reimplement scope owned by the POWERFUL-tier specialists. It
 
 | Concern | Fork into |
 |---|---|
-| API contract / breaking-change risk | `engineering/skills/api-design-reviewer/` |
-| Schema design + ERD + indexing | `engineering/skills/database-designer/` |
-| Zero-downtime schema migration | `engineering/skills/migration-architect/` |
+| API contract / breaking-change risk | `skills/api-design-reviewer/` |
+| Schema design + ERD + indexing | `skills/database-designer/` |
+| Zero-downtime schema migration | `skills/migration-architect/` |
 | SLO + SLI + error-budget | `engineering/slo-architect/` |
-| Observability / golden signals | `engineering/skills/observability-designer/` |
-| CI/CD pipeline | `engineering/skills/ci-cd-pipeline-builder/` |
-| Security / threat model | `engineering-team/skills/senior-security/`, `adversarial-reviewer` |
+| Observability / golden signals | `skills/observability-designer/` |
+| CI/CD pipeline | `skills/ci-cd-pipeline-builder/` |
+| Security / threat model | `skills/senior-security/`, `adversarial-reviewer` |
 | Compliance evidence (HIPAA / ISO 27001) | `ra-qm-team/` |
 | Pre-commit Karpathy review | `engineering/karpathy-coder/` |
 | Pre-flight architecture grill | `engineering/grill-me/` |

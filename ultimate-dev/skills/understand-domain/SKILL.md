@@ -49,14 +49,14 @@ UA_DIR="$PROJECT_ROOT/$([ -d "$PROJECT_ROOT/.understand-anything" ] && echo .und
 ```
 This keeps the legacy `.understand-anything/` directory when it already exists (existing projects keep working with no migration) and uses the new `.ua/` otherwise. Because each phase may run in a fresh shell, carry `$UA_DIR` forward like `$PROJECT_ROOT`, re-resolving it with the line above if a later command block needs it.
 
-**Important:** do **not** assume the plugin root is simply two directories above the skill path string. In many installations `~/.agents/skills/understand-domain` is a symlink into the real plugin checkout. Prefer runtime-provided plugin roots first (for Claude), then fall back to universal symlinks, skill symlink resolution, and common clone-based install paths.
+**Important:** do **not** assume the plugin root is simply two directories above the skill path string. In many installations `~/.skills/understand-domain` is a symlink into the real plugin checkout. Prefer runtime-provided plugin roots first (for Claude), then fall back to universal symlinks, skill symlink resolution, and common clone-based install paths.
 
 Resolve the plugin root like this:
 
 ```bash
-SKILL_REAL=$(realpath ~/.agents/skills/understand-domain 2>/dev/null || readlink -f ~/.agents/skills/understand-domain 2>/dev/null || echo "")
+SKILL_REAL=$(realpath ~/.skills/understand-domain 2>/dev/null || readlink -f ~/.skills/understand-domain 2>/dev/null || echo "")
 SELF_RELATIVE=$([ -n "$SKILL_REAL" ] && cd "$SKILL_REAL/../.." 2>/dev/null && pwd || echo "")
-COPILOT_SKILL_REAL=$(realpath ~/.copilot/skills/understand-domain 2>/dev/null || readlink -f ~/.copilot/skills/understand-domain 2>/dev/null || echo "")
+COPILOT_SKILL_REAL=$(realpath ~/.skills/understand-domain 2>/dev/null || readlink -f ~/.skills/understand-domain 2>/dev/null || echo "")
 COPILOT_SELF_RELATIVE=$([ -n "$COPILOT_SKILL_REAL" ] && cd "$COPILOT_SKILL_REAL/../.." 2>/dev/null && pwd || echo "")
 
 PLUGIN_ROOT=""
@@ -80,8 +80,8 @@ if [ -z "$PLUGIN_ROOT" ]; then
   echo "Checked:"
   echo "  - ${CLAUDE_PLUGIN_ROOT:-<unset CLAUDE_PLUGIN_ROOT>}"
   echo "  - $HOME/.understand-anything-plugin"
-  echo "  - ${SELF_RELATIVE:-<unresolved path derived from ~/.agents/skills/understand-domain>}"
-  echo "  - ${COPILOT_SELF_RELATIVE:-<unresolved path derived from ~/.copilot/skills/understand-domain>}"
+  echo "  - ${SELF_RELATIVE:-<unresolved path derived from ~/.skills/understand-domain>}"
+  echo "  - ${COPILOT_SELF_RELATIVE:-<unresolved path derived from ~/.skills/understand-domain>}"
   echo "  - $HOME/<agent-config-dir>/understand-anything/understand-anything-plugin"
   echo "  - $HOME/.opencode/understand-anything/understand-anything-plugin"
   echo "  - $HOME/.pi/understand-anything/understand-anything-plugin"

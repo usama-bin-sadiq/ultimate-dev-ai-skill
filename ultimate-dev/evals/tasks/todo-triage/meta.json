@@ -1,0 +1,8 @@
+{
+  "category": "code-analysis",
+  "difficulty": "medium",
+  "skill": "code-reviewer",
+  "artifacts": [
+    "out/todos.csv"
+  ]
+}

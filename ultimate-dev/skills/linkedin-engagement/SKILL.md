@@ -93,7 +93,7 @@ something specific from that reading. Then, after acceptance and a pause, ask on
 ## Distinct from
 
 - **`linkedin-content`** — writes posts. A comment is a different craft on a different budget.
-- **`marketing-skill/cold-email`** — email. Different channel, law, and caps.
+- **`skills/cold-email`** — email. Different channel, law, and caps.
 - **`business-growth/`, `commercial/`** — sales process and deal economics, not networking.
 
 ---

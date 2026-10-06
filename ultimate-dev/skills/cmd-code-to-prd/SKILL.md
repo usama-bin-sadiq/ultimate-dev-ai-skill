@@ -73,7 +73,7 @@ A `prd/` directory containing:
 
 ## Skill Reference
 
-- `product-team/code-to-prd/skills/code-to-prd/SKILL.md`
-- `product-team/code-to-prd/skills/code-to-prd/scripts/codebase_analyzer.py`
-- `product-team/code-to-prd/skills/code-to-prd/scripts/prd_scaffolder.py`
-- `product-team/code-to-prd/skills/code-to-prd/references/prd-quality-checklist.md`
+- `skills/code-to-prd/SKILL.md`
+- `skills/code-to-prd/scripts/codebase_analyzer.py`
+- `skills/code-to-prd/scripts/prd_scaffolder.py`
+- `skills/code-to-prd/references/prd-quality-checklist.md`

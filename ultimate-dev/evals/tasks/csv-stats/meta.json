@@ -1,0 +1,8 @@
+{
+  "category": "data-quality",
+  "difficulty": "medium",
+  "skill": "data-quality-auditor",
+  "artifacts": [
+    "out/summary.txt"
+  ]
+}

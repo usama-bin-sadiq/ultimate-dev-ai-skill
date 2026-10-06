@@ -1,0 +1,8 @@
+{
+  "category": "testing",
+  "difficulty": "hard",
+  "skill": "test-driven-development",
+  "artifacts": [
+    "out/test_stats.py"
+  ]
+}

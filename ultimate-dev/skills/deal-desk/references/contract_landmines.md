@@ -2,7 +2,7 @@
 
 The 10 founder/seller-killer patterns the `terms_redliner.py` tool detects, with example counter-language for each. This is a triage reference, **not** legal advice — every HIGH/CRITICAL finding must be reviewed by named counsel before signing.
 
-For deep prose-level redline of an actual contract, use `c-level-advisor/skills/general-counsel-advisor/scripts/contract_risk_scanner.py`. The tool in this skill operates on a *structured terms JSON*, which is what the deal desk typically has from the intake template.
+For deep prose-level redline of an actual contract, use `skills/general-counsel-advisor/scripts/contract_risk_scanner.py`. The tool in this skill operates on a *structured terms JSON*, which is what the deal desk typically has from the intake template.
 
 ## The 10 patterns
 

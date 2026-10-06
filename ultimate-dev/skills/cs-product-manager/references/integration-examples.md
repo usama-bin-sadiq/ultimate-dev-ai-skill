@@ -14,13 +14,13 @@ echo "=========================================="
 # Current roadmap status
 echo ""
 echo "🎯 Roadmap Priorities (RICE Sorted):"
-python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py current-roadmap.csv --capacity 20
+python skills/product-manager-toolkit/scripts/rice_prioritizer.py current-roadmap.csv --capacity 20
 
 # Recent interview insights
 echo ""
 echo "💡 Latest Customer Insights:"
 if [ -f latest-interview.txt ]; then
-  python ../../product-team/skills/product-manager-toolkit/scripts/customer_interview_analyzer.py latest-interview.txt
+  python skills/product-manager-toolkit/scripts/customer_interview_analyzer.py latest-interview.txt
 else
   echo "No new interviews this week"
 fi
@@ -29,7 +29,7 @@ fi
 echo ""
 echo "📝 PRD Templates:"
 echo "Standard PRD, One-Page PRD, Feature Brief, Agile Epic"
-echo "Location: ../../product-team/skills/product-manager-toolkit/references/prd_templates.md"
+echo "Location: skills/product-manager-toolkit/references/prd_templates.md"
 ```
 
 ### Example 2: Discovery Sprint Workflow
@@ -44,11 +44,11 @@ echo "=============================="
 echo "Conducting 5 customer interviews..."
 
 # Day 3-5: Analyze insights
-python ../../product-team/skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interview-001.txt > insights-001.txt
-python ../../product-team/skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interview-002.txt > insights-002.txt
-python ../../product-team/skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interview-003.txt > insights-003.txt
-python ../../product-team/skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interview-004.txt > insights-004.txt
-python ../../product-team/skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interview-005.txt > insights-005.txt
+python skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interview-001.txt > insights-001.txt
+python skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interview-002.txt > insights-002.txt
+python skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interview-003.txt > insights-003.txt
+python skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interview-004.txt > insights-004.txt
+python skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interview-005.txt > insights-005.txt
 
 echo ""
 echo "🔍 Discovery Sprint - Week 2"
@@ -58,7 +58,7 @@ echo "=============================="
 echo "Creating solution candidates..."
 
 # Day 9-10: RICE prioritization
-python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py solution-candidates.csv
+python skills/product-manager-toolkit/scripts/rice_prioritizer.py solution-candidates.csv
 
 echo ""
 echo "✅ Discovery Complete - Ready for PRD creation"
@@ -78,7 +78,7 @@ echo "===================="
 # Step 1: Prioritize backlog
 echo ""
 echo "1. Feature Prioritization:"
-python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py backlog.csv --capacity $CAPACITY > $QUARTER-roadmap.txt
+python skills/product-manager-toolkit/scripts/rice_prioritizer.py backlog.csv --capacity $CAPACITY > $QUARTER-roadmap.txt
 
 # Step 2: Extract quick wins
 echo ""

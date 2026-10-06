@@ -23,7 +23,7 @@ Walk the user through the Matt Pocock forcing-question discipline before they lo
 
 ## Lane: fullstack
 
-Questions live in `engineering-team/skills/senior-fullstack/references/forcing_questions.md`. Summary:
+Questions live in `skills/senior-fullstack/references/forcing_questions.md`. Summary:
 
 1. Team size today + 12-month headcount?
 2. Deployment cadence — per-PR, daily, weekly, quarterly?
@@ -35,7 +35,7 @@ Questions live in `engineering-team/skills/senior-fullstack/references/forcing_q
 
 ## Lane: frontend
 
-Questions live in `engineering-team/skills/senior-frontend/references/forcing_questions.md`. Summary:
+Questions live in `skills/senior-frontend/references/forcing_questions.md`. Summary:
 
 1. Primary device + network (mobile-4G / desktop-fiber / low-end Android / corporate)?
 2. LCP target in ms (and INP, CLS)?
@@ -47,7 +47,7 @@ Questions live in `engineering-team/skills/senior-frontend/references/forcing_qu
 
 ## Lane: backend
 
-Questions live in `engineering-team/skills/senior-backend/references/forcing_questions.md`. Summary:
+Questions live in `skills/senior-backend/references/forcing_questions.md`. Summary:
 
 1. Read/write ratio + p99 QPS forecast?
 2. Tenancy model — single / shared / isolated?
@@ -68,9 +68,9 @@ Questions live in `engineering-team/skills/senior-backend/references/forcing_que
 ## After the grill
 
 1. **Run the lane's decision engine** with the seven answers:
-   - Fullstack → `python engineering-team/skills/senior-fullstack/scripts/fullstack_decision_engine.py ...`
-   - Frontend → `python engineering-team/skills/senior-frontend/scripts/frontend_decision_engine.py ...`
-   - Backend → `python engineering-team/skills/senior-backend/scripts/backend_decision_engine.py ...`
+   - Fullstack → `python skills/senior-fullstack/scripts/fullstack_decision_engine.py ...`
+   - Frontend → `python skills/senior-frontend/scripts/frontend_decision_engine.py ...`
+   - Backend → `python skills/senior-backend/scripts/backend_decision_engine.py ...`
 2. **Surface the matched profile + named approvers.**
 3. **Recommend the next sub-skill chain** based on the composition map.
 

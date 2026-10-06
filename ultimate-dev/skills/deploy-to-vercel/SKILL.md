@@ -207,13 +207,13 @@ The script auto-detects the framework from `package.json`, packages the project 
    skill_dir="<path-to-skill>"
 
    # Deploy current directory
-   bash "$skill_dir/resources/deploy-codex.sh"
+   bash "$skill_dir/resources/deploy.sh"
 
    # Deploy specific project
-   bash "$skill_dir/resources/deploy-codex.sh" /path/to/project
+   bash "$skill_dir/resources/deploy.sh" /path/to/project
 
    # Deploy existing tarball
-   bash "$skill_dir/resources/deploy-codex.sh" /path/to/project.tgz
+   bash "$skill_dir/resources/deploy.sh" /path/to/project.tgz
    ```
 
 The script handles framework detection, packaging, and deployment. It waits for the build to complete and returns JSON with `previewUrl` and `claimUrl`.

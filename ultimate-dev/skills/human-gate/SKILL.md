@@ -23,7 +23,7 @@ is available now. Read `human-gate-context.md` first if it exists.
 ## The loop
 
 ```sh
-S=engineering/human-gate/skills/human-gate/scripts
+S=skills/human-gate/scripts
 
 python3 $S/human_gate.py open plan.md --launch   # build page, start round N → END YOUR TURN
 python3 $S/human_gate.py status plan.md          # non-blocking: 0 clear·2 blocked·3 collect·4 none

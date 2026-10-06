@@ -34,7 +34,7 @@ Interactive mode prompts for product context. Alternatively, provide context inl
 ```
 
 ## Scripts
-- `product-team/skills/ux-researcher-designer/scripts/persona_generator.py` — Persona generator (positional `json` arg for JSON output)
+- `skills/ux-researcher-designer/scripts/persona_generator.py` — Persona generator (positional `json` arg for JSON output)
 
 ## Skill Reference
-> `product-team/skills/ux-researcher-designer/SKILL.md`
+> `skills/ux-researcher-designer/SKILL.md`

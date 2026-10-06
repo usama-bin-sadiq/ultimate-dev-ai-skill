@@ -275,6 +275,41 @@ What to measure and benchmarks
 
 ---
 
+## Communication
+
+
+Deliver email sequences as complete, ready-to-send drafts — include subject line, preview text, full body, and CTA for every email in the sequence. Always specify the trigger condition and send timing. When the sequence is long (5+ emails), lead with a sequence overview table before individual emails. Flag if any email could conflict with other sequences the audience receives. Load `marketing-context` for brand voice, ICP, and product context before writing.
+
+---
+
+---
+
+## Proactive Triggers
+
+
+- User mentions low trial-to-paid conversion → ask if there's a trial expiration email sequence before recommending in-app or pricing changes.
+- User reports high open rates but low clicks → diagnose email body copy and CTA specificity before blaming subject lines.
+- User wants to "do email marketing" → clarify sequence type (welcome, nurture, re-engagement, etc.) before writing anything.
+- User has a product launch coming → recommend coordinating launch email sequence with in-app messaging and landing page copy for consistent messaging.
+- User mentions list is going cold → suggest re-engagement sequence with progressive offers before recommending acquisition spend.
+
+---
+
+---
+
+## Output Artifacts
+
+
+| Artifact | Description |
+|----------|-------------|
+| Sequence Architecture Doc | Trigger, goal, length, timing, exit conditions, and branching logic for the full sequence |
+| Complete Email Drafts | Subject line, preview text, full body, and CTA for every email in the sequence |
+| Metrics Benchmarks | Open rate, click rate, and conversion rate targets per email type and sequence goal |
+| Segmentation Rules | Audience entry/exit conditions, behavioral branching, and suppression lists |
+| Subject Line Variations | 3 subject line alternatives per email for A/B testing |
+
+---
+
 ## Task-Specific Questions
 
 1. What triggers entry to this sequence?

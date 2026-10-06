@@ -1,0 +1,8 @@
+{
+  "category": "text-search",
+  "difficulty": "easy",
+  "skill": null,
+  "artifacts": [
+    "out/matches.txt"
+  ]
+}

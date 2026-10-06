@@ -43,7 +43,7 @@ Add a fifth: **Define abort criteria up front.** A chaos experiment with no abor
 ## Quick start
 
 ```bash
-SKILL=engineering/chaos-engineering/skills/chaos-engineering
+SKILL=skills/chaos-engineering
 
 # 1. Design an experiment
 python "$SKILL/scripts/experiment_designer.py" --target "checkout-svc" --hypothesis "p99 latency stays <500ms" --attack latency --duration-min 15

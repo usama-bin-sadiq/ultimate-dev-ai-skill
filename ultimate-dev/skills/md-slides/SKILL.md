@@ -37,15 +37,15 @@ slide_splitter.py  →  presenter_notes_parser.py  →  deck_html_renderer.py
 
 ```bash
 # 1. Split slides on --- or H1 (auto-detect by default)
-python3 markdown-html/skills/md-slides/scripts/slide_splitter.py \
+python3 skills/md-slides/scripts/slide_splitter.py \
     --input <path>.md --output /tmp/slides.json
 
 # 2. Extract <!-- notes: ... --> blocks from each slide
-python3 markdown-html/skills/md-slides/scripts/presenter_notes_parser.py \
+python3 skills/md-slides/scripts/presenter_notes_parser.py \
     --slides /tmp/slides.json --output /tmp/deck.json
 
 # 3. Render single-file HTML deck
-python3 markdown-html/skills/md-slides/scripts/deck_html_renderer.py \
+python3 skills/md-slides/scripts/deck_html_renderer.py \
     --slides /tmp/deck.json --title "My Talk" --output deck.html
 ```
 

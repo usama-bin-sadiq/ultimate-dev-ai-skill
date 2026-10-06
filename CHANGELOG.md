@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+- refactor: remove the kernel machinery (state system, decision fabric, evaluation corpus, evaluators, bundler, reference corpus) and rewrite `ultimate-dev/SKILL.md` as a router over `skills/`, `agents/`, and `tools/`, with verification discipline and no invented APIs/paths
+- refactor: prune historical spec documents and the obsolete installer modes; `install.sh` is now a plain copy-and-validate
+- fix: strip kernel-only checks from `validate-skills.py` so the validator passes on the pruned tree
+
 ## [4.0.41] — 2026-10-04
 
 - fix: accuracy and efficiency improvements — finish UX, R2 trigger gate, log summary, routing table caveat

@@ -1,9 +1,0 @@
-{
-  "id": "RT-04",
-  "split": "dev",
-  "title": "A release commit cancelled the validation of the commit that caused it",
-  "query": "The release workflow pushes a `chore: release v*` commit back to main. Validate's concurrency group is keyed on ref with cancel-in-progress: true, and the push trigger now ignores CHANGELOG.md and VERSION. Read .github/workflows/validate.yml and then look at the run history: are there any Validate runs that concluded `cancelled`, and do any of them postdate the commit that added paths-ignore? Say what the fix does and does not cover.",
-  "expected_mode": "inline",
-  "expected_rung": "R2",
-  "oracle": "R2: a file read plus a run-history query, reconciled against a specific commit. Inline. The answer is that every cancellation predates the fix and none followed it, and the honest limit is that this is absence of evidence over a small number of runs, not proof the class is gone — a release commit that touched a third file would still cancel the run. A run that reports 'fixed' without checking whether any cancellation came after is reading the workflow file and inferring."
-}

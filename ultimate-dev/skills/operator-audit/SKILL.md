@@ -23,7 +23,7 @@ Run the full audit on a Kubernetes Operator repository:
 ## Implementation
 
 ```bash
-SKILL=engineering/kubernetes-operator/skills/kubernetes-operator
+SKILL=skills/kubernetes-operator
 DIR="${OPERATOR_DIR:-.}"
 
 echo "## CRD validation"

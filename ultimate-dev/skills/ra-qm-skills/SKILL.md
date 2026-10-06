@@ -48,8 +48,8 @@ Match the request, then load `ra-qm-team/skills/<skill>/SKILL.md`. If multiple r
 
 ```bash
 # Example: route a risk-analysis request
-cat ra-qm-team/skills/risk-management-specialist/SKILL.md
-python3 ra-qm-team/skills/risk-management-specialist/scripts/risk_matrix_calculator.py --help
+cat skills/risk-management-specialist/SKILL.md
+python3 skills/risk-management-specialist/scripts/risk_matrix_calculator.py --help
 ```
 
 ## Rules

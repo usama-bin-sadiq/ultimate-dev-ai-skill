@@ -51,7 +51,7 @@ Five-step deterministic flow:
 
 ```bash
 # Renders a BPMN-style swim-lane diagram + normalized JSON for the built-in 6-stage procurement-intake example
-cd business-operations/skills/process-mapper && python3 scripts/process_documenter.py --sample
+cd skills/process-mapper && python3 scripts/process_documenter.py --sample
 ```
 
 ## References

@@ -1,0 +1,9 @@
+{
+  "category": "api-design",
+  "difficulty": "hard",
+  "skill": "api-and-interface-design",
+  "artifacts": [
+    "out/openapi.fixed.yaml",
+    "out/changes.txt"
+  ]
+}

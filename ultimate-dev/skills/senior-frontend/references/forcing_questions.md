@@ -86,7 +86,7 @@ These seven questions gate every meaningful frontend decision: framework pick, r
 
 **Why it matters:** a11y is a regulatory baseline in 2026 (European Accessibility Act enforcement began 2025; US ADA Title III litigation surged 2018–2024). "We'll fix it later" is the most expensive a11y strategy — retrofitting costs 5–10× building it in. AND without a named owner, no one is accountable.
 
-**Kill criterion:** customer-facing surface + no named a11y owner — STOP. Assign one before scaffolding. Run `engineering-team/skills/a11y-audit` as part of CI.
+**Kill criterion:** customer-facing surface + no named a11y owner — STOP. Assign one before scaffolding. Run `skills/a11y-audit` as part of CI.
 
 **Canon:** W3C WCAG 2.2 (2023); Marcy Sutton, *Accessibility in JavaScript Applications* (2017+); Adrian Roselli's blog on a11y testing (a-roselli.com, 2015–2024); European Accessibility Act (EU 2019/882, enforced 2025).
 

@@ -28,12 +28,12 @@ Use this agent instead of cs-product-manager when the work is quantitative: the 
 1. **Metrics Calculator**
    - **Purpose:** Retention by day, cohort retention matrices, and funnel conversion by stage from CSV event data
    - **Path:** `../product-analytics/scripts/metrics_calculator.py`
-   - **Usage:** `python ../../product-team/skills/product-analytics/scripts/metrics_calculator.py retention events.csv` (subcommands: `retention`, `cohort`, `funnel`)
+   - **Usage:** `python skills/product-analytics/scripts/metrics_calculator.py retention events.csv` (subcommands: `retention`, `cohort`, `funnel`)
 
 2. **Sample Size Calculator**
    - **Purpose:** Two-proportion experiment sizing with alpha/power and absolute or relative MDE
    - **Path:** `../experiment-designer/scripts/sample_size_calculator.py`
-   - **Usage:** `python ../../product-team/skills/experiment-designer/scripts/sample_size_calculator.py --baseline-rate 0.12 --mde 0.02 --mde-type absolute --daily-samples 800`
+   - **Usage:** `python skills/experiment-designer/scripts/sample_size_calculator.py --baseline-rate 0.12 --mde 0.02 --mde-type absolute --daily-samples 800`
 
 ## Workflows
 
@@ -78,8 +78,8 @@ Use this agent instead of cs-product-manager when the work is quantitative: the 
 
 ## Related Agents
 
-- [cs-product-manager](cs-product-manager.md) - Prioritization and PRDs; hands measurement questions to this agent
-- [cs-ux-researcher](cs-ux-researcher.md) - Qualitative evidence to explain the "why" behind metric movements
+- [cs-product-manager](../cs-product-manager/SKILL.md) - Prioritization and PRDs; hands measurement questions to this agent
+- [cs-ux-researcher](../cs-ux-researcher/SKILL.md) - Qualitative evidence to explain the "why" behind metric movements
 
 ## References
 

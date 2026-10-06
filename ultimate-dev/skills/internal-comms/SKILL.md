@@ -33,7 +33,7 @@ This skill produces the four artifacts above with deterministic logic anchored o
 
 ## When NOT to use
 
-- Customer-facing launch comms / press release / blog post → `marketing-skill/*`
+- Customer-facing launch comms / press release / blog post → any marketing skill under `skills/`
 - Strategic narrative framing for a transformation arc → `c-level-advisor/internal-narrative`
 - Executive change-strategy design (sponsor coalition, change-saturation analysis) → `c-level-advisor/change-management`
 - All-hands deck visual design / slide template → (future skill, not this one)
@@ -63,7 +63,7 @@ All three: stdlib only, `--help` and `--sample` exit 0, accept `--input <json>` 
 
 ```bash
 # Emits the 4-artifact comms package (pre-comm, announcement, FAQ, follow-up) for the built-in tool-rollout example
-cd business-operations/skills/internal-comms && python3 scripts/comms_template_filler.py --sample
+cd skills/internal-comms && python3 scripts/comms_template_filler.py --sample
 ```
 
 ## References
@@ -93,7 +93,7 @@ cd business-operations/skills/internal-comms && python3 scripts/comms_template_f
 
 ## Distinct from
 
-- **`marketing-skill/*`** — external / customer-facing comms. Internal-comms is for employees, not press or customers. Different audience, different trust model, different success metric.
+- **the marketing skills** (`skills/*`) — external / customer-facing comms. Internal-comms is for employees, not press or customers. Different audience, different trust model, different success metric.
 - **`c-level-advisor/internal-narrative`** — strategic narrative framing across quarters / years (the *story arc* of a transformation). Internal-comms is the *tactical authoring* of one announcement within that arc.
 - **`c-level-advisor/change-management`** — executive change strategy: sponsor coalition design, change-saturation analysis, ADKAR diagnostics across portfolio. Internal-comms is the deliverable for one event, not the strategy.
 - **`business-growth/*`** — outbound sales / customer-success motion. Different audience, different goal.

@@ -1,0 +1,27 @@
+{
+  "service": {
+    "name": "billing"
+  },
+  "data": {
+    "users": [
+      {
+        "contact": {
+          "email": "first@example.com",
+          "phone": "+1-555-0100"
+        }
+      },
+      {
+        "contact": {
+          "email": "second@example.com",
+          "phone": "+1-555-0101"
+        }
+      },
+      {
+        "contact": {
+          "email": "third@corp.org",
+          "phone": "+1-555-0102"
+        }
+      }
+    ]
+  }
+}

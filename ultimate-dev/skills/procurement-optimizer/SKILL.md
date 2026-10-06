@@ -103,7 +103,7 @@ All three accept `--input` (JSON), `--output` (markdown path), `--sample` (run w
 
 ```bash
 # Emits a UNSPSC-aligned spend categorization with Pareto breakdown for the built-in sample spend file
-cd business-operations/skills/procurement-optimizer && python3 scripts/spend_categorizer.py --sample
+cd skills/procurement-optimizer && python3 scripts/spend_categorizer.py --sample
 ```
 
 ## References

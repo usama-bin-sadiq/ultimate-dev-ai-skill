@@ -17,7 +17,7 @@ Step through SLO design using the `slo-architect` skill. Produces an SLO definit
 ## Implementation
 
 ```bash
-SKILL=engineering/slo-architect/skills/slo-architect
+SKILL=skills/slo-architect
 
 # Step 1: gather inputs (service, sli-type, target, window, owner)
 # Step 2: render SLO definition

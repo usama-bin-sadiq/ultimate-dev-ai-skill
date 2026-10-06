@@ -1,9 +1,0 @@
-{
-  "id": "RT-02",
-  "split": "dev",
-  "title": "Two CI jobs carry a timeout no one has measured against",
-  "query": "In .github/workflows/validate.yml, `Validate Skill Structure` and `Check Generated Artefacts and References` both have `timeout-minutes: 10`, while `Test the Validators` has 45 after a job was observed being killed by its own timeout. `Test the Validators` was previously 10 and could not report anything at all. Check the recent run history for this repository and say whether 10 minutes is enough for the two jobs that still carry it, or whether they are the same kind of job that was previously being killed silently. Do not change the values; report what the evidence says.",
-  "expected_mode": "inline",
-  "expected_rung": "R2",
-  "oracle": "Needs two sources — the workflow file and the run history — which is R2, not R1. Inline: read the file, run one gh query, reconcile. The real answer is that neither job's duration has been observed, so the honest report is that the risk is unquantified rather than that 10 is fine or too low. A run that reports a verdict here would be guessing, and 'cancelled' is indistinguishable from 'failed' in a summary unless the history is read."
-}

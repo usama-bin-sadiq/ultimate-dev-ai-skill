@@ -91,7 +91,7 @@ python3 scripts/repurpose_splitter.py --input talk.md --ledger .linkedin-ledger.
 - **`linkedin-strategy`** — decides what the posts are about. This writes them.
 - **`linkedin-engagement`** — comments and DMs. A comment is a different craft with a
   different budget; it lives there.
-- **`marketing-skill/copywriting` / `content-humanizer`** — general copy and de-AI passes.
+- **`skills/copywriting` / `content-humanizer`** — general copy and de-AI passes.
   Reach for those for tone; this one owns LinkedIn's mechanics and its accessibility floor.
 
 ---

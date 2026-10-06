@@ -1,0 +1,26 @@
+openapi: 3.0.0
+info:
+  title: Users API
+  version: "1.0.0"
+servers:
+  - url: https://api.example.com/latest
+paths:
+  /users/{id}:
+    get:
+      operationId: getUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema: { type: object }
+        default:
+          description: error
+          content:
+            application/json:
+              schema: { type: object }

@@ -44,7 +44,7 @@ Every script in `scripts/` should:
 - Support `--output {text,json}`
 - Be deterministic (no randomness, no LLM calls)
 
-Tool: `engineering/karpathy-coder/skills/karpathy-coder/scripts/complexity_checker.py`
+Tool: `skills/karpathy-coder/scripts/complexity_checker.py`
 
 ### Cross-skill compatibility
 
@@ -88,10 +88,10 @@ jobs:
       - name: Run review checklist
         run: |
           for skill in $(find . -name "SKILL.md" -type f); do
-            python engineering/write-a-skill/skills/write-a-skill/scripts/skill_review_checklist_runner.py "$(dirname $skill)"
+            python skills/write-a-skill/scripts/skill_review_checklist_runner.py "$(dirname $skill)"
           done
       - name: Run karpathy gate
-        run: python engineering/karpathy-coder/skills/karpathy-coder/scripts/complexity_checker.py .
+        run: python skills/karpathy-coder/scripts/complexity_checker.py .
 ```
 
 ## Common Failure Modes (and Fixes)

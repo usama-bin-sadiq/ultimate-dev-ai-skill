@@ -37,9 +37,9 @@ This map is the routing table for the `cs-frontend-engineer` agent and the `/cs:
 
 ## When to escalate out of frontend
 
-- **Brand voice / copy** → escalate to `marketing-skill/content-creator` + `cs-content-creator` agent.
+- **Brand voice / copy** → escalate to `skills/content-creator` + `cs-content-creator` agent.
 - **Backend API design** → escalate to `cs-backend-engineer` + `api-design-reviewer`.
-- **iOS/macOS-native UI** → escalate to `cs-apple-hig` (if present) or `product-team/skills/apple-hig-expert`.
+- **iOS/macOS-native UI** → escalate to `cs-apple-hig` (if present) or `skills/apple-hig-expert`.
 - **Marketing-site infrastructure choice (Astro vs Next vs Hugo)** → escalate to `cs-fullstack-engineer` (marketing-site profile).
 
 ## References

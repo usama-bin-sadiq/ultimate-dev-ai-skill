@@ -50,15 +50,15 @@ Keep it to ~2 pages. Use the repo template as the skeleton.
 If the user has multiple candidate features, offer to RICE-score them before committing the PRD:
 
 ```bash
-python3 product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py features.csv --capacity 20
+python3 skills/product-manager-toolkit/scripts/rice_prioritizer.py features.csv --capacity 20
 ```
 
 ## Repo Assets (verified paths)
 
-- Skill: `product-team/skills/product-manager-toolkit/SKILL.md`
-- PRD template: `product-team/skills/product-manager-toolkit/assets/prd_template.md`
-- PRD patterns reference: `product-team/skills/product-manager-toolkit/references/prd_templates.md`
-- RICE tool: `product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py`
+- Skill: `skills/product-manager-toolkit/SKILL.md`
+- PRD template: `skills/product-manager-toolkit/assets/prd_template.md`
+- PRD patterns reference: `skills/product-manager-toolkit/references/prd_templates.md`
+- RICE tool: `skills/product-manager-toolkit/scripts/rice_prioritizer.py`
 
 ## Related
 

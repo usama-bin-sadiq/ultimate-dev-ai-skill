@@ -46,7 +46,7 @@ Output: `{"models": [...], "total_count": N, "truncated": bool}`.
 > pricing and will fail with `Unsupported request type` on tuning requests. You
 > **MUST** call the `run_command` tool to execute Python code or
 > `scripts/calculate_cost.py` (or
-> `/workspace/skills/agent-platform-tuning/scripts/calculate_cost.py`) to
+> `/skills/agent-platform-tuning/scripts/calculate_cost.py`) to
 > calculate the cost. Whenever a model is chosen or the user switches models
 > (e.g. from Llama to Gemma), you **MUST** call `run_command` to calculate or
 > recalculate the cost before presenting the dry-run confirmation prompt. Always

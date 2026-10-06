@@ -208,6 +208,41 @@ What you've accomplished:
 
 ---
 
+## Communication
+
+
+Paywall recommendations must account for where the user is in their value journey — always confirm whether the aha moment has been reached before recommending upgrade prompt placement. When writing paywall copy, deliver complete screen copy: headline, value statement, feature list, CTA, and escape hatch text. Flag dark patterns proactively and recommend ethical alternatives. Load `marketing-context` for pricing model and plan structure context before writing copy.
+
+---
+
+---
+
+## Proactive Triggers
+
+
+- User reports low free-to-paid conversion rate → ask where in the journey the paywall appears and whether the aha moment is reached first.
+- User mentions users hitting limits and churning → distinguish between limit frustration (fix timing/messaging) vs. wrong ICP (fix acquisition).
+- User asks about freemium model design → help define what's free vs. paid, then design paywall moments around natural value gaps.
+- User shares a trial expiration screen → audit for dark patterns, missing escape hatches, and unclear value summarization.
+- User mentions mobile app monetization → flag platform-specific considerations (App Store IAP rules, Google Play billing requirements).
+
+---
+
+---
+
+## Output Artifacts
+
+
+| Artifact | Description |
+|----------|-------------|
+| Paywall Trigger Map | All paywall trigger points with timing rules, cooldown periods, and frequency caps |
+| Full Paywall Screen Copy | Headline, value demonstration, feature comparison, CTA, and escape hatch for each paywall type |
+| Upgrade Flow Diagram | Step-by-step from paywall click to post-upgrade confirmation with friction reduction notes |
+| Anti-Pattern Audit | Review of existing paywall for dark patterns, trust-damaging copy, and conversion killers |
+| A/B Test Backlog | Prioritized experiment ideas for trigger timing, copy, and pricing display |
+
+---
+
 ## Task-Specific Questions
 
 1. What's your current free → paid conversion rate?

@@ -49,7 +49,7 @@ def get_gcp_access_token():
 
 ### Python Example (OpenMaaS - Chat Completions)
 
-See [`scripts/openmaas_openai_sdk.py`](scripts/openmaas_openai_sdk.py) for the
+See [`scripts/openmaas_openai_sdk.py`](../scripts/openmaas_openai_sdk.py) for the
 complete code.
 
 > [!TIP] **Alternative: Environment Variables** You can set environment
@@ -95,7 +95,7 @@ print(response.data[0].embedding)
 The `google-genai` SDK can also access OpenMaaS models via the `vertexai`
 backend.
 
-See [`scripts/openmaas_genai_sdk.py`](scripts/openmaas_genai_sdk.py) for the
+See [`scripts/openmaas_genai_sdk.py`](../scripts/openmaas_genai_sdk.py) for the
 complete code.
 
 > [!IMPORTANT]
@@ -107,7 +107,7 @@ complete code.
 
 For OpenMaaS, you can also use `GenerativeModel` (if supported).
 
-See [`scripts/openmaas_vertexai_sdk.py`](scripts/openmaas_vertexai_sdk.py) for
+See [`scripts/openmaas_vertexai_sdk.py`](../scripts/openmaas_vertexai_sdk.py) for
 the complete code.
 
 > [!IMPORTANT] **Model ID Format**: For Agent Platform SDK with OpenMaaS, you

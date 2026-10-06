@@ -2,11 +2,11 @@
 
 # Reference files
 
-- [scripts/object_detection_training.py](scripts/object_detection_training.py) — Production-ready object detection training script
-- [scripts/image_classification_training.py](scripts/image_classification_training.py) — Production-ready image classification training script (supports timm models)
-- [scripts/sam_segmentation_training.py](scripts/sam_segmentation_training.py) — Production-ready SAM/SAM2 segmentation training script (bbox & point prompts)
-- [scripts/dataset_inspector.py](scripts/dataset_inspector.py) — Validate dataset format for OD, classification, and SAM segmentation
-- [scripts/estimate_cost.py](scripts/estimate_cost.py) — Estimate training costs for any vision model (includes SAM/SAM2)
+- [scripts/object_detection_training.py](../scripts/object_detection_training.py) — Production-ready object detection training script
+- [scripts/image_classification_training.py](../scripts/image_classification_training.py) — Production-ready image classification training script (supports timm models)
+- [scripts/sam_segmentation_training.py](../scripts/sam_segmentation_training.py) — Production-ready SAM/SAM2 segmentation training script (bbox & point prompts)
+- [scripts/dataset_inspector.py](../scripts/dataset_inspector.py) — Validate dataset format for OD, classification, and SAM segmentation
+- [scripts/estimate_cost.py](../scripts/estimate_cost.py) — Estimate training costs for any vision model (includes SAM/SAM2)
 - [references/object_detection_training_notebook.md](./object_detection_training_notebook.md) — Object detection training workflow, augmentation strategies, and training patterns
 - [references/image_classification_training_notebook.md](./image_classification_training_notebook.md) — Image classification training workflow with ViT, preprocessing, and evaluation
 - [references/finetune_sam2_trainer.md](./finetune_sam2_trainer.md) — SAM2 fine-tuning walkthrough with MicroMat dataset, DiceCE loss, and Trainer integration

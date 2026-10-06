@@ -6,10 +6,10 @@ This skill does NOT reimplement scope owned by the POWERFUL-tier specialists. It
 
 | Concern | Fork into |
 |---|---|
-| WCAG audit, contrast, screen-reader | `engineering-team/skills/a11y-audit/` |
-| Bundle profiling + runtime perf | `engineering/skills/performance-profiler/` |
-| Cinematic / scroll-storytelling landing | `engineering-team/skills/epic-design/` |
-| Apple HIG (iOS / macOS / visionOS) | `product-team/skills/apple-hig-expert/` |
+| WCAG audit, contrast, screen-reader | `skills/a11y-audit/` |
+| Bundle profiling + runtime perf | `skills/performance-profiler/` |
+| Cinematic / scroll-storytelling landing | `skills/epic-design/` |
+| Apple HIG (iOS / macOS / visionOS) | `skills/apple-hig-expert/` |
 | Pre-commit Karpathy review | `engineering/karpathy-coder/` |
 | Pre-flight architecture grill | `engineering/grill-me/` |
 

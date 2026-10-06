@@ -22,13 +22,13 @@ A typical ingest touches **5-15 wiki pages**. You (the user) are in the loop: th
 
 ## What happens
 
-1. **Prep** — runs `engineering/llm-wiki/skills/llm-wiki/scripts/ingest_source.py` to get title, preview, and suggested summary path
+1. **Prep** — runs `skills/llm-wiki/scripts/ingest_source.py` to get title, preview, and suggested summary path
 2. **Read** — reads the source directly
 3. **Discuss** — reports TL;DR, key claims, which pages will be touched, any contradictions
 4. **Confirm** — waits for your go-ahead (or redirects)
 5. **Write** — creates the source summary, updates 5-15 pages, flags contradictions
-6. **Index** — runs `engineering/llm-wiki/skills/llm-wiki/scripts/update_index.py` or edits `wiki/index.md` inline
-7. **Log** — runs `engineering/llm-wiki/skills/llm-wiki/scripts/append_log.py --op ingest --title "<title>"`
+6. **Index** — runs `skills/llm-wiki/scripts/update_index.py` or edits `wiki/index.md` inline
+7. **Log** — runs `skills/llm-wiki/scripts/append_log.py --op ingest --title "<title>"`
 8. **Report** — bulleted wikilinks to every touched page
 
 ## Sub-agent
@@ -36,9 +36,9 @@ A typical ingest touches **5-15 wiki pages**. You (the user) are in the loop: th
 This command dispatches the `wiki-ingestor` sub-agent for the heavy lifting.
 ## Scripts
 
-- `engineering/llm-wiki/skills/llm-wiki/scripts/ingest_source.py` — source prep (metadata + preview)
-- `engineering/llm-wiki/skills/llm-wiki/scripts/update_index.py` — regenerate index
-- `engineering/llm-wiki/skills/llm-wiki/scripts/append_log.py` — log the ingest
+- `skills/llm-wiki/scripts/ingest_source.py` — source prep (metadata + preview)
+- `skills/llm-wiki/scripts/update_index.py` — regenerate index
+- `skills/llm-wiki/scripts/append_log.py` — log the ingest
 
 ## Rules
 
@@ -48,5 +48,5 @@ This command dispatches the `wiki-ingestor` sub-agent for the heavy lifting.
 
 ## Skill Reference
 
-→ `engineering/llm-wiki/skills/llm-wiki/SKILL.md`
-→ `engineering/llm-wiki/skills/llm-wiki/references/ingest-workflow.md`
+→ `skills/llm-wiki/SKILL.md`
+→ `skills/llm-wiki/references/ingest-workflow.md`

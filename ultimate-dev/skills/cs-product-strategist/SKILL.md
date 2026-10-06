@@ -34,21 +34,21 @@ The cs-product-strategist agent operates at the intersection of business strateg
 1. **OKR Cascade Generator**
    - **Purpose:** Generate cascaded OKRs from company objectives to team-level key results with initiative mapping
    - **Path:** `../product-strategist/scripts/okr_cascade_generator.py`
-   - **Usage:** `python ../../product-team/skills/product-strategist/scripts/okr_cascade_generator.py growth`
+   - **Usage:** `python skills/product-strategist/scripts/okr_cascade_generator.py growth`
    - **Features:** Multi-level cascade (company > product > team), initiative mapping, scoring framework, tracking cadence
    - **Use Cases:** Quarterly planning, strategic alignment, goal setting, annual planning
 
 2. **Competitive Matrix Builder**
    - **Purpose:** Build competitive analysis matrices, feature comparison grids, and positioning maps
    - **Path:** `../competitive-teardown/scripts/competitive_matrix_builder.py`
-   - **Usage:** `python ../../product-team/skills/competitive-teardown/scripts/competitive_matrix_builder.py competitors.csv`
+   - **Usage:** `python skills/competitive-teardown/scripts/competitive_matrix_builder.py competitors.csv`
    - **Features:** Multi-dimensional scoring, weighted comparison, gap analysis, positioning visualization
    - **Use Cases:** Competitive intelligence, market positioning, feature gap analysis, strategic differentiation
 
 3. **RICE Prioritizer**
    - **Purpose:** Strategic initiative prioritization using RICE framework for portfolio-level decisions
    - **Path:** `../product-manager-toolkit/scripts/rice_prioritizer.py`
-   - **Usage:** `python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py initiatives.csv --capacity 50`
+   - **Usage:** `python skills/product-manager-toolkit/scripts/rice_prioritizer.py initiatives.csv --capacity 50`
    - **Features:** Portfolio quadrant analysis (big bets, quick wins), capacity planning, strategic roadmap generation
    - **Use Cases:** Initiative prioritization, resource allocation, strategic portfolio management
 
@@ -105,7 +105,7 @@ The cs-product-strategist agent operates at the intersection of business strateg
 2. **Analyze Market Context** - Understand external factors:
    ```bash
    # Build competitive landscape
-   python ../../product-team/skills/competitive-teardown/scripts/competitive_matrix_builder.py competitors.csv
+   python skills/competitive-teardown/scripts/competitive_matrix_builder.py competitors.csv
    ```
    - Review competitive movements from past quarter
    - Identify market trends and opportunities
@@ -114,7 +114,7 @@ The cs-product-strategist agent operates at the intersection of business strateg
 3. **Generate OKR Cascade** - Create aligned objectives:
    ```bash
    # Generate OKRs for growth strategy
-   python ../../product-team/skills/product-strategist/scripts/okr_cascade_generator.py growth
+   python skills/product-strategist/scripts/okr_cascade_generator.py growth
    ```
 
 4. **Define Product Objectives** - Set 2-3 product objectives:
@@ -130,7 +130,7 @@ The cs-product-strategist agent operates at the intersection of business strateg
 6. **Map Initiatives to KRs** - Connect work to outcomes:
    ```bash
    # Prioritize strategic initiatives
-   python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py initiatives.csv --capacity 50
+   python skills/product-manager-toolkit/scripts/rice_prioritizer.py initiatives.csv --capacity 50
    ```
 
 7. **Stakeholder Alignment** - Present and iterate:
@@ -140,7 +140,7 @@ The cs-product-strategist agent operates at the intersection of business strateg
 
 8. **Document and Launch** - Use OKR template:
    ```bash
-   cat ../../product-team/skills/product-strategist/assets/okr_template.md
+   cat skills/product-strategist/assets/okr_template.md
    ```
 
 **Expected Output:** Quarterly OKR document with 2-3 objectives, 8-12 key results, mapped initiatives, and stakeholder alignment
@@ -154,16 +154,16 @@ echo "Q3 2026 OKR Planning"
 echo "===================="
 
 # Step 1: Competitive context
-python ../../product-team/skills/competitive-teardown/scripts/competitive_matrix_builder.py q3-competitors.csv
+python skills/competitive-teardown/scripts/competitive_matrix_builder.py q3-competitors.csv
 
 # Step 2: Generate OKR cascade
-python ../../product-team/skills/product-strategist/scripts/okr_cascade_generator.py growth
+python skills/product-strategist/scripts/okr_cascade_generator.py growth
 
 # Step 3: Prioritize initiatives
-python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py q3-initiatives.csv --capacity 45
+python skills/product-manager-toolkit/scripts/rice_prioritizer.py q3-initiatives.csv --capacity 45
 
 # Step 4: Review OKR template
-cat ../../product-team/skills/product-strategist/assets/okr_template.md
+cat skills/product-strategist/assets/okr_template.md
 ```
 
 ### Workflow 2: Competitive Landscape Review
@@ -178,7 +178,7 @@ cat ../../product-team/skills/product-strategist/assets/okr_template.md
 
 2. **Gather Data** - Use ethical collection methods:
    ```bash
-   cat ../../product-team/skills/competitive-teardown/references/data-collection-guide.md
+   cat skills/competitive-teardown/references/data-collection-guide.md
    ```
    - Public sources: G2, Capterra, pricing pages, changelogs
    - Market reports: Gartner, Forrester, analyst briefings
@@ -186,7 +186,7 @@ cat ../../product-team/skills/product-strategist/assets/okr_template.md
 
 3. **Score Competitors** - Apply standardized rubric:
    ```bash
-   cat ../../product-team/skills/competitive-teardown/references/scoring-rubric.md
+   cat skills/competitive-teardown/references/scoring-rubric.md
    ```
    - Score across 7 dimensions (UX, features, pricing, integrations, support, performance, security)
    - Use multiple scorers to reduce bias
@@ -194,7 +194,7 @@ cat ../../product-team/skills/product-strategist/assets/okr_template.md
 
 4. **Build Competitive Matrix** - Generate comparison:
    ```bash
-   python ../../product-team/skills/competitive-teardown/scripts/competitive_matrix_builder.py competitors-scored.csv
+   python skills/competitive-teardown/scripts/competitive_matrix_builder.py competitors-scored.csv
    ```
 
 5. **Identify Gaps and Opportunities** - Analyze the matrix:
@@ -204,7 +204,7 @@ cat ../../product-team/skills/product-strategist/assets/okr_template.md
 
 6. **Create Deliverables** - Use analysis templates:
    ```bash
-   cat ../../product-team/skills/competitive-teardown/references/analysis-templates.md
+   cat skills/competitive-teardown/references/analysis-templates.md
    ```
    - SWOT analysis per major competitor
    - Positioning map (2x2)
@@ -226,7 +226,7 @@ Competitor B,9,6,8,5,8,6,6
 Competitor C,5,9,5,7,5,8,9
 EOF
 
-python ../../product-team/skills/competitive-teardown/scripts/competitive_matrix_builder.py competitors.csv
+python skills/competitive-teardown/scripts/competitive_matrix_builder.py competitors.csv
 ```
 
 ### Workflow 3: Product Vision Document
@@ -250,7 +250,7 @@ python ../../product-team/skills/competitive-teardown/scripts/competitive_matrix
 3. **Map the Strategy** - Connect vision to execution:
    ```bash
    # Review strategy frameworks
-   cat ../../product-team/skills/product-strategist/references/strategy_types.md
+   cat skills/product-strategist/references/strategy_types.md
    ```
    - Choose strategic posture (category leader, disruptor, fast follower)
    - Define competitive moats (technology, network effects, data, brand)
@@ -292,7 +292,7 @@ python ../../product-team/skills/competitive-teardown/scripts/competitive_matrix
 2. **Quantify Current Performance** - Baseline analysis:
    ```bash
    # Assess current initiative portfolio
-   python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py current-initiatives.csv
+   python skills/product-manager-toolkit/scripts/rice_prioritizer.py current-initiatives.csv
    ```
    - Revenue trajectory and unit economics
    - Customer acquisition cost trends
@@ -310,7 +310,7 @@ python ../../product-team/skills/competitive-teardown/scripts/competitive_matrix
 4. **Score Each Option** - Structured evaluation:
    ```bash
    # Build comparison matrix for pivot options
-   python ../../product-team/skills/competitive-teardown/scripts/competitive_matrix_builder.py pivot-options.csv
+   python skills/competitive-teardown/scripts/competitive_matrix_builder.py pivot-options.csv
    ```
    - Market size and growth potential
    - Competitive intensity in new direction
@@ -327,7 +327,7 @@ python ../../product-team/skills/competitive-teardown/scripts/competitive_matrix
 
 6. **Set Pivot OKRs** - Define success for the new direction:
    ```bash
-   python ../../product-team/skills/product-strategist/scripts/okr_cascade_generator.py pivot
+   python skills/product-strategist/scripts/okr_cascade_generator.py pivot
    ```
 
 **Expected Output:** Pivot analysis document with current state assessment, option evaluation, recommended path, transition plan, and pivot-specific OKRs
@@ -345,10 +345,10 @@ Problem Pivot to Workflow,8,6,7,5,6
 Technology Pivot to AI-Native,9,4,8,4,7
 EOF
 
-python ../../product-team/skills/competitive-teardown/scripts/competitive_matrix_builder.py pivot-options.csv
+python skills/competitive-teardown/scripts/competitive_matrix_builder.py pivot-options.csv
 
 # Generate OKRs for recommended pivot direction
-python ../../product-team/skills/product-strategist/scripts/okr_cascade_generator.py growth
+python skills/product-strategist/scripts/okr_cascade_generator.py growth
 ```
 
 ## Integration Examples
@@ -367,22 +367,22 @@ echo "================================"
 # Competitive landscape
 echo ""
 echo "1. Competitive Analysis:"
-python ../../product-team/skills/competitive-teardown/scripts/competitive_matrix_builder.py annual-competitors.csv
+python skills/competitive-teardown/scripts/competitive_matrix_builder.py annual-competitors.csv
 
 # Strategy reference
 echo ""
 echo "2. Strategy Frameworks:"
-cat ../../product-team/skills/product-strategist/references/strategy_types.md | head -50
+cat skills/product-strategist/references/strategy_types.md | head -50
 
 # Annual OKR cascade
 echo ""
 echo "3. Annual OKR Cascade:"
-python ../../product-team/skills/product-strategist/scripts/okr_cascade_generator.py growth
+python skills/product-strategist/scripts/okr_cascade_generator.py growth
 
 # Initiative prioritization
 echo ""
 echo "4. Strategic Initiative Prioritization:"
-python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py annual-initiatives.csv --capacity 180
+python skills/product-manager-toolkit/scripts/rice_prioritizer.py annual-initiatives.csv --capacity 180
 ```
 
 ### Example 2: Monthly Strategy Review
@@ -397,17 +397,17 @@ echo "============================================"
 # Competitive movements
 echo ""
 echo "Competitive Updates:"
-echo "Review: ../../product-team/skills/competitive-teardown/references/data-collection-guide.md"
+echo "Review: skills/competitive-teardown/references/data-collection-guide.md"
 
 # OKR progress
 echo ""
 echo "OKR Progress:"
-echo "Review: ../../product-team/skills/product-strategist/assets/okr_template.md"
+echo "Review: skills/product-strategist/assets/okr_template.md"
 
 # Initiative status
 echo ""
 echo "Initiative Portfolio:"
-python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py current-initiatives.csv
+python skills/product-manager-toolkit/scripts/rice_prioritizer.py current-initiatives.csv
 ```
 
 ### Example 3: Board Preparation
@@ -424,17 +424,17 @@ echo "============================="
 # Strategic metrics
 echo ""
 echo "1. Product Strategy Performance:"
-python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py $QUARTER-delivered.csv
+python skills/product-manager-toolkit/scripts/rice_prioritizer.py $QUARTER-delivered.csv
 
 # Competitive position
 echo ""
 echo "2. Competitive Positioning:"
-python ../../product-team/skills/competitive-teardown/scripts/competitive_matrix_builder.py board-competitors.csv
+python skills/competitive-teardown/scripts/competitive_matrix_builder.py board-competitors.csv
 
 # Next quarter OKRs
 echo ""
 echo "3. Next Quarter OKR Proposal:"
-python ../../product-team/skills/product-strategist/scripts/okr_cascade_generator.py growth
+python skills/product-strategist/scripts/okr_cascade_generator.py growth
 ```
 
 ## Success Metrics
@@ -465,17 +465,17 @@ python ../../product-team/skills/product-strategist/scripts/okr_cascade_generato
 
 ## Related Agents
 
-- [cs-product-manager](cs-product-manager.md) - Feature-level execution, RICE prioritization, PRD development
-- [cs-agile-product-owner](cs-agile-product-owner.md) - Sprint-level planning and backlog management
-- [cs-ux-researcher](cs-ux-researcher.md) - User research to validate strategic assumptions
+- [cs-product-manager](../cs-product-manager/SKILL.md) - Feature-level execution, RICE prioritization, PRD development
+- [cs-agile-product-owner](../cs-agile-product-owner/SKILL.md) - Sprint-level planning and backlog management
+- [cs-ux-researcher](../cs-ux-researcher/SKILL.md) - User research to validate strategic assumptions
 - Senior PM Skill - Portfolio context (see `../senior-pm`)
 
 ## References
 
-- **Primary Skill:** [../../product-team/skills/product-strategist/SKILL.md](../product-strategist/SKILL.md)
-- **Competitive Teardown Skill:** [../../product-team/skills/competitive-teardown/SKILL.md](../competitive-teardown/SKILL.md)
-- **OKR Framework:** [../../product-team/skills/product-strategist/references/okr_framework.md](../product-strategist/references/okr_framework.md)
-- **Strategy Types:** [../../product-team/skills/product-strategist/references/strategy_types.md](../product-strategist/references/strategy_types.md)
+- **Primary Skill:** [skills/product-strategist/SKILL.md](../product-strategist/SKILL.md)
+- **Competitive Teardown Skill:** [skills/competitive-teardown/SKILL.md](../competitive-teardown/SKILL.md)
+- **OKR Framework:** [skills/product-strategist/references/okr_framework.md](../product-strategist/references/okr_framework.md)
+- **Strategy Types:** [skills/product-strategist/references/strategy_types.md](../product-strategist/references/strategy_types.md)
 
 ---
 

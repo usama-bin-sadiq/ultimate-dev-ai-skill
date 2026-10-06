@@ -62,7 +62,7 @@ Both fall back gracefully: if the CDN is blocked, fonts default to the system st
 ### 1. Thariq Shihipar — "Claude Code HTML output" (Medium, 2026)
 "Every playground is a single HTML file with all CSS and JavaScript inlined. No external dependencies. No build step. Open it in any browser." (Playground plugin section — same discipline applies to converted documents.)
 
-### 2. marketing/landing/skills/landing/SKILL.md §"Single-File HTML Discipline"
+### 2. skills/landing/SKILL.md §"Single-File HTML Discipline"
 Established the rule for this repo. Marketing landing pages were the first artifact type to require single-file output; this plugin inherits the discipline directly.
 
 ### 3. Tom MacWright — "Big" (github.com/tmcw/big, MIT)

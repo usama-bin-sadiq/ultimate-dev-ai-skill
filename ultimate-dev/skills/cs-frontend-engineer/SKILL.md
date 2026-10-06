@@ -32,7 +32,7 @@ Do not skip ahead. Do not bundle. The primary device decides every downstream ch
 1. **Frontend Decision Engine**
    - **Purpose:** Deterministic framework + rendering picker from the 7 forcing-question answers
    - **Path:** `../senior-frontend/scripts/frontend_decision_engine.py`
-   - **Usage:** `python ../../engineering-team/skills/senior-frontend/scripts/frontend_decision_engine.py --primary-device mobile-4g --lcp-target-ms 2000 --seo-dependent true --auth-walled false --team-size 5`
+   - **Usage:** `python skills/senior-frontend/scripts/frontend_decision_engine.py --primary-device mobile-4g --lcp-target-ms 2000 --seo-dependent true --auth-walled false --team-size 5`
 
 2. **Frontend Scaffolder** (existing)
    - **Path:** `../senior-frontend/scripts/frontend_scaffolder.py`
@@ -48,11 +48,11 @@ Do not skip ahead. Do not bundle. The primary device decides every downstream ch
 
 1. **Forcing-Question Library** — `../senior-frontend/references/forcing_questions.md`
 2. **Composition Map** — `../senior-frontend/references/composition_map.md`
-3. **React Patterns / Next.js Optimization / Frontend Best Practices** (existing) — `../../engineering-team/skills/senior-frontend/references/{react_patterns,nextjs_optimization_guide,frontend_best_practices}.md`
+3. **React Patterns / Next.js Optimization / Frontend Best Practices** (existing) — `skills/senior-frontend/references/{react_patterns,nextjs_optimization_guide,frontend_best_practices}.md`
 
 ### Templates / Profiles
 
-1. **Profile JSONs:** `../../engineering-team/skills/senior-frontend/profiles/{next-app-router,remix-or-sveltekit,vite-spa,astro-or-static}.json`
+1. **Profile JSONs:** `skills/senior-frontend/profiles/{next-app-router,remix-or-sveltekit,vite-spa,astro-or-static}.json`
 
 ## Workflows
 
@@ -107,8 +107,8 @@ If the parent's prompt names answers explicitly (e.g., "mobile-4G primary, LCP t
 Before any commit:
 
 ```bash
-python ../../engineering/karpathy-coder/skills/karpathy-coder/scripts/complexity_checker.py <changed-files> --json
-python ../../engineering/karpathy-coder/skills/karpathy-coder/scripts/diff_surgeon.py --json
+python skills/karpathy-coder/scripts/complexity_checker.py <changed-files> --json
+python skills/karpathy-coder/scripts/diff_surgeon.py --json
 ```
 
 ## Anti-patterns
@@ -121,9 +121,9 @@ python ../../engineering/karpathy-coder/skills/karpathy-coder/scripts/diff_surge
 
 ## Related Agents
 
-- [cs-fullstack-engineer](cs-fullstack-engineer.md) — parent orchestrator for stack-spanning decisions
-- [cs-backend-engineer](cs-backend-engineer.md) — fork into for API contract design
-- [cs-karpathy-reviewer](cs-karpathy-reviewer.md) — invoke before every commit
+- [cs-fullstack-engineer](../cs-fullstack-engineer/SKILL.md) — parent orchestrator for stack-spanning decisions
+- [cs-backend-engineer](../cs-backend-engineer/SKILL.md) — fork into for API contract design
+- [cs-karpathy-reviewer](../cs-karpathy-reviewer/SKILL.md) — invoke before every commit
 
 ## Invocation Contract
 

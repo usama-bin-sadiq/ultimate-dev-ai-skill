@@ -23,7 +23,7 @@ The ISO 27001 ISMS auditor pressure-tests any ISMS work. Six sample-driven quest
 ### 1. What's the audit scope, and is rolling 3-year coverage on track?
 **No 3-year coverage discipline, no defensible programme.**
 - Every Clause 4-10 + every applicable Annex A control must be audited at least once per 3-year cycle
-- Run `isms_audit_scheduler.py` in `ra-qm-team/skills/isms-audit-expert/`
+- Run `isms_audit_scheduler.py` in `skills/isms-audit-expert/`
 - Confirm auditor independence — no self-audit on any sample
 
 ### 2. When was the risk register last refreshed, and are treatments linked to Annex A controls?
@@ -65,13 +65,13 @@ The ISO 27001 ISMS auditor pressure-tests any ISMS work. Six sample-driven quest
 
 ```bash
 # 1. Audit programme planning
-python ra-qm-team/skills/isms-audit-expert/scripts/isms_audit_scheduler.py audit_scope.json
+python skills/isms-audit-expert/scripts/isms_audit_scheduler.py audit_scope.json
 
 # 2. Mock audit for readiness check
-python ../../skills/compliance-os/scripts/audit_simulator.py iso27001_scope.json
+python skills/compliance-os/scripts/audit_simulator.py iso27001_scope.json
 
 # 3. Cross-framework reuse (SOC 2 = 75% overlap; ISO 42001 = 60% reuse)
-python ../../skills/compliance-os/scripts/cross_framework_mapper.py program.json
+python skills/compliance-os/scripts/cross_framework_mapper.py program.json
 ```
 
 ## Output Format

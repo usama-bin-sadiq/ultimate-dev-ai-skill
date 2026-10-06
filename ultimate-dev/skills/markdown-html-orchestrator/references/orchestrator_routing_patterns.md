@@ -14,13 +14,13 @@ Filename hint counts double (2 points each) because filename is high-signal user
 
 ## Sources
 
-### 1. research-ops/skills/research-ops-skills/SKILL.md §"Routing logic (deterministic)"
+### 1. skills/research-ops-skills/SKILL.md §"Routing logic (deterministic)"
 The two-signal threshold pattern formalized: "Same two-signal threshold pattern as `commercial-skills`. Single-signal → clarifying question. Mixed signals → highest-confidence first, chain second in a follow-up turn. Never silently chain."
 
-### 2. commercial/skills/commercial-skills/SKILL.md
+### 2. skills/commercial-skills/SKILL.md
 First domain to ship the explicit "never silently chain" rule, with named signal classes (PRICING / DEAL / PARTNERSHIPS / RFP / FORECAST). The discipline is independent of subject matter — same shape for research, for commercial deals, for markdown docs.
 
-### 3. business-operations/skills/business-operations-skills/SKILL.md
+### 3. skills/business-operations-skills/SKILL.md
 The "explore the workspace first" pattern: filenames like `vendor-list.csv` or `sla-tracker.xlsx` resolve the lane without asking. Filename hint = 2 points is calibrated here.
 
 ### 4. Matt Pocock — *grill-with-docs* (engineering/grill-with-docs/SKILL.md, MIT)

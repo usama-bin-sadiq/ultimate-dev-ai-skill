@@ -128,7 +128,7 @@ Each sub-skill ships its own `skills/<sub-skill>/scripts/ar_evaluator.py` — an
 - **`finance/financial-analysis`** — that's **corporate close + valuation**. research-finance manages **R&D program/portfolio spend**.
 - **`research/grants`** — that's **funding discovery**. research-finance manages **money already won**.
 - **`product-team`** — that's **persona/journey artifacts, discovery sprints, and live A/B experiments**. product-research is the **method + repository discipline**.
-- **`marketing-skill`** — that's **campaign analytics and demand-gen**. market-research is **upstream methodology**.
+- **The marketing skills** (`campaign-analytics`, `marketing-demand-acquisition`) — that's **campaign analytics and demand-gen**. market-research is **upstream methodology**.
 
 ## Output artifacts
 

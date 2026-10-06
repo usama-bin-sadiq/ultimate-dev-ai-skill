@@ -35,7 +35,7 @@ The skill surfaces GAPs explicitly. Leadership decides whether to close them, pa
 **Do not use for:**
 - Free-form proposal narrative authoring → `business-growth/contract-and-proposal-writer`
 - Contract redline AFTER award → `c-level-advisor/general-counsel-advisor`
-- Marketing collateral / category content → `marketing-skill/*`
+- Marketing collateral / category content → any marketing skill under `skills/`
 - Discount approval on the awarded deal → `commercial/deal-desk`
 - Pricing-model design for a new product → `commercial/pricing-strategist`
 
@@ -115,7 +115,7 @@ All scripts: stdlib only (argparse, json, sys, pathlib, re, collections, statist
 
 - **`business-growth/contract-and-proposal-writer`** — free-form narrative proposals where YOU set the structure (executive briefs, capability statements, unsolicited proposals). RFP-responder handles **buyer-dictated structured Q&A** where the buyer set the questions, sections, scoring criteria, and format. Different artifact, different decision logic.
 - **`c-level-advisor/general-counsel-advisor`** — contract redline and IP/risk review AFTER award. RFP-responder operates BEFORE award, on the response strategy.
-- **`marketing-skill/*`** — external marketing assets (web copy, content, ASO, SEO, brand voice) for many-to-many audiences. RFP-responder produces a **single-buyer artifact** with deterministic compliance requirements.
+- **the marketing skills** (`skills/*`) — external marketing assets (web copy, content, ASO, SEO, brand voice) for many-to-many audiences. RFP-responder produces a **single-buyer artifact** with deterministic compliance requirements.
 - **`commercial/deal-desk`** — per-deal discount routing on a closing opportunity. RFP-responder is pursuit-stage; deal-desk is close-stage.
 - **`commercial/pricing-strategist`** — pricing-model design for a new product. RFP-responder consumes existing pricing as input to the commercial-terms section.
 

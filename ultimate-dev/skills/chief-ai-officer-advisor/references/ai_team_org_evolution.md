@@ -219,8 +219,8 @@ Never hire the next role until the previous role:
 
 ## When This Reference Doesn't Help
 
-- **Comp benchmarking.** See `c-level-advisor/skills/chro-advisor/scripts/comp_benchmarker.py`.
-- **Leveling ladders.** See `c-level-advisor/skills/chro-advisor/references/leveling_ladders.md`.
+- **Comp benchmarking.** See `skills/chro-advisor/scripts/comp_benchmarker.py`.
+- **Leveling ladders.** See `skills/chro-advisor/references/leveling_ladders.md`.
 - **JD templates.** Many open-source examples; not covered here.
 - **Performance management.** Standard people management; not AI-specific.
 
