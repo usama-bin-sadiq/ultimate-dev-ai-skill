@@ -1,5 +1,5 @@
 {
- "count": 2366,
+ "count": 2367,
  "entries": [
   {
    "name": "21risk-automation",
@@ -903,6 +903,34 @@
     "search",
     "tasks",
     "tools"
+   ]
+  },
+  {
+   "name": "agent-browser",
+   "kind": "skill",
+   "family": "",
+   "path": "skills/agent-browser/SKILL.md",
+   "description": "Drive a real browser with the agent-browser CLI: open pages, snapshot the accessibility tree, click and fill by element ref, wait on state, screenshot, diff against a baseline, run axe-core accessibility audits, and capture React trees and Web Vitals. Use for browser automation, scraping rendered pages, UI verification, and visual regression checks when a hosted CLI beats a bundled browser runtime.",
+   "what": "Drive a real browser with the agent-browser CLI: open pages, snapshot the accessibility tree, click and fill by element ref, wait on state, screenshot, diff against a baseline, run axe-core accessibility audits, and capture React trees and Web Vitals.",
+   "when": [
+    "Use for browser automation, scraping rendered pages, UI verification, and visual regression checks when a hosted CLI beats a bundled browser runtime."
+   ],
+   "not": [],
+   "keywords": [
+    "automation",
+    "beats",
+    "browser",
+    "bundled",
+    "checks",
+    "cli",
+    "hosted",
+    "pages",
+    "regression",
+    "rendered",
+    "runtime",
+    "scraping",
+    "verification",
+    "visual"
    ]
   },
   {

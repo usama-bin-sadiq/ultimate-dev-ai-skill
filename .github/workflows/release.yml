@@ -286,8 +286,25 @@ jobs:
             *) echo "Invalid release version type: $VERSION_TYPE" >&2; exit 1 ;;
           esac
           new_version="$major.$minor.$patch"
-          if git ls-remote --exit-code --tags origin "refs/tags/v$new_version" >/dev/null 2>&1; then
+          # Check the LOCAL tag namespace, not the remote.
+          #
+          # This was `git ls-remote --exit-code --tags origin`, and it never
+          # worked here. The checkout sets persist-credentials: false and this
+          # step holds no token, so on a private repo ls-remote exited 128
+          # ("could not read Username for 'https://github.com'"). Its stderr
+          # went to /dev/null, so the guard read an authentication error as
+          # "tag does not exist", waved the bump through, and the next step
+          # died on `fatal: tag 'v4.0.42' already exists`. It failed in exactly
+          # the case it existed to catch, and hid the reason while doing it.
+          #
+          # `fetch-depth: 0` already fetches remote tags, so the local
+          # namespace is what `git tag` below will actually collide with. A
+          # local check needs no credential and cannot be silenced by an
+          # unrelated network or auth failure.
+          if git rev-parse -q --verify "refs/tags/v$new_version" >/dev/null; then
             echo "Tag v$new_version already exists; refusing duplicate release" >&2
+            echo "VERSION is $current, so this release wants v$new_version, which is taken." >&2
+            echo "Reconcile VERSION with the tag before releasing again." >&2
             exit 1
           fi
           printf '%s\n' "$new_version" > VERSION

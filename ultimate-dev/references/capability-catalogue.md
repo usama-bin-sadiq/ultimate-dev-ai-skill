@@ -6,7 +6,7 @@ cannot tell which is right.
 
 ## What this is
 
-2366 capabilities are installed: 2080 sub-skills and
+2367 capabilities are installed: 2081 sub-skills and
 286 roles. This file is the map, not the territory — it tells
 you a capability exists and where it lives, and it does not load any of
 them. A catalogue printed into context would cost more than the task.
@@ -27,13 +27,13 @@ hit is **routed** — whether a decision can actually reach it — or
 
 | | |
 |---|---|
-| sub-skills | 2080 |
+| sub-skills | 2081 |
 | roles | 286 |
-| **discoverable** (has a description) | **2366** |
+| **discoverable** (has a description) | **2367** |
 | **undiscoverable** (no description) | **0** |
 | roles with a dispatch row | 0 |
 | ...of which the condition decides something | 0 |
-| tool-bound | 610 |
+| tool-bound | 611 |
 
 ## Two different mechanisms, not one count
 
@@ -91,6 +91,7 @@ are the only entries reachable without editing anything.
 - `affinda-automation` (skill) — Automate Affinda tasks via Rube MCP (Composio). Always search tools first for current schemas.
 - `affinity-automation` (skill) — Automate Affinity tasks via Rube MCP (Composio). Always search tools first for current schemas.
 - `agencyzoom-automation` (skill) — Automate Agencyzoom tasks via Rube MCP (Composio). Always search tools first for current schemas.
+- `agent-browser` (skill) — Drive a real browser with the agent-browser CLI: open pages, snapshot the accessibility tree, click and fill by element 
 - `agent-decision-receipts` (skill) — Mint a tamper-evident, post-quantum-signed receipt for a consequential agent action (deploy, delete, pay, grant-access, 
 - `agent-designer` (skill) — Use when the user asks to design a multi-agent system, pick an orchestration pattern (supervisor/swarm/pipeline), genera
 - `agent-development` (skill) — This skill should be used when the user asks to "create an agent", "add an agent", "write a subagent", "agent frontmatte
@@ -2158,7 +2159,7 @@ python3 tools/index-tree.py --search <term>
 
   `3d-scene-developer`, `abroad-advisor`, `accessibility-auditor`, `account-strategist`, `ai-data-remediation-engineer`, `ai-engineer`, `api-tester`, `app-store-optimizer`, `appsec-engineer`, `architect`, `artist`, `audio-engineer`, ... (184 total)
 
-### verification — 334 installed, 307 routed, 27 not
+### verification — 335 installed, 308 routed, 27 not
 
   `agentic-search-optimizer`, `ai-citation-strategist`, `ai-generated-code-auditor`, `ats-validator-architect`, `change-governor`, `clinical-evidence-agent`, `code-reviewer`, `digital-presales-consultant`, `doubt-reviewer`, `email-strategist`, `governance-architect`, `grader`, ... (27 total)
 

@@ -1,6 +1,6 @@
 # Skill quality rubric
 
-- skills scored: 2080
+- skills scored: 2081
 - mean score: 2.71 / 4
 
 ## Lowest scoring (needs work)

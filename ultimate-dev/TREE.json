@@ -1,20 +1,20 @@
 {
   "counts": {
-    "total": 2366,
-    "skills": 2080,
+    "total": 2367,
+    "skills": 2081,
     "agents": 286,
-    "reachable": 2080,
+    "reachable": 2081,
     "not_reachable": 286,
     "roles_with_dispatch_row": 0,
     "roles_with_a_deciding_condition": 0,
     "roles_with_a_deciding_condition_loose": 0,
     "roles_with_no_usable_condition": 0,
     "roles_with_a_derived_row": 0,
-    "skills_reachable_by_description": 2080,
-    "discoverable": 2366,
+    "skills_reachable_by_description": 2081,
+    "discoverable": 2367,
     "undiscoverable": 0,
     "no_frontmatter": 0,
-    "tool_bound": 610
+    "tool_bound": 611
   },
   "domains": [
     [
@@ -27,7 +27,7 @@
     ],
     [
       "verification",
-      334
+      335
     ],
     [
       "planning",
@@ -1332,6 +1332,61 @@
         "search",
         "tasks",
         "tools"
+      ]
+    },
+    {
+      "name": "agent-browser",
+      "dir": "agent-browser",
+      "kind": "skill",
+      "purpose": "Drive a real browser with the agent-browser CLI: open pages, snapshot the accessibility tree, click and fill by element ref, wait on state, screenshot, diff against a baseline, run axe-core accessibility audits, and capt",
+      "domain": "verification",
+      "tool_bound": true,
+      "dispatched": false,
+      "routed": true,
+      "condition_real": null,
+      "discoverable": true,
+      "has_frontmatter": true,
+      "path": "skills/agent-browser/SKILL.md",
+      "tokens": [
+        "accessibility",
+        "against",
+        "agent-browser",
+        "audits",
+        "automation",
+        "axe-core",
+        "baseline",
+        "beats",
+        "browser",
+        "bundled",
+        "capture",
+        "checks",
+        "cli",
+        "click",
+        "diff",
+        "drive",
+        "element",
+        "fill",
+        "hosted",
+        "open",
+        "pages",
+        "react",
+        "real",
+        "ref",
+        "regression",
+        "rendered",
+        "run",
+        "runtime",
+        "scraping",
+        "screenshot",
+        "snapshot",
+        "state",
+        "tree",
+        "trees",
+        "verification",
+        "visual",
+        "vitals",
+        "wait",
+        "web"
       ]
     },
     {

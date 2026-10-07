@@ -6,17 +6,31 @@
 - refactor: prune historical spec documents and the obsolete installer modes; `install.sh` is now a plain copy-and-validate
 - fix: strip kernel-only checks from `validate-skills.py` so the validator passes on the pruned tree
 
+## [4.0.42] — 2026-10-05
+
+- fix: classify resources/ and manifest.yaml for the bundler
+- ci: uninstall round-trip assertions in the installer gate
+- feat: capability routing discipline, package composition contracts (PRD phase 1), and --uninstall flag
+
+
+
 ## [4.0.41] — 2026-10-04
 
 - fix: accuracy and efficiency improvements — finish UX, R2 trigger gate, log summary, routing table caveat
+
+
 
 ## [4.0.40] — 2026-10-04
 
 - fix: address review findings in model-tier adaptation (P1/P3/P7)
 
+
+
 ## [4.0.39] — 2026-10-04
 
 - feat: model-tier adaptation fixes P1-P3 P5-P7
+
+
 
 ## [4.0.38] — 2026-10-03
 
@@ -37,6 +51,8 @@
 - feat: rebuild the kernel spine from the 56-section spec, and check it every time
 - feat: the kernel had a rule against over-delegating and none against under-delegating
 - feat: an acceptance gate, because a run ended three times by describing the work it had not done
+
+
 
 ## [4.0.37] — 2026-09-30
 
@@ -85,6 +101,8 @@ non-zero on a row that is neither.
   to follow the marker. An older test asserted the bare-"no" behaviour, so the bug
   had a test protecting it
 
+
+
 ## [4.0.36] — 2026-09-30
 
 - feat: the process log, numbered and gated against the state it claims to describe
@@ -92,12 +110,16 @@ non-zero on a row that is neither.
 - feat: the host as a second term in the effort gate, and a ceiling on procedure that
   never touches the standard of proof
 
+
+
 ## [4.0.35] — 2026-09-30
 
 - feat: the two worked exemplars SKILL.md tells you to read before writing
 - fix: a write in one clause cleared every reference on the line, and a missing file went unreported
 - feat: a step log that answers "what is this doing", and a hard line between memory and deliverables
 - fix: the check that policed "0 executed" could never have been contradicted
+
+
 
 ## [4.0.34] — 2026-09-29
 
@@ -112,29 +134,43 @@ non-zero on a row that is neither.
 - fix: a commit labelled "fixed" had reverted the kernel, and nothing in CI objected
 - fixed
 
+
+
 ## [4.0.33] — 2026-09-29
 
 - fix: the routing oracle is 4 of 128 by construction, so say so instead of looking broken
+
+
 
 ## [4.0.32] — 2026-09-29
 
 - fix: the kernel never told a run to record its architecture, and the corpus found it
 
+
+
 ## [4.0.31] — 2026-09-29
 
 - feat: the self-eval criterion, four dispatch rows, and a corpus with live premises
+
+
 
 ## [4.0.30] — 2026-09-29
 
 - fix: two CI mutations had stopped breaking the trees they name
 
+
+
 ## [4.0.29] — 2026-09-29
 
 - fix: no harness may name a provider, and no report may claim one
 
+
+
 ## [4.0.28] — 2026-09-29
 
 - feat: measure the cost argument, and stop a release commit from cancelling its own validation
+
+
 
 ## [4.0.27] — 2026-09-29
 
@@ -142,105 +178,157 @@ non-zero on a row that is neither.
 - feat: make the routing claim measurable, and add the gate that measures it
 - docs: ADR 0013, a green result is not evidence unless the producer did the work
 
+
+
 ## [4.0.26] — 2026-09-28
 
 - fix: the validator suite has never reported a verdict, and no release has ever had a changelog
+
+
 
 ## [4.0.25] — 2026-09-28
 
 _No summary recorded. Review the comparison for details._
 
+
+
 ## [4.0.24] — 2026-09-28
 
 _No summary recorded. Review the comparison for details._
+
+
 
 ## [4.0.23] — 2026-09-27
 
 _No summary recorded. Review the comparison for details._
 
+
+
 ## [4.0.22] — 2026-09-27
 
 _No summary recorded. Review the comparison for details._
+
+
 
 ## [4.0.21] — 2026-09-27
 
 _No summary recorded. Review the comparison for details._
 
+
+
 ## [4.0.20] — 2026-09-27
 
 _No summary recorded. Review the comparison for details._
+
+
 
 ## [4.0.19] — 2026-09-27
 
 _No summary recorded. Review the comparison for details._
 
+
+
 ## [4.0.18] — 2026-09-27
 
 _No summary recorded. Review the comparison for details._
+
+
 
 ## [4.0.17] — 2026-09-27
 
 _No summary recorded. Review the comparison for details._
 
+
+
 ## [4.0.16] — 2026-09-27
 
 _No summary recorded. Review the comparison for details._
+
+
 
 ## [4.0.15] — 2026-09-27
 
 _No summary recorded. Review the comparison for details._
 
+
+
 ## [4.0.14] — 2026-09-27
 
 _No summary recorded. Review the comparison for details._
+
+
 
 ## [4.0.13] — 2026-09-27
 
 _No summary recorded. Review the comparison for details._
 
+
+
 ## [4.0.12] — 2026-09-27
 
 _No summary recorded. Review the comparison for details._
+
+
 
 ## [4.0.11] — 2026-09-27
 
 _No summary recorded. Review the comparison for details._
 
+
+
 ## [4.0.10] — 2026-09-27
 
 _No summary recorded. Review the comparison for details._
+
+
 
 ## [4.0.9] — 2026-09-27
 
 _No summary recorded. Review the comparison for details._
 
+
+
 ## [4.0.8] — 2026-09-27
 
 _No summary recorded. Review the comparison for details._
+
+
 
 ## [4.0.7] — 2026-09-27
 
 _No summary recorded. Review the comparison for details._
 
+
+
 ## [4.0.6] — 2026-09-27
 
 _No summary recorded. Review the comparison for details._
+
+
 
 ## [4.0.5] — 2026-09-27
 
 _No summary recorded. Review the comparison for details._
 
+
+
 ## [4.0.4] — 2026-09-27
 
 _No summary recorded. Review the comparison for details._
+
+
 
 ## [4.0.3] — 2026-09-27
 
 _No summary recorded. Review the comparison for details._
 
+
+
 ## [4.0.2] — 2026-09-27
 
 _No summary recorded. Review the comparison for details._
+
+
 
 ## [4.0.1] — 2026-09-27
 
@@ -248,9 +336,7 @@ _No summary recorded. Review the comparison for details._
 All notable changes to this project are recorded here. The format follows
 Keep a Changelog. Versions follow semantic versioning.
 
-## [Unreleased]
 
-_Nothing yet._
 
 ## [4.0.0] — 2026-09-27
 
@@ -360,6 +446,8 @@ that cannot report an inconvenient result is not a suite.
   and a harness that gives up is measuring the endpoint rather than the skill.
   Every result records the model that served it, and a mixed-model run is flagged
   as not strictly comparable rather than silently pooled.
+
+
 
 ## [2.0.0] — 2026-09-26
 
@@ -588,6 +676,8 @@ introduced by earlier fixes in this same release.
   specified rather than implemented, and enforced by evaluation cases.
 - Anything that depended on a generated prompt payload should read
   `SKILL.md` and its references directly.
+
+
 
 ## [1.0.0]
 
