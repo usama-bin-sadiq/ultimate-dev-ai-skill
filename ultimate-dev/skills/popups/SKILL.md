@@ -480,6 +480,13 @@ Deliver popup recommendations with specificity: name the trigger type, target au
 
 ---
 
+## Reference
+
+Loaded on demand, not at triage:
+
+- `references/popup-cro-playbook.md` — Popup CRO Playbook. Design patterns and optimization strategies for popups and modals.
+- `references/README.md` — index of this skill's reference tree.
+
 ## Related Skills
 
 - **lead-magnets**: For planning lead magnets to promote via popups

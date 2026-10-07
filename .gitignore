@@ -72,3 +72,5 @@ ultimate-dev/evals/.results/logs/
 ultimate-dev/evals/.results/work/
 ultimate-dev/evals/.results/*.json
 !ultimate-dev/evals/.results/summary.json
+
+.idea

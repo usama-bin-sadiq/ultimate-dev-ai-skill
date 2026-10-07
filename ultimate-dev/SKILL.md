@@ -99,5 +99,8 @@ changing anything inside `skills/` or `agents/`:
   meaning rather than browsing 2,000 directories.
 - `python3 tools/test-*.py` — self-tests for the validators and converters.
 
+The generated capability map is `references/README.md`, which indexes
+`references/capability-catalogue.md`.
+
 When you add a capability, create it under `skills/` (procedure) or `agents/`
 (role), with frontmatter, and let the validator tell you what you forgot.

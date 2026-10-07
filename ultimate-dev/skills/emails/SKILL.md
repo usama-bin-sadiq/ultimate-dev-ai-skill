@@ -348,4 +348,6 @@ Each file below is loaded on demand, not at triage. 3 file(s):
 - `references/copy-guidelines.md` — Email Copy Guidelines. 1.
 - `references/email-types.md` — Email Types Reference. A comprehensive guide to lifecycle and campaign emails.
 - `references/sequence-templates.md` — Email Sequence Templates. Detailed templates for common email sequences.
+- `references/email-sequence-playbook.md` — Email Sequence Playbook. Step-by-step playbook for designing and wiring email sequences.
+- `references/README.md` — index of this skill's reference tree.
 

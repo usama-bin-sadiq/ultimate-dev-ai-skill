@@ -72,7 +72,7 @@ It holds ICP, positioning, personas, and competitive landscape — required befo
   - **Path:** `../emails/scripts/sequence_analyzer.py`
   - **Usage:** `python3 skills/email-sequence/scripts/sequence_analyzer.py --file sequence.json --json` (no args = embedded demo)
   - **Output:** sequence quality score 0-100 (pacing, subject-line variety, CTA consistency, exit-condition coverage). **Threshold: fix anything it flags below 70** before handoff.
-- **Knowledge base:** `../emails/references/email-sequence-playbook.md`
+- **Knowledge base:** See [../emails/references](../emails/references) for email sequence playbooks and related resources.
 
 ## Workflows
 

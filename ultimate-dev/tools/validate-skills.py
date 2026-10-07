@@ -295,7 +295,7 @@ INDEXED_TREES = ("skills", "agents", "evals")
 # silently did not cover them. The list is now derived from what is on disk and
 # anything unaccounted for is an error, so a new tree cannot be added without
 # either an index or an explicit decision that it does not need one.
-NON_TREE_DIRS = frozenset({"tools", "__pycache__"})
+NON_TREE_DIRS = frozenset({"tools", "__pycache__", "tickets", "references"})
 
 # The sub-skill lives here, and the kernel must be able to reach it.
 SUB_SKILL_GLOB = "skills/*"
