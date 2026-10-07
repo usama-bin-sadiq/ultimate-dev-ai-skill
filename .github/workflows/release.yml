@@ -35,8 +35,38 @@ defaults:
     shell: bash
 
 jobs:
+  # Nothing below this job runs until the tree validates. `needs:` only
+  # orders jobs inside one workflow -- it cannot express "wait for the
+  # Validate workflow" -- so the gate has to sit on the release path
+  # itself. Without it, Validate and Release both trigger on `push: main`
+  # and start at the same instant, and a red commit races its own
+  # release to the tag.
+  #
+  # This also closes a hole validate.yml leaves open on purpose: it
+  # ignores pushes that touch only VERSION and CHANGELOG.md, which is
+  # exactly the shape of a release commit. Those commits were never
+  # validated by that workflow at all. This job validates every commit
+  # that reaches here, release commits included.
+  validate:
+    name: Validate Before Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: The tree validates
+        run: python ultimate-dev/tools/validate-skills.py --strict
+
   should-release:
     name: Determine Release Need
+    needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
@@ -460,8 +490,16 @@ jobs:
     # fails, the remaining workflows of this commit are cancelled rather than
     # left running against a known-red commit. Scoped by head_sha, so runs of
     # other commits and other branches are never touched.
-    if: failure()
-    needs: [should-release, release-gate, create-release]
+    # `needs:` propagates skips. With `validate` in front, a failed
+    # validation leaves should-release, release-gate and create-release
+    # all skipped rather than failed, and a bare `failure()` here is
+    # skipped too -- so the one job whose entire purpose is to stop the
+    # bill on a red commit would never run on a red commit. Ask for
+    # validate's outcome explicitly. `!cancelled()` keeps a
+    # concurrency-cancelled run from firing this, which is what the
+    # original `failure()` was protecting against.
+    if: ${{ !cancelled() && (failure() || needs.validate.outcome == 'failure') }}
+    needs: [validate, should-release, release-gate, create-release]
     permissions:
       contents: read
       actions: write

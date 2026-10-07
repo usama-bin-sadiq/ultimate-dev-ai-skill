@@ -38,21 +38,57 @@ Go to: **Settings → Branches → Add rule**
   - ✅ Require branches to be up to date before merging
   - Required checks:
     - `Validate Skill Structure`
-    - `Run the pre-commit gate`
-    - `Check Generated Artefacts and References`
-    - `Test the Validators`
-    - `Check Documentation Hygiene`
-    - `PR Quality Check`
-  - Recommended, not required: `Check Release Metadata`. It only matters for a
-    PR carrying a release label, and requiring it would make an unrelated PR wait
-    on a check that has nothing to say about it.
-  - These are the `name:` values of the jobs in `validate.yml`, not their YAML
-    keys. GitHub matches on the display name, and a name that does not exist
-    never reports — so a typo here does not fail loudly, it silently makes the
-    branch unprotectable. Regenerate the list with:
+    - `PR Template Compliance (Read-only)`
+  - These are the `name:` values of the jobs, not their YAML keys. GitHub
+    matches on the display name, and a name that does not exist never
+    reports — so a typo here does not fail loudly, it silently makes the
+    branch unprotectable. A required check is only valid if the job that
+    produces it actually runs on the event being gated, so the list is
+    the jobs that report on a pull request, across *all* workflow files:
     ```sh
-    python3 -c "import yaml;[print(f'    - \`{v[\"name\"]}\`') for v in yaml.safe_load(open('.github/workflows/validate.yml'))['jobs'].values()]"
+    python3 - <<'PY'
+    import pathlib, yaml
+
+    # A required check must report on the event being gated. A pull_request
+    # trigger narrowed to `closed` never fires on an open PR, so its jobs
+    # would block every merge forever.
+    ON_OPEN_PR = {"opened", "synchronize", "reopened", "edited", "ready_for_review"}
+
+    def fires_on_open_pr(trigger):
+        pr = (trigger.get(True) or trigger).get("pull_request")
+        if pr is None:
+            return False
+        types = pr.get("types") if isinstance(pr, dict) else None
+        return not types or bool(set(types) & ON_OPEN_PR)
+
+    for p in sorted(pathlib.Path(".github/workflows").glob("*.yml")):
+        doc = yaml.safe_load(p.read_text())
+        # bare `on:` parses as the boolean True, so check both spellings
+        trigger = doc.get(True) or doc.get("on") or {}
+        if not fires_on_open_pr(trigger):
+            continue
+        for job in doc["jobs"].values():
+            # a job gated on failure() reports only when something broke
+            if "failure()" in str(job.get("if", "")):
+                continue
+            print(f"    - `{job['name']}`")
+    PY
     ```
+  - Do **not** require the release jobs (`Validate Before Release`,
+    `Determine Release Need`, `Release Approval Gate`, `Create Release`).
+    They trigger on `push: main`, `pull_request: closed`, and
+    `workflow_dispatch` — never on an open pull request — so requiring
+    them would block every merge forever. Do not require
+    `Cancel sibling workflows on failure` either; it is gated on
+    `failure()` and reports only when something already broke.
+  - Release ordering lives in `release.yml`, not here. Its `validate`
+    job runs `validate-skills.py --strict` and everything downstream
+    `needs:` it, so a red tree cannot reach a tag. That gate is
+    deliberately duplicated from `validate.yml` rather than shared:
+    `needs:` cannot express "wait for another workflow", and
+    `validate.yml` ignores pushes touching only `VERSION` and
+    `CHANGELOG.md` — which is the exact shape of a release commit, so
+    those commits were never validated at all.
 - ✅ Require conversation resolution before merging
 - ✅ Require linear history
 - ✅ Do not allow bypassing the above settings
