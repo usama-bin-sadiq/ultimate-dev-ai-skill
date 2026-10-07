@@ -1,5 +1,16 @@
 # Changelog
 
+## [4.0.43] — 2026-10-07
+
+- fix(release): the tag guard could not authenticate, so it never guarded
+- ci: a red tree could reach a tag, and the setup doc named four dead jobs
+- Release fix
+- feat: finalize kernel-removal - rename-files fixture fix, re-run evals, update tickets, clean stale files
+- ci: cancel sibling workflow runs when any workflow of a commit fails
+- fix: classify resources/ and manifest.yaml for the bundler
+- ci: uninstall round-trip assertions in the installer gate
+- feat: capability routing discipline, package composition contracts (PRD phase 1), and --uninstall flag
+
 ## [Unreleased]
 
 - refactor: remove the kernel machinery (state system, decision fabric, evaluation corpus, evaluators, bundler, reference corpus) and rewrite `ultimate-dev/SKILL.md` as a router over `skills/`, `agents/`, and `tools/`, with verification discipline and no invented APIs/paths
