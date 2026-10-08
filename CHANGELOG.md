@@ -1,5 +1,9 @@
 # Changelog
 
+## [4.0.45] — 2026-10-08
+
+- fix(router): a stopword excluded one skill from every possible query
+
 ## [4.0.44] — 2026-10-08
 
 - feat(router): there was no dispatcher, so routing was decided by whoever read the JSON
