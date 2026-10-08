@@ -1,5 +1,9 @@
 # Changelog
 
+## [4.0.44] — 2026-10-08
+
+- feat(router): there was no dispatcher, so routing was decided by whoever read the JSON
+
 ## [4.0.43] — 2026-10-07
 
 - fix(release): the tag guard could not authenticate, so it never guarded
