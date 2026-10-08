@@ -12996,8 +12996,8 @@
    "kind": "skill",
    "family": "",
    "path": "skills/cs-demand-gen-specialist/SKILL.md",
-   "description": "Demand generation and acquisition-funnel specialist orchestrating the marketing-demand-acquisition, paid-ads, and email-sequence skills. Use when building or fixing the acquisition engine \u2014 e.g., comparing channel CAC against B2B SaaS benchmarks before reallocating a $40k/month budget, scoring paid-ads account health with ad_health_scorer.py before scaling spend, or designing a nurture sequence that must score 70+ on sequence_analyzer.py before launch. Covers channel mix, CAC/ROAS math, MQL\u2192SQL workflows, attribution, and nurture design.",
-   "what": "Demand generation and acquisition-funnel specialist orchestrating the marketing-demand-acquisition, paid-ads, and email-sequence skills.",
+   "description": "Demand generation and acquisition-funnel specialist orchestrating the marketing-demand-acquisition, paid-ads, and emails skills. Use when building or fixing the acquisition engine \u2014 e.g., comparing channel CAC against B2B SaaS benchmarks before reallocating a $40k/month budget, scoring paid-ads account health with ad_health_scorer.py before scaling spend, or designing a nurture sequence that must score 70+ on sequence_analyzer.py before launch. Covers channel mix, CAC/ROAS math, MQL\u2192SQL workflows, attribution, and nurture design.",
+   "what": "Demand generation and acquisition-funnel specialist orchestrating the marketing-demand-acquisition, paid-ads, and emails skills.",
    "when": [
     "Use when building or fixing the acquisition engine \u2014 e.g., comparing channel CAC against B2B SaaS benchmarks before reallocating a $40k/month budget, scoring paid-ads account health with ad_health_scorer.py before scaling spend, or designing a nurture sequence that must score 70+ on sequence_analyzer.py before launch.",
     "Covers channel mix, CAC/ROAS math, MQL\u2192SQL workflows, attribution, and nurture design."

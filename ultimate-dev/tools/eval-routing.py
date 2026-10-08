@@ -18,7 +18,20 @@ QUERIES = ROOT / "evals" / "routing" / "queries.jsonl"
 STOP = set("a an the and or of in on for to from with via this that it its is are be by as i you not do does don't no nor when use used using user ask wants want should can could will each other more get got that then than also such any all me my we our".split())
 
 def toks(text):
-    return {t for t in re.findall(r"[a-z0-9][a-z0-9-]+", text.lower()) if t not in STOP and len(t) > 2}
+    # Hyphens are separators, not part of a token.
+    #
+    # The pattern `[a-z0-9][a-z0-9-]+` treats "omnisend-automation" as one
+    # token. A query of "omnisend automation" tokenises to {omnisend,
+    # automation}, so the name contributed nothing to the very query it exists
+    # to answer -- and the strongest signal in the scorer, 3x name overlap,
+    # was structurally unreachable for every hyphenated skill. Most of this
+    # corpus is hyphenated, which is why Hit@1 sat at 23%.
+    #
+    # Splitting first costs nothing: a hyphen is never meaningful inside a
+    # word in a natural-language query, and it restores the name weight the
+    # scorer already claims to give it.
+    return {t for t in re.findall(r"[a-z0-9][a-z0-9-]*", text.lower().replace("-", " ").replace("_", " "))
+            if t not in STOP and len(t) > 2}
 
 def body_tokens(name):
     p = ROOT / "skills" / name / "SKILL.md"

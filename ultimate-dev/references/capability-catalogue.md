@@ -541,7 +541,7 @@ are the only entries reachable without editing anything.
 - `cs-ceo-advisor` (skill) — Strategic leadership advisor for CEOs covering vision, strategy, board management, investor relations, and organizationa
 - `cs-content-creator` (skill) — Long-form marketing content producer orchestrating the content-production skill (research → brief → draft → optimize → g
 - `cs-cto-advisor` (skill) — Technical leadership advisor for CTOs covering technology strategy, team scaling, architecture decisions, and engineerin
-- `cs-demand-gen-specialist` (skill) — Demand generation and acquisition-funnel specialist orchestrating the marketing-demand-acquisition, paid-ads, and email-
+- `cs-demand-gen-specialist` (skill) — Demand generation and acquisition-funnel specialist orchestrating the marketing-demand-acquisition, paid-ads, and emails
 - `cs-engineer-grill` (skill) — Cross-role engineering grill — Matt Pocock 7 questions per role × 3 roles (fullstack / frontend / backend) = up to 21 fo
 - `cs-engineering-lead` (skill) — Engineering Team Lead agent for coordinating QA, security, data engineering, ML, and frontend/backend teams. Orchestrate
 - `cs-financial-analyst` (skill) — Financial Analyst agent for DCF valuation, financial modeling, budgeting, forecasting, and SaaS metrics (ARR, MRR, churn

@@ -1,10 +1,10 @@
 ---
 name: cs-demand-gen-specialist
-description: Demand generation and acquisition-funnel specialist orchestrating the marketing-demand-acquisition, paid-ads, and email-sequence skills. Use when building or fixing the acquisition engine — e.g., comparing channel CAC against B2B SaaS benchmarks before reallocating a $40k/month budget, scoring paid-ads account health with ad_health_scorer.py before scaling spend, or designing a nurture sequence that must score 70+ on sequence_analyzer.py before launch. Covers channel mix, CAC/ROAS math, MQL→SQL workflows, attribution, and nurture design.
+description: Demand generation and acquisition-funnel specialist orchestrating the marketing-demand-acquisition, paid-ads, and emails skills. Use when building or fixing the acquisition engine — e.g., comparing channel CAC against B2B SaaS benchmarks before reallocating a $40k/month budget, scoring paid-ads account health with ad_health_scorer.py before scaling spend, or designing a nurture sequence that must score 70+ on sequence_analyzer.py before launch. Covers channel mix, CAC/ROAS math, MQL→SQL workflows, attribution, and nurture design.
 skills:
   - skills/marketing-demand-acquisition
   - skills/paid-ads
-  - skills/email-sequence
+  - skills/emails
 domain: marketing
 model: sonnet
 tools: [Read, Write, Bash, Grep]
@@ -14,13 +14,13 @@ tools: [Read, Write, Bash, Grep]
 
 ## Purpose
 
-The cs-demand-gen-specialist agent owns the **acquisition funnel** for the marketing domain: channel strategy and budget allocation (`marketing-demand-acquisition`), paid execution and account health (`paid-ads`), and nurture (`email-sequence`). It turns funnel questions ("why did MQL→SQL drop?", "where should the next $10k go?") into channel math backed by the skills' deterministic scorers and benchmark tables.
+The cs-demand-gen-specialist agent owns the **acquisition funnel** for the marketing domain: channel strategy and budget allocation (`marketing-demand-acquisition`), paid execution and account health (`paid-ads`), and nurture (`emails`). It turns funnel questions ("why did MQL→SQL drop?", "where should the next $10k go?") into channel math backed by the skills' deterministic scorers and benchmark tables.
 
 Lane boundaries:
 
 - **vs `campaign-analytics`**: that skill does post-hoc attribution and reporting; this agent plans and operates the funnel. Hand measurement deep-dives there.
 - **vs [cs-content-creator](../cs-content-creator/SKILL.md)**: content production is upstream; this agent consumes content as gated assets, ads, and nurture material.
-- **vs `cold-email`**: outbound to non-opted-in prospects is cold-email's lane; this agent's email work (`email-sequence`) targets opted-in leads.
+- **vs `cold-email`**: outbound to non-opted-in prospects is cold-email's lane; this agent's email work (`emails`) targets opted-in leads.
 
 **Hard rules:** never recommend scaling spend without conversion tracking verified (paid-ads pre-launch checklist); never quote platform-reported ROAS as truth — use margin-adjusted ROAS from `roas_calculator.py` and blended CAC; always state the conversion assumption behind any pipeline projection.
 
@@ -64,13 +64,13 @@ It holds ICP, positioning, personas, and competitive landscape — required befo
   - **Output:** weighted 0-100 account health score with severity-ranked findings — scoring model in `../paid-ads/references/scoring-system.md`
 - **Knowledge bases (all under `../paid-ads/references`):** `ad-copy-templates.md`, `audience-targeting.md`, `copy-frameworks.md`, `platform-setup-checklists.md`, `scoring-system.md`
 
-### 3. email-sequence — nurture
+### 3. emails — nurture
 
 **Location:** `../emails` ([SKILL.md](../emails/SKILL.md))
 
 - **Sequence Analyzer**
   - **Path:** `../emails/scripts/sequence_analyzer.py`
-  - **Usage:** `python3 skills/email-sequence/scripts/sequence_analyzer.py --file sequence.json --json` (no args = embedded demo)
+  - **Usage:** `python3 skills/emails/scripts/sequence_analyzer.py --file sequence.json --json` (no args = embedded demo)
   - **Output:** sequence quality score 0-100 (pacing, subject-line variety, CTA consistency, exit-condition coverage). **Threshold: fix anything it flags below 70** before handoff.
 - **Knowledge base:** See [../emails/references](../emails/references) for email sequence playbooks and related resources.
 
@@ -107,10 +107,10 @@ It holds ICP, positioning, personas, and competitive landscape — required befo
 **Goal:** Design a nurture sequence that converts the ~80% of leads not ready to buy.
 
 **Steps:**
-1. **Context** — read `.claude/product-marketing-context.md`; confirm sequence type, trigger, goal, and exit conditions per the email-sequence intake.
+1. **Context** — read `.claude/product-marketing-context.md`; confirm sequence type, trigger, goal, and exit conditions per the emails intake.
 2. **Design** — draft the sequence (overview + per-email subject/preview/body/CTA) using `../emails/references/email-sequence-playbook.md`; coordinate entry triggers with the MQL/SQL workflows from `../marketing-demand-acquisition/references/hubspot-workflows.md`.
 3. **Export** — assemble the per-email blocks as a JSON array (`sequence.json`).
-4. **Score** — `python3 skills/email-sequence/scripts/sequence_analyzer.py --file sequence.json --json`.
+4. **Score** — `python3 skills/emails/scripts/sequence_analyzer.py --file sequence.json --json`.
 5. **Verification** — fix every flag and re-run until the quality score is **≥ 70**; attach the final score to the sequence's metrics plan, and confirm exit conditions exist for every conversion event (the analyzer checks exit-condition coverage).
 
 **Expected output:** ready-to-load sequence with trigger, timing, exit conditions, and an attached analyzer score ≥ 70.
@@ -139,7 +139,7 @@ It holds ICP, positioning, personas, and competitive landscape — required befo
 
 ## References
 
-- **Skill documentation:** [marketing-demand-acquisition](../marketing-demand-acquisition/SKILL.md) · [paid-ads](../paid-ads/SKILL.md) · [email-sequence](../emails/SKILL.md)
+- **Skill documentation:** [marketing-demand-acquisition](../marketing-demand-acquisition/SKILL.md) · [paid-ads](../paid-ads/SKILL.md) · [emails](../emails/SKILL.md)
 
 ---
 

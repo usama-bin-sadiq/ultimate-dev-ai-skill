@@ -30,7 +30,27 @@ INLINE = re.compile(r"`[^`\n]*`")
 LINK = re.compile(r"\[[^\]]*\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
 # A bare invocation path: appears in prose or a code line as skills/<...>/file.ext
 SCRIPT_REF = re.compile(r"(?<![A-Za-z0-9_./-])(skills/[A-Za-z0-9_][A-Za-z0-9_./-]*\.(?:py|sh|md|json|ya?ml|txt|tgz|svg|png|html|csv))")
-PLACEHOLDER = re.compile(r"[<>]|\.\.\.|\\\$\{|\$[A-Z_]{3,}")
+# A target containing a placeholder is a template slot, not a dead link:
+# `chapters/ch01-<slug>.md` is meant to be filled in by whatever copies the
+# template, and `skills/path/SKILL.md` documents a shape rather than a file.
+# These are reported as `unresolved` for a human to judge, never as broken.
+#
+# The `${...}` form is the one that matters and it did not match. The old
+# pattern had `\\\$\{`, an ESCAPED dollar, so it required a literal backslash
+# before `${` -- which no path in the tree contains. Every
+# `${CLAUDE_SKILL_DIR}/...` and `${CLAUDE_PLUGIN_ROOT}/...` reference was
+# therefore resolved against disk, found missing, and reported as a broken
+# link, when it is a runtime variable the host substitutes before reading the
+# file. The bare `\$[A-Z_]{3,}` alternative could not catch these either: it
+# stops at the `{`.
+PLACEHOLDER = re.compile(r"[<>]|\.\.\.|\$\{[^}]*\}|\$[A-Z_][A-Z0-9_]*")
+
+# Prose that a markdown link regex can pick up when a document uses
+# `[text](URL)` or writes a bare token as the link target. These are not paths,
+# so resolving them against the filesystem only ever produces noise.
+NON_PATH_TARGET = re.compile(
+    r"(?i)\A(?:url|uri|link|href|src|path|name|title|image|img|file|here|target)\Z"
+)
 
 EXTS = {".md", ".py", ".sh", ".json", ".yaml", ".yml", ".txt", ".svg", ".png", ".csv"}
 
@@ -66,6 +86,8 @@ def main() -> int:
         for target in LINK.findall(clean):
             t = target.split("#")[0].strip()
             if not t or t.startswith(("http://", "https://", "mailto:", "#")):
+                continue
+            if NON_PATH_TARGET.match(t):
                 continue
             if PLACEHOLDER.search(t):
                 unresolved.setdefault(doc, set()).add(t)

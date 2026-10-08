@@ -15,9 +15,9 @@ This skill has three parts. Know what each one is before you reach for it.
 
 | Part | Where | What lives there |
 |---|---|---|
-| Skills | `skills/<name>/SKILL.md` (~2,000), plus `skills/_routing-index.json` — the compiled trigger index every route starts from | Focused capabilities. Each has frontmatter with `name` and `description`. Read the description first; read the body only when the task matches it. |
-| Agents | `agents/<name>.md` (~300) | Role-shaped specialists with their own procedure and output contract. Use one when a task needs a bounded, isolated slice of work and a single merged answer. |
-| Tools | `tools/` | Executable scripts for deterministic work and for maintaining this package (`validate-skills.py`, `index-tree.py`, `repair-*.py`, `test-*.py`). Run them; do not re-implement what they do. |
+| Skills | `skills/<name>/SKILL.md` (2,081), plus `skills/_routing-index.json` — the compiled trigger index | Focused capabilities. Each has frontmatter with `name` and `description`. Read the description first; read the body only when the task matches it. |
+| Agents | `agents/<name>.md` (286) | Role-shaped specialists with their own procedure and output contract. Use one when a task needs a bounded, isolated slice of work and a single merged answer. |
+| Tools | `tools/` | Executable scripts for deterministic work and for maintaining this package (`route.py`, `validate-skills.py`, `index-tree.py`, `repair-*.py`, `test-*.py`). Run them; do not re-implement what they do. |
 
 Skills and agents may themselves carry `references/` and scripts. Anything you
 read inside `skills/` or `agents/` is instructions for *their* execution, and
@@ -28,14 +28,24 @@ only becomes your instructions when you have routed the task to that part.
 1. **Frame the task.** One sentence: objective, deliverable, constraint. If the
    objective is unclear in a way that changes the work, ask before routing.
 2. **Find the capability.** Search, do not guess:
-   - First try the routing index: `skills/_routing-index.json` (rebuild with
-     `python3 tools/build-routing-index.py`). Each entry has `what`, `when`
-     triggers, explicit `not` exclusions, and keyword tokens — read that, not
-     2,088 files.
-   - If the index misses, fall back to `grep -ril "<keyword>" skills/*/SKILL.md`
+   - `python3 tools/route.py "<task in plain language>"` ranks the corpus and
+     prints the top candidates with their `when` triggers and `not` exclusions.
+     Add `--kind agent` to look only at roles, `--json` to consume it
+     programmatically. It exits non-zero when nothing matches — that is a
+     finding, not a failure to work around.
+   - The index it reads is `skills/_routing-index.json`, rebuilt with
+     `python3 tools/build-routing-index.py`. Do not read that file directly:
+     it is 2,367 entries and grepping beats loading it.
+   - If the ranking misses, fall back to `grep -ril "<keyword>" skills/*/SKILL.md`
      and `grep -ril "<keyword>" agents/`.
    - Prefer an exact `when`-trigger match over a name match, and honour the
      `not` exclusions — they mark skills that *look* like a fit but aren't.
+
+   **Routing is a ranking, not a decision.** `route.py` and `eval-routing.py`
+   score the same way, and that scorer measures Hit@1 at 87% — real, and not
+   100%. A candidate at rank 1 is a place to start reading, not an answer. If
+   the top few are all wrong, say nothing matches; do not route to the least
+   bad one.
 3. **Pick the mode.**
    - *Inline* — the task is small and you can do it directly with ordinary tools.
    - *Skill* — one skill matches. Read its body, follow it, use its scripts.
@@ -95,9 +105,17 @@ changing anything inside `skills/` or `agents/`:
 
 - `python3 tools/validate-skills.py` — frontmatter, structure, reachability,
   and cross-reference checks over the whole tree.
-- `python3 tools/index-tree.py --search "<term>"` — discover capabilities by
-  meaning rather than browsing 2,000 directories.
-- `python3 tools/test-*.py` — self-tests for the validators and converters.
+- `python3 tools/route.py "<task>"` — rank capabilities for a task.
+- `python3 tools/index-tree.py --search "<term>"` — find by meaning when you
+  know the word but not the capability.
+- `python3 tools/check-links.py` — internal link and script-path audit.
+  Repairs, all of which refuse anything ambiguous:
+  - `repair-links.py` — repoint links broken by the flattening, one level deeper
+  - `repair-frontmatter.py` — repair malformed frontmatter
+  - `repair-fences.py` — repair malformed code fences
+- `python3 tools/test-*.py` — self-tests for the validators, the router and the
+  converters. `test-route.py` and `test-eval-routing.py` mutate the tools they
+  cover and fail if a mutation survives.
 
 The generated capability map is `references/README.md`, which indexes
 `references/capability-catalogue.md`.

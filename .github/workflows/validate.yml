@@ -45,8 +45,31 @@ jobs:
         run: python ultimate-dev/evals/selftest_tasks.py
       - name: No phantom collection prefixes
         run: python ultimate-dev/tools/normalize-collection-refs.py --check
+      # Report-only, and the volume is why. Of the 172 remaining findings, the
+      # large majority are skills documenting a script or a document that was
+      # never written -- `skills/pylabrobot/scripts/validate_manifest.py` and
+      # three sibling CLIs are the clearest case: that skill has no scripts/
+      # directory at all, and 464 skills reference a scripts/ path. Closing
+      # that means writing the corpus or deleting the claims, which is a
+      # content decision rather than a link repair, so the check reports and
+      # does not gate.
+      #
+      # The two classes it used to report wrongly are fixed in the tool: a
+      # `${CLAUDE_SKILL_DIR}` runtime variable and a bare `URL` in prose. Both
+      # were resolved against disk and called broken, when neither is a path.
       - name: Internal references (report only)
         run: python ultimate-dev/tools/check-links.py --quiet || true
+      # The dispatcher and the measurement of the dispatcher must not drift, so
+      # both self-tests gate. Each mutates the tool it covers and fails if the
+      # mutation survives, which is the only way to know a check can fail.
+      - name: Router self-tests
+        run: |
+          python ultimate-dev/tools/test-eval-routing.py
+          python ultimate-dev/tools/test-route.py
+
+      # Routing quality is report-only. 87% Hit@1 is real and not 100%, and
+      # routing decides suggestions rather than gating a release; a floor here
+      # would turn a corpus that grows noisier into a build that cannot pass.
       - name: Routing eval (report only)
         run: python ultimate-dev/tools/eval-routing.py || true
       - name: Sibling imports resolve
