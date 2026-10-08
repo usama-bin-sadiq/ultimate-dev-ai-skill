@@ -44,6 +44,31 @@ STOP = set(
 
 WEIGHTS = {"name": 3, "when": 2, "body": 2, "description": 1}
 
+# Role words every composio stub ends in. They identify the shape of the
+# entry, not the product, so a query containing one must not admit the stub.
+GENERIC_SEGMENTS = frozenset(
+    "api automation automate mcp tools tool cli sdk connector integration "
+    "plugin agent".split()
+)
+
+
+def product_tokens(name):
+    """The identifying words in a composio stub's name.
+
+    This was `name.split("-")[0]`, which is wrong for any product whose name
+    starts with a word the tokenizer drops or treats as filler. It reduced
+    "the-odds-api-automation" to "the", a stopword present in no query, so
+    that one entry could never be admitted no matter what was asked -- the
+    gate excluded the correct answer with no way to observe it.
+
+    Taking every non-generic segment instead admits the stub on its actual
+    product word: "the-odds-api-automation" on "odds", "api-bible-automation"
+    on "bible". Generic suffixes are excluded so a query mentioning only "api"
+    still cannot open the gate to all 742 stubs.
+    """
+    return {seg for seg in name.lower().split("-")
+            if len(seg) > 2 and seg not in STOP and seg not in GENERIC_SEGMENTS}
+
 
 def toks(text):
     """Tokenise for overlap.
@@ -69,8 +94,8 @@ def score_entry(e, qt, cache):
     # near-identical, so 742 of them will out-score a real skill on any query
     # mentioning a word they all share. Require the query to name the product.
     if e.get("family") == "composio":
-        product = e["name"].split("-")[0]
-        if product not in qt and "automate" not in qt and "composio" not in qt:
+        if not (qt & product_tokens(e["name"])) \
+                and "automate" not in qt and "composio" not in qt:
             return None
 
     path = entry_path(e)

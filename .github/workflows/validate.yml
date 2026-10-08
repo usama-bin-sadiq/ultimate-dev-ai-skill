@@ -67,9 +67,11 @@ jobs:
           python ultimate-dev/tools/test-eval-routing.py
           python ultimate-dev/tools/test-route.py
 
-      # Routing quality is report-only. 87% Hit@1 is real and not 100%, and
-      # routing decides suggestions rather than gating a release; a floor here
-      # would turn a corpus that grows noisier into a build that cannot pass.
+      # Routing quality is reported on two sets: the one the scorer was
+      # developed against, and one written afterwards and never tuned against.
+      # Both are printed because the tuned number alone is misleading -- a
+      # scorer can be walked to 100% on a fixed 60-query set without improving
+      # routing at all. The gap was 18 points when the held-out set was added.
       - name: Routing eval (report only)
         run: python ultimate-dev/tools/eval-routing.py || true
       - name: Sibling imports resolve

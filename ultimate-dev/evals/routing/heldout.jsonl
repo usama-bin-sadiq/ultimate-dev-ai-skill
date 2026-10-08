@@ -1,0 +1,30 @@
+{"query": "why is my deploy pipeline slow", "expect": ["senior-devops", "devops-engineer"], "not_expect": []}
+{"query": "set up github actions for a node project", "expect": ["ci-cd-pipeline-builder", "automation-recommender"], "not_expect": []}
+{"query": "refactor this python module for readability", "expect": ["code-simplification", "deslop", "ultra-review"], "not_expect": []}
+{"query": "add dark mode to my react app", "expect": ["ui-styling", "web-styling", "minimalist-skill"], "not_expect": []}
+{"query": "write unit tests for my express server", "expect": ["senior-qa", "tdd-guide", "test-driven-development"], "not_expect": []}
+{"query": "migrate postgres to a new schema", "expect": ["database-designer", "database-schema-designer", "sql-database-assistant"], "not_expect": []}
+{"query": "the page loads slowly on mobile", "expect": ["performance-profiler", "performance-optimization", "page-cro"], "not_expect": []}
+{"query": "scrape prices from a website", "expect": ["universal-scraping-architect", "firecrawl-automation", "scrape"], "not_expect": []}
+{"query": "audit my dependencies for vulnerabilities", "expect": ["dependency-auditor", "security-and-hardening"], "not_expect": []}
+{"query": "containerise this application", "expect": ["docker-development"], "not_expect": []}
+{"query": "design a rest api for my service", "expect": ["senior-backend", "api-and-interface-design", "api-design-reviewer"], "not_expect": []}
+{"query": "review a pull request", "expect": ["review", "code-review-and-quality", "pr-review-expert"], "not_expect": []}
+{"query": "generate sql from a schema", "expect": ["sql-database-assistant"], "not_expect": []}
+{"query": "set up error tracking", "expect": ["sentry"], "not_expect": []}
+{"query": "reduce my bundle size", "expect": ["performance-optimization", "vercel-optimize", "performance-profiler"], "not_expect": []}
+{"query": "write a technical spec for a feature", "expect": ["spec", "spec-driven-workflow", "prd"], "not_expect": []}
+{"query": "keep secrets out of my repo", "expect": ["env-secrets-manager"], "not_expect": []}
+{"query": "validate a json schema", "expect": ["api-and-interface-design", "schema-markup"], "not_expect": []}
+{"query": "test a browser flow end to end", "expect": ["pw", "playwright", "pw-init", "browser-testing-with-devtools"], "not_expect": []}
+{"query": "analyse a large dataframe fast", "expect": ["polars", "vaex", "dask"], "not_expect": []}
+{"query": "build an mcp server in typescript", "expect": ["mcp-server-builder", "build-mcp-server", "build-mcp-app"], "not_expect": []}
+{"query": "make an image from a prompt", "expect": ["imagegen", "generate-image", "image"], "not_expect": []}
+{"query": "audit a web page for accessibility", "expect": ["a11y-audit", "web-design-guidelines", "ui-ux-pro-max"], "not_expect": []}
+{"query": "write release notes for my users", "expect": ["changelog-generator"], "not_expect": []}
+{"query": "take a screenshot of my running app", "expect": ["screenshot", "agent-browser", "browse"], "not_expect": []}
+{"query": "profile a binary for hotspots", "expect": ["performance-profiler"], "not_expect": []}
+{"query": "bump the version and tag a release", "expect": ["senior-devops", "ship-gate", "release-management"], "not_expect": []}
+{"query": "convert a notebook to a web app", "expect": ["jupyter-notebook", "design-html"], "not_expect": []}
+{"query": "run a multi agent experiment", "expect": ["agent-harness", "agenthub", "arena", "autoresearch-agent"], "not_expect": []}
+{"query": "why is my bundle so big in vite", "expect": ["vercel-optimize", "performance-optimization"], "not_expect": []}

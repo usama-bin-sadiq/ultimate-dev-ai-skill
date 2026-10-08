@@ -93,6 +93,41 @@ name = "omnisend-automation"
 score_name = 3 * len(er.toks("omnisend automation") & er.toks(name))
 case("name overlap is non-zero for a hyphenated skill", score_name > 0, True)
 
+# The composio product gate. It read `name.split("-")[0]`, which reduced
+# "the-odds-api-automation" to "the" -- a stopword no query contains -- so that
+# entry was excluded from every possible query and the correct answer could
+# never surface. One entry, and the miss was structurally invisible.
+GENERIC = {"api", "automation", "automate", "mcp", "tools", "tool",
+           "cli", "sdk", "connector", "integration", "plugin", "agent"}
+
+
+def product(n):
+    return {s for s in n.lower().split("-")
+            if len(s) > 2 and s not in er.STOP and s not in GENERIC}
+
+
+case("multi-word product is reachable",
+     bool(er.toks("the odds api automation") & product("the-odds-api-automation")),
+     True)
+
+# A query naming only a generic suffix must not open the gate, or all 742
+# composio stubs flood the ranking and the gate has stopped gating. "api" is
+# the generic suffix here and "bible" is the product word, so a query that
+# mentions api and not bible must be refused.
+case("generic suffixes do not open the gate",
+     bool(er.toks("add oauth to my api") & product("api-bible-automation")), False)
+case("product words do open the gate",
+     bool(er.toks("bible api automation") & product("api-bible-automation")), True)
+
+# The eval must refuse to report a single number. A scorer walked to 100% on a
+# fixed corpus is indistinguishable from one that actually routes well; only a
+# held-out set tells them apart.
+src = (ROOT / "tools" / "eval-routing.py").read_text(encoding="utf-8")
+case("eval reports both corpora",
+     "heldout.jsonl" in src and "held out" in src, True)
+case("eval gates on the held-out score",
+     "held[0] <" in src, True)
+
 if failures:
     print(f"\n{len(failures)} case(s) failed", file=sys.stderr)
     sys.exit(1)
