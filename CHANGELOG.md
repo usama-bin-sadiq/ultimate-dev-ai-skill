@@ -1,5 +1,9 @@
 # Changelog
 
+## [4.0.46] — 2026-10-09
+
+- fix(ci): stop cancelling the check whose verdict you need
+
 ## [4.0.45] — 2026-10-08
 
 - fix(router): a stopword excluded one skill from every possible query
