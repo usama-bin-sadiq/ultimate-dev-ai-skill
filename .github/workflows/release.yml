@@ -526,12 +526,29 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
+          # Validate is never cancelled. It is the check whose verdict you
+          # actually need when something breaks, and it is the longest job in
+          # the pipeline, so cancelling it saves the least and costs the most:
+          # the run is left `cancelled`, which reads as "something went wrong"
+          # without saying what, and the validation evidence is simply gone.
+          #
+          # Nine of the Validate runs in this repository's history ended
+          # `cancelled` rather than reporting a verdict. This loop is what did
+          # that. Saving a few runner-minutes is not worth destroying the only
+          # signal that distinguishes a bad tree from a bad release.
+          #
+          # Everything else still gets cancelled, which is the fail-fast the
+          # job exists for.
           for status in queued in_progress; do
             gh api "repos/${{ github.repository }}/actions/runs?head_sha=${{ github.sha }}&status=${status}" \
-              --jq '.workflow_runs[].id' | while read -r id; do
+              --jq '.workflow_runs[] | "\(.id)\t\(.name)"' | while IFS=$'\t' read -r id name; do
                 [ -z "$id" ] && continue
                 [ "$id" = "${{ github.run_id }}" ] && continue
-                echo "cancelling run ${id}"
+                if [ "$name" = "Validate" ]; then
+                  echo "leaving run ${id} (${name}) running; it is the verdict"
+                  continue
+                fi
+                echo "cancelling run ${id} (${name})"
                 gh api -X POST "repos/${{ github.repository }}/actions/runs/${id}/cancel"
               done
           done
