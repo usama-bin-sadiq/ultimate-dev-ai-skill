@@ -1,6 +1,10 @@
 ---
 name: ultimate-dev
-description: "General-purpose execution skill. Use when a task needs the right capability located and applied: code changes, research, documents, data work, or multi-step projects. It owns routing and verification discipline; each skill/, agent/, or tool/ it points to owns the actual work."
+description: "A comprehensive software engineering skill for routing, orchestrating, and managing complex tasks across departments and agencies."
+metadata:
+  type: skill
+  version: 3.0.0
+  tags: [routing, orchestration, software-engineering, multi-department, mcp]
 ---
 
 # ultimate-dev
@@ -55,6 +59,9 @@ only becomes your instructions when you have routed the task to that part.
    - *Compose* — two skills in sequence: the first produces an artifact the
      second consumes. Run them in order; a merged "do both" instruction is not
      composition.
+   - *Orchestrate* — for complex tasks spanning departments or agencies, use
+     this mode to coordinate multiple skills/agents with dependency management,
+     parallel execution when safe, and result aggregation.
 4. **Execute, using the capability's own instructions.** Do not approximate a
    skill from memory. Do not claim an agent did work you did not invoke.
 5. **Verify before reporting.** Run whatever the underlying skill, agent, or
@@ -98,27 +105,100 @@ Nothing matches?                           → say so; do not force a fit
 When two parts both claim a task, the more specific description wins. When in
 doubt, prefer the skill — agents are for isolation, skills are for expertise.
 
-## Maintaining this package
+## MCP Multi-Channel Processing
 
-The tools in `tools/` exist so the package stays honest. Run them after
-changing anything inside `skills/` or `agents/`:
+### When to Use MCP
+Use multi-channel processing when a task naturally decomposes into independent
+sub-tasks that can run in parallel across different skills, agents, or departments.
+Examples:
+- HR + financial + technical evaluation of a vendor request
+- Simultaneous bug diagnosis across multiple subsystems
+- Parallel code review and security audit
 
-- `python3 tools/validate-skills.py` — frontmatter, structure, reachability,
-  and cross-reference checks over the whole tree.
-- `python3 tools/route.py "<task>"` — rank capabilities for a task.
-- `python3 tools/index-tree.py --search "<term>"` — find by meaning when you
-  know the word but not the capability.
-- `python3 tools/check-links.py` — internal link and script-path audit.
-  Repairs, all of which refuse anything ambiguous:
-  - `repair-links.py` — repoint links broken by the flattening, one level deeper
-  - `repair-frontmatter.py` — repair malformed frontmatter
-  - `repair-fences.py` — repair malformed code fences
-- `python3 tools/test-*.py` — self-tests for the validators, the router and the
-  converters. `test-route.py` and `test-eval-routing.py` mutate the tools they
-  cover and fail if a mutation survives.
+### MCP Rules
+1. **Independence Check**: Only parallelize tasks that are genuinely independent
+   and do not interfere with each other. If tasks share state, dependencies, or
+   output format requirements, use sequential composition instead.
+2. **Resource Limits**: Respect resource limits to avoid overloading the system.
+   Do not spawn more parallel tasks than the system can handle.
+3. **Result Aggregation**: Collect and unify results from all channels into a
+   coherent output. Do not leave partial results unmerged.
+4. **Independence Verification**: Before launching parallel channels, verify
+   that no channel's output depends on another channel's output.
 
-The generated capability map is `references/README.md`, which indexes
-`references/capability-catalogue.md`.
+### MCP Execution Pattern
+```
+Task → Decompose → Independence Check → Launch Parallel Channels → Aggregate Results → Unified Output
+```
 
-When you add a capability, create it under `skills/` (procedure) or `agents/`
-(role), with frontmatter, and let the validator tell you what you forgot.
+## Orchestration Mode
+
+### When to Use Orchestration
+Use orchestration mode for complex tasks that involve multiple steps, dependencies,
+or require coordination across skills/agents. Examples:
+- Full software development lifecycle (spec → design → implementation → test → deploy)
+- Multi-department vendor evaluation (HR screens + financial due diligence + technical review)
+- Agency project delivery (discovery → design → build → handoff)
+
+### Orchestration Rules
+1. **Dependency Mapping**: Map all task dependencies before execution. Ensure
+   tasks are executed in the correct order.
+2. **Bounded Retries**: Each task step gets a maximum of 3 retries before
+   escalation. Do not infinite-loop on failing steps.
+3. **Escalation Protocol**: If a step fails after retries, escalate to human
+   review rather than silently failing or producing garbage output.
+4. **Progressive Disclosure**: Report intermediate results as they complete,
+   but do not claim final completion until all steps pass verification.
+
+### Orchestration Execution Pattern
+```
+Task → Decompose → Map Dependencies → Execute Sequential with Controlled Parallel → Aggregate → Verify → Report
+```
+
+## Why This Matters
+
+### Common Failure Modes (And How We Avoid Them)
+
+| Symptom | Root Cause | Fix |
+|---|---|---|
+| "I'm unable to do it" at the end | Task decomposition failed; no skill/agent claimed the full task | Orchestration mode maps all dependencies before execution; if no single capability covers the full task, compose multiple skills in sequence |
+| Token burn / endless looping | No retry limits; parallel tasks without independence checks | MCP independence check (max 3 retries per step); orchestration bounded retries (3 per step) |
+| Poor quality work | Verification skipped; only one check at the end | Verify before reporting (step 5); progressive disclosure in orchestration |
+| Confusion about what to do | No clear mode selection; routing picks wrong capability | Picking well short version at top of doc; explicit Orchestrate/MCP/Compose/Inline modes |
+| Departments/agencies not handled | Skill only knows singular path; no cross-department coordination | Orchestration mode explicitly handles multi-department tasks with dependency mapping; MCP coordinates independent channels across departments |
+
+## Department/Agency Support
+
+### How This Skill Handles Departments
+
+**Software Companies (HR, Financial, Technical departments):**
+- HR: Skills for candidate evaluation, offer generation, policy compliance
+- Financial: Skills for budget analysis, cost-benefit review, payment processing
+- Technical: Skills for architecture review, code quality assessment, security audit
+
+**Software Agencies (Solution-focused teams):**
+- Discovery: Requirements gathering, client interview, scope definition
+- Design: Architecture, UI/UX, system design
+- Build: Development, integration, QA
+- Deploy: CI/CD, production rollout, monitoring
+- Hand-off: Documentation, training, support hand-off
+
+### Cross-Department Task Example
+```
+Task: "Evaluate a new CRM solution for our mid-market sales team"
+
+1. Orchestrate mode maps dependencies:
+   - HR must screen for team size/compatibility (before technical eval)
+   - Financial must do cost-benefit analysis (parallel with HR, after scope definition)
+   - Technical must assess integration requirements (parallel with financial, after scope definition)
+
+2. MCP coordinates independent channels:
+   - Channel 1: HR evaluation (culture add, hiring impact)
+   - Channel 2: Financial analysis (ROI, TCO, payment terms)
+   - Channel 3: Technical assessment (API compatibility, data migration, security)
+
+3. Result aggregation produces unified output:
+   - Recommendation with HR, Financial, and Technical scores
+   - Risk factors from each department
+   - Go/no-go recommendation with supporting evidence
+```

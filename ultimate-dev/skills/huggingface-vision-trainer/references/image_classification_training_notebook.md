@@ -124,7 +124,7 @@ To apply the preprocessing function over the entire dataset, use 🤗 Datasets [
 >>> food = food.with_transform(transforms)
 ```
 
-Now create a batch of examples using [DefaultDataCollator](/docs/transformers/v5.2.0/en/main_classes/data_collator#transformers.DefaultDataCollator). Unlike other data collators in 🤗 Transformers, the `DefaultDataCollator` does not apply additional preprocessing such as padding.
+Now create a batch of examples using [DefaultDataCollator](https://huggingface.co/docs/transformers/v5.2.0/en/main_classes/data_collator#transformers.DefaultDataCollator). Unlike other data collators in 🤗 Transformers, the `DefaultDataCollator` does not apply additional preprocessing such as padding.
 
 ```py
 >>> from transformers import DefaultDataCollator
@@ -159,9 +159,9 @@ Your `compute_metrics` function is ready to go now, and you'll return to it when
 
 ## Train
 
-If you aren't familiar with finetuning a model with the [Trainer](/docs/transformers/v5.2.0/en/main_classes/trainer#transformers.Trainer), take a look at the basic tutorial [here](https://huggingface.co/docs/transformers/v5.2.0/en/training#train-with-pytorch-trainer)!
+If you aren't familiar with finetuning a model with the [Trainer](https://huggingface.co/docs/transformers/v5.2.0/en/main_classes/trainer#transformers.Trainer), take a look at the basic tutorial [here](https://huggingface.co/docs/transformers/v5.2.0/en/training#train-with-pytorch-trainer)!
 
-You're ready to start training your model now! Load ViT with [AutoModelForImageClassification](/docs/transformers/v5.2.0/en/model_doc/auto#transformers.AutoModelForImageClassification). Specify the number of labels along with the number of expected labels, and the label mappings:
+You're ready to start training your model now! Load ViT with [AutoModelForImageClassification](https://huggingface.co/docs/transformers/v5.2.0/en/model_doc/auto#transformers.AutoModelForImageClassification). Specify the number of labels along with the number of expected labels, and the label mappings:
 
 ```py
 >>> from transformers import AutoModelForImageClassification, TrainingArguments, Trainer
@@ -176,9 +176,9 @@ You're ready to start training your model now! Load ViT with [AutoModelForImageC
 
 At this point, only three steps remain:
 
-1. Define your training hyperparameters in [TrainingArguments](/docs/transformers/v5.2.0/en/main_classes/trainer#transformers.TrainingArguments). It is important you don't remove unused columns because that'll drop the `image` column. Without the `image` column, you can't create `pixel_values`. Set `remove_unused_columns=False` to prevent this behavior! The only other required parameter is `output_dir` which specifies where to save your model. You'll push this model to the Hub by setting `push_to_hub=True` (you need to be signed in to Hugging Face to upload your model). At the end of each epoch, the [Trainer](/docs/transformers/v5.2.0/en/main_classes/trainer#transformers.Trainer) will evaluate the accuracy and save the training checkpoint.
-2. Pass the training arguments to [Trainer](/docs/transformers/v5.2.0/en/main_classes/trainer#transformers.Trainer) along with the model, dataset, tokenizer, data collator, and `compute_metrics` function.
-3. Call [train()](/docs/transformers/v5.2.0/en/main_classes/trainer#transformers.Trainer.train) to finetune your model.
+1. Define your training hyperparameters in [TrainingArguments](https://huggingface.co/docs/transformers/v5.2.0/en/main_classes/trainer#transformers.TrainingArguments). It is important you don't remove unused columns because that'll drop the `image` column. Without the `image` column, you can't create `pixel_values`. Set `remove_unused_columns=False` to prevent this behavior! The only other required parameter is `output_dir` which specifies where to save your model. You'll push this model to the Hub by setting `push_to_hub=True` (you need to be signed in to Hugging Face to upload your model). At the end of each epoch, the [Trainer](https://huggingface.co/docs/transformers/v5.2.0/en/main_classes/trainer#transformers.Trainer) will evaluate the accuracy and save the training checkpoint.
+2. Pass the training arguments to [Trainer](https://huggingface.co/docs/transformers/v5.2.0/en/main_classes/trainer#transformers.Trainer) along with the model, dataset, tokenizer, data collator, and `compute_metrics` function.
+3. Call [train()](https://huggingface.co/docs/transformers/v5.2.0/en/main_classes/trainer#transformers.Trainer.train) to finetune your model.
 
 ```py
 >>> training_args = TrainingArguments(
@@ -213,7 +213,7 @@ At this point, only three steps remain:
 >>> trainer.train()
 ```
 
-Once training is completed, share your model to the Hub with the [push_to_hub()](/docs/transformers/v5.2.0/en/main_classes/trainer#transformers.Trainer.push_to_hub) method so everyone can use your model:
+Once training is completed, share your model to the Hub with the [push_to_hub()](https://huggingface.co/docs/transformers/v5.2.0/en/main_classes/trainer#transformers.Trainer.push_to_hub) method so everyone can use your model:
 
 ```py
 >>> trainer.push_to_hub()
@@ -234,7 +234,7 @@ Load an image you'd like to run inference on:
 
     
 
-The simplest way to try out your finetuned model for inference is to use it in a [pipeline()](/docs/transformers/v5.2.0/en/main_classes/pipelines#transformers.pipeline). Instantiate a `pipeline` for image classification with your model, and pass your image to it:
+The simplest way to try out your finetuned model for inference is to use it in a [pipeline()](https://huggingface.co/docs/transformers/v5.2.0/en/main_classes/pipelines#transformers.pipeline). Instantiate a `pipeline` for image classification with your model, and pass your image to it:
 
 ```py
 >>> from transformers import pipeline

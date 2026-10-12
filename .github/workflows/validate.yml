@@ -57,6 +57,14 @@ jobs:
       # The two classes it used to report wrongly are fixed in the tool: a
       # `${CLAUDE_SKILL_DIR}` runtime variable and a bare `URL` in prose. Both
       # were resolved against disk and called broken, when neither is a path.
+      # The checker is report-only on purpose -- the tree carries a real content
+      # gap (skills that promise bundled files nobody wrote) which is content
+      # work, not a regression, and must not redden the build. The checker's own
+      # classification still gates below, because a checker that has stopped
+      # telling broken from deliberate is worse than no checker: it would report
+      # the gap as clean.
+      - name: Link checker self-test
+        run: python ultimate-dev/tools/test-check-links.py
       - name: Internal references (report only)
         run: python ultimate-dev/tools/check-links.py --quiet || true
       # The dispatcher and the measurement of the dispatcher must not drift, so

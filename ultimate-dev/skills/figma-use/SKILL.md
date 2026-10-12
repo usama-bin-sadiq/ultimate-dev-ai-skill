@@ -234,16 +234,16 @@ You will see snippets throughout documentation here. These snippets contain usef
 
 Each file below is loaded on demand, not at triage. 19 file(s):
 
-- `references/api-reference.md` — Figma Plugin API Reference. > Part of the [usefigma skill](../SKILL.md).
-- `references/common-patterns.md` — Common Patterns. > Part of the [usefigma skill](../SKILL.md).
-- `references/component-patterns.md` — Component & Variant API Patterns. > Part of the [usefigma skill](../SKILL.md).
-- `references/effect-style-patterns.md` — Effect Style API Patterns. > Part of the [usefigma skill](../SKILL.md).
-- `references/gotchas.md` — Gotchas & Common Mistakes. > Part of the [usefigma skill](../SKILL.md).
-- `references/plugin-api-patterns.md` — Plugin API Patterns. > Part of the [usefigma skill](../SKILL.md).
+- `references/api-reference.md` — Figma Plugin API Reference. > Part of the [usefigma skill](./SKILL.md).
+- `references/common-patterns.md` — Common Patterns. > Part of the [usefigma skill](./SKILL.md).
+- `references/component-patterns.md` — Component & Variant API Patterns. > Part of the [usefigma skill](./SKILL.md).
+- `references/effect-style-patterns.md` — Effect Style API Patterns. > Part of the [usefigma skill](./SKILL.md).
+- `references/gotchas.md` — Gotchas & Common Mistakes. > Part of the [usefigma skill](./SKILL.md).
+- `references/plugin-api-patterns.md` — Plugin API Patterns. > Part of the [usefigma skill](./SKILL.md).
 - `references/plugin-api-standalone.index.md` — Plugin API Index. > Full typings: plugin-api-standalone.d.ts (11,292 lines)
-- `references/text-style-patterns.md` — Text Style API Patterns. > Part of the [usefigma skill](../SKILL.md).
-- `references/validation-and-recovery.md` — Validation Workflow & Error Recovery. > Part of the [usefigma skill](../SKILL.md).
-- `references/variable-patterns.md` — Variable & Token API Patterns. > Part of the [usefigma skill](../SKILL.md).
+- `references/text-style-patterns.md` — Text Style API Patterns. > Part of the [usefigma skill](./SKILL.md).
+- `references/validation-and-recovery.md` — Validation Workflow & Error Recovery. > Part of the [usefigma skill](./SKILL.md).
+- `references/variable-patterns.md` — Variable & Token API Patterns. > Part of the [usefigma skill](./SKILL.md).
 - `references/working-with-design-systems/wwds-components--creating.md` — prose
 - `references/working-with-design-systems/wwds-components--using.md` — Working with design systems: Using Components. When using Figma components, you need to start by understanding the state of the source and the state of Figma.
 - `references/working-with-design-systems/wwds-components.md` — Components overlap a lot with the idea of components in a codebase, but with some gaps and other Figma-specific use cases.

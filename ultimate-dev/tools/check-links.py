@@ -52,6 +52,32 @@ NON_PATH_TARGET = re.compile(
     r"(?i)\A(?:url|uri|link|href|src|path|name|title|image|img|file|here|target)\Z"
 )
 
+# A deliberate cross-document reference, not a promise that this skill bundles
+# the target. Reported as its own bucket so the count of genuinely broken links
+# stays trustworthy.
+#
+# Two shapes qualify:
+#
+# 1. `chapters/chNN-<slug>.md` -- the book companion skills (deep-learning-book,
+#    spinning-up-deep-rl) index each chapter of a book they deliberately do NOT
+#    reproduce. Their own frontmatter says so: "It points at the official
+#    chapters -- it never reproduces them." The chapter files live in the book,
+#    not this repo, so resolving the path against disk correctly finds nothing
+#    and then wrongly counts a documented external pointer as breakage. This was
+#    the largest single source of false "broken" links.
+#
+# 2. A link inside a template asset (`*_template.md`, `*.template.md`) whose
+#    target is a bare `foo.md`. Templates describe the shape of a document
+#    generated later; the links stand in for "a file like this will exist" and
+#    are not navigation. Requiring the filename to sit in the *same* template
+#    (an index_template listing identidade.md) is the tell.
+#
+# A template link to a REAL bundled file elsewhere in the skill (a template that
+# genuinely links to ../references/real.md) is NOT excused -- only bare `foo.md`
+# targets inside a template are. Real navigation from a template is still checked.
+EXTERNAL_REF = re.compile(r"\Achapters/ch\d\d[-\w]*\.md\Z")
+TEMPLATE_FILE = re.compile(r"(?:^|/)[\w.-]*_?template\.md\Z", re.I)
+
 EXTS = {".md", ".py", ".sh", ".json", ".yaml", ".yml", ".txt", ".svg", ".png", ".csv"}
 
 
@@ -78,10 +104,12 @@ def main() -> int:
     broken_links: dict[Path, set[str]] = {}
     broken_paths: dict[Path, set[str]] = {}
     unresolved: dict[Path, set[str]] = {}
+    external: dict[Path, set[str]] = {}
 
     for doc in docs():
         raw = doc.read_text(errors="ignore")
         clean = strip_code(raw)
+        in_template = bool(TEMPLATE_FILE.search(str(doc)))
 
         for target in LINK.findall(clean):
             t = target.split("#")[0].strip()
@@ -91,6 +119,11 @@ def main() -> int:
                 continue
             if PLACEHOLDER.search(t):
                 unresolved.setdefault(doc, set()).add(t)
+                continue
+            # deliberate external pointers: book chapters the skill documents
+            # but does not reproduce, and bare `foo.md` slots inside a template
+            if EXTERNAL_REF.match(t) or (in_template and "/" not in t):
+                external.setdefault(doc, set()).add(t)
                 continue
             if t.startswith("/"):
                 cand = ROOT / t.lstrip("/")
@@ -112,11 +145,13 @@ def main() -> int:
     n_links = sum(len(v) for v in broken_links.values())
     n_paths = sum(len(v) for v in broken_paths.values())
     n_unres = sum(len(v) for v in unresolved.values())
+    n_ext = sum(len(v) for v in external.values())
 
     print(f"files scanned:        {len(docs())}")
     print(f"broken markdown links: {n_links} in {len(broken_links)} files")
     print(f"broken script paths:   {n_paths} in {len(broken_paths)} files")
     print(f"unresolved (judge me): {n_unres} in {len(unresolved)} files")
+    print(f"external (not bundled): {n_ext} in {len(external)} files")
 
     if not a.quiet:
         for label, table in (("broken link", broken_links), ("broken path", broken_paths)):
@@ -127,6 +162,10 @@ def main() -> int:
         if a.all:
             for f, targets in sorted(unresolved.items()):
                 print(f"\n  unresolved in {f.relative_to(ROOT)}")
+                for t in sorted(targets)[:12]:
+                    print(f"      {t}")
+            for f, targets in sorted(external.items()):
+                print(f"\n  external in {f.relative_to(ROOT)}")
                 for t in sorted(targets)[:12]:
                     print(f"      {t}")
 

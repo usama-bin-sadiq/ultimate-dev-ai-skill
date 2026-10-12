@@ -19,6 +19,9 @@ own instructions name.
 | `test-text-rules.py` | `text_rules.py` |
 | `test-marker-drift.py` | the unfilled-marker rule in `validate-skills.py` |
 | `test-workflow-auth.py` | `check-workflow-auth.py` |
+| `test-check-links.py` | `check-links.py` — pins the broken / external / unresolved classification |
+| `test-eval-routing.py` | `eval-routing.py` and `route.py` |
+| `test-route.py` | `route.py` |
 
 ## Search and index
 
@@ -37,7 +40,7 @@ own instructions name.
 | `split-oversized-skills.py` | Splits skills that exceed the size budget. |
 | `shorten-descriptions.py` | Trims descriptions that exceed the length budget. |
 | `merge-automation-pairs.py` | One-off merge of underscore-named duplicate skills. |
-| `check-links.py` | Reports broken internal references. Strips code fences before looking, so a parenthesised token in a sample is not mistaken for a link; separates broken targets from env/placeholder ones. Exit 1 if any broken. |
+| `check-links.py` | Reports broken internal references. Strips code fences before looking, so a parenthesised token in a sample is not mistaken for a link; separates broken targets from env/placeholder ones, and from deliberate external references (book chapters a companion skill documents but never reproduces, and bare `foo.md` slots inside template assets). Exit 1 if any genuinely broken. |
 | `normalize-collection-refs.py` | Rewrites `<upstream-collection>/skills/<name>` to this repo's flat `skills/<name>`, only when the target exists. Skips URLs and `~/.claude/skills/...` install paths. `--dry-run` to preview. |
 | `repair-links.py` | Repoints broken relative links that resolve uniquely elsewhere in the same skill. Refuses self-links, generic basenames (`SKILL.md`) and generator templates. `--dry-run` to preview. |
 | `run-task-eval.py` | Runs the task suite against real agent CLIs with and without the target skill, then grades with each task's verifier. Preflights every CLI so an unauthenticated one is reported instead of timing out 13 times. `--agent opencode,claude`, `--condition`, `--task`, `--list`. |

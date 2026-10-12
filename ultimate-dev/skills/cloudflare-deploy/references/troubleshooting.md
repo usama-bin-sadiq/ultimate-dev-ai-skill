@@ -117,10 +117,10 @@ Each file below is loaded on demand, not at triage. 306 file(s):
 - `./email-workers/gotchas.md` — Email Workers Gotchas. typescript
 - `./email-workers/patterns.md` — Email Workers Patterns. typescript
 - `./hyperdrive/README.md` — Hyperdrive. Accelerates database queries from Workers via connection pooling, edge setup, query caching.
-- `./hyperdrive/api.md` — API Reference. See [README.md](./README.md) for overview, [configuration.md](./configuration.md) for setup.
-- `./hyperdrive/configuration.md` — Configuration. See [README.md](./README.md) for overview.
-- `./hyperdrive/gotchas.md` — Gotchas. See [README.md](./README.md), [configuration.md](./configuration.md), [api.md](./api.md), [patterns.md](./patterns.md).
-- `./hyperdrive/patterns.md` — Patterns. See [README.md](./README.md), [configuration.md](./configuration.md), [api.md](./api.md).
+- `./hyperdrive/api.md` — API Reference. See [README.md](./hyperdrive/README.md) for overview, [configuration.md](./hyperdrive/configuration.md) for setup.
+- `./hyperdrive/configuration.md` — Configuration. See [README.md](./hyperdrive/README.md) for overview.
+- `./hyperdrive/gotchas.md` — Gotchas. See [README.md](./hyperdrive/README.md), [configuration.md](./hyperdrive/configuration.md), [api.md](./hyperdrive/api.md), [patterns.md](./hyperdrive/patterns.md).
+- `./hyperdrive/patterns.md` — Patterns. See [README.md](./hyperdrive/README.md), [configuration.md](./hyperdrive/configuration.md), [api.md](./hyperdrive/api.md).
 - `./images/README.md` — Cloudflare Images Skill Reference. Cloudflare Images is an end-to-end image management solution providing storage, transformation, optimization, and delivery at scale via Cloudflare's...
 - `./images/api.md` — API Reference. toml
 - `./images/configuration.md` — prose
