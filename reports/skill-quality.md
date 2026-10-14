@@ -1,7 +1,7 @@
 # Skill quality rubric
 
-- skills scored: 2081
-- mean score: 2.71 / 4
+- skills scored: 2092
+- mean score: 2.72 / 4
 
 ## Lowest scoring (needs work)
 - **0/4** — `anti-overengineering-audit`

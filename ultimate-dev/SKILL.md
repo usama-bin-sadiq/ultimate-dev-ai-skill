@@ -25,7 +25,9 @@ This skill has three parts. Know what each one is before you reach for it.
 
 Skills and agents may themselves carry `references/` and scripts. Anything you
 read inside `skills/` or `agents/` is instructions for *their* execution, and
-only becomes your instructions when you have routed the task to that part.
+only becomes your instructions when you have routed the task to that part. The
+package's own reference index is `references/README.md` — read it to orient
+before routing, never instead of routing.
 
 ## How to work a request
 

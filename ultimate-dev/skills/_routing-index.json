@@ -1,5 +1,5 @@
 {
- "count": 2367,
+ "count": 2378,
  "entries": [
   {
    "name": "21risk-automation",
@@ -42899,6 +42899,127 @@
     "tasks",
     "tools"
    ]
+  },
+  {
+   "name": "replica-architect",
+   "kind": "skill",
+   "family": "",
+   "path": "skills/replica-architect/SKILL.md",
+   "description": ">-",
+   "what": ">-",
+   "when": [],
+   "not": [],
+   "keywords": []
+  },
+  {
+   "name": "replica-backend",
+   "kind": "skill",
+   "family": "",
+   "path": "skills/replica-backend/SKILL.md",
+   "description": ">-",
+   "what": ">-",
+   "when": [],
+   "not": [],
+   "keywords": []
+  },
+  {
+   "name": "replica-brand",
+   "kind": "skill",
+   "family": "",
+   "path": "skills/replica-brand/SKILL.md",
+   "description": ">-",
+   "what": ">-",
+   "when": [],
+   "not": [],
+   "keywords": []
+  },
+  {
+   "name": "replica-build",
+   "kind": "skill",
+   "family": "",
+   "path": "skills/replica-build/SKILL.md",
+   "description": ">-",
+   "what": ">-",
+   "when": [],
+   "not": [],
+   "keywords": []
+  },
+  {
+   "name": "replica-deploy",
+   "kind": "skill",
+   "family": "",
+   "path": "skills/replica-deploy/SKILL.md",
+   "description": ">-",
+   "what": ">-",
+   "when": [],
+   "not": [],
+   "keywords": []
+  },
+  {
+   "name": "replica-design",
+   "kind": "skill",
+   "family": "",
+   "path": "skills/replica-design/SKILL.md",
+   "description": ">-",
+   "what": ">-",
+   "when": [],
+   "not": [],
+   "keywords": []
+  },
+  {
+   "name": "replica-diff",
+   "kind": "skill",
+   "family": "",
+   "path": "skills/replica-diff/SKILL.md",
+   "description": ">-",
+   "what": ">-",
+   "when": [],
+   "not": [],
+   "keywords": []
+  },
+  {
+   "name": "replica-entrepreneur",
+   "kind": "skill",
+   "family": "",
+   "path": "skills/replica-entrepreneur/SKILL.md",
+   "description": ">-",
+   "what": ">-",
+   "when": [],
+   "not": [],
+   "keywords": []
+  },
+  {
+   "name": "replica-launch",
+   "kind": "skill",
+   "family": "",
+   "path": "skills/replica-launch/SKILL.md",
+   "description": ">-",
+   "what": ">-",
+   "when": [],
+   "not": [],
+   "keywords": []
+  },
+  {
+   "name": "replica-recon",
+   "kind": "skill",
+   "family": "",
+   "path": "skills/replica-recon/SKILL.md",
+   "description": ">-",
+   "what": ">-",
+   "when": [],
+   "not": [],
+   "keywords": []
+  },
+  {
+   "name": "replica-test",
+   "kind": "skill",
+   "family": "",
+   "path": "skills/replica-test/SKILL.md",
+   "description": ">-",
+   "what": ">-",
+   "when": [],
+   "not": [],
+   "keywords": []
   },
   {
    "name": "replicate-automation",
