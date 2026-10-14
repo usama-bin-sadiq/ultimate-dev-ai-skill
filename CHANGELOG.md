@@ -1,5 +1,10 @@
 # Changelog
 
+## [4.0.47] — 2026-10-14
+
+- feat(replica): an 11-skill pack for rebuilding an app from scratch
+- improve the stuff
+
 ## [4.0.46] — 2026-10-09
 
 - fix(ci): stop cancelling the check whose verdict you need
