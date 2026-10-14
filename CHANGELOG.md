@@ -1,5 +1,9 @@
 # Changelog
 
+## [4.0.48] — 2026-10-14
+
+- ci: node 20 is gone from these workflows, and the Windows installer could not run at all
+
 ## [4.0.47] — 2026-10-14
 
 - feat(replica): an 11-skill pack for rebuilding an app from scratch
