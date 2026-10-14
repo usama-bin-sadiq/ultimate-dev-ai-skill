@@ -1,5 +1,9 @@
 # Changelog
 
+## [4.0.49] — 2026-10-14
+
+- docs(actions): stop teaching retired action versions
+
 ## [4.0.48] — 2026-10-14
 
 - ci: node 20 is gone from these workflows, and the Windows installer could not run at all
