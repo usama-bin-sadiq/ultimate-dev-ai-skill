@@ -56,6 +56,14 @@ Pull Request Opened
 
 ## GitHub Actions Configuration
 
+**Pin to the current stable major, not the exact number written below.** A major
+tag floats forward to the newest patch on its own, so `@v7` tracks 7.0.x with no
+edit to make. But a new major still supersedes it, and an action retired
+outright — as `upload-artifact@v3` was — fails the run rather than warning.
+Check the action's releases page instead of trusting the pin written here.
+Prefer a major tag to `@latest`, which crosses majors and can break a green
+pipeline with no commit of yours.
+
 ### Basic CI Pipeline
 
 ```yaml
@@ -72,9 +80,9 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
           cache: 'npm'
@@ -119,8 +127,8 @@ jobs:
           --health-retries 5
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
           cache: 'npm'
@@ -143,8 +151,8 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
           cache: 'npm'
@@ -155,7 +163,7 @@ jobs:
         run: npm run build
       - name: Run E2E tests
         run: npx playwright test
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: playwright-report
@@ -203,7 +211,7 @@ deploy-preview:
   runs-on: ubuntu-latest
   if: github.event_name == 'pull_request'
   steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Deploy preview
       run: npx vercel --token=${{ secrets.VERCEL_TOKEN }}
 ```
@@ -333,8 +341,8 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with: { node-version: '22', cache: 'npm' }
       - run: npm ci
       - run: npm run lint
@@ -342,8 +350,8 @@ jobs:
   typecheck:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with: { node-version: '22', cache: 'npm' }
       - run: npm ci
       - run: npx tsc --noEmit
@@ -351,8 +359,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with: { node-version: '22', cache: 'npm' }
       - run: npm ci
       - run: npm test -- --coverage

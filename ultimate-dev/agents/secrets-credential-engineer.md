@@ -79,7 +79,7 @@ jobs:
   gitleaks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with: { fetch-depth: 0 }   # full history so an old leak is caught too
       - uses: gitleaks/gitleaks-action@v2
         env: { GITLEAKS_CONFIG: .gitleaks.toml }  # allowlist known-public test fixtures

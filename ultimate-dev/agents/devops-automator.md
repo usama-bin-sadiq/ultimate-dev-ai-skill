@@ -68,7 +68,7 @@ jobs:
   security-scan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
       - name: Security Scan
         run: |
           # Dependency vulnerability scanning
@@ -80,7 +80,7 @@ jobs:
     needs: security-scan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
       - name: Run Tests
         run: |
           npm test

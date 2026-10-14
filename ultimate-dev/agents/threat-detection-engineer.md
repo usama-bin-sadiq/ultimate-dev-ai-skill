@@ -229,7 +229,7 @@ jobs:
     name: Validate Sigma Rules
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install sigma-cli
         run: pip install sigma-cli pySigma-backend-splunk pySigma-backend-microsoft365defender
@@ -265,7 +265,7 @@ jobs:
     needs: validate
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install sigma-cli with backends
         run: |
@@ -289,7 +289,7 @@ jobs:
           sigma convert -t elasticsearch \
             detections/**/*.yml > compiled/elastic/rules.ndjson
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: compiled-rules
           path: compiled/
@@ -299,7 +299,7 @@ jobs:
     needs: compile
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Run detection tests
         run: |
@@ -322,7 +322,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: compiled-rules
 

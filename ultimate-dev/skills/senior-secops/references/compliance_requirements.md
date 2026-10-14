@@ -675,7 +675,7 @@ jobs:
   soc2-checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Check for secrets in code
         run: |
@@ -704,7 +704,7 @@ jobs:
     runs-on: ubuntu-latest
     if: contains(github.event.head_commit.message, '[pci]')
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Scan for PAN in code
         run: |
@@ -718,7 +718,7 @@ jobs:
   gdpr-checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Check data retention policies
         run: |

@@ -103,13 +103,13 @@ jobs:
       matrix:
         shard: [1/4, 2/4, 3/4, 4/4]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: npm ci && npx playwright install --with-deps chromium
       - run: npx playwright test --shard=${{ matrix.shard }}
         env:
           # trace on first retry: zero overhead on green runs, full forensics on red
           PLAYWRIGHT_TRACE: on-first-retry
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: traces-${{ strategy.job-index }}

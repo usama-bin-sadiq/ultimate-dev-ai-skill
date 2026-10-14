@@ -84,7 +84,7 @@ on: [pull_request]
 jobs:
   skill-quality:
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Run review checklist
         run: |
           for skill in $(find . -name "SKILL.md" -type f); do

@@ -10,7 +10,7 @@ jobs:
   changelog:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: python3 engineering/changelog-generator/scripts/commit_linter.py \
           --from-ref origin/main --to-ref HEAD --strict
 ```

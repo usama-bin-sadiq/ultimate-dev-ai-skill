@@ -339,7 +339,7 @@ jobs:
   security-scan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Scan IaC for misconfigurations
       - name: Checkov — Infrastructure Policy Check
@@ -370,11 +370,11 @@ jobs:
     runs-on: ubuntu-latest
     environment: production  # Requires manual approval
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # OIDC federation — no AWS access keys stored as secrets
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT_ID }}:role/github-deploy
           aws-region: us-east-1
