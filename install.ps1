@@ -22,7 +22,13 @@ if (-not (Test-Path (Join-Path $SourceDir "SKILL.md"))) {
     Write-Error "source skill not found at $SourceDir"; exit 1
 }
 
-$HomeDir = $env:USERPROFILE ?? $HOME
+# USERPROFILE first, $HOME second -- but assigned the long way rather than with
+# the ?? operator, which is PowerShell 7+. Windows still ships 5.1 as the
+# default `powershell.exe`, and there ?? is a parse error, so the installer
+# dies before it has copied a single file. Verified: nothing else in this
+# script is 7.x-only.
+$HomeDir = $env:USERPROFILE
+if (-not $HomeDir) { $HomeDir = $HOME }
 $GlobalDirs = @(
     (Join-Path $HomeDir ".agents\skills"),
     (Join-Path $HomeDir ".claude\skills"),
