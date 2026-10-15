@@ -21,10 +21,21 @@ defaults:
   run:
     shell: bash
 
+# Runner pinned to ubuntu-24.04 rather than the floating ubuntu-latest.
+#
+# ubuntu-latest rolls to 26.04 between 2026-10-19 and 2026-11-19. 26.04 is GA
+# and supported to 2031, but it is six months old where 24.04 is two and a half
+# years -- it has not had the time to mature, and nothing in these workflows
+# needs it. 24.04 is supported to 2029. Moving forward then becomes a
+# deliberate change with a diff, instead of a silent one nobody chose.
+#
+# Python is requested as a minor ('3.11'), not an exact patch. Newer images
+# carry builds for only the newest few patches of each minor, so if the image
+# ever does move, an exact pin is what breaks -- not this label.
 jobs:
   structure:
     name: Validate Skill Structure
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
