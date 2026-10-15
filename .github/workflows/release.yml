@@ -42,9 +42,17 @@ defaults:
 # needs it. 24.04 is supported to 2029. Moving forward then becomes a
 # deliberate change with a diff, instead of a silent one nobody chose.
 #
-# Python is requested as a minor ('3.11'), not an exact patch. Newer images
-# carry builds for only the newest few patches of each minor, so if the image
-# ever does move, an exact pin is what breaks -- not this label.
+# Python is pinned to an exact patch, not to the '3.11' minor. A minor pin
+# silently tracks whichever 3.11.x the image last shipped, so the interpreter
+# under a green build is not necessarily the one that was validated, and the
+# only record of it is a build log. Exact makes a green run evidence about one
+# specific interpreter.
+#
+# 3.11.17 is the newest 3.11.x, so this costs no currency -- it carries every
+# patch and security fix published. It is also one of only three 3.11.x builds
+# published for ubuntu-26.04, so it still resolves if the runner is ever
+# bumped past 24.04. An older exact pin would not survive that; pinning the
+# runner is what keeps the exact pin cheap.
 jobs:
   # Nothing below this job runs until the tree validates. `needs:` only
   # orders jobs inside one workflow -- it cannot express "wait for the
@@ -71,7 +79,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-python@v7
         with:
-          python-version: '3.11'
+          python-version: '3.11.17'
       - name: The tree validates
         run: python ultimate-dev/tools/validate-skills.py --strict
 
@@ -270,7 +278,7 @@ jobs:
 
       - uses: actions/setup-python@v7
         with:
-          python-version: '3.11'
+          python-version: '3.11.17'
 
       - name: Configure Git
         run: |

@@ -86,6 +86,12 @@ for d in "${DESTINATIONS[@]}"; do
     cp -R "$SOURCE_DIR" "$dest"
     find "$dest" -name "__pycache__" -type d -prune -exec rm -rf {} + 2>/dev/null || true
     find "$dest" -name "*.pyc" -delete 2>/dev/null || true
+    # .DS_Store is already gitignored, so it never ships in a clone -- but it is
+    # sitting in the working tree of whoever runs the installer on macOS, and
+    # Copy-It-along means the installed copy inherits it. validate-skills.py
+    # then reports it as an unignored build artefact, which is true of the copy
+    # (there is no .gitignore beside it) and useless to whoever is reading it.
+    find "$dest" -name ".DS_Store" -delete 2>/dev/null || true
   fi
 done
 

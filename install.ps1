@@ -83,6 +83,14 @@ foreach ($d in $Destinations) {
         Copy-Item -Recurse -Force $SourceDir $dest
         Get-ChildItem -Recurse -Force -Directory -Path $dest -Filter "__pycache__" | Remove-Item -Recurse -Force
         Get-ChildItem -Recurse -Force -Path $dest -Filter "*.pyc" | Remove-Item -Force
+        # .DS_Store is already gitignored, so it never ships in a clone -- but it
+        # is sitting in the working tree of whoever runs the installer on macOS
+        # (or on Windows with a synced Explorer metadata file), and Copy-Item
+        # means the installed copy inherits it. validate-skills.py then reports
+        # it as an unignored build artefact, which is true of the copy (there is
+        # no .gitignore beside it) and useless to whoever is reading it. -Force
+        # is required to see it at all when the filesystem marks it hidden.
+        Get-ChildItem -Recurse -Force -Path $dest -Filter ".DS_Store" | Remove-Item -Force
     }
 }
 
