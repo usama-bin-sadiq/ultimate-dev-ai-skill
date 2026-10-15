@@ -1,5 +1,9 @@
 # Changelog
 
+## [4.0.51] — 2026-10-15
+
+- fix(installer): stop shipping .DS_Store; pin Python to an exact patch
+
 ## [4.0.50] — 2026-10-15
 
 - ci: pin the runner to ubuntu-24.04 rather than the floating label
