@@ -1,5 +1,9 @@
 # Changelog
 
+## [4.0.50] — 2026-10-15
+
+- ci: pin the runner to ubuntu-24.04 rather than the floating label
+
 ## [4.0.49] — 2026-10-14
 
 - docs(actions): stop teaching retired action versions
